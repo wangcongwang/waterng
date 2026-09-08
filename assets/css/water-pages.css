@@ -94,6 +94,32 @@
   background: var(--ek-blue);
 }
 
+/* Original portal-style tabs for the account dashboard (Overview/Orders/Profile/Sponsor). */
+.tabs {
+  display: flex;
+  gap: var(--ek-8);
+  margin-bottom: var(--ek-24);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--ek-border);
+}
+.tabs a {
+  flex: 0 0 auto;
+  padding: var(--ek-12) var(--ek-18);
+  position: relative;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  color: var(--ek-muted);
+  font-size: var(--ek-small);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.tabs a:hover { color: var(--ek-charcoal); }
+.tabs a.active {
+  color: var(--ek-blue);
+  border-bottom-color: var(--ek-blue);
+}
+
 .dash-view[hidden],
 [hidden] { display: none; }
 
