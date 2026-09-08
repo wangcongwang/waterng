@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Order Details · AquaLife</title>
+  <meta name="description" content="View your AquaLife order details." />
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260908b">
+  <link rel="stylesheet" href="assets/css/water-pages.css">
+  <script src="assets/js/elken-ui.js" defer></script>
+</head>
+<body data-page="order">
+  <div id="offline-banner" class="offline-banner">Connection status</div>
+  <div id="app-header" class="ek-site-header"></div>
+  <nav class="wv-account-nav" aria-label="Account navigation">
+  <a href="account.html">Overview</a>
+  <a href="order.html" aria-current="page">Orders</a>
+  <a href="member-welcome.html">Welcome Pack</a>
+  <a href="member-repurchase.html">Repurchase</a>
+  <a href="member-auto-maintenance.html">Auto Maintenance</a>
+  <a href="member-upgrade.html">Upgrade</a>
+  <a href="team-inquiry.html">Team Inquiry</a>
+</nav>
+
+  <main class="page order-shell">
+    <div class="container">
+      <div class="crumbs">
+        <a href="index.html">Home</a> <span>›</span> <span>Order details</span>
+      </div>
+      <h1>Order details</h1>
+      <p>Reference for your AquaLife purchase. Shareable via the link below.</p>
+
+      <div id="orderHost"></div>
+    </div>
+  </main>
+
+  <div id="app-footer" class="ek-site-footer"></div>
+
+  <script src="assets/i18n/strings.js?v=20260819-2"></script>
+<script src="assets/js/app.js?v=20260908f"></script>
+  <script src="assets/js/website.js?v=20260819-2"></script>
+  <script>
+    const PICKUP_LOCATIONS = {
+      lagos: { name: 'Lagos HQ', addr: '12B Admiralty Way, Lekki Phase 1', hours: 'Mon–Sat · 8:00 – 18:00' },
+      abuja: { name: 'Abuja branch', addr: 'Plot 24, Wuse Zone 5', hours: 'Mon–Fri · 9:00 – 17:00' },
+      ph:    { name: 'Port Harcourt branch', addr: '5 Aba Road, GRA Phase 2', hours: 'Mon–Fri · 9:00 – 17:00' },
+    };
+    const PAY_LABELS = { cod: 'Cash on delivery', card: 'Debit / credit card', ussd: 'USSD', bank: 'Bank transfer' };
+
+    function getOrder() {
+      const id = new URLSearchParams(location.search).get('order');
+      if (!id) return null;
+      return (window.ProductCatalog && window.ProductCatalog.getOrderById)
+        ? window.ProductCatalog.getOrderById(id) : null;
+    }
+    function orderDetailLink(orderId) {
+      try { return new URL('order.html?order=' + encodeURIComponent(orderId), location.href).href; }
+      catch (e) { return 'order.html?order=' + encodeURIComponent(orderId); }
+    }
+    function buildOrderMailto(order) {
+      const item = (order.items && order.items[0]) || {};
+      const qty = item.qty || 1;
+      const isPickup = order.delivery && order.delivery.method === 'pickup';
+      const methodLabel = isPickup ? 'Self-pickup' : 'Door delivery';
+      const payLabel = PAY_LABELS[order.payment] || order.payment || 'Not specified';
+      const link = orderDetailLink(order.id);
+      const subject = 'AquaLife Order ' + order.id + ': Your order details';
+      const body =
+        'Hello ' + (order.customer && order.customer.name ? order.customer.name : 'there') + ',\n\n' +
+        'Thank you for your order with AquaLife.\n\n' +
+        'Order: ' + order.id + '\n' +
+        'Product: ' + (item.name || 'Unnamed product') + ' × ' + qty + '\n' +
+        'Total: N' + (order.total || 0).toLocaleString() + '\n' +
+        'Delivery: ' + methodLabel + '\n' +
+        'Payment: ' + payLabel + '\n\n' +
+        'View your full order details here:\n' + link + '\n\n' +
+        'If you have any questions, reply to this email or contact hello@aqualease.ng.\n\n' +
+        'Best regards,\nAquaLife Nigeria';
+      const email = (order.customer && order.customer.email) || '';
+      return 'mailto:' + encodeURIComponent(email) +
+        '?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(body);
+    }
+
+    // --- order-item helpers (shared with the Orders tab in account.html) ---
+    window.__ORDER_PIC_SVG = '<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z"/><path d="M5 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/></svg>';
+    function _getBV(item) {
+      if (typeof item.bv === 'number') return item.bv;
+      if (item.bvString !== undefined) return item.bvString;
+      if (typeof item.price === 'number') return Math.round(item.price / 1000) * (item.qty || 1);
+      return 0;
+    }
+    function _currencySymbol(c) {
+      const m = { NGN: 'N', USD: '$', EUR: '€', GBP: '£', CNY: '¥', KES: 'KSh', GHS: 'GH₵' };
+      return m[c] || 'N';
+    }
+    function _resolveOrderItemImage(it) {
+      if (!it) return null;
+      if (it.image) return it.image;
+      if (it.category && it.img) return 'assets/img/products/' + it.category + '/' + it.img;
+      const pc = window.ProductCatalog;
+      if (pc && typeof pc.allProducts === 'function') {
+        const list = pc.allProducts();
+        const iid = String(it.id || '');
+        const iname = String(it.name || '').trim();
+        const match = list.find(p => p && ((iid && String(p.id) === iid) || (iname && String(p.name).trim() === iname)));
+        if (match) {
+          if (match.image) return match.image;
+          if (match.category && match.img) return 'assets/img/products/' + match.category + '/' + match.img;
+        }
+      } else if (pc && pc.PRODUCTS) {
+        const list = [];
+        Object.keys(pc.PRODUCTS).forEach(k => {
+          const arr = pc.PRODUCTS[k];
+          if (Array.isArray(arr)) { for (let j = 0; j < arr.length; j++) list.push(arr[j]); }
+        });
+        const iid = String(it.id || '');
+        const iname = String(it.name || '').trim();
+        const match = list.find(p => p && ((iid && String(p.id) === iid) || (iname && String(p.name).trim() === iname)));
+        if (match) {
+          if (match.image) return match.image;
+          if (match.category && match.img) return 'assets/img/products/' + match.category + '/' + match.img;
+        }
+      }
+      if (it.pic) return it.pic;
+      if (it.img) return it.img;
+      return null;
+    }
+    function _resolveOrderItemCode(it) {
+      if (!it) return null;
+      if (it.sku || it.code || it.id) return it.sku || it.code || it.id;
+      const pc = window.ProductCatalog;
+      const iname = String(it.name || '').trim();
+      if (pc && typeof pc.allProducts === 'function' && iname) {
+        const match = pc.allProducts().find(p => p && String(p.name).trim() === iname);
+        if (match) return match.sku || match.code || match.id || null;
+      }
+      return null;
+    }
+    function fmtDateTime(ts, fb) {
+      if (!ts) return (fb != null ? fb : '—');
+      const d = new Date(ts);
+      if (isNaN(d.getTime())) return (fb != null ? fb : '—');
+      const pad = n => String(n).padStart(2, '0');
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+             ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+    // Return `fb` (friendly text) instead of a dash when value is empty.
+    function orFallback(v, fb) {
+      if (v === null || v === undefined || v === '' || v === '—') return fb;
+      return v;
+    }
+
+    function render() {
+      const host = document.getElementById('orderHost');
+      const order = getOrder();
+      if (!order) {
+        host.innerHTML = `
+          <div class="checkout-card">
+            <h2>Order not found</h2>
+            <p>
+              We couldn't find this order on this device. Orders are stored locally in your browser,
+              so a link opened on a different phone or computer won't show the details.
+              Please open the link on the device where you placed the order, or contact
+              <a href="mailto:hello@aqualease.ng">hello@aqualease.ng</a> with your order ID.
+            </p>
+            <a href="index.html" class="ek-btn ek-btn--primary ek-btn--sm">Back to home</a>
+          </div>`;
+        return;
+      }
+
+      const items = order.items || [];
+      const isPickup = order.delivery && order.delivery.method === 'pickup';
+      const link = orderDetailLink(order.id);
+      const email = (order.customer && order.customer.email) || '';
+      const statusLabel = (order.status || 'pending').toUpperCase();
+
+      // ---- Member / order meta (mirrors the member data shown on the Orders list) ----
+      const authUser = (window.Auth && window.Auth.user) || {};
+      const authMemberId = authUser.memberId || null;
+      const authName = authUser.name || authUser.fullName || null;
+
+      const memberId = orFallback(order.memberId || authMemberId, 'Not registered');
+      const memberName = orFallback(order.memberName || (order.customer && order.customer.name) || authName, 'Guest');
+      const recipient = orFallback(order.customer && order.customer.name, memberName);
+      const phone = orFallback(order.customer && order.customer.phone, 'No phone on file');
+      const pickupLoc = (order.delivery && order.delivery.pickupLoc) || 'lagos';
+      const pickup = PICKUP_LOCATIONS[pickupLoc] || PICKUP_LOCATIONS.lagos;
+      const addressParts = [order.customer && order.customer.address, order.customer && order.customer.city, order.customer && order.customer.state].filter(Boolean);
+      const addressStr = isPickup
+        ? (pickup.name + ' · ' + pickup.addr)
+        : (addressParts.join(', ') || 'No address provided');
+      const country = order.country || 'Nigeria';
+      const currency = order.currency || 'NGN';
+      const payMethod = order.paymentLabel || PAY_LABELS[order.payment] || order.payment || 'Not specified';
+      const placedStr = fmtDateTime(order.date || order.createdAt || order.placeTime || null, 'Unknown date');
+      const paidStr = fmtDateTime(order.paidAt || null, 'Not yet paid');
+      const isMemberOrder = !!(order.operatorId && order.memberId && order.operatorId !== order.memberId);
+      const orderTypeLabel = isMemberOrder ? 'Member order' : 'My order';
+      const payStatusLabel = order.payStatus || statusLabel;
+
+      // ---- Items product table (mirrors the Orders tab: Code / Product / Qty / Price /
+      //      Total Price / Total BV / Tax Rate / Total Tax) with Subtotal + Total (incl. tax) ----
+      const TAX_RATE = (typeof order.taxRate === 'number') ? order.taxRate
+        : (typeof (items[0] && items[0].taxRate) === 'number' ? items[0].taxRate : 0.075);
+      const sym = _currencySymbol(currency);
+      const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+      const itemRows = (items.length ? items : [{}]).map((it) => {
+        const qty = Number(it.qty) || 1;
+        const price = Number(it.price) || 0;
+        const bv = (typeof it.bv === 'number') ? it.bv : (_getBV(it) || 0);
+        const totalPrice = qty * price;
+        const totalBV = qty * (Number(bv) || 0);
+        const totalTax = totalPrice * TAX_RATE;
+        const code = _resolveOrderItemCode(it) || 'Unlisted';
+        const img = _resolveOrderItemImage(it);
+        const picInner = img
+          ? `<img src="${img}" alt="" loading="lazy" onerror="this.outerHTML=window.__ORDER_PIC_SVG">`
+          : window.__ORDER_PIC_SVG;
+        return `
+          <tr>
+            <td class="col-img"><span class="ocard__thumb">${picInner}</span></td>
+            <td>${esc(code)}</td>
+            <td>${esc(it.name || 'Unnamed product')}</td>
+            <td class="num">${qty}</td>
+            <td class="num">${sym}${fmtNum(price)}</td>
+            <td class="num">${sym}${fmtNum(totalPrice)}</td>
+            <td class="num">${totalBV}</td>
+            <td class="num">${TAX_RATE}</td>
+            <td class="num">${sym}${fmtNum(totalTax)}</td>
+          </tr>`;
+      }).join('');
+
+      const subtotal = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number(it.price) || 0), 0);
+      const sumBV = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number((typeof it.bv === 'number' ? it.bv : _getBV(it))) || 0), 0);
+      const sumTax = subtotal * TAX_RATE;
+      const grand = subtotal + sumTax;
+      const totalQty = items.reduce((s, it) => s + (Number(it.qty) || 1), 0);
+
+      const itemsTableHtml = `
+        <div class="ocard__table-wrap">
+          <table class="ocard__items">
+            <thead>
+              <tr>
+                <th class="col-img" aria-label="Image"></th>
+                <th>Product Code</th>
+                <th>Product</th>
+                <th class="num">Qty</th>
+                <th class="num">Price</th>
+                <th class="num">Total Price</th>
+                <th class="num">Total BV</th>
+                <th class="num">Tax Rate</th>
+                <th class="num">Total Tax</th>
+              </tr>
+            </thead>
+            <tbody>${itemRows}</tbody>
+            <tfoot>
+              <tr>
+                <td class="col-img"></td>
+                <td colspan="2" class="lbl">Subtotal</td>
+                <td class="num">${totalQty}</td>
+                <td></td>
+                <td class="num">${sym}${fmtNum(subtotal)}</td>
+                <td class="num">${sumBV}</td>
+                <td></td>
+                <td class="num">${sym}${fmtNum(sumTax)}</td>
+              </tr>
+              <tr class="ocard__grand">
+                <td class="col-img"></td>
+                <td colspan="5" class="lbl">Total (incl. tax)</td>
+                <td></td>
+                <td></td>
+                <td class="num">${sym}${fmtNum(grand)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>`;
+
+      // ---- Member information (mirrors the member data shown on the Orders list) ----
+      const metaItem = (k, v, wide) =>
+        `<div class="order-meta-item${wide ? ' wide' : ''}"><span class="k">${esc(k)}</span><b class="v">${esc(v)}</b></div>`;
+      const memberInfoHtml = `
+        <div class="order-meta-grid">
+          ${metaItem('Member ID', memberId)}
+          ${metaItem('Member name', memberName)}
+          ${metaItem('Recipient', recipient)}
+          ${metaItem('Phone', phone)}
+          ${metaItem('Country', country)}
+          ${metaItem('Currency', currency)}
+          ${metaItem('Payment', payMethod)}
+          ${metaItem('Order type', orderTypeLabel)}
+          ${metaItem('Placed', placedStr)}
+          ${metaItem('Paid', paidStr)}
+          ${metaItem('Pay status', payStatusLabel)}
+          ${metaItem('BV earned', '+' + (order.bv != null ? order.bv : sumBV) + ' BV')}
+          ${metaItem('Address', addressStr, true)}
+          ${(order.customer && order.customer.note) ? metaItem('Note', order.customer.note, true) : ''}
+        </div>`;
+
+      host.innerHTML = `
+        <div class="order-grid">
+          <div>
+            <div class="checkout-card">
+              <div>
+                <h2>Order ${order.id}</h2>
+                <span class="order-status">${statusLabel}</span>
+              </div>
+              <div class="sign-side">
+                <h3 class="order-sub">Member information</h3>
+                ${memberInfoHtml}
+              </div>
+            </div>
+
+            <div class="checkout-card">
+              <h2>Items</h2>
+              ${itemsTableHtml}
+            </div>
+          </div>
+
+          <aside class="order-side">
+            <div class="checkout-card">
+              <h2>Order details link</h2>
+              <div class="order-link-box">
+                <div class="order-link-row">
+                  <input class="ek-input" id="orderLinkInput" readonly value="${link.replace(/"/g, '&quot;')}" />
+                  <button type="button" class="ek-btn ek-btn--secondary ek-btn--sm" id="copyOrderLink">Copy</button>
+                </div>
+                ${email
+                  ? `<button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="emailOrderLink">
+                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l9 6 9-6M3 7v10h18V7H3z"/></svg>
+                       Email order link to ${email}
+                     </button>`
+                  : ''}
+                <p>
+                  This link is stored in your browser, so it only opens on this device.
+                  Email it to yourself to keep a copy. (Static demo: no server-side email is sent; the button opens your email app with the link pre-filled.)
+                </p>
+              </div>
+            </div>
+            <div class="checkout-card">
+              <a href="index.html" class="ek-btn btn-link ek-btn--block">Back to home</a>
+            </div>
+          </aside>
+        </div>
+      `;
+
+      const copyBtn = document.getElementById('copyOrderLink');
+      if (copyBtn) copyBtn.addEventListener('click', () => {
+        const inp = document.getElementById('orderLinkInput');
+        inp.select();
+        try { navigator.clipboard.writeText(inp.value); } catch (e) { document.execCommand('copy'); }
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1500);
+      });
+      const emailBtn = document.getElementById('emailOrderLink');
+      if (emailBtn) emailBtn.addEventListener('click', () => { location.href = buildOrderMailto(order); });
+    }
+
+    document.addEventListener('DOMContentLoaded', render);
+  </script>
+</body>
+</html>

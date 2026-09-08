@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Team Inquiry · AquaLife</title>
+  <meta name="description" content="View your personal member details and team network summary." />
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260908b">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260908b">
+  <link rel="stylesheet" href="assets/css/water-pages.css">
+  <script src="assets/js/elken-ui.js?v=20260908b" defer></script>
+</head>
+<body data-page="team-inquiry">
+  <div id="app-header" class="ek-site-header"></div>
+
+  <nav class="wv-account-nav" aria-label="Account navigation">
+    <a href="account.html">Overview</a>
+    <a href="order.html">Orders</a>
+    <a href="member-welcome.html">Welcome Pack</a>
+    <a href="member-repurchase.html">Repurchase</a>
+    <a href="member-auto-maintenance.html">Auto Maintenance</a>
+    <a href="member-upgrade.html">Upgrade</a>
+    <a href="team-inquiry.html" aria-current="page">Team Inquiry</a>
+  </nav>
+
+  <main id="main">
+    <section class="sec-banner sec-banner--gradient sec-banner--short">
+      <div class="sec-banner__glow" aria-hidden="true"></div>
+      <div class="sec-banner__inner">
+        <div class="sec-banner__crumb"><nav class="ek-breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><a href="account.html">My Account</a><span aria-hidden="true">/</span><span aria-current="page">Team Inquiry</span></nav></div>
+        <div class="sec-banner__copy">
+          <h1 class="ek-h1">Your team, <span class="t-accent">at a glance.</span></h1>
+          <p class="sec-banner__sub">View your personal member summary and your direct team details. Calculations are refreshed at the end of each pay cycle.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec-pad sec-about">
+      <div class="ek-container">
+        <div class="ek-sechead">
+          <div class="ek-sechead__left"><p class="ek-eyebrow">Team Inquiry</p><h2 class="ek-h2">Personal &amp; team details</h2></div>
+          <div class="ek-sechead__body"><p class="ek-lead">A clear view of your own standing and the members in your direct team. This is the same data your distributor sees when they register you.</p></div>
+        </div>
+
+        <div class="ti-card">
+          <h2>Personal Details</h2>
+          <div class="ti-table-wrap">
+            <table class="ti-table" id="personalTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Member Code</th>
+                  <th>Member Name</th>
+                  <th>Status</th>
+                  <th>Personal BV</th>
+                  <th>PGS</th>
+                  <th>Total BV</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td class="code" id="tiPersonalCode">NG09246375</td>
+                  <td id="tiPersonalName">David Okafor</td>
+                  <td><span class="status-badge active" id="tiPersonalStatus">ACTIVE</span></td>
+                  <td class="num" id="tiPersonalBV">320</td>
+                  <td class="num" id="tiPersonalPGS">1,450</td>
+                  <td class="num" id="tiPersonalTotal">1,770</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="ti-card">
+          <h2>Team Details</h2>
+          <div class="ti-table-wrap">
+            <table class="ti-table" id="teamTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Member Code</th>
+                  <th>Member Name</th>
+                  <th>Status</th>
+                  <th>Personal BV</th>
+                  <th>PGS</th>
+                  <th>Total BV</th>
+                </tr>
+              </thead>
+              <tbody id="teamTableBody">
+                <tr><td colspan="7" class="ti-empty">No Data</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p class="ti-calc-time" id="tiCalcTime">Latest calculation time: <span id="tiCalcTimeVal"></span></p>
+      </div>
+    </section>
+  </main>
+
+  <div id="app-footer" class="ek-site-footer"></div>
+
+  <script src="assets/i18n/strings.js?v=20260908b"></script>
+  <script src="assets/js/app.js?v=20260908f"></script>
+  <script src="assets/js/website.js?v=20260908b"></script>
+  <script>
+    (function () {
+      function statusClass(status) {
+        const s = (status || '').toString().toLowerCase();
+        if (s === 'active') return 'active';
+        if (s === 'pending') return 'pending';
+        return 'inactive';
+      }
+      function statusText(status) {
+        const s = (status || '').toString().toLowerCase();
+        if (s === 'active') return 'ACTIVE';
+        if (s === 'pending') return 'PENDING';
+        return 'INACTIVE';
+      }
+      function fmt(n) {
+        const v = Number(n);
+        return Number.isFinite(v) ? v.toLocaleString('en-US') : '0';
+      }
+      const DEMO_PERSONAL = {
+        memberId: 'NG09246375', fullName: 'David Okafor', status: 'active',
+        personalBV: 320, pgs: 1450, totalBV: 1770
+      };
+      const DEMO_TEAM = [
+        { memberId: 'NG27187710', fullName: 'Amara Eze',      status: 'active',   personalBV: 210, pgs: 980,  totalBV: 1190 },
+        { memberId: 'NG66051653', fullName: 'Chinedu Bello',  status: 'inactive', personalBV: 0,   pgs: 0,    totalBV: 0 },
+        { memberId: 'NG48655323', fullName: 'Fatima Yusuf',   status: 'pending',  personalBV: 150, pgs: 640,  totalBV: 790 },
+        { memberId: 'NG13579024', fullName: 'Tunde Adeyemi',  status: 'active',   personalBV: 95,  pgs: 320,  totalBV: 415 },
+        { memberId: 'NG77881203', fullName: 'Ngozi Ibe',      status: 'active',   personalBV: 64,  pgs: 180,  totalBV: 244 }
+      ];
+      function loadPersonal() {
+        let md = {};
+        try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
+        if (!md.memberId && !md.id) md = DEMO_PERSONAL;
+        document.getElementById('tiPersonalCode').textContent = md.memberId || md.id;
+        document.getElementById('tiPersonalName').textContent = md.fullName || md.name;
+        const badge = document.getElementById('tiPersonalStatus');
+        badge.className = 'status-badge ' + statusClass(md.status || 'inactive');
+        badge.textContent = statusText(md.status || 'inactive');
+        document.getElementById('tiPersonalBV').textContent = fmt(md.personalBV || md.bv || 0);
+        document.getElementById('tiPersonalPGS').textContent = fmt(md.pgs || 0);
+        document.getElementById('tiPersonalTotal').textContent = fmt(md.totalBV || md.totalBv || 0);
+      }
+      function loadTeam() {
+        let rows = [];
+        try { rows = JSON.parse(localStorage.getItem('al.teamMembers') || '[]'); } catch (e) {}
+        if (!rows || rows.length === 0) rows = DEMO_TEAM;
+        const tbody = document.getElementById('teamTableBody');
+        tbody.innerHTML = rows.map(function (m, i) {
+          return '<tr><td>' + (i + 1) + '</td><td class="code">' + (m.memberId || m.id) + '</td><td>' +
+            (m.fullName || m.name) + '</td><td><span class="status-badge ' + statusClass(m.status) + '">' +
+            statusText(m.status) + '</span></td><td class="num">' + fmt(m.personalBV || m.bv || 0) +
+            '</td><td class="num">' + fmt(m.pgs || 0) + '</td><td class="num">' + fmt(m.totalBV || m.totalBv || 0) + '</td></tr>';
+        }).join('');
+      }
+      function setCalcTime() {
+        const el = document.getElementById('tiCalcTimeVal');
+        const ts = new Date();
+        el.textContent =
+          ts.getFullYear() + '-' + String(ts.getMonth() + 1).padStart(2, '0') + '-' + String(ts.getDate()).padStart(2, '0') + ' ' +
+          String(ts.getHours()).padStart(2, '0') + ':' + String(ts.getMinutes()).padStart(2, '0') + ':' + String(ts.getSeconds()).padStart(2, '0');
+      }
+      function init() { loadPersonal(); loadTeam(); setCalcTime(); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
+    })();
+  </script>
+</body>
+</html>

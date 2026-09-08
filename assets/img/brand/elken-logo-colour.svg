@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 578.79 111.84" role="img" aria-label="AquaLife">
+  <defs>
+    <style>
+      .mark { fill: #0a1a5c; }
+      .mark-inner { fill: #2a8df0; }
+      .word { fill: #0a1a5c; font-family: "Helvetica Neue", "Arial Black", Helvetica, Arial, sans-serif; font-weight: 800; font-size: 78px; letter-spacing: -1.5px; }
+    </style>
+  </defs>
+  <!-- Water-drop emblem -->
+  <g>
+    <path class="mark" d="M62 11 C 95 50, 104 70, 62 102 C 20 70, 29 50, 62 11 Z"/>
+    <path class="mark-inner" d="M62 35 C 78 56, 82 67, 62 86 C 42 67, 46 56, 62 35 Z" opacity=".55"/>
+  </g>
+  <!-- Wordmark -->
+  <text class="word" x="128" y="84">AquaLife</text>
+</svg>

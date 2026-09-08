@@ -1,0 +1,326 @@
+/* ==========================================================================
+   AquaLife home — v2, rebuilt on the Elken Africa marketing design system.
+
+   Source of truth: https://staging.elkenafrica.com/ng/
+   (assets/css/tokens.css + components.css + sections.css, Figma "Home").
+
+   Everything here is namespaced `mk-` and the marketing type scale is set as
+   local custom properties on `.mk-home` only. CSS variables inherit, so the
+   shared header, footer and portal styles keep the portal scale and cannot be
+   disturbed by this file. Nothing outside the home page loads it.
+
+   Rule: no hardcoded colour, size or spacing — always a var(--ek-…).
+   ========================================================================== */
+
+.mk-home {
+  /* Marketing type scale (Figma "01 - Foundations") ---------------------- */
+  --ek-h1:      60px;  --ek-h1-lh: 1.1;  --ek-h1-ls: -2px;
+  --ek-h2:      33px;  --ek-h2-lh: 1.2;
+  --ek-h3:      23px;  --ek-h3-lh: 1.25;
+  --ek-h4:      18px;  --ek-h4-lh: 1.3;
+  --ek-lead:    16px;  --ek-lead-lh: 1.5;
+  --ek-text:    15px;  --ek-text-lh: 1.5;
+  --ek-small:   14px;  --ek-small-lh: 1.4;
+  --ek-eyebrow: 18px;
+
+  /* Marketing layout ------------------------------------------------------ */
+  --ek-content-max: 1408px;
+  --ek-page-pad:    48px;
+  --mk-section-pad: 130px;
+  --mk-76:          76px;
+  --mk-120:         120px;
+
+  /* Grounds and scrims ---------------------------------------------------- */
+  --mk-ground-light: linear-gradient(118deg, #FBFCFC 0%, #F3F6F9 52%, #E9EEF5 100%);
+  --mk-scrim-dark:   linear-gradient(90deg, rgba(13,15,19,.84) 0%, rgba(13,15,19,.66) 30%, rgba(13,15,19,0) 62%);
+  /* Warm near-white wash, so navy type stays legible over the brand photo
+     without grey-­ing the wood in it. Fades out before the product line-up. */
+  --mk-wash:         linear-gradient(94deg,
+                       rgba(255,251,246,.95) 0%,  rgba(255,251,246,.93) 20%,
+                       rgba(255,251,246,.82) 29%, rgba(255,251,246,.55) 36%,
+                       rgba(255,251,246,.26) 42%, rgba(255,251,246,.08) 46%,
+                       rgba(255,251,246,0)   50%);
+  /* One number to touch if the hero product line-up needs to be bigger. */
+  --mk-hero-zoom:    1.05;
+}
+
+/* Buttons on the home page take the marketing set: square corners, 18px/500. */
+.mk-home .ek-btn {
+  border-radius: 0; padding: 12px 30px;
+  font-size: 18px; font-weight: var(--ek-w-medium); min-height: 0;
+}
+.mk-home .ek-btn--white      { --btn-bg: var(--ek-grey-light); --btn-ink: var(--ek-blue); }
+.mk-home .ek-btn--white:hover{ --btn-bg: var(--ek-white); }
+.mk-home .ek-btn--ghostwhite { --btn-bg: transparent; --btn-ink: var(--ek-white); --btn-border: rgba(255,255,255,.55); }
+.mk-home .ek-btn--ghostwhite:hover { --btn-bg: var(--ek-white); --btn-ink: var(--ek-blue); --btn-border: var(--ek-white); }
+
+/* Two-tone headline spans, as on the Figma home page ---------------------- */
+.t-blue  { color: var(--ek-blue); }
+.t-pink  { color: var(--ek-pink); }
+.t-white { color: var(--ek-white); }
+.t-aqua  { color: var(--ek-aqua); }
+
+.mk-section { padding-block: var(--mk-section-pad); }
+
+/* Designer background grounds for the home sections: products sit on the light
+   ground, about on white, so the two read as alternating bands like the Figma
+   "Home" page. Locations (blue) and closing keep their own treatment. */
+.mk-products { background: var(--mk-ground-light); }
+.mk-about    { background: var(--ek-white); }
+
+/* ==========================================================================
+   sec-hero  —  full-bleed carousel, header overlays it
+   ========================================================================== */
+.mk-hero { position: relative; }
+.mk-hero__slides { display: grid; }
+.mk-hero__slide {
+  grid-area: 1 / 1; position: relative;
+  opacity: 0; visibility: hidden;
+  transition: opacity var(--ek-slow) var(--ek-ease), visibility var(--ek-slow);
+}
+.mk-hero__slide.is-active { opacity: 1; visibility: visible; }
+
+.mk-hero__media {
+  position: absolute; inset: 0;
+  background-size: cover; background-repeat: no-repeat; background-position: center;
+}
+/* A second, re-framed copy of each hero photograph for narrow screens, as on
+   the marketing site. Inline style attribute holds the url() so it resolves
+   against the document, not the stylesheet. */
+.mk-hero__media--m { display: none; }
+.mk-hero__scrim { position: absolute; inset: 0; background: var(--mk-scrim-dark); }
+.mk-hero__wash  { position: absolute; inset: 0; pointer-events: none; background: var(--mk-wash); }
+
+.mk-hero__inner {
+  position: relative; min-height: clamp(560px, 46vw, 880px);
+  display: flex; align-items: center; padding-block: 110px 140px;
+}
+.mk-hero__copy { max-width: 620px; }
+.mk-hero__slide--light .mk-hero__copy { max-width: 520px; }
+.mk-hero__slide--light .ek-h1 { font-size: clamp(34px, 3.4vw, 50px); }
+.mk-hero__slide--light .ek-eyebrow { color: var(--ek-blue-hover); }
+.mk-hero__sub { margin-top: var(--ek-24); max-width: 520px; }
+.mk-hero__actions { display: flex; gap: var(--ek-16); margin-top: 36px; flex-wrap: wrap; }
+.mk-hero__slide--dark .ek-eyebrow { color: var(--ek-aqua); }
+.mk-hero__slide--dark .ek-lead { color: var(--ek-grey-light); }
+
+/* Carousel dots — Figma "Pagination" ------------------------------------- */
+.mk-hero__dots { position: relative; height: 0; }
+.mk-hero__controls {
+  position: absolute; left: 0; right: 0; bottom: 60px; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--ek-24);
+}
+.mk-dots { display: flex; gap: 10px; align-items: center; }
+.mk-dots button {
+  width: 9px; height: 9px; padding: 0; border: 0; border-radius: 999px;
+  background: #C6C9CE; cursor: pointer;
+  transition: width var(--ek-fast) var(--ek-ease), background-color var(--ek-fast) var(--ek-ease);
+}
+.mk-dots button[aria-selected="true"] { width: 24px; background: var(--ek-pink); }
+.mk-hero__arrows { display: flex; gap: var(--ek-12); }
+.mk-hero__arrow {
+  width: 56px; height: 56px; padding: 0; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.88); border: 1px solid rgba(32,34,89,.18);
+  color: var(--ek-blue); cursor: pointer;
+  transition: background-color var(--ek-fast) var(--ek-ease),
+              color var(--ek-fast) var(--ek-ease),
+              border-color var(--ek-fast) var(--ek-ease);
+}
+.mk-hero__arrow:hover { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); }
+
+/* ==========================================================================
+   sec-trustbar
+   ========================================================================== */
+.mk-trustbar { background: var(--ek-grey-light); padding: 34px 0; }
+.mk-trustbar__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mk-trust { display: flex; align-items: center; gap: var(--ek-16); padding-left: 44px; border-left: 1px solid #DCDEE0; }
+.mk-trust:first-child { padding-left: 0; border-left: 0; }
+.mk-trust svg { flex: 0 0 auto; }
+.mk-trust span {
+  font-size: 14px; font-weight: var(--ek-w-bold); letter-spacing: .08em;
+  line-height: 1.45; text-transform: uppercase; color: var(--ek-blue);
+}
+
+/* ==========================================================================
+   Section header — Figma "Sec - StatsIntroSection"
+   ========================================================================== */
+.mk-sechead { display: grid; grid-template-columns: 561px 762px; align-items: start; }
+.mk-sechead__left { display: flex; flex-direction: column; gap: 10px; max-width: 390px; }
+.mk-sechead__left .ek-eyebrow { text-transform: none; }
+.mk-sechead__body { padding-top: 4px; display: flex; flex-direction: column; gap: var(--ek-24); }
+
+/* Category cards — Figma "Sec - ContentCardsSection" ---------------------- */
+.mk-cardrow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--ek-8); margin-top: var(--mk-76); }
+.mk-card { background: var(--ek-white); display: flex; flex-direction: column; color: inherit; }
+.mk-card:hover { color: inherit; }
+.mk-card__panel {
+  aspect-ratio: 346 / 260; background: var(--ek-grey-light);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.mk-card__panel img { max-width: 72%; max-height: 76%; object-fit: contain; transition: transform .35s var(--ek-ease); }
+.mk-card:hover .mk-card__panel img { transform: scale(1.05); }
+.mk-card__body { padding: 32px 30px 36px; display: flex; flex-direction: column; gap: var(--ek-12); flex-grow: 1; }
+.mk-card__body .ek-text { color: var(--ek-body-ink); }
+.mk-card__body .ek-link { margin-top: auto; padding-top: 14px; font-size: 15px; }
+.mk-section__foot { margin-top: 44px; }
+
+/* Popular products reuse the card row, with the tile markup the catalogue
+   injects: <a class="category-tile popular-tile"><img><span>…</span></a>. */
+.mk-cardrow .popular-tile {
+  background: var(--ek-white); display: flex; flex-direction: column;
+  padding: 0 0 26px; color: inherit;
+}
+.mk-cardrow .popular-tile img {
+  width: 100%; aspect-ratio: 346 / 260; object-fit: contain;
+  background: var(--ek-grey-light); margin-bottom: 22px;
+  transition: transform .35s var(--ek-ease);
+}
+.mk-cardrow .popular-tile:hover img { transform: scale(1.04); }
+.mk-cardrow .popular-tile span { display: flex; flex-direction: column; gap: 6px; padding: 0 30px; }
+.mk-cardrow .popular-tile strong { font-size: var(--ek-h4); line-height: var(--ek-h4-lh); color: var(--ek-blue); }
+.mk-cardrow .popular-tile small { font-size: 14px; color: var(--ek-muted); }
+
+/* Statistic panels -------------------------------------------------------- */
+.mk-statgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: var(--mk-76); }
+.mk-stat { min-height: 220px; padding: 40px 55px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.mk-stat:nth-child(1) { background: var(--ek-stat-1); }
+.mk-stat:nth-child(2) { background: var(--ek-stat-2); }
+.mk-stat:nth-child(3) { background: var(--ek-stat-3); }
+.mk-stat__value { font-size: var(--ek-h2); font-weight: var(--ek-w-bold); line-height: 1.2; color: var(--ek-grey-light); }
+.mk-stat__label { font-size: var(--ek-h3); font-weight: var(--ek-w-medium); line-height: 1.25; color: var(--ek-grey-light); }
+
+/* ==========================================================================
+   sec-locations — full-bleed Deep Vital Blue band
+   ========================================================================== */
+.mk-locations { background: var(--ek-blue); color: var(--ek-white); }
+.mk-locations .ek-h2 { color: var(--ek-white); }
+.mk-locations .ek-lead { color: var(--ek-grey-light); }
+.mk-locations__grid { display: grid; grid-template-columns: 561px 762px; align-items: start; }
+.mk-locations__copy { display: flex; flex-direction: column; gap: 22px; max-width: 470px; }
+.mk-locations__actions { display: flex; gap: var(--ek-16); margin-top: 14px; flex-wrap: wrap; }
+.mk-loclist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ek-8); }
+.mk-loc { display: flex; gap: var(--ek-16); align-items: flex-start; padding: 26px 28px; background: rgba(255,255,255,.06); }
+.mk-loc svg { flex: 0 0 auto; margin-top: 3px; }
+.mk-loc__name { display: block; font-size: 18px; font-weight: var(--ek-w-bold); line-height: 1.3; color: var(--ek-white); }
+.mk-loc__meta { display: block; font-size: 15px; line-height: 1.4; color: var(--ek-steel); margin-top: 6px; }
+.mk-locations__note {
+  margin-top: 64px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,.16);
+  display: flex; align-items: center; gap: var(--ek-12); flex-wrap: wrap;
+  font-size: 16px; color: var(--ek-steel);
+}
+
+/* ==========================================================================
+   sec-closing
+   ========================================================================== */
+.mk-closing { padding-block: 110px; }
+.mk-closing .ek-h2 { color: var(--ek-blue); }
+.mk-marktitle { display: flex; align-items: flex-start; gap: var(--ek-16); }
+.mk-marktitle__square { flex: 0 0 auto; width: 26px; height: 26px; background: var(--ek-pink); margin-top: 6px; }
+
+/* ==========================================================================
+   Responsive — one breakpoint set, measured off the Figma pages
+   ========================================================================== */
+@media (max-width: 1439px) {
+  .mk-sechead, .mk-locations__grid { grid-template-columns: 40% 1fr; column-gap: var(--ek-56); }
+}
+@media (max-width: 1199px) {
+  .mk-home {
+    --ek-h1: 44px; --ek-h1-ls: -1.2px;
+    --ek-h2: 29px; --ek-eyebrow: 16px;
+    --ek-page-pad: 40px; --mk-section-pad: 88px;
+  }
+  .mk-cardrow { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: var(--ek-40); }
+  .mk-statgrid { margin-top: var(--ek-40); }
+  .mk-trustbar { padding: 26px 0; }
+  .mk-trustbar__grid { grid-template-columns: 1fr; }
+  .mk-trust { padding: 18px 0; border-left: 0; border-top: 1px solid #DCDEE0; }
+  .mk-trust:first-child { border-top: 0; padding-top: 0; }
+  .mk-trust:last-child { padding-bottom: 0; }
+  .mk-trust span { font-size: 12px; }
+}
+@media (max-width: 1023px) {
+  .mk-sechead, .mk-locations__grid { grid-template-columns: 1fr; row-gap: var(--ek-24); }
+  .mk-sechead__left { max-width: none; }
+  .mk-sechead__body { padding-top: 0; }
+  .mk-locations__copy { max-width: none; }
+  .mk-locations__actions { flex-direction: column; }
+  .mk-statgrid { grid-template-columns: 1fr; }
+  .mk-stat { min-height: 0; padding: 26px 24px; }
+  .mk-loclist { grid-template-columns: 1fr; margin-top: var(--ek-32); }
+  .mk-locations__note { margin-top: 34px; padding-top: 24px; flex-direction: column; align-items: flex-start; gap: 2px; font-size: 14px; }
+}
+@media (max-width: 767px) {
+  .mk-home {
+    --ek-h1: 34px; --ek-h1-ls: -1px;
+    --ek-h2: 27px; --ek-h3: 20px; --ek-h4: 16px;
+    --ek-lead: 15px; --ek-text: 14px; --ek-eyebrow: 15px;
+    --ek-page-pad: 20px; --mk-section-pad: 60px;
+  }
+  .mk-hero__inner { min-height: 0; padding-block: 0 40px; align-items: flex-start; }
+  .mk-hero__media { position: relative; inset: auto; height: auto; aspect-ratio: 3 / 2; }
+  .mk-hero__media--d { display: none; }
+  .mk-hero__media--m { display: block; }
+  .mk-hero__scrim, .mk-hero__wash { display: none; }
+  .mk-hero__slide { background: var(--ek-white); }
+  .mk-hero__slide--dark { background: #0D0F13; }
+  .mk-hero__dots { height: auto; padding-bottom: 40px; }
+  .mk-hero__controls { position: static; }
+  .mk-hero__actions { flex-direction: column; gap: var(--ek-12); margin-top: var(--ek-24); }
+  .mk-hero__arrow { width: 48px; height: 48px; }
+  .mk-cardrow { margin-top: var(--ek-32); }
+  .mk-card__body { padding: 18px 16px 22px; gap: var(--ek-8); }
+  .mk-card__body .ek-link { padding-top: 6px; }
+  .mk-cardrow .popular-tile span { padding: 0 16px; }
+  .mk-loc { padding: 18px; gap: var(--ek-12); }
+  .mk-loc__name { font-size: 15px; }
+  .mk-loc__meta { font-size: 13px; }
+  .mk-closing { padding-block: 56px; }
+  .mk-marktitle { gap: 14px; }
+  .mk-marktitle__square { width: 22px; height: 22px; margin-top: 5px; }
+  .mk-home .ek-btn { width: 100%; min-height: 52px; padding: 14px 24px; font-size: 16px; }
+  .mk-home .ek-btn--sm { width: auto; flex: 1 1 auto; min-width: 96px; padding: 12px 18px; font-size: 15px; }
+}
+
+/* ==========================================================================
+   Overlay header — the designer's home page puts the header on top of the
+   hero banner. Ink follows the active slide: dark ink on the light brand
+   slide, reversed white ink on dark slides (`.header-on-dark`, toggled by the
+   carousel). Desktop only; under 900px the header keeps its white sticky bar.
+   ========================================================================== */
+@media (min-width: 901px) {
+  /* The host div and the injected <header> must both go transparent, or the
+     inner white bar shows as a strip across the top of the banner. */
+  body[data-page="home"] .ek-site-header {
+    position: absolute; top: 0; left: 0; right: 0;
+    z-index: var(--ek-z-header, 200);
+  }
+  body[data-page="home"] .ek-header {
+    background: transparent; border-bottom: 0;
+  }
+  /* Reversed state — dark slides */
+  body[data-page="home"] .ek-header.header-on-dark { color: var(--ek-white); }
+  body[data-page="home"] .ek-header.header-on-dark .ek-logo__colour { opacity: 0; }
+  body[data-page="home"] .ek-header.header-on-dark .ek-logo__reversed { opacity: 1; }
+  /* Icon utilities swap to reversed ink. */
+  body[data-page="home"] .ek-header.header-on-dark .ek-util { color: rgba(255,255,255,.88); }
+  body[data-page="home"] .ek-header.header-on-dark .ek-util:hover { background: rgba(255,255,255,.14); color: var(--ek-white); }
+  body[data-page="home"] .ek-header.header-on-dark .ek-util__phase {
+    background: rgba(255,255,255,.25); color: var(--ek-white);
+  }
+  /* Language pill inverts to a white pill with blue text, matching the
+     dark-slide hero CTAs. */
+  body[data-page="home"] .ek-header.header-on-dark .ek-lang {
+    background: var(--ek-white); color: var(--ek-blue);
+  }
+  body[data-page="home"] .ek-header.header-on-dark .ek-lang:hover {
+    background: var(--ek-white); color: var(--ek-blue-hover);
+  }
+  body[data-page="home"] .ek-header.header-on-dark .ek-lang .ek-util__phase {
+    background: rgba(32,34,89,.18); color: var(--ek-muted);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-hero__slide, .mk-card__panel img, .mk-cardrow .popular-tile img { transition: none; }
+}

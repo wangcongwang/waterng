@@ -1,0 +1,58 @@
+
+## 账户页九宫格入口（account.html + website.js）
+
+**位置：** account.html overview 区域顶部，KPI 卡片之后、overview-grid 之前。首格改为 "Repeat Purchase"。/
+
+**位置：** account.html overview 区域顶部，KPI 卡片之后、overview-grid 之前。
+
+**效果：** 3×3 宫格，9 个功能入口：
+1. 我的订单 → 跳转到 orders 标签页（#orders）
+2. 产品中心 → products.html
+3. 购物车 → cart.html（带实时角标，购物车有商品时显示红点数字）
+4. 个人中心 → profile 标签页（#profile）
+5. 常见问题 → faq.html
+6. 联系我们 → contact.html
+7. 售后服务 → service.html
+8. 配送说明 → shipping.html
+9. 客户案例 → case-studies.html
+
+**样式：**
+- `.hub-grid`：3 列 CSS Grid，gap 12px，640px 以下自动切换为 2 列
+- `.hub-cell`：圆角卡片，hover 时上移 2px + 阴影 + 品牌绿边框
+- `.hub-icon`：44px 圆形图标容器，各入口用不同颜色背景区分
+- `.hub-label`：display 字体，14px 加粗
+- `.hub-desc`：11px 灰色辅助说明
+- `.hub-badge`：右上角绝对定位红点角标（购物车用）
+
+**JS 改动：**
+- `website.js` 的 `updateCartBadge()` 改为同时处理 `cartBadge`（header 中）和 `hubCartBadge`（账户页宫格中），后者用 `hidden` 属性切换
+- `account.html` 添加 `#hubGrid` 点击监听，对含 `data-tab-target` 的格子拦截跳转，调用 `showView()` 切换到对应标签页并滚动到顶部
+
+**设计一致：** 遵循现有 design-system CSS 变量（paper-3, ink-200, brand-500, status-danger 等），与 account 页现有组件风格统一。
+
+
+## Member Welcome Pack 页面（member-welcome.html）
+
+**目的：** 已有会员的重复购买入口，表单结构与 signup.html 相同，但推荐人字段自动填入当前登录会员的信息。
+
+**创建方式：** 基于 signup.html 复制，修改以下三处：
+1. `<title>` 改为 "Member Welcome Pack · AquaLife Nigeria"
+2. `<h1>` 改为 "Member Welcome Pack"，副标题说明推荐人字段已预填
+3. 推荐人自动填充逻辑：从 `al.memberData` localStorage 读取 `referrerId`/`actualReferrerId` 预填到表单；URL `?ref=` 参数仍优先覆盖
+
+**登录态数据来源：** 账户页在用户登录时会将 `md.referrerId`/`md.actualReferrerId` 写入 `al.memberData`（line 1704-1708 in account.html），member-welcome.html 页面加载时读取这两个字段。
+
+**账户页入口更新：** 九宫格第一个格子 "Repeat Purchase" 的 href 从 `products.html` 改为 `member-welcome.html`。
+
+
+## 解决内置浏览器缓存问题
+
+**问题：** account.html 和 member-welcome.html 页面打开缓慢，CfT 内置浏览器会缓存静态资源。
+
+**解决方案：**
+1. 所有 CSS/JS 资产URL加时间戳版本号（`?v=1787799322`），强制浏览器重新下载
+2. 使用 `/tmp/no_cache_server.py` 无缓存服务器替代 `python3 -m http.server 8080`
+   - 服务器在响应头中注入 `Cache-Control: no-store, no-cache, must-revalidate, max-age=0`
+   - 每次请求都获取最新文件
+
+**注意：** 后台进程的 `python3 -m http.server 8080` 会被沙箱回收，必须用 `/tmp/no_cache_server.py` 持久运行。

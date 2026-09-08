@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Member Upgrade · AquaLife</title>
+  <meta name="description" content="Look up a member, view their profile, and adjust their rank. Only the level is editable." />
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
+
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260908b">
+  <link rel="stylesheet" href="assets/css/water-pages.css">
+  <script src="assets/js/elken-ui.js" defer></script>
+</head>
+<body data-page="member-upgrade">
+  <div id="offline-banner" class="offline-banner">Connection status</div>
+  <div id="app-header" class="ek-site-header"></div>
+  <nav class="wv-account-nav" aria-label="Account navigation">
+  <a href="account.html">Overview</a>
+  <a href="order.html">Orders</a>
+  <a href="member-welcome.html">Welcome Pack</a>
+  <a href="member-repurchase.html">Repurchase</a>
+  <a href="member-auto-maintenance.html">Auto Maintenance</a>
+  <a href="member-upgrade.html" aria-current="page">Upgrade</a>
+  <a href="team-inquiry.html">Team Inquiry</a>
+</nav>
+
+  <main class="page mug-shell">
+    <div class="container">
+      <div class="crumbs">
+        <a href="index.html">Home</a> <span>›</span> <a href="account.html">My Account</a> <span>›</span> <span>Member Upgrade</span>
+      </div>
+
+      <div class="mug-card">
+        <h1>Member Upgrade</h1>
+        <p class="mug-intro">Look up a member by their ID to view basic profile information. Only the member level can be adjusted — all other fields are read-only. Save to apply the new level.</p>
+
+        <!-- Section 1: Member ID search -->
+        <div class="mug-field">
+          <label for="memberIdInput">Member ID <span>*</span></label>
+          <div>
+            <input class="ek-input" type="text" id="memberIdInput" placeholder="NG + 8 digits" maxlength="10" autocomplete="off" />
+            <button type="button" class="ek-btn--secondary" id="memberSearchBtn">Search</button>
+          </div>
+        </div>
+
+        <div id="mugStatus" class="mug-status"></div>
+
+        <!-- Section 2-4: Member fields (populated after search) -->
+        <div id="mugFields" class="mug-fields">
+          <!-- Member level (editable) -->
+          <div class="mug-field is-editable">
+            <label for="memberLevel">Member Level</label>
+            <select class="ek-select" id="memberLevel" disabled>
+              <option value="Bronze">Bronze</option>
+              <option value="Silver">Silver</option>
+              <option value="Gold">Gold</option>
+              <option value="Platinum">Platinum</option>
+              <option value="Diamond">Diamond</option>
+              <option value="Corporate">Corporate</option>
+            </select>
+          </div>
+
+          <!-- Member name (read-only) -->
+          <div class="mug-field">
+            <label>Member Name</label>
+            <input class="ek-input" type="text" id="memberNameDisplay" readonly disabled />
+          </div>
+
+          <!-- Join date (read-only) -->
+          <div class="mug-field">
+            <label>Join Date</label>
+            <input class="ek-input" type="text" id="memberJoinDateDisplay" readonly disabled />
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="mug-actions" id="mugActions">
+          <button type="button" class="ek-btn--secondary" id="cancelBtn">Cancel</button>
+          <button type="button" class="ek-btn--primary" id="saveBtn">Save level</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="app-footer" class="ek-site-footer"></div>
+
+  <script src="assets/i18n/strings.js?v=1787805290"></script>
+<script src="assets/js/app.js?v=20260908f"></script>
+  <script src="assets/js/website.js?v=1787805290"></script>
+  <script>
+    /* ============================================================
+       Member Upgrade page
+       - Look up a member by ID
+       - Display ID / Name / Join Date (read-only)
+       - Allow adjusting Level only
+       - Persist to localStorage and emit a local event so the
+         account page can reflect the new level on next view.
+       ============================================================ */
+    (function () {
+      'use strict';
+
+      /* ---------- Tiny in-page directory of members (demo) ----------
+         Each entry carries the basics shown to the user:
+         name, level, joinDate. Real deployment would query the API.
+         Level can be changed and persisted to al.memberLevels[]. */
+      const DEMO_DIRECTORY = {
+        'NG09246375': { name: 'Amara Okafor',        level: 'Silver',   joinDate: '2023-06-18' },
+        'NG23374876': { name: 'Fauzia Yunus Shehu',    level: 'Gold',     joinDate: '2022-11-02' },
+        'NG27187710': { name: 'Chinedu Okafor',        level: 'Platinum', joinDate: '2021-04-15' },
+        'NG66051653': { name: 'Reporting Center',      level: 'Diamond',  joinDate: '2020-01-10' },
+        'NG48655323': { name: 'Default Order Demo',    level: 'Silver',   joinDate: '2023-09-30' },
+        'NG00000001': { name: 'AquaLife HQ',           level: 'Corporate',joinDate: '2019-08-01' },
+      };
+
+      const LEVELS = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Corporate'];
+
+      /* ---------- Persistence ----------
+         al.memberLevels = { [memberId]: 'Gold', ... } overrides demo values.
+         al.memberProfiles = { [memberId]: { name, joinDate } } overrides too. */
+      function getLevelOverrides() {
+        try { return JSON.parse(localStorage.getItem('al.memberLevels') || '{}'); } catch { return {}; }
+      }
+      function getProfileOverrides() {
+        try { return JSON.parse(localStorage.getItem('al.memberProfiles') || '{}'); } catch { return {}; }
+      }
+      function saveLevelOverride(id, level) {
+        const all = getLevelOverrides();
+        all[id] = level;
+        localStorage.setItem('al.memberLevels', JSON.stringify(all));
+      }
+
+      /* ---------- Lookup: demo → overrides → stub ---------- */
+      // Default join date so the read-only field is never shown as '—'.
+      const DEFAULT_JOIN_DATE = '2024-01-01';
+      function lookupMember(rawId) {
+        const id = rawId.toUpperCase();
+        const profile = getProfileOverrides()[id] || DEMO_DIRECTORY[id];
+        const level = getLevelOverrides()[id] || (profile && profile.level) || 'Silver';
+        if (!profile) return { id, _stub: true, name: 'Member ' + id.slice(-4), joinDate: DEFAULT_JOIN_DATE, level };
+        return { id, name: profile.name, joinDate: profile.joinDate || DEFAULT_JOIN_DATE, level };
+      }
+
+      /* ---------- State ---------- */
+      let current = null;          // { id, name, joinDate, level } — current loaded member
+      let levelDirty = false;      // did user change the dropdown after load?
+      const $ = id => document.getElementById(id);
+
+      /* ---------- UI helpers ---------- */
+      function setStatus(msg, kind) {
+        const el = $('mugStatus');
+        el.className = 'mug-status ' + (kind || 'info');
+        el.textContent = msg;
+        el.style.display = 'block';
+      }
+      function hideStatus() {
+        const el = $('mugStatus');
+        el.style.display = 'none';
+        el.className = 'mug-status';
+      }
+      function formatJoinDate(raw) {
+        if (!raw || raw === '—') return '—';
+        // If the raw value looks like YYYY-MM-DD, format nicely.
+        const m = String(raw).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (m) {
+          const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          const dt = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+          if (!isNaN(dt)) {
+            return `${dt.getUTCDate()} ${months[dt.getUTCMonth()]} ${dt.getUTCFullYear()}`;
+          }
+        }
+        return String(raw);
+      }
+
+      /* ---------- Load a member into the form ---------- */
+      function loadMember(m) {
+        current = { ...m };
+        $('memberIdInput').value = m.id;
+        $('memberNameDisplay').value = m.name || '—';
+        $('memberJoinDateDisplay').value = formatJoinDate(m.joinDate);
+        const sel = $('memberLevel');
+        if (LEVELS.indexOf(m.level) >= 0) sel.value = m.level;
+        else {
+          // unknown level — add as a transient option so the user sees it
+          let opt = Array.from(sel.options).find(o => o.value === m.level);
+          if (!opt) {
+            opt = document.createElement('option');
+            opt.value = m.level;
+            opt.textContent = m.level;
+            sel.appendChild(opt);
+          }
+          sel.value = m.level;
+        }
+        sel.disabled = false;
+        $('mugFields').style.display = 'grid';
+        $('mugActions').style.display = 'flex';
+        levelDirty = false;
+        $('saveBtn').disabled = true;
+        setStatus('Member found. Only the level can be adjusted.', 'info');
+      }
+
+      function clearMember() {
+        current = null;
+        $('mugFields').style.display = 'none';
+        $('mugActions').style.display = 'none';
+        $('memberNameDisplay').value = '';
+        $('memberJoinDateDisplay').value = '';
+        $('memberLevel').value = 'Silver';
+        $('memberLevel').disabled = true;
+        levelDirty = false;
+      }
+
+      /* ---------- Search ---------- */
+      function doSearch() {
+        const raw = ($('memberIdInput').value || '').trim();
+        if (!/^NG\d{8}$/i.test(raw)) {
+          setStatus('Invalid member ID — format must be NG + 8 digits.', 'error');
+          clearMember();
+          return;
+        }
+        const m = lookupMember(raw);
+        loadMember(m);
+      }
+
+      /* ---------- Save ---------- */
+      function doSave() {
+        if (!current) return;
+        const newLevel = $('memberLevel').value;
+        if (LEVELS.indexOf(newLevel) < 0) {
+          setStatus('Invalid level selected.', 'error');
+          return;
+        }
+        saveLevelOverride(current.id, newLevel);
+        current.level = newLevel;
+        levelDirty = false;
+        $('saveBtn').disabled = true;
+        setStatus(`✓ Level updated to ${newLevel}. The change is effective immediately.`, 'success');
+
+        // notify other tabs / pages (e.g. account.html) so they re-read the override
+        try {
+          window.dispatchEvent(new CustomEvent('al:member-level-changed', {
+            detail: { memberId: current.id, level: newLevel }
+          }));
+        } catch {}
+        try { localStorage.setItem('al.memberLevels:ping', String(Date.now())); } catch {}
+      }
+
+      /* ---------- Init ---------- */
+      function init() {
+        const input = $('memberIdInput');
+        input.addEventListener('input', () => { input.value = input.value.toUpperCase(); });
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+
+        $('memberSearchBtn').addEventListener('click', doSearch);
+        $('saveBtn').addEventListener('click', doSave);
+        $('cancelBtn').addEventListener('click', () => {
+          clearMember();
+          hideStatus();
+          $('memberIdInput').value = '';
+          $('memberIdInput').focus();
+        });
+
+        // dirty-tracking on the level select — only enabled when a member is loaded
+        $('memberLevel').addEventListener('change', () => {
+          if (!current) return;
+          levelDirty = $('memberLevel').value !== current.level;
+          $('saveBtn').disabled = !levelDirty;
+        });
+
+        // If the URL has ?id=NGxxxxxxxx, pre-load that member
+        try {
+          const qp = new URLSearchParams(location.search).get('id');
+          if (qp && /^NG\d{8}$/i.test(qp)) {
+            $('memberIdInput').value = qp.toUpperCase();
+            doSearch();
+          }
+        } catch {}
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>

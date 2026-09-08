@@ -1,0 +1,24 @@
+/* ==========================================================================
+   AquaLife — self-hosted Montserrat (SIL OFL).
+   The tokens reference Montserrat, but without these @font-face declarations
+   the family only applied when it happened to be installed locally — every
+   other machine fell back to Helvetica/Arial and the whole site drifted from
+   the design. Files ship in assets/fonts/ (no Google Fonts CDN: unreachable
+   from mainland China). Only 400, 500 and 700 exist, by design: 600 resolves
+   to 700, which is the weight the marketing site was signed off at.
+   ========================================================================== */
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Bold.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}

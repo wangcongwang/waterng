@@ -1,126 +1,170 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>My Account · AquaLease Nigeria</title>
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%2300875A' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
-  <link rel="stylesheet" href="assets/css/design-system.css" />
-  <link rel="stylesheet" href="assets/css/components.css" />
-  <link rel="stylesheet" href="assets/css/pages.css" />
+  <title>My Account · AquaLife</title>
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
+
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260908b">
+  <link rel="stylesheet" href="assets/css/water-pages.css">
+  <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="account">
-  <div id="offline-banner" class="offline-banner">Offline mode · showing cached information</div>
-  <div id="app-header"></div>
+  <div id="offline-banner" class="offline-banner">Connection status</div>
+  <div id="app-header" class="ek-site-header"></div>
+  <nav class="wv-account-nav" aria-label="Account navigation">
+  <a href="account.html" aria-current="page">Overview</a>
+  <a href="order.html">Orders</a>
+  <a href="member-welcome.html">Welcome Pack</a>
+  <a href="member-repurchase.html">Repurchase</a>
+  <a href="member-auto-maintenance.html">Auto Maintenance</a>
+  <a href="member-upgrade.html">Upgrade</a>
+  <a href="team-inquiry.html">Team Inquiry</a>
+</nav>
 
   <main class="page dash-shell">
     <div class="container">
-
-      <!-- dunning banner: collection -->
-      <div class="alert alert-danger dunning-banner" role="alert">
-        <span class="alert-icon">!</span>
-        <div>
-          <h3 data-i18n="dunning.collection_t">Final collection notice</h3>
-          <p data-i18n="dunning.collection_d" data-params='{"days":"9","amount":"₦37,333"}'>Your account is 9 days overdue. Continued non-payment may result in remote equipment lock and field recovery.</p>
-        </div>
-        <div class="alert-actions">
-          <a class="btn btn-primary" href="billing.html" data-i18n="dunning.pay_now">Pay now</a>
-          <a class="btn btn-ghost" href="https://wa.me/2348000000000" target="_blank" rel="noopener">WhatsApp</a>
-        </div>
-      </div>
-
       <div class="dash-head">
-        <div class="avatar-lg" id="dashAvatar">A</div>
+        <div class="ek-avatar" id="dashAvatar">A</div>
         <div>
-          <h1 data-i18n="account.title">My account</h1>
-          <div class="muted" id="dashSubtitle">Adaeze Okonkwo · Member since Mar 2024 · Verified ✓</div>
+          <h1 id="dashName">My account</h1>
+          <div class="muted" id="dashSubtitle">Member ID: —</div>
         </div>
-        <div style="margin-left:auto;display:flex;gap:8px">
-          <a class="btn btn-light" href="mall.html">+ Add device</a>
-          <button type="button" class="btn btn-ghost" id="accountLogout" data-i18n="common.logout">Sign out</button>
+        <div class="dash-actions">
+          <button type="button" class="ek-btn ek-btn--ghost" id="accountLogout" data-i18n="common.logout">Sign out</button>
         </div>
       </div>
 
-      <nav class="tabs" id="dashTabs">
+      <nav class="wv-account-nav" id="dashTabs">
         <a href="#overview" data-tab="overview" data-i18n="account.overview"></a>
         <a href="#orders" data-tab="orders" data-i18n="account.orders"></a>
-        <a href="billing.html" data-i18n="account.plan"></a>
         <a href="#profile" data-tab="profile" data-i18n="account.profile"></a>
+        <a href="#sponsor" data-tab="sponsor">Sponsor Network</a>
       </nav>
 
       <!-- ============ OVERVIEW (default) ============ -->
       <section class="dash-view" data-view="overview">
-        <div class="kpi-grid">
+        <div class="kpi-grid two-kpi">
+          <!-- Member Bonus -->
           <div class="kpi">
-            <div class="k" data-i18n="account.device">Active device</div>
-            <div class="v" id="kpiDevices">1<small>/1</small></div>
-            <div class="delta" id="kpiDeviceName">Bio Pure N200 · 200 GPD</div>
+            <div class="k">Member Bonus</div>
+            <div class="v" id="kpiBonus">0<small> BV</small></div>
+            <div class="delta" id="kpiBonusDelta">Purchase products to earn points</div>
+            <div class="kpi-breakdown" id="kpiBonusBreakdown" hidden>
+              <div class="kpi-breakdown-title">Breakdown</div>
+              <div class="kpi-breakdown-rows" id="kpiBonusBreakdownRows"></div>
+            </div>
+            <button type="button" class="ek-btn ek-btn--sm ek-btn--primary mt-2" id="bonusHistoryBtn">View History</button>
           </div>
+          <!-- Member Ecoin -->
           <div class="kpi">
-            <div class="k" data-i18n="account.next_due">Next payment</div>
-            <div class="v">₦37,333<small> overdue 9d</small></div>
-            <div class="delta" style="color:var(--status-dunning)">Instalment 02 of 12</div>
+            <div class="k">Member Ecoin</div>
+            <div class="v" id="kpiEcoin">0<small> EC</small></div>
+            <div class="delta" id="kpiEcoinDelta">No ecoin yet</div>
+            <div class="kpi-breakdown" id="kpiEcoinBreakdown" hidden>
+              <div class="kpi-breakdown-title">Breakdown</div>
+              <div class="kpi-breakdown-rows" id="kpiEcoinBreakdownRows"></div>
+            </div>
+            <button type="button" class="ek-btn ek-btn--sm ek-btn--primary mt-2" id="ecoinHistoryBtn">View History</button>
           </div>
-          <div class="kpi">
-            <div class="k" data-i18n="account.lifetime_bv">Lifetime BV</div>
-            <div class="v">560<small> BV</small></div>
-            <div class="delta">Gold tier · 4,440 to Platinum</div>
+        </div>
+
+        <!-- ===== 九宫格多功能入口 ===== -->
+        <div class="hub-grid" id="hubGrid">
+          <a class="hub-cell" href="products.html">
+            <div class="hub-icon">📦</div>
+            <span class="hub-label">Repeat Purchase</span>
+            <p class="hub-desc">Browse & buy again</p>
+          </a>
+          <a class="hub-cell" href="member-welcome.html">
+            <div class="hub-icon">🎁</div>
+            <span class="hub-label">Member Welcome Pack</span>
+            <p class="hub-desc">Invite & earn rewards</p>
+          </a>
+          <a class="hub-cell" href="member-repurchase.html">
+            <div class="hub-icon">🔁</div>
+            <span class="hub-label">Member Repeat Purchase</span>
+            <p class="hub-desc">Search member & place order</p>
+          </a>
+          <a class="hub-cell" href="member-auto-maintenance.html">
+            <div class="hub-icon">⚙️</div>
+            <span class="hub-label">Member Auto-Maintenance</span>
+            <p class="hub-desc">Auto top-up · ≥90 BV</p>
+          </a>
+          <a class="hub-cell" href="member-upgrade.html">
+            <div class="hub-icon">⬆️</div>
+            <span class="hub-label">Member Upgrade</span>
+            <p class="hub-desc">Adjust member rank</p>
+          </a>
+          <div class="hub-cell" id="hubPreviousBonus" onclick="openPeriodBonusList()">
+            <div class="hub-icon">📊</div>
+            <span class="hub-label">Previous Bonus</span>
+            <p class="hub-desc">View historical bonus periods</p>
           </div>
-          <div class="kpi dark">
-            <div class="k" style="color:var(--ink-300)" data-i18n="account.title">Health score</div>
-            <div class="v">62<small>/100</small></div>
-            <div class="delta" style="color:var(--status-warn)">Resolve overdue to restore 25 pts</div>
+          <a class="hub-cell" href="team-inquiry.html">
+            <div class="hub-icon">👥</div>
+            <span class="hub-label">Team Inquiry</span>
+            <p class="hub-desc">View your team details</p>
+          </a>
+          <div class="hub-cell" id="hubHistoricalCumulativeBonus" onclick="openHistoricalCumulativeBonus()">
+            <div class="hub-icon">🏆</div>
+            <span class="hub-label">Historical Cumulative Bonus</span>
+            <p class="hub-desc">View lifetime bonus totals</p>
+          </div>
+          <div class="hub-cell" id="hubRechargeTransfer" onclick="openRechargeAndTransfer()">
+            <div class="hub-icon">💳</div>
+            <span class="hub-label">Recharge and Transfer</span>
+            <p class="hub-desc">Recharge bonus & transfer funds</p>
           </div>
         </div>
 
         <div class="overview-grid">
           <section>
-            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
-              <h2 style="font-family:var(--font-display);font-size:24px;font-weight:500;margin:0" data-i18n="account.orders">Orders</h2>
-              <a href="#orders" class="btn-link" data-tab-link="orders" data-i18n="account.orders_view">View details</a>
-            </div>
-            <div id="overviewLatest"></div>
-          </section>
-
-          <section>
-            <h2 style="font-family:var(--font-display);font-size:24px;font-weight:500;margin:0 0 16px">Quick actions</h2>
-            <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:14px">
-              <a class="btn btn-light" href="billing.html" style="justify-content:space-between">
-                <span><span style="color:var(--status-dunning);font-weight:600">Pay overdue instalment</span><br><small style="color:var(--ink-500)">₦37,333 · 9 days late</small></span>
+            <h2 class="panel-title">Quick actions</h2>
+            <div class="ek-card action-stack">
+              <a class="ek-btn ek-btn--secondary" href="products.html">
+                <span><b>Browse products</b><br><small>View our health & beauty collection</small></span>
                 <span>→</span>
               </a>
-              <a class="btn btn-light" href="mall.html" style="justify-content:space-between">
-                <span><b>Add a second device</b><br><small style="color:var(--ink-500)">Earn more BV per month</small></span>
-                <span>→</span>
-              </a>
-              <a class="btn btn-light" href="https://wa.me/2348000000000" target="_blank" rel="noopener" style="justify-content:space-between">
-                <span><b>Talk to support</b><br><small style="color:var(--ink-500)">Avg reply 2 min · WhatsApp</small></span>
-                <span>→</span>
-              </a>
-              <a class="btn btn-light" href="agreement.html" target="_blank" style="justify-content:space-between">
-                <span><b>View agreement</b><br><small style="color:var(--ink-500)">Download signed PDF</small></span>
+              <a class="ek-btn ek-btn--secondary" href="https://wa.me/2348000000000" target="_blank" rel="noopener">
+                <span><b>Talk to support</b><br><small>Avg reply 2 min · WhatsApp</small></span>
                 <span>→</span>
               </a>
             </div>
 
-            <h2 style="font-family:var(--font-display);font-size:24px;font-weight:500;margin:32px 0 16px">Device health</h2>
-            <div class="card" style="padding:24px">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
-                <div class="eyebrow">Filter life</div>
-                <div style="font-family:var(--font-mono);font-size:12px;color:var(--ink-500)">Replaced 14 May 2026</div>
+            <h2 class="panel-title">Product catalog</h2>
+            <div class="ek-card">
+              <div>💧</div>
+              <div>Quality products for your health, beauty and wellness needs.</div>
+              <a class="ek-btn ek-btn--primary ek-btn--sm" href="products.html">Browse all products</a>
+            </div>
+
+            <h2 class="panel-title">Your referral link</h2>
+            <div class="ek-card referral-card">
+              <p class="referral-desc">Share this link. When friends order <b>without signing in</b>, their order's BV is credited to your member ID.</p>
+              <div class="order-link-row">
+                <input class="ek-input" id="referralLink" readonly aria-label="Your referral link" />
+                <button class="ek-btn ek-btn--primary ek-btn--sm" id="referralCopy" type="button">Copy</button>
+                <button class="ek-btn ek-btn--ghost ek-btn--sm" id="referralShare" type="button">Share</button>
               </div>
-              <div style="height:8px;background:var(--ink-100);border-radius:4px;overflow:hidden">
-                <div style="height:100%;width:62%;background:linear-gradient(90deg,var(--brand-500),var(--brand-400));border-radius:4px"></div>
+            </div>
+
+            <h2 class="panel-title">Referrals · BV credited to you</h2>
+            <div class="ek-card">
+              <div class="referral-summary">
+                <div><span class="referral-summary-k">Referred BV</span><b id="referralBVTotal">0 BV</b></div>
+                <div><span class="referral-summary-k">Referred orders</span><b id="referralCount">0</b></div>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink-500);margin-top:8px">
-                <span>62% used</span><span>Next change in 49 days</span>
-              </div>
-              <hr style="margin:20px 0" />
-              <div style="display:flex;justify-content:space-between;align-items:baseline">
-                <div class="eyebrow">TDS today</div>
-                <div style="font-family:var(--font-display);font-size:24px;font-weight:500">42 <small style="font-size:14px;color:var(--ink-500)">ppm</small></div>
-              </div>
-              <div style="font-size:12px;color:var(--brand-700);margin-top:4px">↑ 4 from yesterday · safe range</div>
+              <div id="referralList" class="referral-list"></div>
+              <p class="referral-empty" id="referralEmpty" hidden>No referrals yet — share your link so friends' orders earn you BV.</p>
             </div>
           </section>
         </div>
@@ -128,80 +172,168 @@
 
       <!-- ============ ORDERS ============ -->
       <section class="dash-view" data-view="orders" hidden>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
-          <h2 style="font-family:var(--font-display);font-size:24px;font-weight:500;margin:0" data-i18n="account.orders">Orders</h2>
-          <span class="muted" id="ordersCount" style="font-size:13px"></span>
+        <div class="orders-head">
+          <div>
+            <h2 class="panel-title" data-i18n="account.orders">Orders</h2>
+            <p class="muted" id="ordersSubtitle"></p>
+          </div>
+          <a class="ek-btn ek-btn--primary ek-btn--sm" href="products.html" data-i18n="account.orders_browse">Browse products</a>
         </div>
-        <div id="ordersList"></div>
+        <div class="orders-segments" role="tablist" aria-label="Order categories">
+          <button type="button" class="orders-segment is-active" data-segment="self" role="tab" aria-selected="true">
+            <span data-i18n="account.orders_tab_self">My orders</span>
+            <span class="orders-segment__count" id="ordersSegmentSelfCount">0</span>
+          </button>
+          <button type="button" class="orders-segment" data-segment="member" role="tab" aria-selected="false">
+            <span data-i18n="account.orders_tab_member">Member orders</span>
+            <span class="orders-segment__count" id="ordersSegmentMemberCount">0</span>
+          </button>
+        </div>
+        <div class="orders-segment-panel" data-segment-panel="self">
+          <div id="ordersTableSelf" class="orders-table-wrap"></div>
+        </div>
+        <div class="orders-segment-panel" data-segment-panel="member" hidden>
+          <div id="ordersTableMember" class="orders-table-wrap"></div>
+        </div>
+      </section>
+
+      <!-- ============ SPONSOR NETWORK ============ -->
+      <section class="dash-view" data-view="sponsor" hidden>
+        <div class="ek-card sponsor-network-card">
+          <div class="sn-mode-toggle" role="tablist" aria-label="Sponsor Network mode">
+            <button type="button" class="sn-mode-btn active" data-mode="normal">Sponsor Network</button>
+            <button type="button" class="sn-mode-btn" data-mode="ex">Sponsor Network Ex</button>
+          </div>
+          <div class="sponsor-toolbar">
+            <div class="sponsor-field">
+              <label>Top Member</label>
+              <input type="text" id="snTopMember" placeholder="Member ID / Name / PCV" value="">
+            </div>
+            <div class="sponsor-field">
+              <label>Spread Depth</label>
+              <input type="number" id="snSpreadDepth" min="1" max="10" value="5">
+            </div>
+            <button type="button" class="ek-btn" id="snConfirmBtn">Confirm</button>
+          </div>
+          <div class="sponsor-tree" id="sponsorTree">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
       </section>
 
       <!-- ============ PROFILE ============ -->
       <section class="dash-view" data-view="profile" hidden>
         <div class="profile-grid">
+          <!-- Basic Info Bar (top, full width) — matches: 系统时间 / 结算周期 / 会员等级 / 最高荣耀等级 / Elite 级别 -->
+          <div class="ek-card profile-card profile-card-wide">
+            <div class="profile-card-head">
+              <h2 data-i18n="account.profile_basic_bar">Basic Information</h2>
+            </div>
+            <div class="basic-info-bar" id="profileBasicInfoBar">
+              <!-- Rendered by JS: 5 rows with icon + label + value -->
+            </div>
+          </div>
+
           <!-- Personal info -->
-          <div class="card profile-card">
+          <div class="ek-card profile-card profile-card-wide">
             <div class="profile-card-head">
               <h2 data-i18n="account.profile_info">Personal information</h2>
               <button class="btn-link" id="profileEditBtn" data-i18n="account.profile_edit">Edit</button>
             </div>
-            <form id="profileForm" class="profile-form" data-mode="view">
+            <form id="profileForm" class="profile-form ek-form" data-mode="view">
               <div class="row">
                 <div class="field">
-                  <label data-i18n="login.name_label">Full name</label>
-                  <input class="input" name="name" id="pfName" disabled />
+                  <label data-i18n="account.profile_member_id">Member ID</label>
+                  <input class="ek-input input-locked" name="memberId" id="pfMemberId" maxlength="10" autocomplete="off"
+                         data-i18n-ph="account.profile_member_id_ph" placeholder="NG12345678" disabled />
+                  <span class="hint member-id-locked-hint">This ID is fixed and cannot be changed.</span>
+                </div>
+                <div class="field">
+                  <label data-i18n="account.profile_member_name">Member name</label>
+                  <input class="ek-input" name="memberName" id="pfMemberName" autocomplete="off" disabled />
+                </div>
+              </div>
+              <div class="row">
+                <div class="field">
+                  <label data-i18n="account.profile_country">Country</label>
+                  <select class="ek-select" name="country" id="pfCountry" disabled>
+                    <!-- Rendered by JS with i18n -->
+                  </select>
                 </div>
                 <div class="field">
                   <label>Email</label>
-                  <input class="input" name="email" id="pfEmail" type="email" disabled />
+                  <input class="ek-input" name="email" id="pfEmail" type="email" disabled />
                 </div>
               </div>
-              <div class="row">
-                <div class="field">
-                  <label data-i18n="addr_phone">Phone</label>
-                  <input class="input" name="phone" id="pfPhone" type="tel" disabled />
-                </div>
-                <div class="field">
-                  <label data-i18n="login.account_type">Account type</label>
-                  <select class="select" name="type" id="pfType" disabled>
-                    <option value="member" data-i18n="account.profile_type_member">Member user</option>
-                  </select>
-                </div>
+              <div class="field">
+                <label data-i18n="account.addr_phone">Phone</label>
+                <div class="phone-field" id="pfPhoneField"></div>
               </div>
               <div class="profile-actions" hidden>
-                <button type="button" class="btn btn-light" id="profileCancelBtn" data-i18n="account.profile_cancel">Cancel</button>
-                <button type="submit" class="btn btn-primary" id="profileSaveBtn" data-i18n="account.profile_save">Save changes</button>
+                <button type="button" class="ek-btn ek-btn--secondary" id="profileCancelBtn" data-i18n="account.profile_cancel">Cancel</button>
+                <button type="submit" class="ek-btn" id="profileSaveBtn" data-i18n="account.profile_save">Save changes</button>
               </div>
             </form>
           </div>
 
-          <!-- Security -->
-          <div class="card profile-card">
+          <!-- Login password (独立卡片) — 与支付密码卡片同一行 (both single-col profile-card) -->
+          <div class="ek-card profile-card">
             <div class="profile-card-head">
-              <h2 data-i18n="account.profile_security">Account security</h2>
+              <h2 data-i18n="account.profile_sec_login">Login password</h2>
             </div>
-            <form id="pwdForm" class="profile-form">
-              <div class="field">
-                <label data-i18n="account.profile_current_pwd">Current password</label>
-                <input class="input" type="password" name="current" required minlength="6" autocomplete="current-password" />
-              </div>
-              <div class="row">
-                <div class="field">
-                  <label data-i18n="account.profile_new_pwd">New password</label>
-                  <input class="input" type="password" name="new" required minlength="6" autocomplete="new-password" />
+            <div class="sec-block">
+              <form id="pwdForm" class="profile-form ek-form">
+                <div class="row cols-3">
+                  <div class="field">
+                    <label data-i18n="account.profile_current_pwd">Current password</label>
+                    <input class="ek-input" type="password" name="current" required minlength="6" autocomplete="current-password" />
+                  </div>
+                  <div class="field">
+                    <label data-i18n="account.profile_new_pwd">New password</label>
+                    <input class="ek-input" type="password" name="new" required minlength="6" autocomplete="new-password" />
+                  </div>
+                  <div class="field">
+                    <label data-i18n="account.profile_confirm_pwd">Confirm new password</label>
+                    <input class="ek-input" type="password" name="confirm" required minlength="6" autocomplete="new-password" />
+                  </div>
                 </div>
-                <div class="field">
-                  <label data-i18n="account.profile_confirm_pwd">Confirm new password</label>
-                  <input class="input" type="password" name="confirm" required minlength="6" autocomplete="new-password" />
+                <div class="profile-actions">
+                  <button type="submit" class="ek-btn" data-i18n="account.profile_pay_save">Save</button>
                 </div>
-              </div>
-              <div class="profile-actions">
-                <button type="submit" class="btn btn-primary" data-i18n="account.profile_change_pwd">Change password</button>
-              </div>
-            </form>
+              </form>
+            </div>
+          </div>
+
+          <!-- Payment password (独立卡片) — 按截图：原密码 / 新密码 / 重复新密码 / 保存 -->
+          <div class="ek-card profile-card">
+            <div class="profile-card-head">
+              <h2 data-i18n="account.profile_sec_payment">Payment password</h2>
+            </div>
+            <div class="sec-block">
+              <form id="payPwdForm" class="profile-form ek-form" autocomplete="off">
+                <div class="row cols-3">
+                  <div class="field">
+                    <label data-i18n="account.profile_pay_old_pwd">Old password</label>
+                    <input class="ek-input" type="password" name="oldPay" id="payOld" minlength="6" maxlength="32" autocomplete="new-password" />
+                  </div>
+                  <div class="field">
+                    <label data-i18n="account.profile_pay_new_pwd">New password</label>
+                    <input class="ek-input" type="password" name="newPay" id="payNew" minlength="6" maxlength="32" autocomplete="new-password" />
+                  </div>
+                  <div class="field">
+                    <label data-i18n="account.profile_pay_confirm_pwd">Confirm new password</label>
+                    <input class="ek-input" type="password" name="confirmPay" id="payConfirm" minlength="6" maxlength="32" autocomplete="new-password" />
+                  </div>
+                </div>
+                <div class="profile-actions">
+                  <button type="submit" class="ek-btn" data-i18n="account.profile_pay_save">Save</button>
+                </div>
+              </form>
+            </div>
           </div>
 
           <!-- Addresses -->
-          <div class="card profile-card profile-card-wide">
+          <div class="ek-card profile-card profile-card-wide">
             <div class="profile-card-head">
               <h2 data-i18n="account.profile_addresses">Delivery addresses</h2>
               <button class="btn-link" id="addrAddBtn" data-i18n="account.profile_add_address">+ Add new address</button>
@@ -212,40 +344,44 @@
                 <h3 id="addrEditorTitle" data-i18n="account.profile_add_address">Add new address</h3>
                 <button class="icon-btn" id="addrEditorClose" aria-label="Close">×</button>
               </div>
-              <form id="addrForm" class="auth-form">
+              <form id="addrForm" class="auth-form ek-form">
                 <input type="hidden" name="id" />
-                <div class="row">
-                  <div class="field">
-                    <label data-i18n="account.addr_label">Label</label>
-                    <input class="input" name="label" required placeholder="Home" />
-                  </div>
-                  <div class="field">
-                    <label data-i18n="account.addr_recipient">Recipient</label>
-                    <input class="input" name="recipient" required />
-                  </div>
+                <div class="field">
+                  <label data-i18n="account.addr_recipient">Recipient</label>
+                  <input class="ek-input" name="recipient" required />
                 </div>
-                <div class="row">
-                  <div class="field">
-                    <label data-i18n="account.addr_phone">Phone</label>
-                    <input class="input" name="phone" type="tel" required />
-                  </div>
-                  <div class="field">
-                    <label data-i18n="account.addr_state">State</label>
-                    <input class="input" name="state" required />
-                  </div>
+                <div class="field">
+                  <label data-i18n="account.addr_phone">Phone</label>
+                  <div class="phone-field" id="addrPhoneField"></div>
+                </div>
+                <div class="field">
+                  <label data-i18n="account.addr_region">Region</label>
+                  <select class="ek-select" name="region" id="addrRegion" required>
+                    <option value="" data-i18n="account.addr_region_ph">Please select</option>
+                  </select>
                 </div>
                 <div class="field">
                   <label data-i18n="account.addr_street">Street address</label>
-                  <input class="input" name="street" required />
+                  <input class="ek-input" name="street" required />
                 </div>
                 <div class="field">
                   <label data-i18n="account.addr_city">City</label>
-                  <input class="input" name="city" required />
+                  <input class="ek-input" name="city" required />
                 </div>
-                <label class="check"><input type="checkbox" name="isDefault" /><span data-i18n="account.profile_set_default">Set as default</span></label>
+                <div class="field">
+                  <label data-i18n="account.addr_district">District</label>
+                  <input class="ek-input" name="district" required />
+                </div>
+                <div class="field toggle-row">
+                  <span class="toggle-label" data-i18n="account.profile_set_default">Set as default</span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" name="isDefault" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
                 <div class="inline-addr-foot">
-                  <button type="button" class="btn btn-light" id="addrEditorCancel" data-i18n="account.profile_cancel">Cancel</button>
-                  <button type="submit" class="btn btn-primary" data-i18n="account.profile_save">Save</button>
+                  <button type="button" class="ek-btn ek-btn--secondary" id="addrEditorCancel" data-i18n="account.profile_cancel">Cancel</button>
+                  <button type="submit" class="ek-btn" data-i18n="account.profile_confirm">Confirm</button>
                 </div>
               </form>
             </div>
@@ -253,17 +389,58 @@
           </div>
 
           <!-- Preferences -->
-          <div class="card profile-card profile-card-wide">
+          <div class="ek-card profile-card profile-card-wide">
             <div class="profile-card-head">
               <h2 data-i18n="account.profile_prefs">Notification preferences</h2>
               <button class="btn-link" id="prefsSaveBtn" data-i18n="account.profile_save">Save</button>
             </div>
             <form id="prefsForm" class="prefs-form">
-              <label class="check"><input type="checkbox" name="email" /><span data-i18n="account.profile_pref_email">Email notifications</span></label>
-              <label class="check"><input type="checkbox" name="sms" /><span data-i18n="account.profile_pref_sms">SMS notifications</span></label>
-              <label class="check"><input type="checkbox" name="wa" /><span data-i18n="account.profile_pref_wa">WhatsApp notifications</span></label>
-              <label class="check"><input type="checkbox" name="billing" /><span data-i18n="account.profile_pref_billing">Billing & dunning reminders</span></label>
-              <label class="check"><input type="checkbox" name="marketing" /><span data-i18n="account.profile_pref_marketing">BV rewards & water tips</span></label>
+              <div class="prefs-grid">
+                <!-- Section 1: Notification Channels -->
+                <div class="prefs-section">
+                  <div class="prefs-section-head">
+                    <div>
+                      <h3 data-i18n="account.profile_prefs_channels_title">Notification channels</h3>
+                      <p data-i18n="account.profile_prefs_channels_desc">Choose where to receive updates</p>
+                    </div>
+                  </div>
+                  <div class="prefs-channels-list">
+                    <label class="pref-toggle-card">
+                      <input type="checkbox" name="email" />
+                      <div class="pref-toggle-info">
+                        <div>
+                          <div class="ch-title" data-i18n="account.profile_pref_email">Email notifications</div>
+                          <div class="ch-desc" data-i18n="account.profile_pref_email_desc">Receipts & order confirmations</div>
+                        </div>
+                      </div>
+                      <span class="custom-switch"></span>
+                    </label>
+
+                    <label class="pref-toggle-card">
+                      <input type="checkbox" name="sms" />
+                      <div class="pref-toggle-info">
+                        <div>
+                          <div class="ch-title" data-i18n="account.profile_pref_sms">SMS notifications</div>
+                          <div class="ch-desc" data-i18n="account.profile_pref_sms_desc">Instant delivery & status alerts</div>
+                        </div>
+                      </div>
+                      <span class="custom-switch"></span>
+                    </label>
+
+                    <label class="pref-toggle-card">
+                      <input type="checkbox" name="wa" />
+                      <div class="pref-toggle-info">
+                        <div>
+                          <div class="ch-title" data-i18n="account.profile_pref_wa">WhatsApp notifications</div>
+                          <div class="ch-desc" data-i18n="account.profile_pref_wa_desc">WhatsApp order & delivery alerts</div>
+                        </div>
+                      </div>
+                      <span class="custom-switch"></span>
+                    </label>
+                  </div>
+                </div>
+
+              </div>
             </form>
           </div>
         </div>
@@ -271,10 +448,11 @@
     </div>
   </main>
 
-  <div id="app-footer"></div>
+  <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="assets/i18n/strings.js?v=1787801078"></script>
+<script src="assets/js/app.js?v=20260908f"></script>
+  <script src="assets/js/website.js?v=1787801078"></script>
   <script>
     /* ---------- i18n apply ---------- */
     function applyI18n() {
@@ -287,233 +465,347 @@
       });
     }
 
-    /* ---------- Status → label / badge / timeline ---------- */
-    const STATUS_KEYS = {
-      awaiting_payment: 'account.status_awaiting_payment',
-      awaiting_agreement: 'account.status_awaiting_agreement',
-      awaiting_shipping: 'account.status_awaiting_shipping',
-      in_lease: 'account.status_in_lease',
-      completed: 'account.status_completed',
-      cancelled: 'account.status_cancelled',
-    };
-    const STATUS_TONE = {
-      awaiting_payment: 'warn',
-      awaiting_agreement: 'info',
-      awaiting_shipping: 'info',
-      in_lease: 'success',
-      completed: 'success',
-      cancelled: 'danger',
-    };
-    function statusLabel(s) { return window.T.tr(STATUS_KEYS[s] || s); }
-    function statusTone(s) { return STATUS_TONE[s] || 'info'; }
-
-    const TIMELINE_STEPS = [
-      { key: 'ordered', label: 'Ordered' },
-      { key: 'paid', label: 'Paid' },
-      { key: 'signed', label: 'Signed' },
-      { key: 'shipping', label: 'Shipping' },
-      { key: 'in_lease', label: 'In lease' },
-    ];
-    function timelineIndex(status) {
-      if (status === 'awaiting_payment' || status === 'cancelled') return -1;
-      if (status === 'awaiting_agreement') return 1;   // paid, not signed
-      if (status === 'awaiting_shipping') return 3;    // past signed, before shipping done
-      if (status === 'in_lease') return 4;
-      if (status === 'completed') return 4;
-      return 0;
-    }
-
-    /* ---------- Render order card ---------- */
-    const PICKUP_LOCATIONS = {
-      lagos: { nameKey: 'checkout.pickup_hq_name', addrKey: 'checkout.pickup_hq_addr', hoursKey: 'checkout.pickup_hq_hours', tag: 'HQ' },
-      abuja: { nameKey: 'checkout.pickup_2_name',   addrKey: 'checkout.pickup_2_addr',   hoursKey: 'checkout.pickup_2_hours',   tag: '' },
-      ph:    { nameKey: 'checkout.pickup_3_name',   addrKey: 'checkout.pickup_3_addr',   hoursKey: 'checkout.pickup_3_hours',   tag: '' },
-    };
-    function renderShippingBlock(o) {
-      if (o.status !== 'awaiting_shipping') return '';
-      const isPickup = o.delivMethod === 'pickup';
-      const methodKey = isPickup ? 'account.orders_method_pickup' : 'account.orders_method_delivery';
-      const methodLabel = window.T.tr(methodKey);
-
-      let stateBadge = '';
-      let body = '';
-      if (isPickup) {
-        const loc = PICKUP_LOCATIONS[o.pickupLoc] || PICKUP_LOCATIONS.lagos;
-        if (o.shipped) {
-          stateBadge = `<span class="badge badge-ok badge-dot">${window.T.tr('account.orders_picked_up')}</span>`;
-          body = `
-            <div class="ship-detail">
-              <div class="ship-row"><span class="k">${window.T.tr('account.orders_method_pickup')}</span><span class="v">${window.T.tr(loc.nameKey)}</span></div>
-              <div class="ship-row"><span class="k">${window.T.tr('checkout.pickup_hours')}</span><span class="v">${window.T.tr(loc.hoursKey)}</span></div>
-              <div class="ship-addr">${window.T.tr(loc.addrKey)}</div>
-            </div>
-          `;
-        } else {
-          stateBadge = `<span class="badge badge-warn badge-dot">${window.T.tr('account.orders_not_picked_up')}</span>`;
-          body = `
-            <div class="ship-detail">
-              <div class="ship-row"><span class="k">${window.T.tr('account.orders_method_pickup')}</span><span class="v">${window.T.tr(loc.nameKey)}</span></div>
-              <div class="ship-addr">${window.T.tr(loc.addrKey)}</div>
-            </div>
-          `;
-        }
-      } else {
-        if (o.shipped) {
-          stateBadge = `<span class="badge badge-ok badge-dot">${window.T.tr('account.orders_shipped')}</span>`;
-          const tracking = o.trackingNo || '—';
-          const carrier = o.carrier || '—';
-          body = `
-            <div class="ship-detail">
-              <div class="ship-row"><span class="k">${window.T.tr('account.orders_carrier')}</span><span class="v">${carrier}</span></div>
-              <div class="ship-row"><span class="k">${window.T.tr('account.orders_tracking_no')}</span><span class="v" style="font-family:var(--font-mono)">${tracking}</span></div>
-            </div>
-          `;
-        } else {
-          stateBadge = `<span class="badge badge-warn badge-dot">${window.T.tr('account.orders_not_shipped')}</span>`;
-          body = `
-            <div class="ship-detail">
-              <div class="ship-row"><span class="k">${window.T.tr('account.orders_eta')}</span><span class="v">${window.T.tr('shipping.eta_shipping')}</span></div>
-            </div>
-          `;
-        }
-      }
-
-      return `
-        <div class="ship-block">
-          <div class="ship-head">
-            <div class="eyebrow">${methodLabel}</div>
-            ${stateBadge}
-          </div>
-          ${body}
-        </div>
-      `;
-    }
-
-    function renderOrderCard(o) {
-      const tIdx = timelineIndex(o.status);
-      const timelineHtml = TIMELINE_STEPS.map((s, i) => {
-        const cls = i < tIdx ? 'done' : (i === tIdx ? 'current' : '');
-        const lineCls = i < tIdx ? 'done' : '';
-        return `
-          <div class="node ${cls}"><div class="dot"></div><div class="l">${s.label}</div></div>
-          ${i < TIMELINE_STEPS.length - 1 ? `<div class="line ${lineCls}"></div>` : ''}
-        `;
-      }).join('');
-
-      const tone = statusTone(o.status);
-      const placed = window.fmtDate(o.ts || Date.now());
-      const monthly = o.monthly || (o.term ? Math.round(((o.productPrice || 0) * 0.8) / o.term) : 0);
-      const down = o.price || Math.round((o.productPrice || 0) * 0.2);
-      const productImg = (() => {
-        const cards = (window.T && window.T.trArray && window.T.trArray('products.cards')) || [];
-        const p = cards.find(c => c.id === o.productId);
-        return p ? `assets/img/products/${encodeURIComponent(p.img)}?v=20260609` : 'assets/img/products/' + encodeURIComponent('Bio Pure N200.png') + '?v=20260609';
-      })();
-      const shippingHtml = renderShippingBlock(o);
-
-      return `
-        <article class="order-card">
-          <div class="top">
-            <div>
-              <div class="meta">Order #${o.id} · Placed ${placed}</div>
-              <h3>${o.product || '—'}</h3>
-            </div>
-            <span class="badge badge-${tone} badge-dot">${statusLabel(o.status)}</span>
-          </div>
-          <div class="body">
-            <div class="pic"><img src="${productImg}" alt="" /></div>
-            <div>
-              <div style="font-size:14px;color:var(--ink-700)">${o.term || 12}-month lease</div>
-              <div style="font-family:var(--font-mono);font-size:12px;color:var(--ink-500);margin-top:4px">Down ${window.Money.format(down)} · Monthly ${window.Money.format(monthly)}</div>
-              <div style="font-size:13px;color:var(--ink-500);margin-top:6px">Method: <b style="color:var(--ink-700)">${(o.method || 'card').toUpperCase()}</b></div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:120px">
-              ${o.status === 'awaiting_payment' ? `<a class="btn btn-primary btn-sm" href="checkout.html?id=${o.productId || ''}&t=${o.term || 12}">${window.T.tr('account.orders_pay')}</a>` : ''}
-              ${o.status === 'awaiting_agreement' ? `<a class="btn btn-primary btn-sm" href="agreement.html">${window.T.tr('account.orders_sign')}</a>` : ''}
-            </div>
-          </div>
-          ${shippingHtml}
-          <div class="timeline">${timelineHtml}</div>
-        </article>
-      `;
-    }
-
-    /* ---------- Render views ---------- */
-    function renderOrders() {
-      const list = window.AL.loadOrders();
-      const host = document.getElementById('ordersList');
-      const count = document.getElementById('ordersCount');
-      if (!list.length) {
-        count.textContent = '';
-        host.innerHTML = `
-          <div class="card empty-state">
-            <div class="empty-state-icon">📦</div>
-            <p data-i18n="account.orders_empty">${window.T.tr('account.orders_empty')}</p>
-            <a class="btn btn-primary" href="mall.html">+ Browse the mall</a>
-          </div>
-        `;
-        return;
-      }
-      count.textContent = window.T.tr('account.orders_count', { n: list.length });
-      host.innerHTML = list.map(renderOrderCard).join('');
-    }
-
-    function renderOverviewLatest() {
-      const list = window.AL.loadOrders();
-      const host = document.getElementById('overviewLatest');
-      if (!list.length) {
-        host.innerHTML = `
-          <div class="card empty-state" style="padding:32px;text-align:center">
-            <p data-i18n="account.orders_empty" style="color:var(--ink-500);margin-bottom:12px">${window.T.tr('account.orders_empty')}</p>
-            <a class="btn btn-primary btn-sm" href="mall.html">+ Browse the mall</a>
-          </div>
-        `;
-        return;
-      }
-      host.innerHTML = renderOrderCard(list[0]);
-    }
-
-    /* ---------- Demo seed (only when logged in and no orders) ---------- */
-    const SEED_VERSION = '5-states-v1';
-    function seedDemoOrders() {
-      if (localStorage.getItem('al.demo.seeded') === SEED_VERSION) return;
-      if (!window.Auth.isLoggedIn()) return;
-      // If older seed exists, replace it
-      if (window.AL.loadOrders().length) {
-        localStorage.setItem('al.orders', '[]');
-      }
-      const now = Date.now();
-      const samples = [
-        // 1) 支付中 (Awaiting payment)
-        { id: 'AQL-200101', product: 'Bio Pure N100', productId: 'm1', productSpec: '100 GPD · 5-stage', productPrice: 380000, term: 12, status: 'awaiting_payment', price: 76000, monthly: 25333, method: 'card', delivMethod: 'delivery', pickupLoc: 'lagos', ts: now - 1 * 86400e3 },
-        // 2) 待签署 (Awaiting agreement)
-        { id: 'AQL-200102', product: 'Bio Pure N200', productId: 'm2', productSpec: '200 GPD · UV+Alkaline', productPrice: 560000, term: 12, status: 'awaiting_agreement', price: 112000, monthly: 37333, method: 'card', delivMethod: 'delivery', pickupLoc: 'lagos', ts: now - 2 * 86400e3, paidAt: new Date(now - 1.5 * 86400e3).toISOString() },
-        // 3) 等待发货 + 送货 + 未发货
-        { id: 'AQL-200103', product: 'Bio Pure N300', productId: 'm3', productSpec: '300 GPD · UV+RO', productPrice: 980000, term: 18, status: 'awaiting_shipping', price: 196000, monthly: 43555, method: 'card', delivMethod: 'delivery', pickupLoc: 'lagos', shipped: false, ts: now - 4 * 86400e3, signedAt: new Date(now - 2 * 86400e3).toISOString() },
-        // 4) 等待发货 + 送货 + 已发货 (with tracking)
-        { id: 'AQL-200104', product: 'Bio Pure N300', productId: 'm3', productSpec: '300 GPD · UV+RO', productPrice: 980000, term: 18, status: 'awaiting_shipping', price: 196000, monthly: 43555, method: 'bank', delivMethod: 'delivery', pickupLoc: 'lagos', shipped: true, trackingNo: 'GIG-7842-NG', carrier: 'GIG Logistics', ts: now - 7 * 86400e3, signedAt: new Date(now - 5 * 86400e3).toISOString(), shippedAt: new Date(now - 1 * 86400e3).toISOString() },
-        // 5) 等待自提 + 自提 + 已取货
-        { id: 'AQL-200105', product: 'Bio Pure N200', productId: 'm2', productSpec: '200 GPD · UV+Alkaline', productPrice: 560000, term: 12, status: 'awaiting_shipping', price: 112000, monthly: 37333, method: 'ussd', delivMethod: 'pickup', pickupLoc: 'lagos', shipped: true, pickedUpAt: new Date(now - 0.5 * 86400e3).toISOString(), ts: now - 6 * 86400e3, signedAt: new Date(now - 4 * 86400e3).toISOString(), shippedAt: new Date(now - 2 * 86400e3).toISOString() },
-      ];
-      samples.forEach(o => window.AL.pushOrder(o));
-      localStorage.setItem('al.demo.seeded', '1');
-    }
-
     /* ---------- Profile ---------- */
+
+    /** Map raw level/elite/honor strings → i18n key for profile_bb_val_*, returns translated value */
+    function translateBBValue(raw, kind) {
+      const tr = (k, fallback) => {
+        const v = window.T.tr(k);
+        return (v && v !== k) ? v : (fallback == null ? k : fallback);
+      };
+      const r = (raw || '').toString().trim();
+      const lo = r.toLowerCase();
+      if (kind === 'level') {
+        if (/silver|银卡/i.test(r)) return tr('account.profile_bb_val_silver', 'Silver');
+        if (/gold|金卡/i.test(r)) return tr('account.profile_bb_val_gold', 'Gold');
+        if (/platinum|铂金|plat/i.test(r)) return tr('account.profile_bb_val_platinum', 'Platinum');
+        if (/diamond|钻石/i.test(r)) return tr('account.profile_bb_val_diamond', 'Diamond');
+        if (!r || r === '—' || r === 'N/A' || r === 'NA') return tr('account.profile_bb_val_na', 'NA');
+        return r;
+      }
+      if (kind === 'honor') {
+        if (!r || lo === 'none' || lo === '无' || r === '—' || lo === 'babu' || lo === 'kò sí' || lo === 'ọ fụtịrị') {
+          return tr('account.profile_bb_val_none', 'None');
+        }
+        return r;
+      }
+      if (kind === 'elite') {
+        if (!r || /^(n\/a|n\.a\.|na|—|none)$/i.test(r)) return tr('account.profile_bb_val_na', 'NA');
+        return r;
+      }
+      if (kind === 'cycle') {
+        // e.g. joinPeriod=173, current month → "173, 1st PC of Aug"
+        return r || tr('account.profile_bb_val_na', 'NA');
+      }
+      return r || tr('account.profile_bb_val_na', 'NA');
+    }
+
+    /** 结算周期：根据 joinPeriod + 当前月生成 "173, 1st PC of Aug" */
+    function formatSettlementCycle(memberData) {
+      const period = Number(memberData?.joinPeriod || 0);
+      const periodText = period ? String(period) : '—';
+      const d = new Date();
+      const monthEn = d.toLocaleString('en-GB', { month: 'short' });
+      const pc = (memberData?.settlementPeriodRank == null) ? 1 : Math.max(1, Math.min(4, Number(memberData.settlementPeriodRank)));
+      const ordEn = pc === 1 ? '1st' : pc === 2 ? '2nd' : pc === 3 ? '3rd' : '4th';
+      const lang = (window.T && window.T.current) || 'en';
+      // zh: 8月第1期; en/other: {Nth} PC of {Month}
+      if (lang === 'zh') {
+        const monthsZh = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        return `${periodText}, ${monthsZh[d.getMonth()]}第${pc}期`;
+      }
+      if (lang === 'ha') {
+        const haMonths = ['Jan','Feb','Mar','Afw','Mei','Yun','Yul','Agu','Sat','Okt','Nuw','Dis'];
+        return `${periodText}, PC na ${pc} na ${haMonths[d.getMonth()]}`;
+      }
+      if (lang === 'yo') {
+        const yoMonths = ['Sẹ́rẹ́','Èrèlè́','Ẹrẹ̀nà','Ìgbé','Ẹ̀bibi','Òkùdu','Agẹmọ','Ọgún','Ọwẹ́rẹ́','Ọ̀wàrà','Bélú','Ọ̀pẹ̀'];
+        const ordY = pc === 1 ? 'Àkọ́kọ́' : pc === 2 ? 'Kẹ́jì' : pc === 3 ? 'Kẹ́tà' : 'Ẹ̀kẹ́rin';
+        return `${periodText}, ${ordY} PC ni Oṣù ${yoMonths[d.getMonth()]}`;
+      }
+      if (lang === 'ig') {
+        const igMonths = ['Jen','Feb','Maa','Epr','Mee','Jun','Jul','Ọgọ','Sep','Ọkt','Nov','Dis'];
+        const pcText = (pc === 1 ? 'mbụ' : pc === 2 ? ' nke abụọ' : pc === 3 ? ' nke atọ' : ' nke anọ');
+        return `${periodText}, PC${pcText} na ọnwa ${igMonths[d.getMonth()]}`;
+      }
+      return `${periodText}, ${ordEn} PC of ${monthEn}`;
+    }
+
+    /** Format 系统时间：当前日期+时间+(WAT/zh-CN/locale)，WAT=UTC+1。 */
+    function formatSystemTime() {
+      const d = new Date();
+      const lang = (window.T && window.T.current) || 'en';
+      try {
+        if (lang === 'zh') {
+          const dtf = new Intl.DateTimeFormat('zh-CN', { timeZone: 'Africa/Lagos', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+          return dtf.format(d) + ' (WAT)';
+        }
+        const dtf = new Intl.DateTimeFormat(lang === 'ha' ? 'ha-Latn-NG' : lang === 'yo' ? 'yo-NG' : lang === 'ig' ? 'ig-NG' : 'en-GB', {
+          timeZone: 'Africa/Lagos', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+        });
+        return dtf.format(d) + ' (WAT)';
+      } catch {
+        const p = n => String(n).padStart(2, '0');
+        // WAT offset = UTC+1
+        const wat = new Date(d.getTime() + d.getTimezoneOffset() * 60_000 + 60 * 60_000);
+        return `${wat.getUTCFullYear()}-${p(wat.getUTCMonth()+1)}-${p(wat.getUTCDate())} ${p(wat.getUTCHours())}:${p(wat.getUTCMinutes())}:${p(wat.getUTCSeconds())} (WAT)`;
+      }
+    }
+
+    /** Render 基础信息栏 top card on Profile tab */
+    function renderProfileBasicBar() {
+      const host = document.getElementById('profileBasicInfoBar');
+      if (!host) return;
+      const memberData = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+      const tr = k => { const v = window.T.tr(k); return (v && v !== k) ? v : k; };
+      // 会员等级：优先 currentLevel / settlementLevel
+      const levelRaw = memberData.currentLevel || memberData.settlementLevel || '';
+      // 最高荣耀等级：取 highestMgmtStar 或 latestMgmtStar
+      const honorRaw = memberData.highestMgmtStar || memberData.latestMgmtStar || '';
+      // Elite 级别：取 highestElite 或 latestElite
+      const eliteRaw = memberData.highestElite || memberData.latestElite || '';
+
+      const rows = [
+        { icon: '🕒', labelKey: 'account.profile_bb_system_time', value: formatSystemTime(), cls: 'bib-time' },
+        { icon: '🗓', labelKey: 'account.profile_bb_settlement_cycle', value: formatSettlementCycle(memberData), cls: 'bib-cycle' },
+        { icon: '★', labelKey: 'account.profile_bb_member_level', value: translateBBValue(levelRaw, 'level'), cls: 'bib-level' },
+        { icon: '🚫', labelKey: 'account.profile_bb_highest_honor', value: translateBBValue(honorRaw, 'honor'), cls: '' },
+        { icon: '♛', labelKey: 'account.profile_bb_elite_level', value: translateBBValue(eliteRaw, 'elite'), cls: '' },
+      ];
+      host.innerHTML = rows.map(r => {
+        const valueCls = ['bib-level'].includes(r.cls) ? ' bib-value ' + r.cls :
+          (/na|n\/a|—|none|babu|kò sí|ọ fụtịrị/i.test(r.value)) ? ' bib-value bib-na' :
+          ' bib-value';
+        return `
+          <div class="bib-row">
+            <span class="bib-icon" aria-hidden="true">${r.icon}</span>
+            <div class="bib-main">
+              <div class="bib-label" data-i18n="${r.labelKey}">${tr(r.labelKey)}</div>
+              <div class="${valueCls}">${r.value}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    /* ---------- Profile image card (member identity / avatar) ---------- */
+    const PIC_COUNTRY_FLAGS = {
+      NG:'🇳🇬', GH:'🇬🇭', KE:'🇰🇪', ZA:'🇿🇦', UG:'🇺🇬', TZ:'🇹🇿',
+      CN:'🇨🇳', MY:'🇲🇾', GB:'🇬🇧', US:'🇺🇸', OTHER:'🌍'
+    };
+    function tr(key, fb) {
+      const v = window.T?.tr ? window.T.tr(key) : fb;
+      return (v && v !== key) ? v : fb;
+    }
+    /* Member IDs must be exactly "NG" + 8 digits. If a stored value is
+       non-conforming (e.g. legacy 12-digit), normalize to the first 8 digits
+       after NG so the displayed/persisted value conforms and the identity
+       prefix is preserved (orders stay linkable). Returns null for empty. */
+    function normalizeMemberId(id) {
+      if (!id) return null;
+      const s = String(id).trim().toUpperCase();
+      const m = s.match(/^NG(\d+)$/);
+      if (!m) return null;
+      const d = m[1];
+      if (d.length === 8) return s;
+      return 'NG' + d.slice(0, 8).padStart(8, '0');
+    }
+    function healMemberId() {
+      const u = window.Auth.user || {};
+      const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+      const raw = u.memberId || md.memberId || '';
+      const norm = normalizeMemberId(raw) || (window.ProductCatalog?.genMemberId?.()) || '';
+      if (!norm) return '';
+      if (norm !== (u.memberId || '').toUpperCase()) {
+        u.memberId = norm; window.Auth.user = u;
+      }
+      if (norm !== (md.memberId || '').toUpperCase()) {
+        md.memberId = norm;
+        localStorage.setItem('al.memberData', JSON.stringify(md));
+      }
+      return norm;
+    }
+    function renderProfileImageCard() {
+      const card = document.getElementById('profileImageCard');
+      if (!card) return;
+      const u = window.Auth.user || {};
+      const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+      // Name & Member ID (normalized to NG + 8 digits; self-heals stale 12-digit data)
+      const memberId = healMemberId() || '—';
+      const memberName = md.memberName || u.name || u.firstName || '—';
+      // Country code
+      let country = md.country || 'NG';
+      if (!PROFILE_COUNTRIES.some(c => c.code === country)) {
+        if (country && typeof country === 'string') {
+          const aliasMap = { 'nigeria':'NG', 'najeriya':'NG', '奈及利亚':'NG', '尼日利亚':'NG',
+            'ghana':'GH', 'gana':'GH', '加纳':'GH', 'kenya':'KE', 'south africa':'ZA', 'uganda':'UG',
+            'tanzania':'TZ', 'china':'CN', 'malaysia':'MY', 'united kingdom':'GB', 'united states':'US' };
+          country = aliasMap[country.toLowerCase()] || 'OTHER';
+        } else country = 'OTHER';
+      }
+      const countryEntry = PROFILE_COUNTRIES.find(c => c.code === country) || PROFILE_COUNTRIES[0];
+      const countryName = tr(countryEntry.key, countryEntry.code);
+      const flag = PIC_COUNTRY_FLAGS[countryEntry.code] || '🌍';
+      // Level badge
+      const level = md.currentLevel || md.settlementLevel || '';
+      const levelText = level
+        ? (level.toLowerCase().includes('silver') ? tr('account.profile_bb_val_silver', 'Silver')
+          : level.toLowerCase().includes('gold') ? tr('account.profile_bb_val_gold', 'Gold')
+          : level.toLowerCase().includes('platinum') ? tr('account.profile_bb_val_platinum', 'Platinum')
+          : level.toLowerCase().includes('diamond') ? tr('account.profile_bb_val_diamond', 'Diamond')
+          : level)
+        : '—';
+      const levelIcon = level ? '★' : '—';
+      // Inject texts
+      const nEl = document.getElementById('picName'); if (nEl) nEl.textContent = memberName;
+      const idEl = document.getElementById('picMemberId'); if (idEl) idEl.textContent = memberId;
+      const copyBtn = document.getElementById('picCopyId');
+      if (copyBtn) {
+        const cpT = tr('account.profile_copy_id', 'Copy member ID');
+        copyBtn.setAttribute('title', cpT);
+        copyBtn.setAttribute('aria-label', cpT);
+      }
+      const lvTxt = document.getElementById('picLevelText'); if (lvTxt) lvTxt.textContent = levelText;
+      const lvIco = document.getElementById('picLevelIcon'); if (lvIco) lvIco.textContent = levelIcon;
+      const cflag = document.getElementById('picCountryFlag'); if (cflag) cflag.textContent = flag;
+      const cname = document.getElementById('picCountryText'); if (cname) cname.textContent = countryName;
+      // Wire copy (once)
+      if (!card.dataset.wired) {
+        card.dataset.wired = '1';
+        document.getElementById('picCopyId')?.addEventListener('click', () => {
+          const mid = (document.getElementById('picMemberId')?.textContent || '').trim();
+          if (!mid) return;
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(mid).catch(() => {});
+            } else {
+              const ta = document.createElement('textarea');
+              ta.value = mid; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.left='-9999px';
+              document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e){}
+              document.body.removeChild(ta);
+            }
+            window.toast(tr('account.profile_copied_id', 'Member ID copied.'), 'success');
+          } catch(e) {}
+        });
+        document.getElementById('picShareBtn')?.addEventListener('click', () => {
+          const mid = (document.getElementById('picMemberId')?.textContent || '').trim();
+          const name = (document.getElementById('picName')?.textContent || '').trim();
+          const shareText = tr('account.profile_share_title', 'Share member ID') + ' · ' +
+            (name ? name + ' · ' : '') + mid;
+          try {
+            if (navigator.share) {
+              navigator.share({ text: shareText }).catch(()=>{});
+            } else if (navigator.clipboard) {
+              navigator.clipboard.writeText(shareText).then(()=>{
+                window.toast(tr('account.profile_copied_id', 'Member ID copied.'), 'success');
+              }).catch(()=>{});
+            } else {
+              window.toast(shareText, 'info');
+            }
+          } catch(e) {}
+        });
+      }
+    }
+
+    /* ---------- Country list for Personal info select (i18n + stable codes) ---------- */
+    const PROFILE_COUNTRIES = [
+      { code: 'NG', key: 'account.profile_country_ng' },
+      { code: 'GH', key: 'account.profile_country_gh' },
+      { code: 'KE', key: 'account.profile_country_ke' },
+      { code: 'ZA', key: 'account.profile_country_za' },
+      { code: 'UG', key: 'account.profile_country_ug' },
+      { code: 'TZ', key: 'account.profile_country_tz' },
+      { code: 'CN', key: 'account.profile_country_cn' },
+      { code: 'MY', key: 'account.profile_country_my' },
+      { code: 'GB', key: 'account.profile_country_gb' },
+      { code: 'US', key: 'account.profile_country_us' },
+      { code: 'OTHER', key: 'account.profile_country_other' },
+    ];
+    function renderProfileCountries(selected) {
+      const sel = document.getElementById('pfCountry');
+      if (!sel) return;
+      const tr = (k, fb) => { const v = window.T.tr(k); return (v && v !== k) ? v : fb; };
+      const ph = tr('account.profile_country_ph', 'Select country');
+      const opts = [`<option value="" disabled${selected ? '' : ' selected'}>${ph}</option>`];
+      PROFILE_COUNTRIES.forEach(c => {
+        const label = tr(c.key, c.code);
+        opts.push(`<option value="${c.code}"${c.code === selected ? ' selected' : ''}>${label}</option>`);
+      });
+      sel.innerHTML = opts.join('');
+    }
+
     function loadProfileForm() {
       const p = window.AL.loadProfile() || {};
-      document.getElementById('pfName').value = p.name || '';
-      document.getElementById('pfEmail').value = p.email || '';
-      document.getElementById('pfPhone').value = p.phone || '';
-      document.getElementById('pfType').value = p.type || 'home';
+      const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+      const u = window.Auth.user || {};
+      // Member ID: Auth.user.memberId > memberData.memberId > stable gen (stored into Auth.user & md).
+      // healMemberId() also normalizes any non-conforming value (e.g. legacy NG+12digits) to NG+8digits
+      // and persists the corrected value back, so all downstream reads (drawer, checkout, etc.) see 8 digits.
+      const memberId = healMemberId() || (window.ProductCatalog?.genMemberId?.()) || '';
+      // Member name: prefer md.memberName (the authoritative field used by overview/syncHeader); then Auth.name; then profile.name.
+      const memberName = md.memberName || u.name || u.firstName || p.name || '';
+      // Country: memberData.country code. If stored as name instead of code, best-match to a code.
+      // Seed default for md.country = Nigeria (matches memberData seed) when missing.
+      let country = md.country || md._defaultCountry || '';
+      if (!country) {
+        country = 'NG';
+        md.country = country;
+        localStorage.setItem('al.memberData', JSON.stringify(md));
+      }
+      if (country && !PROFILE_COUNTRIES.some(c => c.code === country)) {
+        const nameLo = String(country).toLowerCase();
+        // 1) 常用英文/本地名称别名映射
+        const aliasMap = {
+          'nigeria': 'NG', 'najeriya': 'NG', 'nàìjíríà': 'NG', 'naịjirịa': 'NG', '奈及利亚': 'NG', '尼日利亚': 'NG',
+          'ghana': 'GH', 'gana': 'GH', '加纳': 'GH',
+          'kenya': 'KE', 'kẹ́ńyà': 'KE', '肯尼亚': 'KE',
+          'south africa': 'ZA', 'afirka ta kudu': 'ZA', 'gúúsù áfíríkà': 'ZA', 'south africa': 'ZA', '南非': 'ZA',
+          'uganda': 'UG', 'yuganda': 'UG', 'ùgándà': 'UG', '乌干达': 'UG',
+          'tanzania': 'TZ', 'tanzaniya': 'TZ', 'tànzáníà': 'TZ', '坦桑尼亚': 'TZ',
+          'china': 'CN', 'caina': 'CN', 'cháínà': 'CN', '中国': 'CN',
+          'malaysia': 'MY', 'málẹ̀shíà': 'MY', '马来西亚': 'MY',
+          'united kingdom': 'GB', 'biritaniya': 'GB', 'ilẹ̀ gẹ̀ẹ́sì': 'GB', '英国': 'GB',
+          'united states': 'US', 'amurka': 'US', 'amẹ́ríkà': 'US', '美国': 'US',
+        };
+        const m = aliasMap[nameLo];
+        if (m) {
+          country = m;
+        } else {
+          const matched = PROFILE_COUNTRIES.find(c => {
+            const label = (window.T.tr(c.key) || c.code).toLowerCase();
+            return label.includes(nameLo) || nameLo.includes(c.code.toLowerCase());
+          });
+          country = matched ? matched.code : 'OTHER';
+        }
+      }
+      // Render country select first (so we can set the value)
+      renderProfileCountries(country);
+
+      document.getElementById('pfMemberId').value = memberId;
+      document.getElementById('pfMemberName').value = memberName;
+      document.getElementById('pfEmail').value = p.email || u.email || md.email || '';
+      // Placeholders i18n (member id)
+      const mid = document.getElementById('pfMemberId');
+      const ph = window.T.tr('account.profile_member_id_ph');
+      if (ph && ph !== 'account.profile_member_id_ph') mid.placeholder = ph;
+      const pc = window.ProductCatalog || {};
+      const host = document.getElementById('pfPhoneField');
+      if (host && pc.phoneFieldHTML) {
+        host.innerHTML = pc.phoneFieldHTML(pc.DEFAULT_DIAL, 'phone');
+        if (pc.fillPhoneFields) pc.fillPhoneFields(host, p.phone || u.phone || md.phone || '');
+      }
     }
     function setProfileMode(mode) {
       const form = document.getElementById('profileForm');
       form.dataset.mode = mode;
-      const disabled = mode === 'view';
-      form.querySelectorAll('input, select').forEach(el => el.disabled = disabled);
-      document.querySelector('#profileForm .profile-actions').hidden = (mode === 'view');
-      document.getElementById('profileEditBtn').hidden = (mode === 'edit');
+      const editing = mode === 'edit';
+      // Country / member name / email / phone — toggled by edit. Member ID stays read-only to protect NG+8 format.
+      form.querySelectorAll('input, select').forEach(el => {
+        const name = (el.name || el.id || '').toLowerCase();
+        if (name === 'memberid' || el.id === 'pfMemberId') el.disabled = true;
+        else el.disabled = !editing;
+      });
+      document.querySelector('#profileForm .profile-actions').hidden = !editing;
+      document.getElementById('profileEditBtn').hidden = editing;
     }
 
     /* ---------- Addresses ---------- */
@@ -521,19 +813,19 @@
       const list = window.AL.getAddresses();
       const host = document.getElementById('addressList');
       if (!list.length) {
-        host.innerHTML = `<p class="muted" style="padding:8px 0">${window.T.tr('account.profile_add_address')}</p>`;
+        host.innerHTML = `<p class="muted">${window.T.tr('account.profile_add_address')}</p>`;
         return;
       }
       host.innerHTML = list.map(a => `
         <div class="address-card ${a.isDefault ? 'is-default' : ''}">
           <div class="address-card-body">
             <div class="address-card-head">
-              <span class="address-label">${a.label || 'Home'}</span>
+              <span class="address-label">${a.recipient || ''} · ${a.phone || ''}</span>
               ${a.isDefault ? `<span class="address-default-badge" data-i18n="account.profile_default">${window.T.tr('account.profile_default')}</span>` : ''}
             </div>
-            <div class="address-recipient">${a.recipient || ''} · ${a.phone || ''}</div>
             <div class="address-line">${a.street || ''}</div>
-            <div class="address-line">${a.city || ''}, ${a.state || ''}</div>
+            <div class="address-line">${a.city || ''}${a.district ? ', ' + a.district : ''}</div>
+            <div class="address-line">${a.region || ''}</div>
           </div>
           <div class="address-actions">
             <button class="btn-link" data-addr-edit="${a.id}" data-i18n="account.profile_edit">${window.T.tr('account.profile_edit')}</button>
@@ -548,35 +840,47 @@
       const editor = document.getElementById('addrEditor');
       const form = document.getElementById('addrForm');
       const title = document.getElementById('addrEditorTitle');
+      const pc = window.ProductCatalog || {};
       form.reset();
+      // Populate region dropdown with Nigerian states
+      const regionSel = document.getElementById('addrRegion');
+      if (regionSel) {
+        const regions = ['Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno','Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','Gombe','Imo','Jigawa','Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara','Lagos','Nasarawa','Niger','Ogun','Ondo','Osun','Oyo','Plateau','Rivers','Sokoto','Taraba','Yobe','Zamfara','FCT Abuja'];
+        regionSel.innerHTML = '<option value="" data-i18n="account.addr_region_ph">Please select</option>' + regions.map(r => `<option value="${r}">${r}</option>`).join('');
+      }
+      // phone field is a dial+number pair inside #addrPhoneField
+      const phoneHost = document.getElementById('addrPhoneField');
+      if (phoneHost && pc.phoneFieldHTML) phoneHost.innerHTML = pc.phoneFieldHTML(pc.DEFAULT_DIAL, 'phone');
       if (addr) {
         title.textContent = window.T.tr('account.profile_edit');
         form.id.value = addr.id;
-        form.label.value = addr.label || '';
         form.recipient.value = addr.recipient || '';
-        form.phone.value = addr.phone || '';
+        if (pc.fillPhoneFields) pc.fillPhoneFields(phoneHost, addr.phone || '');
         form.street.value = addr.street || '';
         form.city.value = addr.city || '';
-        form.state.value = addr.state || '';
+        form.district.value = addr.district || '';
+        form.region.value = addr.region || '';
         form.isDefault.checked = !!addr.isDefault;
       } else {
         title.textContent = window.T.tr('account.profile_add_address');
         form.id.value = '';
         const p = window.AL.loadProfile() || {};
         const existingDefault = (window.AL.getAddresses() || []).find(a => a.isDefault) || {};
-        form.label.value = 'Home';
         form.recipient.value = p.name || existingDefault.recipient || '';
-        form.phone.value = p.phone || existingDefault.phone || '';
+        if (pc.fillPhoneFields) pc.fillPhoneFields(phoneHost, p.phone || existingDefault.phone || '');
         form.street.value = existingDefault.street || '';
-        form.city.value = p.city || existingDefault.city || 'Lagos';
-        form.state.value = p.state || existingDefault.state || 'Lagos State';
+        form.city.value = p.city || existingDefault.city || '';
+        form.district.value = existingDefault.district || '';
+        form.region.value = p.region || existingDefault.region || '';
         const hasDefault = (window.AL.getAddresses() || []).some(a => a.isDefault);
         form.isDefault.checked = !hasDefault;
       }
       editor.hidden = false;
+      // Re-apply i18n to the editor (since region dropdown was dynamically populated)
+      if (window.T && window.T.applyI18n) window.T.applyI18n(editor);
       // Scroll the editor into view for clarity
       editor.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      const firstInput = editor.querySelector('input:not([type=hidden])');
+      const firstInput = editor.querySelector('input:not([type=hidden]):not([name="phone"])');
       if (firstInput) setTimeout(() => firstInput.focus(), 250);
     }
     function closeAddressEditor() {
@@ -588,7 +892,1138 @@
     function loadPrefs() {
       const p = window.AL.loadPrefs();
       const form = document.getElementById('prefsForm');
-      Object.keys(p).forEach(k => { if (form[k]) form[k].checked = !!p[k]; });
+      if (!form) return;
+      ['email','sms','wa'].forEach(k => { if (form[k]) form[k].checked = !!p[k]; });
+      const langSel = form.querySelector('[name="lang"]');
+      const cur = (p && p.lang) || (window.T && window.T.current) || 'en';
+      if (langSel) {
+        langSel.value = (langSel.querySelector('option[value="' + cur + '"]') ? cur : 'en');
+      }
+      form.querySelectorAll('.lang-card').forEach(btn => {
+        btn.classList.toggle('is-active', btn.dataset.langVal === cur);
+      });
+    }
+
+    /* ---------- Orders ---------- */
+    function _getBV(item) {
+      if (typeof item.bv === 'number') return item.bv;
+      if (item.bvString !== undefined) return item.bvString;
+      if (typeof item.price === 'number') return Math.round(item.price / 1000) * (item.qty || 1);
+      return 0;
+    }
+    function _taxRate(order) {
+      if (typeof order.taxRate === 'number') return order.taxRate;
+      if (typeof order.items?.[0]?.taxRate === 'number') return order.items[0].taxRate;
+      return 0.075;
+    }
+    /* ---------- Orders (optimized card layout) ---------- */
+    function _getBV(item) {
+      if (typeof item.bv === 'number') return item.bv;
+      if (item.bvString !== undefined) return item.bvString;
+      if (typeof item.price === 'number') return Math.round(item.price / 1000) * (item.qty || 1);
+      return 0;
+    }
+    function _taxRate(order) {
+      if (typeof order.taxRate === 'number') return order.taxRate;
+      if (typeof order.items?.[0]?.taxRate === 'number') return order.items[0].taxRate;
+      return 0.075;
+    }
+    function _currencySymbol(c) {
+      // Use plain-letter 'N' for Naira display (Nigerian e-commerce standard: N52,000).
+      // Avoids '₦' U+20A6 rendering as "#" on display fonts missing the Naira glyph.
+      const m = { NGN: 'N', USD: '$', EUR: '€', GBP: '£', CNY: '¥', KES: 'KSh', GHS: 'GH₵' };
+      return m[c] || 'N';
+    }
+
+    // SVG placeholder icon used when a purchased product's image is missing / path is wrong.
+    // Shared between render-time (no image src) fallback and runtime onerror (image 404) replacement.
+    // Always referenced via window.__ORDER_PIC_SVG so onerror inline handlers can access it globally.
+    window.__ORDER_PIC_SVG = '<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z"/><path d="M5 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/></svg>';
+
+    // Robust image path resolver for historical order items.
+    // Layered fallback so that even old orders with missing / malformed fields still resolve correctly:
+    //   1. it.image (full relative, newest format)
+    //   2. assets/img/products/<category>/<img> (checkout format before fix / OS order catalog fields)
+    //   3. ProductCatalog lookup by it.id or it.name (dirty legacy orders, any field combination)
+    //   4. it.pic / it.img (last-ditch; onerror will catch if still invalid → SVG icon shows)
+    function _resolveOrderItemImage(it) {
+      if (!it) return null;
+      if (it.image) return it.image;
+      if (it.category && it.img) return 'assets/img/products/' + it.category + '/' + it.img;
+      const pc = window.ProductCatalog;
+      if (pc && typeof pc.allProducts === 'function') {
+        const list = pc.allProducts();
+        const iid = String(it.id || '');
+        const iname = String(it.name || '').trim();
+        const match = list.find(p => p && ((iid && String(p.id) === iid) || (iname && String(p.name).trim() === iname)));
+        if (match) {
+          if (match.image) return match.image;
+          if (match.category && match.img) return 'assets/img/products/' + match.category + '/' + match.img;
+        }
+      } else if (pc && pc.PRODUCTS) {
+        const list = [];
+        Object.keys(pc.PRODUCTS).forEach(k => {
+          const arr = pc.PRODUCTS[k];
+          if (Array.isArray(arr)) { for (let j = 0; j < arr.length; j++) list.push(arr[j]); }
+        });
+        const iid = String(it.id || '');
+        const iname = String(it.name || '').trim();
+        const match = list.find(p => p && ((iid && String(p.id) === iid) || (iname && String(p.name).trim() === iname)));
+        if (match) {
+          if (match.image) return match.image;
+          if (match.category && match.img) return 'assets/img/products/' + match.category + '/' + match.img;
+        }
+      }
+      if (it.pic) return it.pic;
+      if (it.img) return it.img;
+      return null;
+    }
+
+    // Seed a few illustrative orders (with full field values) the first time an
+    // account is viewed and has no orders yet — so the card layout shows real
+    // data instead of an empty state. My orders + Member orders are both covered.
+    function seedDemoOrders(mid) {
+      const pc = window.ProductCatalog || {};
+      const DAY = 86400000;
+      const now = Date.now();
+      const me = mid || 'NG48655323';
+      const mk = (o) => Object.assign({
+        id: (pc.genOrderId ? pc.genOrderId() : 'AQ-' + Math.random().toString(36).slice(2, 8).toUpperCase()),
+        date: now, memberId: me, operatorId: me, country: 'Nigeria', currency: 'NGN',
+        status: 'pending', payStatus: 'Unpaid', source: 'demo',
+      }, o);
+
+      const demo = [
+        // ---- My orders (I am the target member) ----
+        mk({
+          date: now - 3 * DAY, paidAt: now - 3 * DAY + 3600000,
+          status: 'paid', payStatus: 'Paid', payment: 'card', paymentLabel: 'Card',
+          memberId: me, memberName: 'Adaeze Okoro',
+          customer: { name: 'Adaeze Okoro', phone: '+234 803 123 4567', address: '14 Bourdillon Road, Ikoyi', city: 'Lagos', state: 'Lagos' },
+          items: [
+            { id: 'hw2', name: 'Calmag', category: 'health-wellness', img: 'calmag.webp', price: 38000, qty: 2, bv: 35 },
+            { id: 'bs1', name: 'Advanced Age Recovery', category: 'beauty-skincare', img: 'advanced-age-recovery.webp', price: 68000, qty: 1, bv: 62 },
+          ],
+          source: 'checkout',
+        }),
+        mk({
+          date: now - 12 * 3600000, paidAt: null,
+          status: 'pending', payStatus: 'Unpaid', payment: 'cod', paymentLabel: 'Pay on delivery',
+          memberId: me, memberName: 'Adaeze Okoro',
+          customer: { name: 'Adaeze Okoro', phone: '+234 803 123 4567', address: '14 Bourdillon Road, Ikoyi', city: 'Lagos', state: 'Lagos' },
+          items: [
+            { id: 'ha2', name: 'Bio Pure N200', category: 'home-appliances', img: 'bio-pure-n200.webp', price: 560000, qty: 1, bv: 420 },
+          ],
+          source: 'checkout',
+        }),
+        // ---- Member orders (I placed these on behalf of another member) ----
+        mk({
+          date: now - 5 * DAY, paidAt: now - 5 * DAY + 7200000,
+          status: 'paid', payStatus: 'Paid', payment: 'bank', paymentLabel: 'Bank transfer',
+          memberId: 'NG27187710', memberName: 'Chinedu Eze', operatorId: me,
+          customer: { name: 'Chinedu Eze', phone: '+234 805 987 6543', address: '7 Marina Street', city: 'Lagos', state: 'Lagos' },
+          items: [
+            { id: 'wd1', name: 'Bes Massage Device', category: 'wellness-devices', img: 'bes-massage-device.webp', price: 95000, qty: 1, bv: 78 },
+          ],
+          source: 'member-repeat-purchase',
+        }),
+        mk({
+          date: now - 2 * DAY, paidAt: null,
+          status: 'pending', payStatus: 'Unpaid', payment: 'ussd', paymentLabel: 'USSD',
+          memberId: 'NG66051653', memberName: 'Reporting Center', operatorId: me,
+          customer: { name: 'Reporting Center', phone: '+234 809 222 3344', address: '22 Broad Street', city: 'Lagos', state: 'Lagos' },
+          items: [
+            { id: 'fb1', name: 'Elcafe', category: 'food-beverage', img: 'elcafe.webp', price: 25000, qty: 3, bv: 22 },
+          ],
+          source: 'member-auto-maintenance',
+        }),
+      ];
+
+      const orders = (pc.getOrders ? pc.getOrders() : []).slice();
+      demo.forEach(o => { if (!orders.some(x => x.id === o.id)) orders.push(o); });
+      localStorage.setItem('al.orders', JSON.stringify(orders));
+      window.dispatchEvent(new CustomEvent('al:orderschange'));
+    }
+
+    function seedDemoEcoin(mid) {
+      const me = mid || 'NG48655323';
+      const DAY = 86400000;
+      const now = Date.now();
+      let existing = [];
+      try { existing = JSON.parse(localStorage.getItem('al.ecoin') || '[]'); } catch (e) { existing = []; }
+      if (existing.some(e => e.memberId === me)) return; // already seeded for this member
+      const mkRec = (amount, type, remark, orderId, ago) => ({
+        id: 'EC-' + Math.random().toString(36).slice(2, 10).toUpperCase(),
+        memberId: me, amount, type, remark: remark || '', orderId: orderId || '', date: now - ago,
+      });
+      const recs = [
+        mkRec(20, 'credit', 'From referrals', '', 10 * DAY),
+        mkRec(-15, 'debit', 'Redeemed voucher', '', 4 * DAY),
+        mkRec(38, 'credit', 'from your orders', 'AQ-DEMO1', 2 * DAY),
+      ];
+      existing.push(...recs);
+      localStorage.setItem('al.ecoin', JSON.stringify(existing));
+    }
+
+    function renderOrders() {
+      const pc = window.ProductCatalog || {};
+      const t = (k, fb) => { const v = window.T && window.T.tr(k); return (v && v !== k) ? v : fb; };
+
+      // First-run demo: populate illustrative orders + ecoin ledger (with values) when none exist.
+      if (pc.getCurrentMemberId && pc.getOrders && pc.getOrders().length === 0) {
+        const mid = pc.getCurrentMemberId();
+        if (mid) { seedDemoOrders(mid); seedDemoEcoin(mid); }
+      }
+
+      // Orders relevant to the current viewer, split by relationship.
+      // self   → I am the target member (my own purchases)
+      // member → I placed this order on behalf of another member
+      const viewer = pc.getOrdersForViewer ? pc.getOrdersForViewer() : { self: [], member: [] };
+      const selfOrders = Array.isArray(viewer.self) ? viewer.self : [];
+      const memberOrders = Array.isArray(viewer.member) ? viewer.member : [];
+
+      // Update subtitle (total of both buckets)
+      const sub = document.getElementById('ordersSubtitle');
+      if (sub) {
+        const total = selfOrders.length + memberOrders.length;
+        sub.textContent = total
+          ? t('account.orders_count', total + ' orders in total')
+          : t('account.orders_empty', 'No orders yet. Browse our product range to find what you need.');
+      }
+
+      // Update segment counts
+      const cSelf = document.getElementById('ordersSegmentSelfCount');
+      const cMember = document.getElementById('ordersSegmentMemberCount');
+      if (cSelf) cSelf.textContent = String(selfOrders.length);
+      if (cMember) cMember.textContent = String(memberOrders.length);
+
+      // Wire up segment toggle (idempotent — guarded with a flag)
+      const segBtns = document.querySelectorAll('.orders-segments .orders-segment');
+      if (segBtns.length && !segBtns[0].__wired) {
+        segBtns.forEach(btn => {
+          btn.__wired = true;
+          btn.addEventListener('click', () => {
+            const which = btn.dataset.segment;
+            segBtns.forEach(b => {
+              const active = b.dataset.segment === which;
+              b.classList.toggle('is-active', active);
+              b.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+            document.querySelectorAll('.orders-segment-panel').forEach(p => {
+              p.hidden = p.dataset.segmentPanel !== which;
+            });
+          });
+        });
+      }
+
+      // Render each table
+      renderOrdersTable(selfOrders, 'ordersTableSelf', 'self');
+      renderOrdersTable(memberOrders, 'ordersTableMember', 'member');
+
+      // Apply translations to the new content (segmented control labels + per-table headers)
+      if (window.T && typeof window.T.applyI18n === 'function') {
+        const segs = document.querySelector('.orders-segments');
+        if (segs) { try { window.T.applyI18n(segs); } catch(_) {} }
+      }
+    }
+
+    // Render a single orders table (self or member bucket).
+    function renderOrdersTable(orders, hostId, kind) {
+      const host = document.getElementById(hostId);
+      if (!host) return;
+
+      if (!orders.length) {
+        const isMember = kind === 'member';
+        const emptyText = isMember
+          ? (window.T ? window.T.tr('account.orders_empty_member') : 'No member orders yet.')
+          : (window.T ? window.T.tr('account.orders_empty_self') : 'You have no orders yet.');
+        const ctaHtml = isMember
+          ? `<a class="ek-btn ek-btn--primary ek-btn--sm" href="member-repurchase.html">Member Repeat Purchase</a>`
+          : `<a class="ek-btn ek-btn--primary ek-btn--sm" href="products.html">${window.T ? window.T.tr('account.orders_browse') : 'Browse products'}</a>`;
+        host.innerHTML = `
+          <div class="orders-empty">
+            <div class="icon">📦</div>
+            <div class="txt">${emptyText}</div>
+            ${ctaHtml}
+          </div>`;
+        return;
+      }
+
+      const t = (k, fb) => { const v = window.T && window.T.tr(k); return (v && v !== k) ? v : fb; };
+      const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const fmtTime = (ts) => {
+        if (!ts) return '—';
+        try {
+          if (window.fmtDateUp) return fmtDateUp(ts);
+          if (window.fmtDate) return fmtDate(ts);
+        } catch (_) {}
+        try { return new Date(ts).toLocaleString(); } catch (_) { return '—'; }
+      };
+
+      const payMethodLabel = (pm) => {
+        if (!pm) return '—';
+        const labels = {
+          'card': 'Card', 'ussd': 'USSD', 'bank': 'Bank transfer', 'transfer': 'Bank transfer',
+          'cod': 'Pay on delivery', 'cash-on-delivery': 'Pay on delivery',
+          'cash': 'Cash', 'account': 'Account Balance', 'bonus': 'Performance Bonus',
+          'wallet': 'Wallet',
+        };
+        return (labels[pm] || pm).toUpperCase();
+      };
+      const payStatusClass = (o) => {
+        const s = (o.payStatus || (o.status === 'paid' ? 'Paid' : 'Unpaid') || 'Unpaid').toString();
+        if (/paid/i.test(s)) return 'o-status--paid';
+        if (/pending/i.test(s)) return 'o-status--pending';
+        if (/fail|refund|cancel/i.test(s)) return 'o-status--fail';
+        return 'o-status--unpaid';
+      };
+      const payStatusText = (o) => {
+        const s = (o.payStatus || (o.status === 'paid' ? 'Paid' : 'Unpaid') || 'Unpaid').toString();
+        if (/paid/i.test(s)) return t('account.orders_status_paid', 'Paid');
+        if (/pending/i.test(s)) return t('account.orders_status_pending', 'Pending');
+        if (/fail|refund|cancel/i.test(s)) return t('account.orders_status_fail', 'Failed');
+        return t('account.orders_status_unpaid', 'Unpaid');
+      };
+
+      const cardsHtml = orders.map((o) => {
+        const cust = o.customer || {};
+        const deliv = o.delivery || {};
+        const isPickup = deliv.method === 'pickup';
+        const address = isPickup
+          ? (deliv.pickupLoc ? `Self Pick-up · ${deliv.pickupLoc}` : 'Self Pick-up')
+          : [cust.address, cust.city, cust.state].filter(Boolean).join(', ') || 'No address provided';
+        const placeTs = o.date || o.createdAt || o.placeTime || o.updatedAt || null;
+        const payTs = o.paidAt || null;
+        const authMid = (window.Auth && window.Auth.user && window.Auth.user.memberId) || null;
+        const memberId = o.memberId || authMid || 'Not registered';
+        const memberName = o.memberName || cust.name || 'Guest';
+        const recipient = cust.name || 'No recipient';
+        const phone = cust.phone || 'No phone on file';
+        const country = o.country || 'Nigeria';
+        const currency = o.currency || 'NGN';
+        const sym = _currencySymbol(currency);
+        const items = o.items || [];
+        const total = (typeof o.total === 'number')
+          ? o.total
+          : items.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
+
+        const typeKey = kind === 'member' ? 'account.orders_type_member' : 'account.orders_type_self';
+        const typeFallback = kind === 'member' ? 'Member order' : 'My order';
+        const typeClass = kind === 'member' ? 'orders-type--member' : 'orders-type--self';
+
+        // Tax configuration (Nigeria default VAT rate).
+        const TAX_RATE = 0.075;
+
+        // Per-product table rows. Columns mirror the screenshot:
+        // [img] Product Code | Product | Qty | Price | Total Price | Total BV | Tax Rate | Total Tax
+        const itemRows = (items.length ? items : [{}]).map((it) => {
+          const qty = Number(it.qty) || 1;
+          const price = Number(it.price) || 0;
+          const bv = (typeof it.bv === 'number') ? it.bv : (_getBV(it) || 0);
+          const totalPrice = qty * price;
+          const totalBV = qty * (Number(bv) || 0);
+          const totalTax = totalPrice * TAX_RATE;
+          const code = it.sku || it.code || it.id || 'Unlisted';
+          const img = _resolveOrderItemImage(it);
+          const picInner = img
+            ? `<img src="${img}" alt="" loading="lazy" onerror="this.outerHTML=window.__ORDER_PIC_SVG">`
+            : window.__ORDER_PIC_SVG;
+          return `
+            <tr>
+              <td class="col-img"><span class="ocard__thumb">${picInner}</span></td>
+              <td>${esc(code)}</td>
+              <td>${esc(it.name || 'Unnamed product')}</td>
+              <td class="num">${qty}</td>
+              <td class="num">${sym}${fmtNum(price)}</td>
+              <td class="num">${sym}${fmtNum(totalPrice)}</td>
+              <td class="num">${totalBV}</td>
+              <td class="num">${TAX_RATE}</td>
+              <td class="num">${sym}${fmtNum(totalTax)}</td>
+            </tr>`;
+        }).join('');
+
+        // Order-wide totals (subtotal ex-tax, sum tax, grand total).
+        const subtotal = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number(it.price) || 0), 0);
+        const sumBV = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number((typeof it.bv === 'number' ? it.bv : _getBV(it))) || 0), 0);
+        const sumTax = subtotal * TAX_RATE;
+        const grand = subtotal + sumTax;
+
+        // Meta row (chip-style inline fields; address spans full width)
+        const chip = (k, v, wide) => `<span${wide ? ' class="wide"' : ''}><b data-i18n="account.${k}">${t('account.' + k, v.fb)}</b><span>${esc(v.val)}</span></span>`;
+
+        return `
+          <article class="ocard" data-order-id="${esc(o.id || '')}">
+            <header class="ocard__head">
+              <a class="ocard__id" href="order.html?order=${encodeURIComponent(o.id || '')}">${esc(o.id || '—')}</a>
+              <span class="orders-type ${typeClass}">${esc(t(typeKey, typeFallback))}</span>
+              <span class="o-status ${payStatusClass(o)}">${esc(payStatusText(o))}</span>
+              <span class="ocard__spacer"></span>
+              <button type="button" class="o-download" data-order-download="${esc(o.id)}" title="${esc(t('account.orders_action_download', 'Download'))}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span data-i18n="account.orders_action_download">Download</span>
+              </button>
+            </header>
+
+            <div class="ocard__meta">
+              ${chip('orders_col_member_id',    { fb: 'Member ID',    val: memberId })}
+              ${chip('orders_col_member_name',  { fb: 'Member',       val: memberName })}
+              ${chip('orders_col_recipient',    { fb: 'Recipient',    val: recipient })}
+              ${chip('orders_col_phone',        { fb: 'Phone',        val: phone })}
+            </div>
+
+            <div class="ocard__table-wrap">
+              <table class="ocard__items">
+                <thead>
+                  <tr>
+                    <th class="col-img" aria-label="Image"></th>
+                    <th data-i18n="account.orders_col_code">Product Code</th>
+                    <th data-i18n="account.orders_col_product">Product</th>
+                    <th class="num" data-i18n="account.orders_col_qty">Qty</th>
+                    <th class="num" data-i18n="account.orders_col_price">Price</th>
+                    <th class="num" data-i18n="account.orders_col_total_price">Total Price</th>
+                    <th class="num" data-i18n="account.orders_col_total_bv">Total BV</th>
+                    <th class="num" data-i18n="account.orders_col_tax_rate">Tax Rate</th>
+                    <th class="num" data-i18n="account.orders_col_total_tax">Total Tax</th>
+                  </tr>
+                </thead>
+                <tbody>${itemRows}</tbody>
+                <tfoot>
+                  <tr>
+                    <td class="col-img"></td>
+                    <td colspan="2" class="lbl" data-i18n="account.orders_label_subtotal">Subtotal</td>
+                    <td class="num">${items.reduce((s, it) => s + (Number(it.qty) || 1), 0)}</td>
+                    <td></td>
+                    <td class="num">${sym}${fmtNum(subtotal)}</td>
+                    <td class="num">${sumBV}</td>
+                    <td></td>
+                    <td class="num">${sym}${fmtNum(sumTax)}</td>
+                  </tr>
+                  <tr class="ocard__grand">
+                    <td class="col-img"></td>
+                    <td colspan="5" class="lbl" data-i18n="account.orders_label_total">Total (incl. tax)</td>
+                    <td></td>
+                    <td></td>
+                    <td class="num">${sym}${fmtNum(grand)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </article>`;
+      }).join('');
+
+      host.innerHTML = `<div class="orders-cards">${cardsHtml}</div>`;
+
+      // Apply i18n to the newly inserted dynamic content
+      if (window.T && typeof window.T.applyI18n === 'function') {
+        try { window.T.applyI18n(host); } catch(_) {}
+      }
+
+      // Wire up download buttons — export styled Order Details document (.doc)
+      host.querySelectorAll('[data-order-download]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const id = btn.dataset.orderDownload;
+          const order = orders.find(o => String(o.id) === String(id));
+          if (!order) return;
+          try {
+            exportOrderDocument(order);
+          } catch (err) {
+            console.error(err);
+            window.toast && window.toast(String(err.message || err), 'danger');
+          }
+        });
+      });
+    }
+
+    /* ---------- Export Order Details Document (.doc) ---------- */
+    function exportOrderDocument(order) {
+      if (!order) return;
+      const pc = window.ProductCatalog || {};
+      const memberData = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+      const user = (window.Auth && window.Auth.user) || {};
+      const profile = (window.AL && window.AL.loadProfile) ? (window.AL.loadProfile() || {}) : {};
+
+      // 1. Meta information
+      const memberId = order.memberId || user.memberId || memberData.memberId || 'NG48655323';
+      const memberName = order.customer?.name || memberData.memberName || user.name || profile.name || 'S4';
+      
+      const deliv = order.delivery || {};
+      const cust = order.customer || {};
+      let shippingAddress = 'Self Pick-up';
+      if (deliv.method === 'pickup') {
+        shippingAddress = deliv.pickupLoc ? `Self Pick-up (${deliv.pickupLoc})` : 'Self Pick-up';
+      } else {
+        const addrParts = [cust.address, cust.city, cust.state, cust.country].filter(Boolean);
+        shippingAddress = addrParts.length ? addrParts.join(', ') : (memberData.commonAddress || 'Self Pick-up');
+      }
+
+      const phone = cust.phone || user.mobile || memberData.mobile || '5474534543';
+      const orderId = order.id || 'OS202608101159248578';
+      
+      // Creation timestamp formatting YYYY-MM-DD HH:mm:ss
+      const ts = order.date || order.createdAt || order.placeTime || Date.now();
+      const dt = new Date(ts);
+      const pad = n => String(n).padStart(2, '0');
+      const createTime = isNaN(dt.getTime())
+        ? '2026-08-10 09:02:39'
+        : `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())} ${pad(dt.getHours())}:${pad(dt.getMinutes())}:${pad(dt.getSeconds())}`;
+
+      // Helper for currency / amount formatting with commas and 2 decimals
+      const fmtMoney = (n) => Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Tax rate
+      const taxRate = typeof _taxRate === 'function' ? _taxRate(order) : 0.075;
+      const taxRatePct = (taxRate * 100).toFixed(2) + '%';
+      
+      const rawItems = (order.items && order.items.length) ? order.items : [
+        { id: 'EHNH5', name: 'HYDROMI EASYPAY 3/3NGR', price: 1000000, qty: 1 }
+      ];
+
+      let sumQty = 0;
+      let sumTax = 0;
+      let sumTotal = 0;
+
+      const rowsHtml = rawItems.map(it => {
+        const code = it.code || it.sku || (it.id && String(it.id).length < 10 ? String(it.id).toUpperCase() : '') || 'EHNH5';
+        const name = it.name || 'HYDROMI EASYPAY 3/3NGR';
+        const price = Number(it.price) || 0;
+        const qty = Number(it.qty) || 1;
+        const itemTotal = price * qty;
+        const itemTax = typeof it.taxAmount === 'number' ? it.taxAmount : (itemTotal * taxRate);
+
+        sumQty += qty;
+        sumTax += itemTax;
+        sumTotal += itemTotal;
+
+        return `
+          <tr>
+            <td>${code}</td>
+            <td>${name}</td>
+            <td>${fmtMoney(price)}</td>
+            <td>${qty}</td>
+            <td>${taxRatePct}</td>
+            <td>${fmtMoney(itemTax)}</td>
+            <td>${fmtMoney(itemTotal)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const docHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+  <meta charset='utf-8'>
+  <title>Order Details</title>
+  <!--[if gte mso 9]>
+  <xml>
+   <w:WordDocument>
+    <w:View>Print</w:View>
+    <w:Zoom>100</w:Zoom>
+    <w:DoNotOptimizeForBrowser/>
+   </w:WordDocument>
+  </xml>
+  <![endif]-->
+  </head>
+<body>
+  <div>
+    <!-- Top Bar: Logo left, Title center -->
+    <table>
+      <tr>
+        <td>
+          <div>ELKEN</div>
+          <div>GLOBAL</div>
+        </td>
+        <td>
+          <h2>Order Details</h2>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Main Content Table -->
+    <table>
+      <tr>
+        <td colspan="2">Member ID</td>
+        <td colspan="5">${memberId}</td>
+      </tr>
+      <tr>
+        <td colspan="2">Member Name</td>
+        <td colspan="5">${memberName}</td>
+      </tr>
+      <tr>
+        <td colspan="2">Shipping Address</td>
+        <td colspan="5">${shippingAddress}</td>
+      </tr>
+      <tr>
+        <td colspan="2">Phone Number</td>
+        <td colspan="5">${phone}</td>
+      </tr>
+      <tr>
+        <td colspan="2">Order No.</td>
+        <td colspan="5">${orderId}</td>
+      </tr>
+      <tr>
+        <td colspan="2">Created At</td>
+        <td colspan="5">${createTime}</td>
+      </tr>
+      
+      <!-- Section Divider Header -->
+      <tr>
+        <td colspan="7">Order Details</td>
+      </tr>
+
+      <!-- Products Table Headers -->
+      <tr>
+        <td>Product ID</td>
+        <td>Product Name</td>
+        <td>Unit Price</td>
+        <td>Qty</td>
+        <td>Tax Rate</td>
+        <td>Amount</td>
+        <td>Total</td>
+      </tr>
+
+      <!-- Item Rows -->
+      ${rowsHtml}
+
+      <!-- Total Summary Row -->
+      <tr>
+        <td colspan="3">Grand Total</td>
+        <td>${sumQty}</td>
+        <td></td>
+        <td>${fmtMoney(sumTax)}</td>
+        <td>${fmtMoney(sumTotal)}</td>
+      </tr>
+    </table>
+
+    <!-- Signature and Date section -->
+    <table>
+      <tr>
+        <td></td>
+        <td>
+          <div><strong>Signature:</strong></div>
+          <div><strong>Date:</strong></div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>`;
+
+      const blob = new Blob(['\ufeff' + docHtml], { type: 'application/msword;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `order_details_${String(order.id || '').replace(/[^A-Za-z0-9_-]/g, '_')}.doc`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      if (window.toast) window.toast('Order details exported as Word document (.doc)', 'success');
+    }
+
+    /* ---------- Member Overview: Bonus + Ecoin KPIs ---------- */
+    function updateMemberOverview() {
+      const mid = (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId)
+        ? window.ProductCatalog.getCurrentMemberId() : null;
+
+      // === Member Bonus ===
+      const orders = (window.ProductCatalog && window.ProductCatalog.getMyOrders) ? window.ProductCatalog.getMyOrders() : [];
+      const ownBV = orders.reduce((s, o) => s + (o.bv || 0), 0);
+      const referralBV = (window.ProductCatalog && window.ProductCatalog.getReferralBVTotal)
+        ? window.ProductCatalog.getReferralBVTotal(mid) : 0;
+      const totalBonus = ownBV + referralBV;
+
+      const bonusEl = document.getElementById('kpiBonus');
+      if (bonusEl) bonusEl.innerHTML = (totalBonus || 0) + '<small> BV</small>';
+      const bonusDelta = document.getElementById('kpiBonusDelta');
+      if (bonusDelta) {
+        if (totalBonus) {
+          const parts = [];
+          if (ownBV) parts.push(`${ownBV} from your orders`);
+          if (referralBV) parts.push(`${referralBV} from referrals`);
+          bonusDelta.textContent = 'Earned ' + parts.join(' · ');
+        } else {
+          bonusDelta.textContent = 'Purchase products to earn points';
+        }
+      }
+      // Bonus breakdown
+      const bd = document.getElementById('kpiBonusBreakdown');
+      const rowsEl = document.getElementById('kpiBonusBreakdownRows');
+      if (bd && rowsEl) {
+        const t = (window.T && typeof window.T === 'function') ? window.T : (c) => c;
+        const rows = [];
+        if (ownBV) rows.push({ label: t('account.bv_self'), val: ownBV });
+        if (referralBV) rows.push({ label: t('account.bv_referral'), val: referralBV });
+        if (!rows.length) {
+          bd.hidden = true;
+          rowsEl.innerHTML = '';
+        } else {
+          bd.hidden = false;
+          rowsEl.innerHTML = rows.map(r => `
+            <div class="kpi-breakdown-row">
+              <span class="kpi-breakdown-label">${r.label}</span>
+              <b class="kpi-breakdown-val">${r.val} BV</b>
+            </div>`).join('');
+        }
+      }
+      const bonusBtn = document.getElementById('bonusHistoryBtn');
+      if (bonusBtn) bonusBtn.style.display = '';
+
+      // === Member Ecoin (mirrors the Bonus card format) ===
+      const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const ecoinTotal = (window.ProductCatalog && window.ProductCatalog.getEcoinTotal)
+        ? window.ProductCatalog.getEcoinTotal(mid) : 0;
+      const ecoinEl = document.getElementById('kpiEcoin');
+      if (ecoinEl) ecoinEl.innerHTML = (ecoinTotal || 0) + '<small> EC</small>';
+
+      // Most recent earn / spend notification → shown in the delta line.
+      const ecoinRecords = (window.ProductCatalog && window.ProductCatalog.getMemberEcoinRecords)
+        ? window.ProductCatalog.getMemberEcoinRecords(mid) : [];
+      const latestEcoin = ecoinRecords.length ? ecoinRecords[ecoinRecords.length - 1] : null;
+
+      const ecoinDelta = document.getElementById('kpiEcoinDelta');
+      if (ecoinDelta) {
+        if (latestEcoin) {
+          const amt = Math.abs(latestEcoin.amount);
+          const verb = latestEcoin.amount >= 0 ? 'Earned' : 'Spent';
+          let src = '';
+          if (latestEcoin.remark) src = latestEcoin.remark;
+          else if (latestEcoin.orderId) src = 'from your orders';
+          ecoinDelta.textContent = `${verb} ${amt}${src ? ' ' + src : ''}`;
+        } else {
+          ecoinDelta.textContent = ecoinTotal ? `Balance: ${ecoinTotal} EC` : 'No ecoin yet';
+        }
+      }
+
+      // Breakdown → detail of the most recent earn / spend.
+      const ecoinBd = document.getElementById('kpiEcoinBreakdown');
+      const ecoinRowsEl = document.getElementById('kpiEcoinBreakdownRows');
+      if (ecoinBd && ecoinRowsEl) {
+        if (latestEcoin) {
+          const sign = latestEcoin.amount >= 0 ? '+' : '';
+          const label = latestEcoin.remark
+            || (latestEcoin.orderId ? 'From your orders' : 'Adjustment');
+          ecoinRowsEl.innerHTML = `
+            <div class="kpi-breakdown-row">
+              <span class="kpi-breakdown-label">${esc(label)}<br><small>${esc(latestEcoin.date)}</small></span>
+              <b class="kpi-breakdown-val">${sign}${latestEcoin.amount} EC</b>
+            </div>`;
+          ecoinBd.hidden = false;
+        } else {
+          ecoinBd.hidden = true;
+          ecoinRowsEl.innerHTML = '';
+        }
+      }
+
+      const ecoinBtn = document.getElementById('ecoinHistoryBtn');
+      if (ecoinBtn) ecoinBtn.style.display = '';
+    }
+
+    /* ---------- Referrals: share link + credited BV ---------- */
+    function renderReferrals() {
+      const mid = (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId)
+        ? window.ProductCatalog.getCurrentMemberId() : null;
+      // 1) Build & show the referral link (?ref=<memberId>)
+      const linkEl = document.getElementById('referralLink');
+      if (linkEl && mid) {
+        try {
+          const url = new URL('index.html', location.href);
+          url.searchParams.set('ref', mid);
+          linkEl.value = url.toString();
+        } catch (e) {
+          linkEl.value = location.origin + location.pathname.replace(/[^/]*$/, '') + 'index.html?ref=' + mid;
+        }
+      }
+      // 2) Totals + list
+      const total = (window.ProductCatalog && window.ProductCatalog.getReferralBVTotal)
+        ? window.ProductCatalog.getReferralBVTotal(mid) : 0;
+      const list = (window.ProductCatalog && window.ProductCatalog.getReferralList)
+        ? window.ProductCatalog.getReferralList(mid) : [];
+      const bvEl = document.getElementById('referralBVTotal');
+      if (bvEl) bvEl.textContent = (total || 0) + ' BV';
+      const cntEl = document.getElementById('referralCount');
+      if (cntEl) cntEl.textContent = list.length;
+      const listEl = document.getElementById('referralList');
+      const emptyEl = document.getElementById('referralEmpty');
+      if (listEl) {
+        if (!list.length) {
+          listEl.innerHTML = '';
+          if (emptyEl) emptyEl.hidden = false;
+        } else {
+          if (emptyEl) emptyEl.hidden = true;
+          listEl.innerHTML = list.map(c => `
+            <div class="referral-row">
+              <div class="referral-row-main">
+                <b>${c.customerName || 'Guest'}</b>
+                <span class="referral-row-sub">${c.orderId || ''} · ${c.date ? new Date(c.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : ''}</span>
+              </div>
+              <b class="referral-row-bv">+${c.bv} BV</b>
+            </div>`).join('');
+        }
+      }
+    }
+
+    /* ---------- Referral link copy / share ---------- */
+    function wireReferralLink() {
+      const linkEl = document.getElementById('referralLink');
+      const copyBtn = document.getElementById('referralCopy');
+      const shareBtn = document.getElementById('referralShare');
+      const toast = (m) => { if (window.toast) window.toast(m, 'success'); };
+      if (copyBtn && linkEl) {
+        copyBtn.addEventListener('click', () => {
+          const text = linkEl.value || '';
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).then(() => toast('Referral link copied')).catch(() => {});
+            } else { linkEl.select(); try { document.execCommand('copy'); } catch (e) {} }
+          } catch (e) {}
+        });
+      }
+      if (shareBtn && linkEl) {
+        shareBtn.addEventListener('click', () => {
+          const text = linkEl.value || '';
+          const shareText = 'Join AquaLife through my referral link: ' + text;
+          try {
+            if (navigator.share) {
+              navigator.share({ title: 'AquaLife', text: shareText }).catch(() => {});
+            } else if (navigator.clipboard) {
+              navigator.clipboard.writeText(shareText).then(() => toast('Referral link copied')).catch(() => {});
+            } else { if (window.toast) window.toast(shareText, 'info'); }
+          } catch (e) {}
+        });
+      }
+    }
+
+    /* ---------- Bind captured referral into this member's relationship ----------
+       When the visitor arrived via a share link (?ref=<memberId>) and then signed
+       in / opened their account, persist that referrer as their bound relationship
+       (referrerId / actualReferrerId) and consume the one-time capture. */
+    function bindCapturedReferrer() {
+      const ref = (window.ProductCatalog && window.ProductCatalog.getReferral)
+        ? window.ProductCatalog.getReferral() : null;
+      if (!ref || !ref.id) return;
+      const mid = (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId)
+        ? window.ProductCatalog.getCurrentMemberId() : null;
+      if (!mid || ref.id === mid) return; // never self-refer
+      try {
+        const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+        md.referrerId = ref.id;
+        md.referrerName = ref.name || md.referrerName || '';
+        md.actualReferrerId = ref.id;
+        md.actualReferrerName = ref.name || md.actualReferrerName || '';
+        localStorage.setItem('al.memberData', JSON.stringify(md));
+        if (window.ProductCatalog && window.ProductCatalog.clearReferral) window.ProductCatalog.clearReferral();
+      } catch (e) {}
+    }
+
+    /* ---------- Country & Bank constants ---------- */
+    const COUNTRIES = [
+      'Nigeria', 'Malaysia', 'Singapore', 'Indonesia', 'Thailand',
+      'Philippines', 'China', 'India', 'United States', 'United Kingdom',
+    ];
+    const NIGERIA_BANKS = [
+      'Access Bank Nigeria Plc', 'First Bank of Nigeria', 'Zenith Bank Plc',
+      'GTBank (Guarantee Trust Bank)', 'UBA (United Bank for Africa)',
+      'Fidelity Bank Plc', 'Stanbic IBTC Bank', 'Ecobank Nigeria',
+      'Union Bank of Nigeria', 'Sterling Bank', 'Wema Bank',
+      'FCMB (First City Monument Bank)', 'Polaris Bank', 'Keystone Bank',
+      'Jaiz Bank', 'SunTrust Bank', 'Parallex Bank', 'Coronation Merchant Bank',
+      'Rand Merchant Bank', 'ARM Merchant Bank',
+    ];
+    const NIGERIA_BANK_BRANCHES = [
+      'Access Bank - Victoria Island', 'Access Bank - Ikeja', 'Access Bank - Marina',
+      'First Bank - Marina', 'First Bank - Victoria Island', 'First Bank - Ikeja',
+      'Zenith Bank - Ajose Adeogun', 'Zenith Bank - Wuse II', 'Zenith Bank - Ikeja',
+      'GTBank - Adeola Odeku', 'GTBank - Awolowo Road', 'GTBank - Wuse II',
+      'UBA - Marina', 'UBA - Adeola Odeku', 'UBA - Wuse II',
+      'Fidelity Bank - Adeola Odeku', 'Fidelity Bank - Ikeja',
+      'Stanbic IBTC - Walter Carrington', 'Stanbic IBTC - Wuse II',
+      'Ecobank - Adeola Odeku', 'Ecobank - Marina',
+      'Union Bank - Marina', 'Union Bank - Victoria Island',
+      'Sterling Bank - Adeola Odeku', 'Wema Bank - Marina',
+      'FCMB - Adeola Odeku', 'Polaris Bank - Adeola Odeku',
+    ];
+
+    /* ---------- Member Info (from AE XLSX) ---------- */
+    function loadMemberInfo() {
+      const u = window.Auth.user;
+      if (!u) return;
+
+      const memberData = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+
+      // Format date as YYYY-MM-DD HH:mm
+      function fmtDateTime(d) {
+        if (!d) return '—';
+        try {
+          const dt = (d instanceof Date) ? d : new Date(d);
+          if (isNaN(dt.getTime())) return '—';
+          const pad = n => String(n).padStart(2, '0');
+          return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+        } catch { return '—'; }
+      }
+
+      // Helper: create a standard read-only field row
+      function field(label, value, badge, i18nKey) {
+        const val = (value === '' || value == null) ? '—' : value;
+        const badgeHtml = badge ? `<span class="badge badge-${badge}">${badge}</span>` : '';
+        const labelAttr = i18nKey ? ` data-i18n="${i18nKey}"` : '';
+        return `<div class="member-field"><span class="member-label"${labelAttr}>${label}</span><span class="member-value">${val} ${badgeHtml}</span></div>`;
+      }
+
+      // Helper: create an editable text field row
+      function fieldEditable(label, value, dataKey, opts, i18nKey) {
+        const val = (value === '' || value == null) ? '—' : value;
+        opts = opts || {};
+        const multiline = opts.multiline ? ' data-multiline="true"' : '';
+        const labelAttr = i18nKey ? ` data-i18n="${i18nKey}"` : '';
+        return `<div class="member-field member-field-editable" data-edit-key="${dataKey}"${multiline}>` +
+          `<span class="member-label"${labelAttr}>${label}</span>` +
+          `<span class="member-value member-value-editable" title="Click to edit">` +
+            `<span class="member-value-text">${val}</span>` +
+            `<span class="member-edit-badge"><span class="ico">✎</span>Editable</span>` +
+          `</span></div>`;
+      }
+
+      // Helper: create a select dropdown field row
+      function fieldSelect(label, value, dataKey, options, i18nKey) {
+        const val = (value === '' || value == null) ? '—' : value;
+        const optsHtml = options.map(o =>
+          `<option value="${o}"${o === val ? ' selected' : ''}>${o}</option>`
+        ).join('');
+        const labelAttr = i18nKey ? ` data-i18n="${i18nKey}"` : '';
+        return `<div class="member-field member-field-select" data-edit-key="${dataKey}">` +
+          `<span class="member-label"${labelAttr}>${label}</span>` +
+          `<span class="member-value member-value-select" title="Click to change">` +
+            `<span class="member-value-text">${val}</span>` +
+            `<span class="member-edit-badge"><span class="ico">✎</span>Editable</span>` +
+          `</span>` +
+          `<select class="member-select" hidden>${optsHtml}</select></div>`;
+      }
+
+      // Basic Identity
+      const basicHtml = [
+        field('Member ID', u.memberId || '—'),
+        fieldEditable('Member Name', memberData.memberName || u.name || '—', 'memberName'),
+        field('Login Status', memberData.loginStatus || 'Allowed', memberData.loginStatus === 'Allowed' ? 'ok' : 'info'),
+        field('Status', memberData.status || 'Active', memberData.status === 'Active' ? 'ok' : 'info'),
+        fieldSelect('Country', memberData.country || 'Nigeria', 'country', COUNTRIES),
+        field('Join Date', fmtDateTime(memberData.joinDate)),
+        field('Join Period', memberData.joinPeriod ? `#${memberData.joinPeriod}` : '—'),
+      ].join('');
+      document.getElementById('memberBasicFields').innerHTML = basicHtml;
+
+      // Membership Level & Stars
+      const levelHtml = [
+        field('Current Level', memberData.currentLevel || 'Silver'),
+        field('Level Adjustment Date', fmtDateTime(memberData.levelAdjustDate)),
+        field('Settlement Level', memberData.settlementLevel || 'Silver'),
+        field('Highest Management Star', memberData.highestMgmtStar || 'None'),
+        field('Latest Management Star', memberData.latestMgmtStar || 'None'),
+        field('Highest Elite Level', memberData.highestElite || 'N/A'),
+        field('Latest Elite Level', memberData.latestElite || 'N/A'),
+      ].join('');
+      document.getElementById('memberLevelFields').innerHTML = levelHtml;
+
+      // Referral Network
+      const referralHtml = [
+        field('Referrer ID', memberData.referrerId || '—'),
+        field('Referrer Name', memberData.referrerName || '—'),
+        field('Actual Referrer ID', memberData.actualReferrerId || '—'),
+        field('Actual Referrer Name', memberData.actualReferrerName || '—'),
+      ].join('');
+      document.getElementById('memberReferralFields').innerHTML = referralHtml;
+
+      // Reporting Center
+      const reportingHtml = [
+        field('Reporting Center ID', memberData.reportingCenterId || '—'),
+        field('Is Reporting Center', memberData.isReportingCenter === 'Yes' ? 'Yes' : 'No', memberData.isReportingCenter === 'Yes' ? 'ok' : 'neutral'),
+        field('Show Chart', memberData.showChart === 'Yes' ? 'Yes' : 'No'),
+        field('Show Recharge', memberData.showRecharge === 'Yes' ? 'Yes' : 'No'),
+        field('Reporting Center Level', memberData.reportingCenterLevel || '—'),
+      ].join('');
+      document.getElementById('memberReportingFields').innerHTML = reportingHtml;
+
+      // Bank Information — all three fields editable
+      const bankHtml = [
+        fieldSelect('Bank Branch', memberData.bankBranch || '—', 'bankBranch', NIGERIA_BANK_BRANCHES, 'mbank_bank_branch'),
+        fieldEditable('Bank Name', memberData.bankName || '—', 'bankName', null, 'mbank_bank_name'),
+        fieldEditable('Bank Account', memberData.bankAccount ? String(memberData.bankAccount) : '—', 'bankAccount', null, 'mbank_bank_account'),
+      ].join('');
+      document.getElementById('memberBankFields').innerHTML = bankHtml;
+
+      // Transfer & Settings — Address is editable textarea
+      const transferHtml = [
+        fieldEditable('Common Address', memberData.commonAddress || '—', 'commonAddress', { multiline: true }),
+        field('Transfer Function', memberData.transferEnabled === '开启' || memberData.transferEnabled === 'Enabled' ? 'Enabled' : 'Disabled', memberData.transferEnabled === '开启' ? 'ok' : 'warn'),
+      ].join('');
+      document.getElementById('memberTransferFields').innerHTML = transferHtml;
+
+      // Wire up inline editing for editable fields and select fields
+      wireMemberFieldEditing();
+    }
+
+    /* ---------- Wire inline editing for member fields ---------- */
+    function wireMemberFieldEditing() {
+      // Handle select fields (click to open dropdown)
+      document.querySelectorAll('.member-field-select').forEach(row => {
+        const valueEl = row.querySelector('.member-value-select');
+        const textEl = valueEl.querySelector('.member-value-text');
+        const select = row.querySelector('.member-select');
+        if (!valueEl || !select || row.dataset.wired) return;
+        row.dataset.wired = '1';
+
+        valueEl.addEventListener('click', (e) => {
+          if (e.target.closest('.member-edit-badge')) return; // ignore clicks on the marker
+          document.querySelectorAll('.member-field-select.open').forEach(r => {
+            if (r !== row) { r.classList.remove('open'); const s = r.querySelector('.member-select'); if (s) s.hidden = true; }
+          });
+          const isOpen = row.classList.toggle('open');
+          select.hidden = !isOpen;
+          if (isOpen) {
+            const currentVal = (textEl.textContent || '').trim();
+            for (const opt of select.options) {
+              if (opt.value === currentVal) { select.value = currentVal; break; }
+            }
+            select.focus();
+          }
+        });
+
+        select.addEventListener('change', () => {
+          const newVal = select.value;
+          if (textEl) textEl.textContent = newVal; // preserve the Editable badge
+          row.classList.remove('open');
+          select.hidden = true;
+          saveMemberField(row.dataset.editKey, newVal);
+          document.querySelectorAll('.member-field-select.open').forEach(r => { if (r !== row) { r.classList.remove('open'); const s = r.querySelector('.member-select'); if (s) s.hidden = true; } });
+        });
+
+        select.addEventListener('blur', () => {
+          setTimeout(() => {
+            row.classList.remove('open');
+            select.hidden = true;
+          }, 150);
+        });
+      });
+
+      // Handle editable text fields (click to edit)
+      document.querySelectorAll('.member-field-editable').forEach(row => {
+        const valueEl = row.querySelector('.member-value-editable');
+        const textEl = valueEl.querySelector('.member-value-text');
+        if (!valueEl || !textEl || row.dataset.wired) return;
+        row.dataset.wired = '1';
+
+        valueEl.addEventListener('click', (e) => {
+          if (e.target.closest('.member-edit-badge')) return; // ignore clicks on the marker
+          if (row.classList.contains('editing')) return;
+          row.classList.add('editing');
+          const isMultiline = row.dataset.multiline === 'true';
+          const currentVal = (textEl.textContent.trim() === '—' || textEl.textContent.trim() === '') ? '' : textEl.textContent.trim();
+          let input;
+          if (isMultiline) {
+            input = document.createElement('textarea');
+            input.rows = 3;
+            input.style.width = '100%';
+          } else {
+            input = document.createElement('input');
+            input.type = 'text';
+            input.style.width = '100%';
+          }
+          input.className = 'member-edit-input';
+          input.value = currentVal;
+          textEl.textContent = '';
+          textEl.appendChild(input);
+          input.focus();
+          input.select();
+
+          const finishEdit = (save) => {
+            if (!row.classList.contains('editing')) return;
+            const newVal = (input.value || '').trim();
+            row.classList.remove('editing');
+            if (save) {
+              textEl.textContent = newVal || '—';
+              saveMemberField(row.dataset.editKey, newVal);
+            } else {
+              textEl.textContent = currentVal || '—';
+            }
+          };
+
+          input.addEventListener('blur', () => finishEdit(true));
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !isMultiline) { e.preventDefault(); finishEdit(true); }
+            else if (e.key === 'Escape') { e.preventDefault(); finishEdit(false); }
+          });
+        });
+      });
+    }
+
+    /* ---------- Save a single member field & sync ---------- */
+    function saveMemberField(key, value) {
+      const memberData = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+      memberData[key] = value;
+      localStorage.setItem('al.memberData', JSON.stringify(memberData));
+
+      if (key === 'memberName') {
+        const u = window.Auth.user;
+        if (u) {
+          u.name = value || u.name;
+          u.firstName = (value || '').split(/\s+/)[0] || u.firstName;
+          window.Auth.user = u;
+        }
+        syncHeader();
+      }
+
+      window.dispatchEvent(new CustomEvent('al:memberchange', { detail: { key, value } }));
+      window.toast('Saved', 'success');
+    }
+
+    /* ---------- Init member data from XLSX (demo) ---------- */
+    function initMemberDataFromXLSX() {
+      // This simulates loading the AE XLSX data for the current member
+      // In production, this would come from an API call
+      const u = window.Auth.user;
+      if (!u) return;
+
+      const existing = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+      // Seed if empty, or migrate from old version (S4/123 defaults)
+      const needsMigration = existing._schemaVersion !== 2;
+      if (Object.keys(existing).length === 0 || needsMigration) {
+        const seed = {
+          memberName: 'Amara Okafor',
+          loginStatus: 'Allowed',
+          status: 'Active',
+          country: 'Nigeria',
+          joinDate: '2026-06-03T08:52:21',
+          joinPeriod: 172,
+          currentLevel: 'Silver',
+          levelAdjustDate: null,
+          settlementLevel: 'Silver',
+          highestMgmtStar: 'None',
+          latestMgmtStar: 'None',
+          highestElite: 'N/A',
+          latestElite: 'N/A',
+          referrerId: 'NG27187710',
+          referrerName: 'S2',
+          actualReferrerId: 'NG27187710',
+          actualReferrerName: 'S2',
+          reportingCenterId: 'NG66051653',
+          isReportingCenter: 'No',
+          showChart: 'Yes',
+          showRecharge: 'Yes',
+          reportingCenterLevel: 'Level 5',
+          bankBranch: 'Access Bank - Victoria Island',
+          bankName: 'Access Bank Nigeria Plc',
+          bankAccount: '36545355225',
+          commonAddress: '14, Admiralty Way, Victoria Island, Lagos, Nigeria',
+          transferEnabled: 'Enabled',
+          _schemaVersion: 2,
+        };
+        // Preserve any user-edited fields from existing data
+        if (needsMigration && Object.keys(existing).length > 0) {
+          ['memberName', 'country', 'bankBranch', 'bankName', 'bankAccount', 'commonAddress'].forEach(k => {
+            if (existing[k] && existing[k] !== 'S4' && existing[k] !== '123') {
+              seed[k] = existing[k];
+            }
+          });
+        }
+        localStorage.setItem('al.memberData', JSON.stringify(seed));
+      }
     }
 
     /* ---------- Tab switching ---------- */
@@ -597,33 +2032,41 @@
       document.querySelectorAll('#dashTabs a[data-tab]').forEach(a => {
         a.classList.toggle('active', a.dataset.tab === name);
       });
-      if (name === 'orders') renderOrders();
+      if (name === 'orders') {
+        renderOrders();
+      }
       if (name === 'profile') {
+        renderProfileBasicBar();
         loadProfileForm();
         setProfileMode('view');
         renderAddresses();
         loadPrefs();
       }
-      if (name === 'overview') renderOverviewLatest();
+      if (name === 'sponsor') {
+        renderSponsorNetwork();
+      }
     }
 
     function currentView() {
-      const hash = (location.hash || '#overview').replace('#', '');
-      return ['overview', 'orders', 'profile'].includes(hash) ? hash : 'overview';
+      const hash = (location.hash || '#overview').replace(/^#/, '').replace(/[?#].*$/, '');
+      return ['overview', 'orders', 'profile', 'sponsor'].includes(hash) ? hash : 'overview';
     }
 
     /* ---------- Header sync ---------- */
     function syncHeader() {
       const u = window.Auth.user;
       if (!u) return;
-      const initials = (u.name || u.firstName || '?').split(/\s+/).map(s => s[0]).slice(0, 2).join('').toUpperCase();
+      const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+      const displayName = md.memberName || u.name || u.firstName || '—';
+      const initials = (displayName || '?').split(/\s+/).map(s => s[0]).slice(0, 2).join('').toUpperCase();
       const av = document.getElementById('dashAvatar');
       if (av) av.textContent = initials || 'A';
+      const nameEl = document.getElementById('dashName');
+      if (nameEl) nameEl.textContent = displayName;
       const sub = document.getElementById('dashSubtitle');
       if (sub) {
-        const since = window.fmtDate(u.signedInAt || Date.now());
-        const verified = u.verified !== false ? ` · ${window.T.tr('account.profile_verified')} ✓` : '';
-        sub.textContent = `${u.name || '—'} · ${window.T.tr('account.profile_member_since', { date: since })}${verified}`;
+        const memberId = u.memberId || (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId ? window.ProductCatalog.getCurrentMemberId() : null) || '—';
+        sub.textContent = 'Member ID: ' + memberId;
       }
     }
 
@@ -637,10 +2080,48 @@
       }
 
       syncHeader();
-      seedDemoOrders();
-      // Safety: ensure address editor is closed on arrival (e.g. from agreement.html)
-      closeAddressEditor();
+      // clear legacy orders not tied to any account, then show this account's orders
+      if (window.ProductCatalog && window.ProductCatalog.pruneOrphanOrders) {
+        window.ProductCatalog.pruneOrphanOrders();
+      }
+      // Initialize member data from XLSX
+      initMemberDataFromXLSX();
+      // Bind any referral captured from a share link (?ref=) into this member's relationship
+      bindCapturedReferrer();
+      // First-run demo: seed an illustrative ecoin ledger for this member (idempotent).
+      if (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId) {
+        const eMid = window.ProductCatalog.getCurrentMemberId();
+        if (eMid) seedDemoEcoin(eMid);
+      }
+      updateMemberOverview();
+      renderReferrals();
+      wireReferralLink();
       showView(currentView());
+
+      // Sponsor Network confirm button
+      const snConfirm = document.getElementById('snConfirmBtn');
+      if (snConfirm) {
+        snConfirm.addEventListener('click', () => {
+          renderSponsorNetwork();
+          window.toast('Sponsor network updated.', 'success');
+        });
+      }
+
+      // Sponsor Network / Sponsor Network Ex 切换
+      document.querySelectorAll('.sn-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (btn.classList.contains('active')) return;
+          document.querySelectorAll('.sn-mode-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          snMode = btn.dataset.mode === 'ex' ? 'ex' : 'normal';
+          renderSponsorNetwork();
+        });
+      });
+
+      // Re-render BV when orders change (e.g. after placing a new order in another tab)
+      window.addEventListener('al:orderschange', updateMemberOverview);
+      // Keep the "Member ID:" label in sync with the active language
+      window.addEventListener('al:langchange', syncHeader);
 
       // Tab clicks
       document.getElementById('dashTabs').addEventListener('click', e => {
@@ -664,6 +2145,16 @@
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
+      // Hub grid cells with data-tab-target switch to the target tab view
+      document.getElementById('hubGrid')?.addEventListener('click', e => {
+        const cell = e.target.closest('.hub-cell[data-tab-target]');
+        if (!cell) return;
+        e.preventDefault();
+        const v = cell.dataset.tabTarget;
+        history.replaceState(null, '', '#' + v);
+        showView(v);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
       window.addEventListener('hashchange', () => showView(currentView()));
 
       // Logout
@@ -679,25 +2170,61 @@
       document.getElementById('profileForm').addEventListener('submit', e => {
         e.preventDefault();
         const form = e.currentTarget;
+        const pc = window.ProductCatalog || {};
+        // Member ID: 会员编号格式 NG+8 位数字
+        const memberId = (form.memberId ? form.memberId.value.trim() : (document.getElementById('pfMemberId').value || '')).trim().toUpperCase();
+        if (!/^NG\d{8}$/.test(memberId)) {
+          const msg = window.T.tr('account.profile_member_id_invalid');
+          window.toast((msg && msg !== 'account.profile_member_id_invalid') ? msg : 'Member ID must be NG + 8 digits (e.g. NG12345678).', 'danger');
+          return;
+        }
+        const countryCode = (form.country ? form.country.value : document.getElementById('pfCountry').value || '').trim();
+        if (!countryCode) {
+          window.toast(window.T.tr('account.profile_country_ph') || 'Please select a country.', 'danger');
+          return;
+        }
+        const memberName = (form.memberName ? form.memberName.value.trim() : (document.getElementById('pfMemberName').value || '')).trim();
+        const email = (form.email ? form.email.value : '').trim();
+        const phone = (pc.readPhone ? pc.readPhone(form, 'phone') : (form.querySelector('[name="phone"]') || {}).value || '').trim();
+
+        // 1) Update al.profile (still used for prefs/address defaults; drop legacy nin)
+        const existingP = window.AL.loadProfile() || {};
         const p = {
-          ...(window.AL.loadProfile() || {}),
-          name: form.name.value.trim(),
-          email: form.email.value.trim(),
-          phone: form.phone.value.trim(),
-          type: form.type.value,
+          ...existingP,
+          name: memberName,
+          email,
+          phone,
         };
+        delete p.nin;
         window.AL.saveProfile(p);
-        // mirror to Auth.user so the header updates too
+
+        // 2) Update al.memberData — authoritative fields used across overview / basic info bar / syncHeader
+        const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+        md.memberId = memberId;
+        md.memberName = memberName;
+        md.email = email;
+        md.phone = phone;
+        md.country = countryCode;
+        localStorage.setItem('al.memberData', JSON.stringify(md));
+
+        // 3) Mirror to Auth.user so the header / subaccount checks update too
         const u = window.Auth.user; if (u) {
-          u.name = p.name; u.email = p.email; u.phone = p.phone; u.type = p.type; u.firstName = p.name.split(/\s+/)[0] || u.firstName;
+          u.memberId = memberId;
+          u.name = memberName;
+          u.firstName = memberName.split(/\s+/)[0] || u.firstName;
+          u.email = email;
+          u.phone = phone;
+          delete u.nin;
           window.Auth.user = u;
         }
         syncHeader();
+        // Refresh basic info bar if member id/name/level-related fields change
+        renderProfileBasicBar();
         setProfileMode('view');
         window.toast(window.T.tr('account.profile_save_ok'), 'success');
       });
 
-      // Password change
+      // Password change (Login password sub-block)
       document.getElementById('pwdForm').addEventListener('submit', e => {
         e.preventDefault();
         const form = e.currentTarget;
@@ -706,6 +2233,74 @@
         window.toast(window.T.tr('account.profile_pwd_changed'), 'success');
         form.reset();
       });
+
+      // Payment password sub-block (支付密码): 原密码 / 新密码 / 重复新密码 / 保存
+      document.getElementById('payPwdForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const oldP = form.oldPay.value || '';
+        const newP = form.newPay.value || '';
+        const cfmP = form.confirmPay.value || '';
+        const t = (k, fb) => { const v = window.T.tr(k); return (v && v !== k) ? v : fb; };
+        // First-time: if no password has been set (no Auth.user.payPasswordSalted), allow empty old password.
+        const u = window.Auth.user || {};
+        const hasPayPwd = !!u.payPassword || !!u.payPasswordSalted;
+        if (!hasPayPwd && oldP !== '') {
+          // No-op: user might not know; let them proceed if blank old, otherwise check.
+        }
+        if (!hasPayPwd && oldP !== '') {
+          window.toast(t('account.profile_pay_first_time', 'Payment password has not been set yet. Leave "Old password" blank to set it now.'), 'info');
+        }
+        if (newP.length < 6) {
+          window.toast(t('account.profile_pay_too_short', 'Payment password must be at least 6 characters.'), 'danger');
+          return;
+        }
+        if (newP !== cfmP) {
+          window.toast(t('account.profile_pay_mismatch', 'New passwords do not match.'), 'danger');
+          return;
+        }
+        // Verify old password (simple hash-based match, for local demo only)
+        if (hasPayPwd) {
+          const oldHash = u.payPasswordSalted || String(u.payPassword || '');
+          // Extremely simple hash (demo / non-crypto, page has no backend).
+          const inputHash = simpleHash(oldP || '');
+          if (oldHash !== inputHash) {
+            window.toast(t('account.profile_pay_wrong_old', 'Old payment password is incorrect.'), 'danger');
+            return;
+          }
+        } else if (oldP) {
+          // No password set but user still typed old — warn but still let them set (do not block).
+          window.toast(t('account.profile_pay_first_time', 'Payment password has not been set. Leave "Old password" blank to set it now.'), 'info');
+        }
+        // Save — simple salted hash stored in Auth.user (mirrored to storage).
+        const stored = simpleHash(newP);
+        const user2 = window.Auth.user || {};
+        user2.payPasswordSalted = stored;
+        delete user2.payPassword; // never store raw
+        window.Auth.user = user2;
+        // Save to profile storage as well (demo / offline consistency)
+        try {
+          const raw = JSON.parse(localStorage.getItem('al.auth.user') || '{}');
+          raw.payPasswordSalted = stored;
+          delete raw.payPassword;
+          localStorage.setItem('al.auth.user', JSON.stringify(raw));
+        } catch(e) {}
+        window.toast(t('account.profile_pay_saved', 'Payment password saved.'), 'success');
+        form.reset();
+      });
+
+      /** Simple demo-only hash (NOT secure, local-only fallback). */
+      function simpleHash(s) {
+        if (s == null) return 'h:';
+        s = String(s);
+        let h1 = 2166136261, h2 = 1469598103934665603 % 0xffffffff;
+        for (let i = 0; i < s.length; i++) {
+          h1 ^= s.charCodeAt(i);
+          h1 = Math.imul(h1, 16777619);
+          h2 = Math.imul(h2 ^ s.charCodeAt(i), 1099511628211 % 0xffffffff);
+        }
+        return 'h:' + ((h1 >>> 0).toString(36)) + '.' + ((h2 >>> 0).toString(36));
+      }
 
       // Addresses
       document.getElementById('addrAddBtn').addEventListener('click', () => openAddressEditor(null));
@@ -733,14 +2328,15 @@
       document.getElementById('addrForm').addEventListener('submit', e => {
         e.preventDefault();
         const f = e.currentTarget;
+        const pc = window.ProductCatalog || {};
         const data = {
           id: f.id.value || undefined,
-          label: f.label.value.trim() || 'Home',
           recipient: f.recipient.value.trim(),
-          phone: f.phone.value.trim(),
+          phone: (pc.readPhone ? pc.readPhone(f, 'phone') : (f.querySelector('[name="phone"]') || {}).value || '').trim(),
+          region: f.region.value,
           street: f.street.value.trim(),
           city: f.city.value.trim(),
-          state: f.state.value.trim(),
+          district: f.district.value.trim(),
           isDefault: f.isDefault.checked,
         };
         window.AL.upsertAddress(data);
@@ -749,15 +2345,1221 @@
         window.toast(window.T.tr('account.profile_addr_saved'), 'success');
       });
 
-      // Preferences
+      // Preferences & Language Chips
+      document.querySelectorAll('#prefsForm .lang-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const val = card.dataset.langVal;
+          const select = document.getElementById('pfLang');
+          if (select) select.value = val;
+          document.querySelectorAll('#prefsForm .lang-card').forEach(c => c.classList.toggle('is-active', c === card));
+        });
+      });
+      document.getElementById('pfLang')?.addEventListener('change', (e) => {
+        const val = e.target.value;
+        document.querySelectorAll('#prefsForm .lang-card').forEach(c => c.classList.toggle('is-active', c.dataset.langVal === val));
+      });
+
       document.getElementById('prefsSaveBtn').addEventListener('click', () => {
         const form = document.getElementById('prefsForm');
         const p = {};
-        ['email','sms','wa','billing','marketing'].forEach(k => p[k] = !!form[k].checked);
+        ['email','sms','wa'].forEach(k => p[k] = !!form[k].checked);
+        const newLang = (form.lang && form.lang.value) || 'en';
+        p.lang = newLang;
         window.AL.savePrefs(p);
+        const prevLang = (window.T && window.T.current) || 'en';
+        if (window.T && newLang !== prevLang) window.T.switchLang(newLang);
         window.toast(window.T.tr('account.profile_save_ok'), 'success');
       });
+
+      // React to language changes (T.switchLang dispatches al:langchange) — re-render this page's own dynamic blocks + i18n
+      window.addEventListener('al:langchange', () => {
+        applyI18n();
+        // Refresh form labels/placeholder after lang change
+        renderProfileBasicBar();
+        // Profile info: re-render country select (i18n labels) + member id placeholder
+        loadProfileForm();
+        loadPrefs();
+        renderAddresses();
+        renderOrders();
+        renderMemberOverview && renderMemberOverview();
+        syncHeader();
+      });
     });
+
+    /* ---------- Demo seed data for trading record modals ---------- */
+    function seedBonusDemoRecords(mid) {
+      const now = Date.now();
+      const day = 86400000;
+      const fmt = d => d.toLocaleDateString('en-GB') + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      const entries = [
+        { date: new Date(now - 5 * day), amount: 30, type: 'credit', remark: `Order ORD-${mid.slice(-4)}A — Calmag×2` },
+        { date: new Date(now - 4 * day), amount: 20, type: 'credit', remark: `Order ORD-${mid.slice(-4)}B — Bio Pure N200` },
+        { date: new Date(now - 3 * day), amount: 40, type: 'credit', remark: `Referral bonus — Fauzia Yunus Shehu (NG23374876)` },
+        { date: new Date(now - 2 * day), amount: 15, type: 'credit', remark: `Order ORD-${mid.slice(-4)}C — Elcafe×3` },
+        { date: new Date(now - 1 * day), amount: 25, type: 'credit', remark: `Referral bonus — Amara Okafor (NG09246375)` },
+      ];
+      let bal = 0;
+      return entries.map(e => { bal += e.amount; return { ...e, preBalance: bal - e.amount, postBalance: bal }; });
+    }
+    function seedEcoinDemoRecords(mid) {
+      const now = Date.now();
+      const day = 86400000;
+      const fmt = d => d.toLocaleDateString('en-GB') + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      const entries = [
+        { date: new Date(now - 4 * day), amount: 500, type: 'credit', remark: 'Welcome bonus — new member registration' },
+        { date: new Date(now - 3 * day), amount: -100, type: 'debit', remark: 'Redeemed for product discount' },
+        { date: new Date(now - 2 * day), amount: 200, type: 'credit', remark: 'Monthly loyalty bonus' },
+        { date: new Date(now - 1 * day), amount: -50, type: 'debit', remark: 'Redeemed for shipping fee waiver' },
+      ];
+      let bal = 0;
+      return entries.map(e => { bal += e.amount; return { ...e, preBalance: bal - e.amount, postBalance: bal }; });
+    }
+
+    /* ---------- Helper: build a trading-record modal ---------- */
+    function createTradingRecordModal({ btnId, modalId, title, columns, loadRecords }) {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+
+      const thHeaders = columns.map(c => `<th>${c.header}</th>`).join('');
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.id = modalId;
+      modal.innerHTML = `
+        <div class="modal-panel">
+          <div class="modal-head">
+            <h3>${title}</h3>
+            <button type="button" class="modal-close" data-close>&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="modal-filter-bar">
+              <input type="date" id="${modalId}-start" title="Start date">
+              <input type="date" id="${modalId}-end" title="End date">
+              ${columns.find(c => c.key === 'type') ? `<select id="${modalId}-type">
+                <option value="">All Trans Type</option>
+                <option value="credit">Credit</option>
+                <option value="debit">Debit</option>
+              </select>` : ''}
+              <input type="text" id="${modalId}-remark" placeholder="Remark">
+            </div>
+            <div class="modal-table-wrap">
+              <table class="modal-table">
+                <thead><tr>${thHeaders}</tr></thead>
+                <tbody id="${modalId}-body"><tr><td colspan="${columns.length}" class="modal-empty">Loading…</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <button type="button" class="ek-btn ek-btn--sm" id="${modalId}-reset">Reset</button>
+            <button type="button" class="ek-btn ek-btn--sm ek-btn--primary" id="${modalId}-select">Select</button>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+
+      const tbody = modal.querySelector(`#${modalId}-body`);
+      let allRecords = [];
+
+      function openModal() {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        if (!allRecords.length) loadRecords();
+        else renderTable(filterRecords(allRecords));
+      }
+      function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+      function filterRecords(records) {
+        const s = modal.querySelector('#' + modalId + '-start').value;
+        const e = modal.querySelector('#' + modalId + '-end').value;
+        const type = modal.querySelector('#' + modalId + '-type')?.value || '';
+        const remark = modal.querySelector('#' + modalId + '-remark').value.trim().toLowerCase();
+        return records.filter(r => {
+          if (s && r.date < s) return false;
+          if (e && r.date > e) return false;
+          if (type && r.type !== type) return false;
+          if (remark && !((r.remark || '').toLowerCase().includes(remark))) return false;
+          return true;
+        });
+      }
+      function fmt(v) { return v == null ? '—' : Number(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+      function renderTable(records) {
+        if (!records.length) { tbody.innerHTML = `<tr><td colspan="${columns.length}" class="modal-empty">No Data</td></tr>`; return; }
+        tbody.innerHTML = records.map(r => `<tr>${columns.map(c => {
+          let val = c.render ? c.render(r) : (r[c.key] ?? '—');
+          const cls = [`mono`.concat(c.right ? ' right' : ''), c.amtClass && r.amount >= 0 ? 'amt-pos' : '', c.amtClass && r.amount < 0 ? 'amt-neg' : ''].filter(Boolean).join(' ');
+          return `<td${cls ? ` class="${cls}"` : ''}>${val}</td>`;
+        }).join('')}</tr>`).join('');
+      }
+
+      btn.addEventListener('click', openModal);
+      modal.querySelector('[data-close]').addEventListener('click', closeModal);
+      modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+      modal.querySelector('#' + modalId + '-reset').addEventListener('click', () => {
+        modal.querySelector('#' + modalId + '-start').value = '';
+        modal.querySelector('#' + modalId + '-end').value = '';
+        const typeSel = modal.querySelector('#' + modalId + '-type');
+        if (typeSel) typeSel.value = '';
+        modal.querySelector('#' + modalId + '-remark').value = '';
+        renderTable(filterRecords(allRecords));
+      });
+      modal.querySelector('#' + modalId + '-select').addEventListener('click', () => {
+        closeModal();
+      });
+      [modalId + '-start', modalId + '-end', modalId + '-remark'].forEach(id => {
+        const el = modal.querySelector('#' + id);
+        if (el) { el.addEventListener('input', () => renderTable(filterRecords(allRecords))); el.addEventListener('change', () => renderTable(filterRecords(allRecords))); }
+      });
+      const typeEl = modal.querySelector('#' + modalId + '-type');
+      if (typeEl) { typeEl.addEventListener('change', () => renderTable(filterRecords(allRecords))); }
+    }
+
+    /* ---------- Member Bonus Trading Record Modal ---------- */
+    createTradingRecordModal({
+      btnId: 'bonusHistoryBtn',
+      modalId: 'bonusHistoryModal',
+      title: 'Member Bonus Trading Record',
+      columns: [
+        { key: 'date', header: 'Trans Date', right: true },
+        { key: 'type', header: 'Trans Type', render: r => `<span class="type-badge ${r.type}">${r.type === 'credit' ? 'Credit' : 'Debit'}</span>` },
+        { key: 'preBalance', header: 'Pre Trans Balance', right: true, render: r => fmt(r.preBalance) },
+        { key: 'postBalance', header: 'Post Trans Balance', right: true, render: r => fmt(r.postBalance) },
+        { key: 'amount', header: 'Trans Amount', right: true, amtClass: true, render: r => `${r.amount >= 0 ? '+' : ''}${fmt(r.amount)}` },
+        { key: 'remark', header: 'Remark' },
+      ],
+      loadRecords: function() {
+        const mid = (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId) ? window.ProductCatalog.getCurrentMemberId() : null;
+        if (!mid) { document.getElementById('bonusHistoryModal-body').innerHTML = '<tr><td colspan="6" class="modal-empty">Please log in first.</td></tr>'; return; }
+        let records = (window.ProductCatalog && window.ProductCatalog.getMemberBVRecords)
+          ? window.ProductCatalog.getMemberBVRecords(mid.trim()) : [];
+        if (!records.length) records = seedBonusDemoRecords(mid.trim());
+        allRecords = records;
+        renderTable(filterRecords(allRecords));
+      }
+    });
+
+    /* ---------- Member Ecoin Trading Record Modal ---------- */
+    createTradingRecordModal({
+      btnId: 'ecoinHistoryBtn',
+      modalId: 'ecoinHistoryModal',
+      title: 'Member Ecoin Trading Record',
+      columns: [
+        { key: 'date', header: 'Trans Date', right: true },
+        { key: 'preBalance', header: 'Pre Trans Balance', right: true, render: r => fmt(r.preBalance) },
+        { key: 'postBalance', header: 'Post Trans Balance', right: true, render: r => fmt(r.postBalance) },
+        { key: 'amount', header: 'Trans Amount', right: true, amtClass: true, render: r => `${r.amount >= 0 ? '+' : ''}${fmt(r.amount)}` },
+        { key: 'remark', header: 'Remark' },
+      ],
+      loadRecords: function() {
+        const mid = (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId) ? window.ProductCatalog.getCurrentMemberId() : null;
+        if (!mid) { document.getElementById('ecoinHistoryModal-body').innerHTML = '<tr><td colspan="5" class="modal-empty">Please log in first.</td></tr>'; return; }
+        let records = (window.ProductCatalog && window.ProductCatalog.getMemberEcoinRecords)
+          ? window.ProductCatalog.getMemberEcoinRecords(mid.trim()) : [];
+        if (!records.length) records = seedEcoinDemoRecords(mid.trim());
+        allRecords = records;
+        renderTable(filterRecords(allRecords));
+      }
+    });
+
+    /* ---------- Previous Bonus: Period List Modal ---------- */
+    function createBonusPeriodModal() {
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.id = 'bonusPeriodModal';
+      modal.innerHTML = `
+        <div class="modal-panel">
+          <div class="modal-head">
+            <h3>Previous Bonus — Historical Periods</h3>
+            <button type="button" class="modal-close" data-close>&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="modal-table-wrap">
+              <table class="bonus-period-table">
+                <thead>
+                  <tr>
+                    <th>Pay Cycle</th>
+                    <th class="right">Elite Bonus</th>
+                    <th class="right">Pro Elite Bonus</th>
+                    <th class="right">Super Elite Bonus</th>
+                    <th class="right">Stockist Bonus</th>
+                    <th class="right">LeaderShip Bonus</th>
+                    <th class="right">Welcome Bonus</th>
+                    <th class="right">Car Bonus</th>
+                    <th class="right">Performance Bonus</th>
+                    <th class="right">Builder Bonus</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="bonusPeriodBody"><tr><td colspan="11" class="modal-empty">Loading…</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      modal.querySelector('[data-close]').addEventListener('click', closeModal);
+      modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+      window.__closeBonusPeriodModal = closeModal;
+    }
+    createBonusPeriodModal();
+
+    function openPeriodBonusList() {
+      const mid = (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId)
+        ? window.ProductCatalog.getCurrentMemberId() : null;
+      if (!mid) {
+        alert('Please log in first to view bonus history.');
+        return;
+      }
+      const body = document.getElementById('bonusPeriodBody');
+      const records = seedPeriodBonusDemoRecords(mid.trim());
+      body.innerHTML = records.map(r => `
+        <tr>
+          <td class="period-num">${r.cycle}</td>
+          <td class="right">${fmtNum(r.elite)}</td>
+          <td class="right">${fmtNum(r.proElite)}</td>
+          <td class="right">${fmtNum(r.superElite)}</td>
+          <td class="right">${fmtNum(r.stockist)}</td>
+          <td class="right">${fmtNum(r.leadership)}</td>
+          <td class="right">${fmtNum(r.welcome)}</td>
+          <td class="right">${fmtNum(r.car)}</td>
+          <td class="right">${fmtNum(r.performance)}</td>
+          <td class="right">${fmtNum(r.builder)}</td>
+          <td><button type="button" class="ek-btn ek-btn--sm ek-btn--primary" onclick="openPeriodBonusDetail(${r.cycle})">View</button></td>
+        </tr>
+      `).join('');
+      document.getElementById('bonusPeriodModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    /* ---------- Period Bonus Detail Modal ---------- */
+    function createBonusDetailModal() {
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.id = 'bonusDetailModal';
+      modal.innerHTML = `
+        <div class="modal-panel">
+          <div class="modal-head">
+            <h3 id="bonusDetailTitle">Period Bonus Detail</h3>
+            <button type="button" class="modal-close" data-close>&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="bonus-detail-grid" id="bonusDetailBody"></div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      modal.querySelector('[data-close]').addEventListener('click', closeModal);
+      modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+      window.__closeBonusDetailModal = closeModal;
+    }
+    createBonusDetailModal();
+
+    function openPeriodBonusDetail(cycle) {
+      const mid = (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId)
+        ? window.ProductCatalog.getCurrentMemberId() : null;
+      const records = seedPeriodBonusDemoRecords(mid ? mid.trim() : 'NG00000000');
+      const rec = records.find(r => r.cycle === cycle);
+      if (!rec) return;
+
+      document.getElementById('bonusDetailTitle').textContent = `Period ${cycle} Bonus`;
+      const fields = [
+        { label: 'Member Code', value: rec.memberId },
+        { label: 'Member Level', value: rec.level, highlight: true },
+        { label: 'Highest Director', value: rec.highestDirector },
+        { label: 'Elite Level', value: rec.eliteLevel },
+        { label: 'Elite Bonus', value: rec.elite },
+        { label: 'Pro Elite Bonus', value: rec.proElite },
+        { label: 'Super Elite Bonus', value: rec.superElite },
+        { label: 'Stockist Bonus', value: rec.stockist },
+        { label: 'LeaderShip Bonus', value: rec.leadership },
+        { label: 'Welcome Bonus', value: rec.welcome },
+        { label: 'Car Bonus', value: rec.car },
+        { label: 'Performance Bonus', value: rec.performance },
+        { label: 'Builder Bonus', value: rec.builder },
+        { label: 'Total Bonus', value: rec.total, highlight: true },
+      ];
+      document.getElementById('bonusDetailBody').innerHTML = fields.map(f => `
+        <div class="bonus-detail-row">
+          <span class="bonus-detail-label">${f.label}</span>
+          <span class="bonus-detail-value${f.highlight ? ' highlight' : ''}">${f.value}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('bonusDetailModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    /* ---------- Demo seed data for period bonus records ---------- */
+    function seedPeriodBonusDemoRecords(mid) {
+      return [
+        {
+          cycle: 165, memberId: 'NG57670642', level: 'Gold',
+          highestDirector: 'No Rank', eliteLevel: 'NA',
+          elite: 0, proElite: 0.00, superElite: 0.00, stockist: 0.00,
+          leadership: 0.00, welcome: 0.00, car: 0.00, performance: 0.00, builder: 0.00,
+          total: 0.00
+        },
+        {
+          cycle: 164, memberId: mid || 'NG09246375', level: 'Silver',
+          highestDirector: 'Director A', eliteLevel: 'Elite 2',
+          elite: 150.00, proElite: 50.00, superElite: 0.00, stockist: 25.00,
+          leadership: 75.00, welcome: 0.00, car: 0.00, performance: 100.00, builder: 30.00,
+          total: 430.00
+        },
+        {
+          cycle: 163, memberId: mid || 'NG09246375', level: 'Bronze',
+          highestDirector: 'No Rank', eliteLevel: 'NA',
+          elite: 80.00, proElite: 0.00, superElite: 0.00, stockist: 10.00,
+          leadership: 0.00, welcome: 0.00, car: 0.00, performance: 45.00, builder: 15.00,
+          total: 150.00
+        },
+        {
+          cycle: 162, memberId: mid || 'NG09246375', level: 'Silver',
+          highestDirector: 'Director B', eliteLevel: 'Elite 1',
+          elite: 200.00, proElite: 75.00, superElite: 25.00, stockist: 50.00,
+          leadership: 100.00, welcome: 0.00, car: 0.00, performance: 150.00, builder: 40.00,
+          total: 640.00
+        },
+        {
+          cycle: 161, memberId: mid || 'NG09246375', level: 'Gold',
+          highestDirector: 'Director A', eliteLevel: 'Elite 3',
+          elite: 300.00, proElite: 120.00, superElite: 60.00, stockist: 80.00,
+          leadership: 200.00, welcome: 0.00, car: 0.00, performance: 250.00, builder: 60.00,
+          total: 1070.00
+        },
+      ];
+    }
+
+    /* ---------- Historical Cumulative Bonus Modal ---------- */
+    function createHistoricalCumulativeBonusModal() {
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.id = 'historicalCumulativeBonusModal';
+      modal.innerHTML = `
+        <div class="modal-panel">
+          <div class="modal-head">
+            <h3>Historical Cumulative Bonus</h3>
+            <button type="button" class="modal-close" data-close>&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="hc-bonus-grid" id="hcBonusGrid"></div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      modal.querySelector('[data-close]').addEventListener('click', closeModal);
+      modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+    }
+
+    function openHistoricalCumulativeBonus() {
+      if (!document.getElementById('historicalCumulativeBonusModal')) createHistoricalCumulativeBonusModal();
+
+      let mid = (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId)
+        ? window.ProductCatalog.getCurrentMemberId()
+        : null;
+      if (!mid) {
+        try {
+          const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+          mid = md.memberId || md.id;
+        } catch {}
+      }
+      if (!mid) {
+        alert('Please log in to view historical cumulative bonus.');
+        return;
+      }
+
+      const records = seedPeriodBonusDemoRecords(mid.trim());
+      const totals = records.reduce((acc, r) => {
+        acc.elite += r.elite || 0;
+        acc.proElite += r.proElite || 0;
+        acc.superElite += r.superElite || 0;
+        acc.stockist += r.stockist || 0;
+        acc.leadership += r.leadership || 0;
+        acc.welcome += r.welcome || 0;
+        acc.car += r.car || 0;
+        acc.builder += r.builder || 0;
+        return acc;
+      }, { elite: 0, proElite: 0, superElite: 0, stockist: 0, leadership: 0, welcome: 0, car: 0, builder: 0 });
+
+      const items = [
+        { key: 'elite', label: 'Elite Bonus' },
+        { key: 'proElite', label: 'Pro Elite Bonus' },
+        { key: 'superElite', label: 'Super Elite Bonus' },
+        { key: 'stockist', label: 'Stockist Bonus' },
+        { key: 'leadership', label: 'LeaderShip Bonus' },
+        { key: 'welcome', label: 'Welcome Bonus' },
+        { key: 'car', label: 'Car Bonus' },
+        { key: 'builder', label: 'Builder Bonus' },
+      ];
+
+      const moneyIcon = `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="12" width="36" height="24" rx="3"/><circle cx="24" cy="24" r="6"/><path d="M12 18h0M36 30h0"/></svg>`;
+
+      document.getElementById('hcBonusGrid').innerHTML = items.map(item => `
+        <div class="hc-bonus-card">
+          <div class="hc-bonus-icon">${moneyIcon}</div>
+          <div class="hc-bonus-name">${item.label}</div>
+          <div class="hc-bonus-value">${Number(totals[item.key] || 0).toLocaleString('en-US')}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('historicalCumulativeBonusModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function fmtNum(v) {
+      return v == null ? '—' : Number(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    /* ============================================================
+       Recharge and Transfer
+       ============================================================ */
+    const RECHARGE_KEY = 'al.rechargeRecords';
+    const TRANSFER_KEY = 'al.transferRecords';
+
+    function fmtDateTime(d) {
+      if (!d) return '—';
+      try {
+        const dt = (d instanceof Date) ? d : new Date(d);
+        if (isNaN(dt.getTime())) return '—';
+        const pad = n => String(n).padStart(2, '0');
+        return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+      } catch { return '—'; }
+    }
+    function fmtDate(d) {
+      if (!d) return '';
+      try {
+        const dt = (d instanceof Date) ? d : new Date(d);
+        if (isNaN(dt.getTime())) return '';
+        const pad = n => String(n).padStart(2, '0');
+        return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
+      } catch { return ''; }
+    }
+    function rtId(prefix) {
+      return prefix + Math.random().toString(36).slice(2, 10).toUpperCase();
+    }
+
+    function getRechargeRecords() {
+      try { return JSON.parse(localStorage.getItem(RECHARGE_KEY) || '[]'); }
+      catch { return []; }
+    }
+    function saveRechargeRecords(list) {
+      localStorage.setItem(RECHARGE_KEY, JSON.stringify(list));
+    }
+    function getTransferRecords() {
+      try { return JSON.parse(localStorage.getItem(TRANSFER_KEY) || '[]'); }
+      catch { return []; }
+    }
+    function saveTransferRecords(list) {
+      localStorage.setItem(TRANSFER_KEY, JSON.stringify(list));
+    }
+
+    function seedRechargeRecords(mid) {
+      const now = Date.now();
+      const day = 86400000;
+      const list = [
+        { id: rtId('RC-'), memberId: mid, amount: 500, type: 'Cash', paymentDate: fmtDate(now - 2 * day), bankName: 'First Bank', paymentRef: 'FPY-882910', voucher: '', remark: 'Initial deposit', status: 'approved', createdAt: now - 2 * day },
+        { id: rtId('RC-'), memberId: mid, amount: 1200, type: 'Cash', paymentDate: fmtDate(now - 5 * day), bankName: 'GTBank', paymentRef: 'GTB-773421', voucher: '', remark: 'Monthly top-up', status: 'approved', createdAt: now - 5 * day },
+        { id: rtId('RC-'), memberId: mid, amount: 300, type: 'Cash', paymentDate: fmtDate(now - 1 * day), bankName: 'Zenith Bank', paymentRef: 'ZEN-991023', voucher: '', remark: 'Quick recharge', status: 'pending', createdAt: now - 1 * day },
+      ];
+      saveRechargeRecords(list);
+      return list;
+    }
+    function seedTransferRecords(mid) {
+      const now = Date.now();
+      const day = 86400000;
+      const list = [
+        { id: rtId('TR-'), memberId: mid, transferType: 'Bonus To Ecoin', fromAccount: 'Bonus', toAccount: 'Ecoin', receivingMemberCode: 'NG27187710', receivingMemberName: 'Amara Eze', amount: 200, remark: 'Convert to Ecoin', transferTime: now - 3 * day },
+        { id: rtId('TR-'), memberId: mid, transferType: 'Bonus To Ecoin', fromAccount: 'Bonus', toAccount: 'Ecoin', receivingMemberCode: 'NG48655323', receivingMemberName: 'Fatima Yusuf', amount: 150, remark: 'Convert to Ecoin', transferTime: now - 6 * day },
+      ];
+      saveTransferRecords(list);
+      return list;
+    }
+
+    function createRechargeTransferModal() {
+      if (document.getElementById('rechargeTransferModal')) return;
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.id = 'rechargeTransferModal';
+      modal.innerHTML = `
+        <div class="modal-panel">
+          <div class="modal-head">
+            <h3>Recharge and Transfer</h3>
+            <button type="button" class="modal-close" data-close>&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="rt-tabs">
+              <button type="button" class="rt-tab active" data-rt-tab="recharge">Recharge</button>
+              <button type="button" class="rt-tab" data-rt-tab="transfer">Transfer</button>
+            </div>
+            <div class="rt-panel active" data-rt-panel="recharge">
+              <div class="rt-toolbar">
+                <button type="button" class="ek-btn ek-btn--sm ek-btn--primary" id="rtRechargeBtn">Recharge</button>
+              </div>
+              <div class="rt-table-wrap">
+                <table class="rt-table">
+                  <thead>
+                    <tr>
+                      <th>Created Time</th>
+                      <th class="num">Recharge Amount</th>
+                      <th>Recharge Status</th>
+                      <th>Type</th>
+                      <th>Bank Name</th>
+                      <th>Payment Reference</th>
+                      <th>Recharge Voucher</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rtRechargeBody"><tr><td colspan="7" class="rt-empty">No Data</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="rt-panel" data-rt-panel="transfer">
+              <div class="rt-filter-bar">
+                <input type="date" id="rtTransferStart" title="Start date">
+                <input type="date" id="rtTransferEnd" title="End date">
+                <select id="rtTransferOut">
+                  <option value="">Select transfer out of account</option>
+                  <option value="Bonus">Bonus</option>
+                  <option value="Ecoin">Ecoin</option>
+                </select>
+                <select id="rtTransferIn">
+                  <option value="">Select transfer in account</option>
+                  <option value="Ecoin">Ecoin</option>
+                  <option value="Bonus">Bonus</option>
+                </select>
+                <input type="text" id="rtTransferRecvCode" placeholder="Enter your receiving member code">
+                <input type="text" id="rtTransferRecvName" placeholder="Enter the name of receiving member">
+                <button type="button" class="ek-btn ek-btn--sm" id="rtTransferReset">Reset</button>
+                <button type="button" class="ek-btn ek-btn--sm ek-btn--secondary" id="rtTransferSearch">Select</button>
+              </div>
+              <div class="rt-table-wrap">
+                <table class="rt-table">
+                  <thead>
+                    <tr>
+                      <th>Transfer Accounts</th>
+                      <th>Receiving Member Code</th>
+                      <th>Receiving Member Name</th>
+                      <th>Transfer Into Account</th>
+                      <th class="num">Amount</th>
+                      <th>Transfer Time</th>
+                      <th>Remark</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rtTransferBody"><tr><td colspan="7" class="rt-empty">No Data</td></tr></tbody>
+                </table>
+              </div>
+              <div class="rt-toolbar">
+                <button type="button" class="ek-btn ek-btn--sm ek-btn--primary" id="rtApplyTransferBtn">Apply For Transfer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      // Tab switching
+      modal.querySelectorAll('[data-rt-tab]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          modal.querySelectorAll('[data-rt-tab]').forEach(b => b.classList.remove('active'));
+          modal.querySelectorAll('[data-rt-panel]').forEach(p => p.classList.remove('active'));
+          btn.classList.add('active');
+          const key = btn.dataset.rtTab;
+          const panel = modal.querySelector('[data-rt-panel="' + key + '"]');
+          if (panel) panel.classList.add('active');
+          if (key === 'recharge') renderRechargeTable();
+          else renderTransferTable();
+        });
+      });
+
+      // Close
+      modal.querySelectorAll('[data-close]').forEach(el => {
+        el.addEventListener('click', () => closeRechargeTransferModal());
+      });
+      modal.addEventListener('click', e => { if (e.target === modal) closeRechargeTransferModal(); });
+
+      // Recharge list buttons
+      document.getElementById('rtRechargeBtn')?.addEventListener('click', openRechargeForm);
+
+      // Transfer list buttons
+      document.getElementById('rtApplyTransferBtn')?.addEventListener('click', openTransferForm);
+      document.getElementById('rtTransferSearch')?.addEventListener('click', renderTransferTable);
+      document.getElementById('rtTransferReset')?.addEventListener('click', () => {
+        document.getElementById('rtTransferStart').value = '';
+        document.getElementById('rtTransferEnd').value = '';
+        document.getElementById('rtTransferOut').value = '';
+        document.getElementById('rtTransferIn').value = '';
+        document.getElementById('rtTransferRecvCode').value = '';
+        document.getElementById('rtTransferRecvName').value = '';
+        renderTransferTable();
+      });
+    }
+
+    function closeRechargeTransferModal() {
+      const modal = document.getElementById('rechargeTransferModal');
+      if (!modal) return;
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function currentMemberId() {
+      return (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId)
+        ? window.ProductCatalog.getCurrentMemberId() : null;
+    }
+
+    function renderRechargeTable() {
+      const mid = currentMemberId();
+      const tbody = document.getElementById('rtRechargeBody');
+      if (!mid || !tbody) return;
+      let list = getRechargeRecords().filter(r => r.memberId === mid);
+      if (!list.length) list = seedRechargeRecords(mid);
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="rt-empty">No Data</td></tr>';
+        return;
+      }
+      tbody.innerHTML = list.slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).map(r => `
+        <tr>
+          <td>${fmtDateTime(r.createdAt)}</td>
+          <td class="num">${Number(r.amount || 0).toLocaleString()}</td>
+          <td><span class="rt-status-badge ${r.status || 'pending'}">${(r.status || 'pending').toUpperCase()}</span></td>
+          <td>${esc(r.type || 'Cash')}</td>
+          <td>${esc(r.bankName || '')}</td>
+          <td>${esc(r.paymentRef || '')}</td>
+          <td>${esc(r.voucher || '')}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderTransferTable() {
+      const mid = currentMemberId();
+      const tbody = document.getElementById('rtTransferBody');
+      if (!mid || !tbody) return;
+      let list = getTransferRecords().filter(r => r.memberId === mid);
+      if (!list.length) list = seedTransferRecords(mid);
+
+      const start = document.getElementById('rtTransferStart')?.value;
+      const end = document.getElementById('rtTransferEnd')?.value;
+      const outAcc = document.getElementById('rtTransferOut')?.value;
+      const inAcc = document.getElementById('rtTransferIn')?.value;
+      const code = (document.getElementById('rtTransferRecvCode')?.value || '').trim().toUpperCase();
+      const name = (document.getElementById('rtTransferRecvName')?.value || '').trim().toLowerCase();
+
+      list = list.filter(r => {
+        const t = r.transferTime || 0;
+        if (start && t < new Date(start).getTime()) return false;
+        if (end && t > new Date(end).getTime() + 86400000) return false;
+        if (outAcc && r.fromAccount !== outAcc) return false;
+        if (inAcc && r.toAccount !== inAcc) return false;
+        if (code && (r.receivingMemberCode || '').toUpperCase().indexOf(code) === -1) return false;
+        if (name && (r.receivingMemberName || '').toLowerCase().indexOf(name) === -1) return false;
+        return true;
+      });
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="rt-empty">No Data</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.slice().sort((a, b) => (b.transferTime || 0) - (a.transferTime || 0)).map(r => `
+        <tr>
+          <td>${esc(r.fromAccount || 'Bonus')}${r.toAccount ? ' → ' + esc(r.toAccount) : ''}</td>
+          <td>${esc(r.receivingMemberCode || '')}</td>
+          <td>${esc(r.receivingMemberName || '')}</td>
+          <td>${esc(r.toAccount || 'Ecoin')}</td>
+          <td class="num">${Number(r.amount || 0).toLocaleString()}</td>
+          <td>${fmtDateTime(r.transferTime)}</td>
+          <td>${esc(r.remark || '')}</td>
+        </tr>
+      `).join('');
+    }
+
+    function openRechargeTransferModal() {
+      createRechargeTransferModal();
+      const modal = document.getElementById('rechargeTransferModal');
+      if (modal) {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        renderRechargeTable();
+      }
+    }
+
+    function openRechargeAndTransfer() {
+      if (!window.Auth.isLoggedIn()) {
+        window.toast('Please log in first.', 'danger');
+        return;
+      }
+      openRechargeTransferModal();
+    }
+
+    function openRechargeForm() {
+      if (document.getElementById('rechargeFormModal')) return;
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.id = 'rechargeFormModal';
+      modal.innerHTML = `
+        <div class="modal-panel">
+          <div class="modal-head">
+            <h3>Recharge</h3>
+            <button type="button" class="modal-close" data-close>&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="rechargeForm">
+              <div class="rt-form-row">
+                <label>Recharge Amount <span class="req">*</span></label>
+                <div class="rt-amount-field">
+                  <button type="button" data-step="-1">−</button>
+                  <input type="number" name="amount" value="1" min="1" step="1" required>
+                  <button type="button" data-step="1">+</button>
+                </div>
+              </div>
+              <div class="rt-form-row">
+                <label>Type <span class="req">*</span></label>
+                <select name="type" required>
+                  <option value="Cash" selected>Cash</option>
+                </select>
+              </div>
+              <div class="rt-form-row">
+                <label>Payment Date <span class="req">*</span></label>
+                <input type="date" name="paymentDate" required>
+              </div>
+              <div class="rt-form-row">
+                <label>Remark <span class="req">*</span></label>
+                <textarea name="remark" placeholder="Please enter remarks" required></textarea>
+              </div>
+              <div class="rt-form-actions">
+                <button type="button" class="ek-btn ek-btn--secondary" data-close>Cancel</button>
+                <button type="submit" class="ek-btn">Confirm</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      const form = document.getElementById('rechargeForm');
+      const amountInput = form.querySelector('input[name="amount"]');
+      modal.querySelectorAll('[data-step]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const step = Number(btn.dataset.step);
+          let v = Number(amountInput.value) || 0;
+          v = Math.max(1, v + step);
+          amountInput.value = v;
+        });
+      });
+      form.querySelector('input[name="paymentDate"]').value = fmtDate(new Date());
+
+      modal.querySelectorAll('[data-close]').forEach(el => {
+        el.addEventListener('click', () => {
+          modal.classList.remove('open');
+          setTimeout(() => modal.remove(), 250);
+        });
+      });
+      modal.addEventListener('click', e => { if (e.target === modal) {
+        modal.classList.remove('open');
+        setTimeout(() => modal.remove(), 250);
+      }});
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const mid = currentMemberId();
+        if (!mid) { window.toast('Please log in first.', 'danger'); return; }
+        const amount = Number(fd.get('amount')) || 0;
+        if (amount <= 0) { window.toast('Amount must be greater than 0.', 'danger'); return; }
+        const rec = {
+          id: rtId('RC-'),
+          memberId: mid,
+          amount: amount,
+          type: fd.get('type') || 'Cash',
+          paymentDate: fd.get('paymentDate') || '',
+          bankName: '—',
+          paymentRef: rtId('REF-'),
+          voucher: '',
+          remark: fd.get('remark') || '',
+          status: 'pending',
+          createdAt: Date.now()
+        };
+        const list = getRechargeRecords();
+        list.unshift(rec);
+        saveRechargeRecords(list);
+        // Sync to Member Bonus history
+        if (window.ProductCatalog && window.ProductCatalog.creditBonus) {
+          window.ProductCatalog.creditBonus({
+            memberId: mid,
+            bv: amount,
+            orderId: rec.id,
+            remark: 'Recharge — ' + rec.type + (rec.remark ? ' · ' + rec.remark : '')
+          });
+        }
+        window.toast('Recharge submitted and pending approval.', 'success');
+        modal.classList.remove('open');
+        setTimeout(() => {
+          modal.remove();
+          renderRechargeTable();
+          updateMemberOverview();
+          window.dispatchEvent(new CustomEvent('al:orderschange'));
+        }, 250);
+      });
+
+      modal.classList.add('open');
+    }
+
+    function openTransferForm() {
+      if (document.getElementById('transferFormModal')) return;
+      const mid = currentMemberId();
+      if (!mid) { window.toast('Please log in first.', 'danger'); return; }
+      const pc = window.ProductCatalog || {};
+      const bvRecords = pc.getMemberBVRecords ? pc.getMemberBVRecords(mid) : [];
+      const availableBonus = bvRecords.length ? Math.max(0, bvRecords[bvRecords.length - 1].postBalance || 0) : 0;
+      const availableEcoin = pc.getEcoinTotal ? pc.getEcoinTotal(mid) : 0;
+
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.id = 'transferFormModal';
+      modal.innerHTML = `
+        <div class="modal-panel">
+          <div class="modal-head">
+            <h3>Apply For Transfer</h3>
+            <button type="button" class="modal-close" data-close>&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="transferForm">
+              <div class="rt-form-row">
+                <label>Transfer Type <span class="req">*</span></label>
+                <select name="transferType" required>
+                  <option value="Bonus To Ecoin" selected>Bonus To Ecoin</option>
+                  <option value="Ecoin To Ecoin">Ecoin To Ecoin</option>
+                </select>
+              </div>
+              <div class="rt-form-row">
+                <label>Available Bonus</label>
+                <input type="text" value="${Number(availableBonus).toLocaleString()}" disabled>
+              </div>
+              <div class="rt-form-row">
+                <label>Available Ecoin</label>
+                <input type="text" value="${Number(availableEcoin).toLocaleString()}" disabled>
+              </div>
+              <div class="rt-form-row">
+                <label>Member Code <span class="req">*</span></label>
+                <input type="text" name="receivingMemberCode" placeholder="" required>
+              </div>
+              <div class="rt-form-row">
+                <label>Amount <span class="req">*</span></label>
+                <input type="number" name="amount" value="0" min="1" step="1" required>
+              </div>
+              <div class="rt-form-row">
+                <label>Remark</label>
+                <input type="text" name="remark" placeholder="">
+              </div>
+              <div class="rt-form-actions">
+                <button type="button" class="ek-btn ek-btn--secondary" data-close>Cancel</button>
+                <button type="submit" class="ek-btn">Confirm</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      const form = document.getElementById('transferForm');
+      modal.querySelectorAll('[data-close]').forEach(el => {
+        el.addEventListener('click', () => {
+          modal.classList.remove('open');
+          setTimeout(() => modal.remove(), 250);
+        });
+      });
+      modal.addEventListener('click', e => { if (e.target === modal) {
+        modal.classList.remove('open');
+        setTimeout(() => modal.remove(), 250);
+      }});
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const mid = currentMemberId();
+        if (!mid) { window.toast('Please log in first.', 'danger'); return; }
+        const amount = Number(fd.get('amount')) || 0;
+        if (amount <= 0) { window.toast('Amount must be greater than 0.', 'danger'); return; }
+        const code = (fd.get('receivingMemberCode') || '').trim().toUpperCase();
+        if (!/^NG\d{8}$/.test(code)) { window.toast('Member Code must be NG + 8 digits.', 'danger'); return; }
+        const transferType = fd.get('transferType') || 'Bonus To Ecoin';
+
+        // Validate balance based on transfer type
+        if (transferType === 'Bonus To Ecoin') {
+          const curBv = pc.getMemberBVRecords ? pc.getMemberBVRecords(mid) : [];
+          const curBonus = curBv.length ? (curBv[curBv.length - 1].postBalance || 0) : 0;
+          if (amount > curBonus) { window.toast('Insufficient Bonus balance.', 'danger'); return; }
+        } else if (transferType === 'Ecoin To Ecoin') {
+          const curEcoin = pc.getEcoinTotal ? pc.getEcoinTotal(mid) : 0;
+          if (amount > curEcoin) { window.toast('Insufficient Ecoin balance.', 'danger'); return; }
+        }
+
+        const fromAccount = transferType === 'Ecoin To Ecoin' ? 'Ecoin' : 'Bonus';
+        const toAccount = transferType === 'Ecoin To Ecoin' ? 'Ecoin' : 'Ecoin';
+        const rec = {
+          id: rtId('TR-'),
+          memberId: mid,
+          transferType: transferType,
+          fromAccount: fromAccount,
+          toAccount: toAccount,
+          receivingMemberCode: code,
+          receivingMemberName: '—',
+          amount: amount,
+          remark: fd.get('remark') || '',
+          transferTime: Date.now()
+        };
+        const list = getTransferRecords();
+        list.unshift(rec);
+        saveTransferRecords(list);
+
+        // Sync to Member Bonus / Member Ecoin history
+        if (transferType === 'Bonus To Ecoin') {
+          if (pc.debitBonus) {
+            pc.debitBonus({
+              memberId: mid,
+              bv: amount,
+              remark: 'Transfer to Ecoin — ' + code
+            });
+          }
+          if (pc.creditEcoin) {
+            pc.creditEcoin({
+              memberId: mid,
+              amount: amount,
+              type: 'credit',
+              orderId: rec.id,
+              remark: 'Transfer from Bonus — ' + code
+            });
+          }
+        } else if (transferType === 'Ecoin To Ecoin') {
+          if (pc.debitEcoin) {
+            pc.debitEcoin({
+              memberId: mid,
+              amount: amount,
+              type: 'debit',
+              orderId: rec.id,
+              remark: 'Transfer to member — ' + code
+            });
+          }
+          if (pc.creditEcoin) {
+            pc.creditEcoin({
+              memberId: code,
+              amount: amount,
+              type: 'credit',
+              orderId: rec.id,
+              remark: 'Transfer from member — ' + mid
+            });
+          }
+        }
+        window.toast('Transfer applied successfully.', 'success');
+        modal.classList.remove('open');
+        setTimeout(() => {
+          modal.remove();
+          renderTransferTable();
+          updateMemberOverview();
+          window.dispatchEvent(new CustomEvent('al:orderschange'));
+        }, 250);
+      });
+
+      modal.classList.add('open');
+    }
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    /* ---------- Sponsor Network ---------- */
+    let snMode = 'normal';
+    function seedSponsorNetwork(mid) {
+      const key = 'al.sponsorNetwork';
+      // 注意：演示数据。PCV 最大 173，等级仅 Gold / Silver。每次刷新强制重灌，便于调整。
+      // 根节点 = 当前登录账户：member id 与真实姓名均取自 Auth.user
+      const authUser = (window.Auth && window.Auth.user) || {};
+      const rootName = authUser.name || authUser.firstName || 'You';
+      const rootId = mid || authUser.memberId || 'NG00000000';
+      const root = {
+        id: rootId,
+        code: rootId,
+        name: rootName,
+        level: 'Silver',
+        highest: 'Gold',
+        pcv: 173,
+        children: [
+          {
+            code: 'NG39626765', name: 'MR. WEST', level: 'Silver', highest: 'Silver', pcv: 164,
+            children: [
+              { code: 'NG11223344', name: 'Adaobi Nwosu', level: 'Silver', highest: 'Silver', pcv: 120 },
+              { code: 'NG22334455', name: 'Emeka Obi', level: 'Gold', highest: 'Gold', pcv: 98 },
+            ]
+          },
+          {
+            code: 'NG27187710', name: 'Amara Eze', level: 'Gold', highest: 'Gold', pcv: 150,
+            children: [
+              { code: 'NG33445566', name: 'Chioma Okonkwo', level: 'Silver', highest: 'Silver', pcv: 140 },
+              {
+                code: 'NG44556677', name: 'Obinna Kalu', level: 'Gold', highest: 'Gold', pcv: 118,
+                children: [
+                  { code: 'NG55667788', name: 'Nkechi Udo', level: 'Silver', highest: 'Silver', pcv: 76 },
+                ]
+              },
+            ]
+          },
+          {
+            code: 'NG66051653', name: 'Chinedu Bello', level: 'Silver', highest: 'Silver', pcv: 88,
+            children: [
+              { code: 'NG66778899', name: 'Tunde Adeyemi', level: 'Gold', highest: 'Gold', pcv: 73 },
+            ]
+          },
+        ]
+      };
+      localStorage.setItem(key, JSON.stringify([root]));
+      return [root];
+    }
+
+    function getSponsorNetwork(mid) {
+      // 演示阶段：每次都重灌 seed（seedSponsorNetwork 内部会写回 localStorage），保证数据修正即时生效
+      return seedSponsorNetwork(mid);
+    }
+
+    // Sponsor Network Ex —— 备选/扩展树，沿用 Gold/Silver + PCV≤173 规则
+    function seedSponsorNetworkEx(mid) {
+      const authUser = (window.Auth && window.Auth.user) || {};
+      const rootName = authUser.name || authUser.firstName || 'You';
+      const rootId = mid || authUser.memberId || 'NG00000000';
+      const root = {
+        id: rootId,
+        code: rootId,
+        name: rootName,
+        level: 'Gold',
+        highest: 'Gold',
+        pcv: 173,
+        children: [
+          {
+            code: 'NG91234567', name: 'Ifeoma Balogun', level: 'Gold', highest: 'Gold', pcv: 165,
+            children: [
+              { code: 'NG81239876', name: 'Kunle Ade', level: 'Silver', highest: 'Silver', pcv: 142 },
+              { code: 'NG72345678', name: 'Zainab Bello', level: 'Gold', highest: 'Gold', pcv: 121 },
+            ]
+          },
+          {
+            code: 'NG83456789', name: 'Folake Ojo', level: 'Silver', highest: 'Silver', pcv: 158,
+            children: [
+              { code: 'NG74567890', name: 'Peter Ekwueme', level: 'Gold', highest: 'Gold', pcv: 133 },
+              {
+                code: 'NG65678901', name: 'Grace Ibe', level: 'Silver', highest: 'Silver', pcv: 109,
+                children: [
+                  { code: 'NG56789012', name: 'Sade Okeke', level: 'Silver', highest: 'Silver', pcv: 84 },
+                ]
+              },
+            ]
+          },
+          {
+            code: 'NG57890123', name: 'Chidi Okoro', level: 'Gold', highest: 'Gold', pcv: 147,
+            children: [
+              { code: 'NG48901234', name: 'Bisi Fashola', level: 'Silver', highest: 'Silver', pcv: 95 },
+            ]
+          },
+        ]
+      };
+      return [root];
+    }
+
+    function getSponsorNetworkEx(mid) {
+      return seedSponsorNetworkEx(mid);
+    }
+
+    function filterSponsorTree(nodes, query, depth, currentDepth) {
+      const d = currentDepth || 1;
+      if (d > depth) return [];
+      query = (query || '').toString().trim().toUpperCase();
+      return nodes.map(n => {
+        const match = !query ||
+          (n.code || '').toUpperCase().includes(query) ||
+          (n.name || '').toUpperCase().includes(query) ||
+          (n.level || '').toUpperCase().includes(query) ||
+          String(n.pcv || '').includes(query);
+        const children = n.children && n.children.length
+          ? filterSponsorTree(n.children, match ? '' : query, depth, d + 1)
+          : [];
+        if (match || children.length) {
+          return { ...n, children };
+        }
+        return null;
+      }).filter(Boolean);
+    }
+
+    function renderSponsorNetwork() {
+      const mid = currentMemberId();
+      if (!mid) return;
+      const host = document.getElementById('sponsorTree');
+      if (!host) return;
+      const topMember = document.getElementById('snTopMember');
+      const spreadDepth = document.getElementById('snSpreadDepth');
+      const query = topMember ? topMember.value : '';
+      const depth = Math.max(1, Math.min(10, Number(spreadDepth ? spreadDepth.value : 5) || 5));
+      const data = snMode === 'ex' ? getSponsorNetworkEx(mid) : getSponsorNetwork(mid);
+      const filtered = filterSponsorTree(data, query, depth);
+      if (!filtered.length) {
+        host.innerHTML = '<div class="sn-empty">No matching sponsor network records found.</div>';
+        return;
+      }
+      host.innerHTML = filtered.map(n => renderTreeNode(n, depth, 1)).join('');
+      host.querySelectorAll('.sn-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const children = btn.closest('.sn-node-wrap').querySelector('.sn-children');
+          if (!children) return;
+          const hidden = children.hidden;
+          children.hidden = !hidden;
+          btn.textContent = hidden ? '−' : '+';
+        });
+      });
+    }
+
+    function renderTreeNode(node, maxDepth, currentDepth) {
+      const hasChildren = node.children && node.children.length && currentDepth < maxDepth;
+      // 默认展示前两层、更深层折叠，使展开/收起交互直观可见
+      const childrenHidden = currentDepth >= 2;
+      const childrenHtml = hasChildren
+        ? `<div class="sn-children" ${childrenHidden ? 'hidden' : ''}>${node.children.map(c => renderTreeNode(c, maxDepth, currentDepth + 1)).join('')}</div>`
+        : '';
+      const avatarSvg = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="#6B7280"/><path d="M4 20c0-4.418 3.582-8 8-8s8 3.582 8 8" fill="#6B7280"/></svg>';
+      return `
+        <div class="sn-node-wrap">
+          <div class="sn-node">
+            ${hasChildren ? `<button type="button" class="sn-toggle">${childrenHidden ? '+' : '−'}</button>` : '<span></span>'}
+            <div class="sn-node-avatar">${avatarSvg}</div>
+            <div class="sn-node-main">
+              <span class="sn-code">${esc(node.code)}</span>
+              <span class="sn-name">${esc(node.name)}</span>
+              <span class="sn-level">${esc(node.level)}</span>
+              <span class="sn-highest">Highest: ${esc(node.highest)}</span>
+              <span class="sn-pcv">${Number(node.pcv || 0).toLocaleString()}</span>
+            </div>
+          </div>
+          ${childrenHtml}
+        </div>`;
+    }
   </script>
 </body>
 </html>
+

@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Member Auto-Maintenance · AquaLife</title>
+  <meta name="description" content="Place an auto-maintenance order for a member. The selected products' total BV must be 90 BV or more." />
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
+
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260908b">
+  <link rel="stylesheet" href="assets/css/water-pages.css">
+  <script src="assets/js/elken-ui.js" defer></script>
+</head>
+<body data-page="member-repurchase">
+  <div id="offline-banner" class="offline-banner">Connection status</div>
+  <div id="app-header" class="ek-site-header"></div>
+  <nav class="wv-account-nav" aria-label="Account navigation">
+  <a href="account.html">Overview</a>
+  <a href="order.html">Orders</a>
+  <a href="member-welcome.html">Welcome Pack</a>
+  <a href="member-repurchase.html">Repurchase</a>
+  <a href="member-auto-maintenance.html" aria-current="page">Auto Maintenance</a>
+  <a href="member-upgrade.html">Upgrade</a>
+  <a href="team-inquiry.html">Team Inquiry</a>
+</nav>
+
+  <main class="page mrp-shell">
+    <div class="container">
+      <div class="crumbs">
+        <a href="index.html">Home</a> <span>›</span> <a href="account.html">My Account</a> <span>›</span> <span>Member Auto-Maintenance</span>
+      </div>
+      <h1>Member Auto-Maintenance</h1>
+      <p>Place an auto-maintenance order for a member in your network. Search the member ID, pick products, and complete payment through the unified checkout process. The selected products must total at least 90 BV.</p>
+
+      <form id="mrpForm" autocomplete="off" novalidate>
+        <!-- Section 1: Member info -->
+        <div class="mrp-card">
+          <h2>Member information</h2>
+          <p class="hint">Enter the auto-maintenance member's ID (NG + 8 digits) to look up their profile.</p>
+
+          <div class="member-search">
+            <input class="ek-input" type="text" id="memberIdInput" placeholder="NG00000000" maxlength="10" autocomplete="off" />
+            <button type="button" class="ek-btn--secondary" id="memberSearchBtn">Search</button>
+          </div>
+
+          <div class="member-result" id="memberResult" hidden>
+            <div class="ek-avatar" id="memberAvatar">M</div>
+            <div>
+              <div class="name" id="memberName">[—]</div>
+              <div class="id" id="memberIdDisplay">NG00000000</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Reporting center -->
+        <div class="mrp-card">
+          <h2>Reporting center</h2>
+          <p class="hint">Auto-filled from your account. Used to credit commissions on this order.</p>
+          <div class="reporting-row">
+            <div class="field">
+              <label>Reporting center ID <span class="req">*</span></label>
+              <input class="ek-input" type="text" id="reportingCenterId" readonly />
+            </div>
+            <div class="field">
+              <label>Reporting center name</label>
+              <input class="ek-input" type="text" id="reportingCenterName" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Products -->
+        <div class="mrp-card">
+          <h2>Choose products</h2>
+          <p class="hint">Tick the products to add, then adjust quantity. Prices shown are DP (distributor price) with BV, and the retail reference RP. <strong>Auto-Maintenance requires the selected products' total BV to be at least 90 BV.</strong></p>
+          <div class="product-list-wrap">
+            <div class="product-list-head">
+              <span></span>
+              <span></span>
+              <span>Product</span>
+              <span>SKU</span>
+              <span>DP (BV)</span>
+              <span>RP</span>
+              <span>Stock</span>
+              <span>Qty</span>
+            </div>
+            <div class="product-list-body" id="productPick"></div>
+          </div>
+        </div>
+
+        <!-- Section 4: Shipping address -->
+        <div class="mrp-card ship-form">
+          <h2>Shipping information</h2>
+          <p class="hint">Where should the order be delivered? The auto-maintenance member is the recipient.</p>
+
+          <div class="field">
+            <label>Recipient name <span class="req">*</span></label>
+            <input class="ek-input" type="text" id="shipRecipient" required />
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>Phone <span class="req">*</span></label>
+              <input class="ek-input" type="tel" id="shipPhone" required />
+            </div>
+            <div class="field">
+              <label>Saved address</label>
+              <select class="ek-select" id="savedAddrSelect">
+                <option value="">— Use a new address —</option>
+              </select>
+            </div>
+          </div>
+          <div class="row3">
+            <div class="field">
+              <label>State <span class="req">*</span></label>
+              <select class="ek-select" id="shipState" required>
+                <option value="">— Select state —</option>
+                <option>Lagos</option><option>FCT Abuja</option><option>Rivers</option>
+                <option>Oyo</option><option>Kano</option><option>Kaduna</option>
+                <option>Ogun</option><option>Anambra</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>City <span class="req">*</span></label>
+              <input class="ek-input" type="text" id="shipCity" required />
+            </div>
+            <div class="field">
+              <label>District / LGA</label>
+              <input class="ek-input" type="text" id="shipDistrict" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Street address <span class="req">*</span></label>
+            <input class="ek-input" type="text" id="shipAddress" required placeholder="House no., street name, area" />
+          </div>
+        </div>
+
+        <!-- Section 5: Payment -->
+        <div class="mrp-card">
+          <h2>Payment method</h2>
+          <p class="hint">Payment is processed through the unified AquaLife payment gateway.</p>
+          <div class="mrp-pay-grid" id="mrpPayGrid">
+            <label class="mrp-pay">
+              <input type="radio" name="mrpPay" value="cod" checked />
+              <div class="mrp-pay-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 7.7l5.4-.8z"/>
+                </svg>
+              </div>
+              <div class="mrp-pay-body">
+                <div class="mrp-pay-name">Cash on delivery</div>
+                <div class="mrp-pay-sub">Pay when you receive your order</div>
+              </div>
+              <div class="mrp-pay-check" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>
+              </div>
+            </label>
+            <label class="mrp-pay">
+              <input type="radio" name="mrpPay" value="card" />
+              <div class="mrp-pay-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>
+                </svg>
+              </div>
+              <div class="mrp-pay-body">
+                <div class="mrp-pay-name">Debit / credit card</div>
+                <div class="mrp-pay-sub">Instant · Visa, MC, Verve</div>
+              </div>
+              <div class="mrp-pay-check" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>
+              </div>
+            </label>
+            <label class="mrp-pay">
+              <input type="radio" name="mrpPay" value="ussd" />
+              <div class="mrp-pay-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <rect x="6" y="2" width="12" height="20" rx="2"/><circle cx="12" cy="18" r="1"/>
+                </svg>
+              </div>
+              <div class="mrp-pay-body">
+                <div class="mrp-pay-name">USSD</div>
+                <div class="mrp-pay-sub">All Nigerian banks</div>
+              </div>
+              <div class="mrp-pay-check" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>
+              </div>
+            </label>
+            <label class="mrp-pay">
+              <input type="radio" name="mrpPay" value="bank" />
+              <div class="mrp-pay-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/>
+                </svg>
+              </div>
+              <div class="mrp-pay-body">
+                <div class="mrp-pay-name">Bank transfer</div>
+                <div class="mrp-pay-sub">Manual · 1–2 hrs</div>
+              </div>
+              <div class="mrp-pay-check" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Payment method detail panels (mirror the unified checkout) -->
+        <div class="mrp-card mrp-method-panel" id="codPanel">
+          <h2>Cash on delivery</h2>
+          <p>Pay in cash or by card when your order arrives. Our delivery team will confirm the amount before dispatch. No advance payment required.</p>
+        </div>
+        <div class="mrp-card mrp-method-panel" id="cardPanel">
+          <h2>Card details</h2>
+          <p>Secured by Paystack · 256-bit encryption · PCI-DSS Level 1</p>
+          <div class="field">
+            <label>Card number</label>
+            <div class="card-input-wrap">
+              <input class="ek-input" id="cardNumberMRP" placeholder="4242 4242 4242 4242" maxlength="19" inputmode="numeric" autocomplete="cc-number" />
+              <div class="card-brand" id="cardBrandMRP" aria-hidden="true"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Cardholder name</label>
+            <input class="ek-input" id="cardNameMRP" autocomplete="cc-name" />
+          </div>
+          <div class="row">
+            <div class="field">
+              <label>Expiry (MM/YY)</label>
+              <input class="ek-input" id="cardExpiryMRP" placeholder="12/27" maxlength="5" inputmode="numeric" autocomplete="cc-exp" />
+            </div>
+            <div class="field">
+              <label>CVV</label>
+              <input class="ek-input" id="cardCvvMRP" placeholder="123" maxlength="4" inputmode="numeric" autocomplete="cc-csc" />
+            </div>
+          </div>
+        </div>
+        <div class="mrp-card mrp-method-panel" id="ussdPanel">
+          <h2>Pay via USSD</h2>
+          <p>Dial the code below on the phone number linked to your bank, then enter your PIN to confirm.</p>
+          <div class="ussd-code" id="ussdCodeMRP">*737*50*100000#</div>
+          <p>Dial this code on your registered phone, then enter your bank PIN to confirm.</p>
+        </div>
+        <div class="mrp-card mrp-method-panel" id="bankPanel">
+          <h2>Bank transfer details</h2>
+          <div class="bank-rows">
+            <div class="bank-row"><span>Bank</span><b>GTBank Plc</b></div>
+            <div class="bank-row"><span>Account number</span><b>012 345 6789</b></div>
+            <div class="bank-row"><span>Account name</span><b>AquaLife Nigeria Ltd</b></div>
+            <div class="bank-row"><span>Amount</span><b id="bankAmountMRP">N0</b></div>
+          </div>
+          <p>Use your order ID as the reference when transferring.</p>
+        </div>
+
+        <!-- Section 6: Summary + actions -->
+        <div class="mrp-card" id="summaryCard">
+          <h2>Order summary</h2>
+          <div id="summaryList">
+            <p>No products selected yet.</p>
+          </div>
+          <div class="row">
+            <span>Subtotal</span>
+            <span id="summarySubtotal">NGN 0</span>
+          </div>
+          <div class="row">
+            <span>BV rewards</span>
+            <span>+<span id="summaryBV">0</span> BV</span>
+          </div>
+          <div class="row">
+            <span>BV requirement</span>
+            <span id="bvReqText">need ≥ 90 BV</span>
+          </div>
+          <div class="row">
+            <span>Total</span>
+            <span id="summaryTotal">NGN 0</span>
+          </div>
+
+          <div class="mrp-actions">
+            <button type="button" class="ek-btn--secondary" id="backBtn">返回 Back</button>
+            <button type="submit" class="ek-btn--primary" id="payBtn" disabled>支付 Pay</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <div id="app-footer" class="ek-site-footer"></div>
+
+  <script src="assets/i18n/strings.js?v=1787805290"></script>
+<script src="assets/js/app.js?v=20260908f"></script>
+  <script src="assets/js/website.js?v=1787805290"></script>
+  <script>
+    /* ============================================================
+       Member Repeat Purchase page
+       - search for a member
+       - pick products
+       - submit through the unified order / payment flow
+       ============================================================ */
+    (function() {
+      'use strict';
+
+      /* ---------- Reference data ---------- */
+      // Tiny directory of known member IDs (for demo). In a real deployment
+      // this would come from the network / API. Each entry carries the full
+      // profile so an auto-maintenance search can associate the member's info
+      // and pre-fill the shipping form.
+      const DEMO_DIRECTORY = {
+        'NG09246375': {
+          name: 'Amara Okafor', phone: '08031234567', level: 'Silver',
+          state: 'Lagos', city: 'Lekki', district: 'Eti-Osa', address: '14 Admiralty Way, Lekki Phase 1',
+          reportingCenterId: 'NG66051653', joinDate: '2023-06-18',
+        },
+        'NG23374876': {
+          name: 'Fauzia Yunus Shehu', phone: '07028912345', level: 'Gold',
+          state: 'FCT Abuja', city: 'Abuja', district: 'Garki', address: '8 Julius Nyerere Crescent, Garki II',
+          reportingCenterId: 'NG66051653', joinDate: '2022-11-02',
+        },
+        'NG27187710': {
+          name: 'S2 (Referrer)', phone: '08155550199', level: 'Platinum',
+          state: 'Rivers', city: 'Port Harcourt', district: 'Obio-Akpor', address: '21 Trans-Amadi Industrial Layout',
+          reportingCenterId: 'NG66051653', joinDate: '2021-04-15',
+        },
+        'NG66051653': {
+          name: 'Reporting Center', phone: '09080001122', level: 'Diamond',
+          state: 'Oyo', city: 'Ibadan', district: 'Ibadan North', address: '3 Ring Road, Dugbe',
+          reportingCenterId: 'NG66051653', joinDate: '2020-01-10',
+        },
+        'NG48655323': {
+          name: 'Default Order Demo', phone: '08019998877', level: 'Silver',
+          state: 'Kano', city: 'Kano', district: 'Fagge', address: '27 Bello Road',
+          reportingCenterId: 'NG66051653', joinDate: '2023-09-30',
+        },
+        'NG00000001': {
+          name: 'AquaLife HQ', phone: '07000000001', level: 'Corporate',
+          state: 'Lagos', city: 'Ikeja', district: 'Ikeja', address: '1 AquaLife Way, Alausa',
+          reportingCenterId: 'NG66051653', joinDate: '2019-08-01',
+        },
+      };
+
+      /* ---------- State ---------- */
+      const state = {
+        member: null,                // { id, name }
+        reportingCenter: null,       // { id, name }
+        items: {},                   // { productId: qty }
+        savedAddresses: [],
+        payMethod: 'cod',
+        cardValid: true,
+      };
+
+      /* ---------- Helpers ---------- */
+      function money(n) {
+        return 'NGN ' + (Number(n) || 0).toLocaleString('en-NG');
+      }
+      function genOrderId() {
+        return 'MR-' + Date.now().toString(36).toUpperCase().slice(-6) + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+      }
+      function getMemberData() {
+        try { return JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch { return {}; }
+      }
+      function getProducts() {
+        return (window.ProductCatalog && window.ProductCatalog.allProducts) || [];
+      }
+
+      /* ---------- Init ---------- */
+      function init() {
+        bindReportingCenter();
+        renderProducts();
+        renderSavedAddresses();
+        bindMemberSearch();
+        bindPayMethod();
+        bindCardInputsMRP();
+        bindSummary();
+        bindFormSubmit();
+        updatePayBtn();
+      }
+
+      /* ---------- Reporting center (auto-filled from current user) ---------- */
+      function bindReportingCenter() {
+        const md = getMemberData();
+        // reportingCenterId is who pays / gets credit. Fall back to the demo
+        // reporting center so the field is never empty in standalone testing.
+        const id = md.reportingCenterId || md.memberId || 'NG66051653';
+        const name = md.memberName || (DEMO_DIRECTORY[id] && DEMO_DIRECTORY[id].name) || 'Reporting Center';
+        state.reportingCenter = { id, name };
+        document.getElementById('reportingCenterId').value = id;
+        document.getElementById('reportingCenterName').value = name;
+      }
+
+      /* ---------- Product picker (table-style rows: ☐ img name sku dp(bv) rp stock qty) ---------- */
+      function renderProducts() {
+        const products = getProducts();
+        const root = document.getElementById('productPick');
+        root.innerHTML = products.map(p => {
+          const img = p.img ? `assets/img/products/${p.category}/${p.img}` : '';
+          const stock = Number(p.stock) || 0;
+          const stockCls = stock <= 0 ? ' out' : (stock < 5 ? ' low' : '');
+          return `
+            <div class="product-list-row" data-pid="${p.id}" data-stock="${stock}">
+              <label class="row-check"><input type="checkbox" data-pick aria-label="Pick ${(p.name || '').replace(/"/g, '&quot;')}" /></label>
+              <div class="row-img">${img ? `<img src="${img}" alt="${p.name}" loading="lazy" />` : ''}</div>
+              <div class="row-name" title="${(p.name || '').replace(/"/g, '&quot;')}">${p.name}</div>
+              <div class="row-sku">${p.sku || ''}</div>
+              <div class="row-dp"><span class="dp-label">DP:</span><span class="dp-price">${money(p.price)}</span><span class="dp-bv">(${Number(p.bv) || 0}BV)</span></div>
+              <div class="row-rp"><span class="rp-label">RP:</span><span class="rp-price">NGN ${Number(p.rp || 0).toFixed(2)}</span></div>
+              <div class="row-stock${stockCls}"><span class="stock-label">Stock:</span><span class="stock-num">${stock}</span></div>
+              <div class="row-qty">
+                <button type="button" data-qty="-1" aria-label="Decrease">−</button>
+                <span class="qty">1</span>
+                <button type="button" data-qty="1" aria-label="Increase">+</button>
+              </div>
+            </div>`;
+        }).join('');
+
+        root.querySelectorAll('.product-list-row').forEach(el => {
+          const pid = el.dataset.pid;
+          const stock = Number(el.dataset.stock) || 0;
+          const cb = el.querySelector('[data-pick]');
+
+          // Checkbox: select/deselect without triggering row click
+          cb.addEventListener('click', e => e.stopPropagation());
+          cb.addEventListener('change', () => toggleProduct(el));
+
+          // Row click toggles pick (anywhere except checkbox/qty buttons)
+          el.addEventListener('click', e => {
+            if (e.target.closest('.row-check') || e.target.closest('.row-qty')) return;
+            cb.checked = !cb.checked;
+            toggleProduct(el);
+          });
+
+          // Qty controls (+ / −), capped by stock
+          el.querySelectorAll('.row-qty button').forEach(btn => {
+            btn.addEventListener('click', e => {
+              e.stopPropagation();
+              if (!state.items[pid]) { toggleProduct(el); return; }
+              const delta = parseInt(btn.dataset.qty, 10);
+              const next = Math.max(1, Math.min(stock || 99, (state.items[pid] || 1) + delta));
+              state.items[pid] = next;
+              el.querySelector('.row-qty .qty').textContent = next;
+              renderSummary();
+              updatePayBtn();
+            });
+          });
+        });
+      }
+
+      function toggleProduct(el) {
+        const pid = el.dataset.pid;
+        const cb = el.querySelector('[data-pick]');
+        if (state.items[pid]) {
+          delete state.items[pid];
+          el.classList.remove('picked');
+          el.querySelector('.row-qty .qty').textContent = '1';
+          if (cb) cb.checked = false;
+        } else {
+          state.items[pid] = 1;
+          el.classList.add('picked');
+          if (cb) cb.checked = true;
+        }
+        renderSummary();
+        updatePayBtn();
+      }
+
+      /* ---------- Member search ---------- */
+      // Sensible defaults so no field is ever left empty when a member is
+      // looked up from a sparse source (signed-in data, prior order, or an
+      // unknown but valid id). Demo directory entries already override these.
+      const MEMBER_DEFAULTS = {
+        phone: '08000000000',
+        level: 'Silver',
+        state: 'Lagos',
+        city: 'Lagos',
+        district: 'Ikeja',
+        address: '1 AquaLife Way, Alausa',
+        reportingCenterId: 'NG66051653',
+        joinDate: '2024-01-01',
+      };
+      function fillMemberDefaults(m) {
+        Object.keys(MEMBER_DEFAULTS).forEach(k => {
+          if (!m[k] || m[k] === '-') m[k] = MEMBER_DEFAULTS[k];
+        });
+        return m;
+      }
+
+      // Build a member record from wherever we can find it: the demo
+      // directory, the signed-in member data, or any prior order.
+      function lookupMember(raw) {
+        raw = (raw || '').trim().toUpperCase();
+        let m = null;
+        // 1) demo directory (full profile)
+        if (DEMO_DIRECTORY[raw]) {
+          const d = DEMO_DIRECTORY[raw];
+          m = {
+            id: raw,
+            name: d.name,
+            phone: d.phone || '',
+            level: d.level || '-',
+            state: d.state || '',
+            city: d.city || '',
+            district: d.district || '',
+            address: d.address || '',
+            reportingCenterId: d.reportingCenterId || '',
+            joinDate: d.joinDate || '',
+            source: 'directory',
+          };
+        }
+        // 2) signed-in member data
+        if (!m) {
+          try {
+            const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+            if (md && md.memberId === raw) {
+              m = {
+                id: raw,
+                name: md.fullName || md.name || 'You',
+                phone: md.phone || '',
+                level: md.level || 'Member',
+                state: md.state || '',
+                city: md.city || '',
+                district: md.district || '',
+                address: md.address || '',
+                reportingCenterId: md.reportingCenterId || '',
+                joinDate: md.joinDate || '',
+                source: 'self',
+              };
+            }
+          } catch {}
+        }
+        // 3) any prior order placed by this member
+        if (!m) {
+          try {
+            const orders = JSON.parse(localStorage.getItem('al.orders') || '[]');
+            const o = orders.find(o => o && o.memberId === raw);
+            if (o && o.customer) {
+              const c = o.customer;
+              m = {
+                id: raw,
+                name: c.name || ('Member ' + raw.slice(-4)),
+                phone: c.phone || '',
+                level: c.level || 'Member',
+                state: c.state || '',
+                city: c.city || '',
+                district: c.district || '',
+                address: c.address || '',
+                reportingCenterId: o.reportingCenterId || '',
+                joinDate: '',
+                source: 'order',
+              };
+            }
+          } catch {}
+        }
+        // 4) unknown but valid-format id → minimal stub (filled with defaults)
+        if (!m) {
+          m = {
+            id: raw,
+            name: 'Member ' + raw.slice(-4),
+            phone: '', level: '-',
+            state: '', city: '', district: '', address: '',
+            reportingCenterId: '', joinDate: '', source: 'unknown',
+          };
+        }
+        return fillMemberDefaults(m);
+      }
+
+      function bindMemberSearch() {
+        const input = document.getElementById('memberIdInput');
+        const btn = document.getElementById('memberSearchBtn');
+        const doSearch = () => {
+          const raw = (input.value || '').trim().toUpperCase();
+          if (!/^NG\d{8}$/.test(raw)) {
+            showMemberResult(null, 'Invalid member ID. Format must be NG + 8 digits (e.g. NG23374876).');
+            return;
+          }
+          const m = lookupMember(raw);
+          state.member = m;
+          prefillFromMember(m);
+          showMemberResult(m, null);
+        };
+        btn.addEventListener('click', doSearch);
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+        // auto-uppercase
+        input.addEventListener('input', () => { input.value = input.value.toUpperCase(); });
+      }
+
+      // Associate the member's profile with the shipping form.
+      function prefillFromMember(m) {
+        if (!m) return;
+        document.getElementById('shipRecipient').value = m.name || '';
+        document.getElementById('shipPhone').value = m.phone || '';
+        document.getElementById('shipCity').value = m.city || '';
+        document.getElementById('shipDistrict').value = m.district || '';
+        document.getElementById('shipAddress').value = m.address || '';
+        const st = document.getElementById('shipState');
+        if (m.state && st) {
+          const opt = Array.from(st.options).find(o => o.value === m.state || o.text === m.state);
+          if (opt) st.value = opt.value;
+        }
+      }
+
+      function showMemberResult(member, error) {
+        const box = document.getElementById('memberResult');
+        if (error) {
+          box.className = 'member-result error';
+          box.innerHTML = '<div><div class="name">' + error + '</div></div>';
+          box.hidden = false;
+          return;
+        }
+        if (member) {
+          const rcName = (member.reportingCenterId && DEMO_DIRECTORY[member.reportingCenterId])
+            ? DEMO_DIRECTORY[member.reportingCenterId].name : (member.reportingCenterId || '-');
+          box.className = 'member-result found';
+          box.innerHTML = `
+            <div class="head">
+              <div class="ek-avatar">${(member.name[0] || 'M').toUpperCase()}</div>
+              <div>
+                <div class="name">${member.name}</div>
+                <div class="id">${member.id} · ${member.level}</div>
+              </div>
+            </div>
+            <div class="meta">
+              <div class="meta-item"><span class="k">Reporting center</span><span class="v mono">${rcName}</span></div>
+              <div class="meta-item"><span class="k">Phone</span><span class="v mono">${member.phone || '-'}</span></div>
+              <div class="meta-item"><span class="k">State</span><span class="v">${member.state || '-'}</span></div>
+              <div class="meta-item"><span class="k">City</span><span class="v">${member.city || '-'}</span></div>
+              <div class="meta-item"><span class="k">District / LGA</span><span class="v">${member.district || '-'}</span></div>
+              <div class="meta-item"><span class="k">Address</span><span class="v">${member.address || '-'}</span></div>
+              ${member.joinDate ? `<div class="meta-item"><span class="k">Joined</span><span class="v mono">${member.joinDate}</span></div>` : ''}
+            </div>`;
+          box.hidden = false;
+        } else {
+          box.hidden = true;
+        }
+        updatePayBtn();
+      }
+
+      /* ---------- Saved addresses ---------- */
+      function renderSavedAddresses() {
+        const select = document.getElementById('savedAddrSelect');
+        if (!select) return;
+        const list = (window.AL && window.AL.getAddresses) ? window.AL.getAddresses() : [];
+        state.savedAddresses = list;
+        select.innerHTML = '<option value="">— Use a new address —</option>' +
+          list.map(a => `<option value="${a.id}">${(a.label || 'Address')} — ${[a.street, a.city].filter(Boolean).join(', ')}</option>`).join('');
+        select.addEventListener('change', () => {
+          const a = list.find(x => x.id === select.value);
+          if (a) {
+            document.getElementById('shipRecipient').value = a.recipient || '';
+            document.getElementById('shipPhone').value = a.phone || '';
+            document.getElementById('shipAddress').value = a.street || '';
+            document.getElementById('shipCity').value = a.city || '';
+            const st = document.getElementById('shipState');
+            const opt = Array.from(st.options).find(o => o.text === a.state);
+            if (opt) st.value = opt.value;
+          }
+        });
+      }
+
+      /* ---------- Payment method (same 4 options as unified checkout) ---------- */
+      const PAY_LABELS = { cod: 'Cash on delivery', card: 'Debit / credit card', ussd: 'USSD', bank: 'Bank transfer' };
+      const PAY_PANELS = { card: 'cardPanel', ussd: 'ussdPanel', bank: 'bankPanel', cod: 'codPanel' };
+
+      function bindPayMethod() {
+        const radios = document.querySelectorAll('input[name="mrpPay"]');
+        const setPanel = (val) => {
+          Object.keys(PAY_PANELS).forEach(k => {
+            document.getElementById(PAY_PANELS[k]).classList.toggle('show', k === val);
+          });
+        };
+        radios.forEach(r => {
+          r.addEventListener('change', () => {
+            state.payMethod = r.value;
+            setPanel(r.value);
+            validateCardMRP();
+            updatePayBtn();
+          });
+        });
+        const checked = document.querySelector('input[name="mrpPay"]:checked');
+        state.payMethod = checked ? checked.value : 'cod';
+        setPanel(state.payMethod);
+      }
+
+      function validateCardMRP() {
+        if (state.payMethod !== 'card') { state.cardValid = true; return true; }
+        const num = document.getElementById('cardNumberMRP');
+        const name = document.getElementById('cardNameMRP');
+        const exp = document.getElementById('cardExpiryMRP');
+        const cvv = document.getElementById('cardCvvMRP');
+        const ok = num && (num.value.replace(/\s/g, '').length >= 13)
+          && name && name.value.trim().length >= 2
+          && exp && /^\d{2}\/\d{2}$/.test(exp.value)
+          && cvv && cvv.value.length >= 3;
+        state.cardValid = !!ok;
+        return !!ok;
+      }
+
+      function bindCardInputsMRP() {
+        const num = document.getElementById('cardNumberMRP');
+        const exp = document.getElementById('cardExpiryMRP');
+        const cvv = document.getElementById('cardCvvMRP');
+        const brand = document.getElementById('cardBrandMRP');
+        if (num) num.addEventListener('input', e => {
+          let v = e.target.value.replace(/\D/g, '').slice(0, 16);
+          e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
+          brand.className = 'card-brand';
+          if (/^4/.test(v)) brand.classList.add('visa');
+          else if (/^(5[1-5]|2[2-7])/.test(v)) brand.classList.add('mc');
+          else if (/^506[01]|^650/.test(v)) brand.classList.add('verve');
+          else if (/^3[47]/.test(v)) brand.classList.add('amex');
+          validateCardMRP(); updatePayBtn();
+        });
+        document.getElementById('cardNameMRP')?.addEventListener('input', () => { validateCardMRP(); updatePayBtn(); });
+        if (exp) exp.addEventListener('input', e => {
+          let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+          if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
+          e.target.value = v;
+          validateCardMRP(); updatePayBtn();
+        });
+        if (cvv) cvv.addEventListener('input', e => {
+          e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+          validateCardMRP(); updatePayBtn();
+        });
+      }
+
+      /* ---------- Summary ---------- */
+      function renderSummary() {
+        const products = getProducts();
+        const lines = Object.keys(state.items).map(pid => {
+          const p = products.find(x => x.id === pid);
+          if (!p) return null;
+          const qty = state.items[pid];
+          return { ...p, qty };
+        }).filter(Boolean);
+        const list = document.getElementById('summaryList');
+        if (lines.length === 0) {
+          list.innerHTML = '<p>No products selected yet.</p>';
+        } else {
+          list.innerHTML = lines.map(it => `
+            <div>
+              <div>
+                ${it.img ? `<img src="assets/img/products/${it.category}/${it.img}" alt="${it.name}" />` : ''}
+              </div>
+              <div>
+                <div>${it.name}</div>
+                <div>${it.qty} × ${money(it.price)}</div>
+              </div>
+              <div>${money(it.price * it.qty)}</div>
+            </div>`).join('');
+        }
+        const subtotal = lines.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
+        // BV now comes from the product's `bv` field (per-unit), not a price approximation
+        const bv = lines.reduce((s, it) => s + (Number(it.bv) || 0) * (it.qty || 1), 0);
+        document.getElementById('summarySubtotal').textContent = money(subtotal);
+        document.getElementById('summaryBV').textContent = Number.isInteger(bv) ? bv : bv.toFixed(1);
+        document.getElementById('summaryTotal').textContent = money(subtotal);
+        const bankAmt = document.getElementById('bankAmountMRP');
+        if (bankAmt) bankAmt.textContent = money(subtotal).replace('NGN', '').trim();
+        // for payBtn enable check
+        state.subtotal = subtotal;
+        state.bv = bv;
+      }
+
+      function bindSummary() {
+        document.getElementById('backBtn').addEventListener('click', () => {
+          if (history.length > 1) history.back();
+          else location.href = 'account.html';
+        });
+      }
+
+      /* ---------- Form submit (unified payment process) ---------- */
+      function bindFormSubmit() {
+        document.getElementById('mrpForm').addEventListener('submit', e => {
+          e.preventDefault();
+          submitOrder();
+        });
+      }
+
+      function updatePayBtn() {
+        const MIN_BV = 90;
+        const payBtn = document.getElementById('payBtn');
+        const bv = state.bv || 0;
+        const bvOk = bv >= MIN_BV;
+        const ok = !!state.member
+          && Object.keys(state.items).length > 0
+          && document.getElementById('shipRecipient').value.trim()
+          && document.getElementById('shipPhone').value.trim()
+          && document.getElementById('shipState').value
+          && document.getElementById('shipCity').value.trim()
+          && document.getElementById('shipAddress').value.trim()
+          && !!state.reportingCenter && !!state.reportingCenter.id
+          && (state.subtotal || 0) > 0
+          && (state.payMethod !== 'card' || state.cardValid)
+          && bvOk;
+        payBtn.disabled = !ok;
+        // Live BV requirement indicator
+        const reqText = document.getElementById('bvReqText');
+        if (reqText) {
+          if (bv <= 0) {
+            reqText.textContent = 'need ≥ ' + MIN_BV + ' BV';
+            reqText.style.color = 'var(--ek-muted)';
+          } else if (bvOk) {
+            reqText.textContent = bv + ' / ' + MIN_BV + ' BV ✓';
+            reqText.style.color = 'var(--ek-blue)';
+          } else {
+            reqText.textContent = bv + ' / ' + MIN_BV + ' BV — not enough';
+            reqText.style.color = 'var(--status-danger)';
+          }
+        }
+      }
+
+      ['shipRecipient','shipPhone','shipState','shipCity','shipAddress'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updatePayBtn);
+        document.getElementById(id).addEventListener('change', updatePayBtn);
+      });
+
+      function submitOrder() {
+        const payBtn = document.getElementById('payBtn');
+        if (payBtn.disabled) return;
+        payBtn.disabled = true;
+        const origText = payBtn.textContent;
+        payBtn.textContent = '处理中 Processing…';
+
+        const products = getProducts();
+        const lines = Object.keys(state.items).map(pid => {
+          const p = products.find(x => x.id === pid);
+          return p ? { ...p, qty: state.items[pid] } : null;
+        }).filter(Boolean);
+        const total = lines.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
+        // BV per-unit from product data, summed with qty
+        const bv = lines.reduce((s, it) => s + (Number(it.bv) || 0) * (it.qty || 1), 0);
+
+        // build the customer / shipping snapshot
+        const customer = {
+          name: document.getElementById('shipRecipient').value.trim(),
+          phone: document.getElementById('shipPhone').value.trim(),
+          email: '',
+          city: document.getElementById('shipCity').value.trim(),
+          state: document.getElementById('shipState').value,
+          district: document.getElementById('shipDistrict').value.trim(),
+          address: document.getElementById('shipAddress').value.trim(),
+        };
+
+        // ----- Unified order + payment flow (reuses ProductCatalog) -----
+        const pc = window.ProductCatalog || {};
+        const orderItems = lines.map(it => ({
+          id: it.id,
+          sku: it.sku || '',
+          name: it.name,
+          qty: it.qty,
+          price: it.price || 0,    // DP (distributor price)
+          rp: it.rp || 0,          // RP (retail reference)
+          bv: Number(it.bv) || 0,  // per-unit BV
+          bvTotal: (Number(it.bv) || 0) * (it.qty || 1),
+          stock: Number(it.stock) || 0,
+          img: it.img,
+          category: it.category,
+          image: it.img && it.category ? `assets/img/products/${it.category}/${it.img}` : (it.img || ''),
+        }));
+        const order = {
+          id: (pc.genOrderId ? pc.genOrderId() : genOrderId()),
+          date: Date.now(),
+          items: orderItems,
+          total: total,
+          bv: bv,
+          memberId: state.member ? state.member.id : null,
+          memberName: (state.member && state.member.name) || customer.name || null,
+          operatorId: (window.Auth && window.Auth.user && window.Auth.user.memberId) || null,
+          country: 'Nigeria',
+          currency: 'NGN',
+          reportingCenterId: state.reportingCenter ? state.reportingCenter.id : null,
+          reportingCenterName: state.reportingCenter ? state.reportingCenter.name : null,
+          customer: customer,
+          delivery: { method: 'delivery' },
+          payment: state.payMethod,
+          paymentLabel: PAY_LABELS[state.payMethod] || state.payMethod,
+          payStatus: 'Unpaid',
+          source: 'member-auto-maintenance',
+          status: 'pending',
+        };
+        if (pc.addOrder) {
+          pc.addOrder(order);
+        } else {
+          const orders = JSON.parse(localStorage.getItem('al.orders') || '[]');
+          orders.unshift(order);
+          localStorage.setItem('al.orders', JSON.stringify(orders));
+        }
+
+        // Same unified flow as the regular checkout:
+        // - cod → order confirmed, paid on delivery (status stays pending)
+        // - card / ussd / bank → route to the secure payment step (order.html)
+        const needsGateway = state.payMethod !== 'cod';
+        if (needsGateway) {
+          showSuccess(order, { next: 'gateway' });
+        } else {
+          showSuccess(order);
+        }
+      }
+
+      function showSuccess(order, opts) {
+        opts = opts || {};
+        const wrap = document.querySelector('.mrp-shell .container');
+        wrap.innerHTML = `
+          <div class="mrp-card">
+            <div>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>
+            </div>
+            <h2>Order placed</h2>
+            <p>Order ID: <strong>${order.id}</strong></p>
+            <p>Repeat-purchase member: <strong>${order.memberId}</strong> · ${order.memberName || ''}</p>
+            <p>Reporting center: <strong>${order.reportingCenterId}</strong>${order.reportingCenterName ? ' · ' + order.reportingCenterName : ''}</p>
+            <p>Payment: <strong>${order.paymentLabel}</strong> · ${order.status === 'paid' ? 'Completed' : 'Pending'}</p>
+            <p>${money(order.total)}</p>
+            ${opts.next === 'gateway' ? '<p>Redirecting to secure payment…</p>' : ''}
+            <div>
+              <a class="ek-btn--primary" href="order.html?id=${order.id}">View order</a>
+              <a class="ek-btn--secondary" href="account.html">Back to account</a>
+            </div>
+          </div>`;
+        if (opts.next === 'gateway') {
+          setTimeout(() => { location.href = 'order.html?id=' + order.id; }, 1800);
+        }
+      }
+
+      /* ---------- go ---------- */
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+/* ==========================================================================
+   Elken UI — design tokens / 设计令牌
+   v1.1.1
+
+   The single source of colour, type and spacing for BOTH the Elken Africa
+   marketing site and the member portal. Change a value here and both change.
+   两个站点（营销官网 + 会员中心）共用这一份令牌。改这里，两边同时生效。
+
+   RULE / 规则
+   Never hardcode a colour, font size or spacing value in your own CSS.
+   Always use var(--ek-…). If a value you need does not exist, ask for it to
+   be added here rather than inventing it locally.
+   不要在自己的样式里写死颜色、字号、间距，一律用 var(--ek-…)。
+   缺什么令牌就提出来加进这里，不要在本地另起一套。
+   ========================================================================== */
+
+:root {
+
+  /* ------------------------------------------------------------------ *
+   * 1. BRAND COLOUR / 品牌色
+   * From the Elken Figma "01 - Foundations" page. Do not alter.
+   * 来自 Elken Figma 基础页，不可修改。
+   * ------------------------------------------------------------------ */
+  --ek-blue:            #202259;  /* Deep Vital Blue  / 品牌深蓝 — primary */
+  --ek-blue-hover:      #0F1034;
+  --ek-pink:            #F287B7;  /* Radiant Bloom Pink / 品牌粉 — accent */
+  --ek-aqua:            #2AA7CF;  /* Aqua Energy Blue / 品牌青 — links, focus */
+  --ek-aqua-hover:      #1B96BD;
+  --ek-charcoal:        #25292C;  /* Charcoal Core / 主文字色 */
+  --ek-charcoal-deep:   #0D1417;
+  --ek-steel:           #859EB3;
+  --ek-blush:           #EDC4C2;
+  --ek-mauve:           #B57A99;
+  --ek-white:           #FFFFFF;
+  --ek-body-ink:        #27282B;  /* body copy / 正文 */
+
+  --ek-grey-light:      #F4F5F5;
+  --ek-grey-mid:        #ECECEC;
+  --ek-grey-out:        #D1D8DE;  /* borders, disabled / 描边、禁用 */
+  --ek-panel-cool:      #E9EEF2;
+
+  /* Deep blues used by the marketing statistics panels. Reused in the portal
+     for chart series and the sponsor tree. / 图表与团队树可复用。 */
+  --ek-stat-1:          #0B1944;
+  --ek-stat-2:          #152964;
+  --ek-stat-3:          #223A81;
+
+
+  /* ------------------------------------------------------------------ *
+   * 2. SEMANTIC / STATUS COLOUR / 语义色（状态）
+   * These are NOT brand colours. They exist so a state reads as a state.
+   * 这些不是品牌色，只用于表达状态，让用户一眼看出成功/警告/失败。
+   *
+   * Each has a -tint (background) and a -ink (text on that tint), and every
+   * -ink is >= 4.5:1 on its own tint, so text is always readable.
+   * 每组都配 -tint 底色和 -ink 文字色，对比度均 >= 4.5:1。
+   * ------------------------------------------------------------------ */
+  --ek-success:         #1F6B3F;  --ek-success-tint:  #EAF6EE;
+  --ek-warning:         #8A6D1F;  --ek-warning-tint:  #FDF6E3;
+  --ek-error:           #B3261E;  --ek-error-tint:    #FDF3F2;
+  --ek-info:            #1B6C88;  --ek-info-tint:     #E9F4F8;
+  --ek-neutral:         #5C646A;  --ek-neutral-tint:  #F1F3F4;
+
+  /* Muted text — captions, table headers, helper copy / 次要文字 */
+  --ek-muted:           #5C646A;
+
+
+  /* ------------------------------------------------------------------ *
+   * 3. SURFACES / 界面层级
+   * The portal is an application, not a brochure: it needs a page ground,
+   * a card surface, and a raised surface. / 应用型界面需要层级。
+   * ------------------------------------------------------------------ */
+  --ek-surface-page:    #F4F6F8;  /* the ground behind cards / 页面底色 */
+  --ek-surface:         #FFFFFF;  /* cards, tables, panels / 卡片面 */
+  --ek-surface-sunken:  #F8F9FA;  /* table headers, wells / 凹陷面 */
+  --ek-border:          #E3E6E8;  /* hairline between rows / 分割线 */
+  --ek-border-strong:   #D1D8DE;  /* input borders / 输入框描边 */
+
+  --ek-shadow-sm:  0 1px 2px rgba(13, 20, 23, .06);
+  --ek-shadow:     0 2px 8px rgba(13, 20, 23, .08);
+  --ek-shadow-lg:  0 12px 32px rgba(13, 20, 23, .14);
+
+
+  /* ------------------------------------------------------------------ *
+   * 4. TYPE / 字体
+   *
+   * IMPORTANT / 重要
+   * Montserrat contains NO Chinese glyphs. Chinese text falls through to the
+   * next family in the stack, so PingFang SC (Mac) and Microsoft YaHei
+   * (Windows) are listed explicitly — otherwise Chinese renders in the
+   * browser default and looks inconsistent between machines.
+   * Montserrat 不含中文字形，中文会回退到后面的字体。这里显式写了
+   * 苹方 / 微软雅黑，避免各台机器渲染不一致。
+   *
+   * Do not add a Google Fonts <link>. The fonts ship inside this package
+   * because fonts.googleapis.com is not reachable from mainland China.
+   * 不要引入 Google Fonts，字体已随包提供（国内无法访问 Google 字体 CDN）。
+   * ------------------------------------------------------------------ */
+  --ek-font: Montserrat, "PingFang SC", "Hiragino Sans GB",
+             "Microsoft YaHei", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
+
+  /* Weights. There is NO 600 face — 600 resolves to 700 by design, which is
+     how the marketing site was signed off. / 没有 600 字重，600 会落到 700。 */
+  --ek-w-regular: 400;
+  --ek-w-medium:  500;
+  --ek-w-bold:    700;
+
+  /* Portal type scale. Smaller than the marketing site: an application is
+     read at arm's length, not scanned from a hero.
+     会员中心的字号比营销站小 —— 应用界面是「读」的，不是「扫」的。 */
+  --ek-h1:      32px;  --ek-h1-lh: 1.25;  --ek-h1-ls: -0.4px;
+  --ek-h2:      24px;  --ek-h2-lh: 1.3;
+  --ek-h3:      19px;  --ek-h3-lh: 1.35;
+  --ek-h4:      16px;  --ek-h4-lh: 1.4;
+  --ek-lead:    16px;  --ek-lead-lh: 1.6;
+  --ek-text:    15px;  --ek-text-lh: 1.6;
+  --ek-small:   13px;  --ek-small-lh: 1.5;
+  --ek-caption: 12px;  --ek-caption-lh: 1.45;
+
+  /* Numerals in tables and stat cards line up in columns. / 表格数字对齐。 */
+  --ek-num: "tnum" 1, "lnum" 1;
+
+
+  /* ------------------------------------------------------------------ *
+   * 5. SPACING / 间距
+   * An 4px scale. Use these, not arbitrary pixels. / 4 的倍数，别用随机值。
+   * ------------------------------------------------------------------ */
+  --ek-4: 4px;    --ek-8: 8px;    --ek-12: 12px;  --ek-16: 16px;
+  --ek-20: 20px;  --ek-24: 24px;  --ek-32: 32px;  --ek-40: 40px;
+  --ek-48: 48px;  --ek-56: 56px;  --ek-64: 64px;  --ek-80: 80px;
+
+
+  /* ------------------------------------------------------------------ *
+   * 6. LAYOUT / 布局
+   * ------------------------------------------------------------------ */
+  --ek-content-max:  1240px;  /* portal content is narrower than marketing */
+  --ek-page-pad:     32px;
+  --ek-sidebar-w:    248px;
+  --ek-header-h:     64px;
+
+  --ek-radius-sm:  4px;
+  --ek-radius:     8px;
+  --ek-radius-lg:  14px;
+  --ek-radius-pill: 999px;
+
+
+  /* ------------------------------------------------------------------ *
+   * 7. MOTION / 动效
+   * ------------------------------------------------------------------ */
+  --ek-ease: cubic-bezier(.4, 0, .2, 1);
+  --ek-fast: .18s;
+  --ek-slow: .4s;
+
+  /* Focus ring. Do not remove it anywhere. Keyboard users and screen-reader
+     users depend on it, and it is the one accessibility rule that gets
+     deleted most often. / 焦点环不可移除，这是最常被误删的无障碍要素。 */
+  --ek-focus-ring: 0 0 0 2px var(--ek-white), 0 0 0 4px var(--ek-aqua);
+
+
+  /* ------------------------------------------------------------------ *
+   * 8. Z-INDEX / 层级顺序
+   * Named, so nobody has to guess or write z-index: 99999.
+   * 统一命名，避免出现 z-index: 99999 这种写法。
+   * ------------------------------------------------------------------ */
+  --ek-z-sticky:  100;
+  --ek-z-header:  200;
+  --ek-z-drawer:  300;
+  --ek-z-modal:   400;
+  --ek-z-toast:   500;
+}
+
+
+/* Tablet / 平板 -------------------------------------------------------- */
+@media (max-width: 1023px) {
+  :root {
+    --ek-h1: 27px;
+    --ek-h2: 21px;
+    --ek-page-pad: 24px;
+  }
+}
+
+/* Mobile / 手机 -------------------------------------------------------- */
+@media (max-width: 767px) {
+  :root {
+    --ek-h1: 24px;
+    --ek-h2: 19px;
+    --ek-h3: 17px;
+    --ek-page-pad: 16px;
+  }
+}
+
+/* Respect the OS "reduce motion" setting. / 尊重系统的「减弱动效」设置。 */
+@media (prefers-reduced-motion: reduce) {
+  :root { --ek-fast: 0s; --ek-slow: 0s; }
+}
