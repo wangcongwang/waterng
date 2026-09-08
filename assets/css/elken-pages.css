@@ -150,52 +150,6 @@
 .sec-closing .ek-h2 { color: var(--ek-blue); }
 @media (max-width: 767px) { .sec-closing { padding-block: 56px; } }
 
-/* sec-footer — Figma "Sec-Footer" ---------------------------------------- */
-/* The footer sits below dark sections on the product pages, so it needs its own
-   ground a clear step darker than Charcoal Core — otherwise the two read as one
-   continuous band. Same relationship as the Elken corporate site. */
-.sec-footer { background: var(--ek-charcoal-deep); color: var(--ek-white); }
-.sec-footer__inner {
-  display: grid; grid-template-columns: 1fr 315px 238px 231px;
-  gap: var(--ek-40); padding-block: 93px 80px;
-}
-.sec-footer__logo { height: 26px; width: auto; display: block; }
-.ek-fcol h2 { font-size: 15px; font-weight: 700; color: var(--ek-white); margin: 0 0 22px; }
-.ek-fcol ul { display: flex; flex-direction: column; gap: 14px; }
-.ek-fcol li { display: flex; gap: 10px; font-size: 14px; line-height: 1.4; color: var(--ek-grey-light); }
-.ek-fcol li::before { content: ""; flex: 0 0 auto; width: 4px; height: 4px; background: var(--ek-pink); margin-top: 8px; }
-.ek-fcol a { color: var(--ek-grey-light); }
-.ek-fcol a:hover { color: var(--ek-pink); }
-.ek-faddr { font-style: normal; font-size: 14px; line-height: 1.7; color: var(--ek-grey-light); }
-.ek-faddr strong { color: var(--ek-white); font-weight: 700; }
-.ek-faddr a { color: var(--ek-grey-light); text-decoration: underline; }
-.ek-faddr a:hover { color: var(--ek-pink); }
-
-.sec-footer__bar {
-  border-top: 1px solid rgba(255,255,255,.10); padding-block: 24px 34px;
-  display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: var(--ek-32);
-}
-/* The whole bottom bar is fine print, at the Figma fill. Deliberately
-   recessive: 1.83:1 on the footer ground, which is the design's intent here and
-   is well below the 4.5:1 a reader needs. Flagged to Elken BC, applied as drawn. */
-.sec-footer__bar p, .sec-footer__bar a { font-size: 12px; line-height: 1.6; color: var(--ek-footer-fine); }
-.sec-footer__bar a:hover { color: var(--ek-pink); }
-.ek-social { display: flex; gap: var(--ek-8); }
-.ek-social a {
-  width: 44px; height: 44px; background: rgba(255,255,255,.10);
-  display: flex; align-items: center; justify-content: center;
-  transition: background-color var(--ek-fast) var(--ek-ease);
-}
-.ek-social a:hover { background: var(--ek-pink); }
-
-@media (max-width: 1199px) {
-  .sec-footer__inner { grid-template-columns: 1fr 1fr; gap: var(--ek-40); padding-block: 56px 40px; }
-  .sec-footer__bar { grid-template-columns: 1fr; gap: var(--ek-16); }
-}
-@media (max-width: 767px) {
-  .sec-footer__inner { grid-template-columns: 1fr; gap: var(--ek-32); padding-block: 48px 32px; }
-}
-
 /* ==========================================================================
    Elken Africa — components
    Every block here becomes a reusable Elementor widget or template part.
