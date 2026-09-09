@@ -14,6 +14,12 @@
   - `account.html` 的 `setProfileMode('edit')` 循环里要保持 `pfMemberId.disabled = true`（不能被其它字段的 `el.disabled = !editing` 覆盖），现有 line 891 已正确处理：`if (name === 'memberid' || el.id === 'pfMemberId') el.disabled = true;`。
   - 锁定样式集中在 `pages.css` 的 `.profile-form .field .input.input-locked`（含 SVG 锁图标的 data URI）。修改 Member ID 字段时不要去掉 `input-locked` 类或 `disabled` 属性。
 
+### 我的账户模块样式（2026-09-09 定稿）
+- **单一文件 `assets/css/account-ui.css`** 承载"我的账户"全部 7 个页面的 UI 覆盖（account / order / member-welcome / member-repurchase / member-auto-maintenance / member-upgrade / team-inquiry）。
+- **纯 CSS 覆盖、逻辑交互不变**：不修改这些页面的 HTML/JS，靠在 `water-pages.css` 之后插入 `<link ... account-ui.css?v=…>`（加载顺序压过基线）生效。改账户页视觉只动这个文件。
+- **CLAUDE.md 硬规则**：新样式必须用 `--ek-` token（设计令牌）；禁止 hex 颜色、禁止 px 字号、禁止 `!important`、禁止新增依赖/Google Fonts、禁止去掉 focus ring。组件本体在 `elken-ui.css`，页面内容以 `.ek-pagehead` 开头。
+- 响应式断点：≤767 单栏、按钮满宽、product-list 收列。
+
 ## 项目结构（2026-09-08 定稿）
 - **纯 HTML 静态项目**：所有 `*.html` 页面 + `assets/` + `robots.txt` + `sitemap.xml`，无后端。
 - **WordPress 已彻底移除（2026-09-08 用户确认）**：`wp-demo/`（329MB）、`wp-migration/`（迁移文档+商品CSV）、`CONTENT_DIFF_REPORT.md` 均已移入 `~/.Trash/`，用户明确不再需要 WordPress。不要再建议任何 WP 相关方案。
