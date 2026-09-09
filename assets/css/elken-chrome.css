@@ -319,12 +319,17 @@
    ground a clear step darker than Charcoal Core — otherwise the two read as one
    continuous band. Same relationship as the Elken corporate site. */
 .sec-footer { background: var(--ek-charcoal-deep); color: var(--ek-white); }
-/* The four columns sit as one centred group — the logo column is sized to the
-   logo (auto) instead of 1fr, and the grid is centred in the container, so the
-   footer never reads as logo-pinned-left / columns-pinned-right. */
+/* Alignment, measured off the design snapshot at 1280: the footer BAND is the
+   centred nav container (1184px wide, 48px gutters each side); inside that band
+   the columns are spread — logo pinned left, the last column pinned right.
+   It is the band that is centred, not the group of columns. */
+.sec-footer .ek-container--nav {
+  --ek-page-pad: 48px;                /* the design's footer gutters */
+  width: min(var(--ek-nav-max), 100% - (var(--ek-page-pad) * 2));
+  margin-inline: auto;
+}
 .sec-footer__inner {
-  display: grid; grid-template-columns: auto 315px 238px 231px;
-  justify-content: center;
+  display: grid; grid-template-columns: 1fr 315px 238px 231px;
   gap: var(--ek-40); padding-block: 93px 80px;
 }
 .sec-footer__logo { height: 26px; width: auto; display: block; }
@@ -341,8 +346,7 @@
 
 .sec-footer__bar {
   border-top: 1px solid rgba(255,255,255,.10); padding-block: 24px 34px;
-  display: grid; grid-template-columns: auto auto auto; justify-content: center;
-  align-items: center; gap: var(--ek-32);
+  display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: var(--ek-32);
 }
 /* The whole bottom bar is fine print, at the Figma fill. Deliberately
    recessive: 1.83:1 on the footer ground, which is the design's intent here and is
@@ -358,9 +362,11 @@
 .ek-social a:hover { background: var(--ek-pink); }
 
 @media (max-width: 1199px) {
-  .sec-footer__inner { grid-template-columns: 315px 238px; justify-content: center; gap: var(--ek-40); padding-block: 56px 40px; }
-  .sec-footer__bar { grid-template-columns: auto; justify-content: center; text-align: center; gap: var(--ek-16); }
+  .sec-footer .ek-container--nav { --ek-page-pad: 40px; }
+  .sec-footer__inner { grid-template-columns: 1fr 1fr; gap: var(--ek-40); padding-block: 56px 40px; }
+  .sec-footer__bar { grid-template-columns: 1fr; gap: var(--ek-16); }
 }
 @media (max-width: 767px) {
-  .sec-footer__inner { grid-template-columns: minmax(0, 340px); justify-content: center; gap: var(--ek-32); padding-block: 48px 32px; }
+  .sec-footer .ek-container--nav { --ek-page-pad: 20px; }
+  .sec-footer__inner { grid-template-columns: 1fr; gap: var(--ek-32); padding-block: 48px 32px; }
 }
