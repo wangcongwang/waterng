@@ -474,7 +474,7 @@
     if (cat && categories[cat]) {
       chooser.hidden = true;
       listing.hidden = false;
-      document.title = `${categories[cat].label} · AquaLife`;
+      document.title = `${categories[cat].label} · Elken`;
 
       const catTitle = document.getElementById('categoryTitle');
       const catIntro = document.getElementById('categoryIntro');
@@ -488,7 +488,7 @@
       // hide the product grid (revealed only when a range is chosen).
       chooser.hidden = false;
       listing.hidden = true;
-      document.title = 'Products · AquaLife';
+      document.title = 'Products · Elken';
     }
   }
 

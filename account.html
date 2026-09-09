@@ -6,7 +6,7 @@
   <meta http-equiv="Expires" content="0" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>My Account · AquaLife</title>
+  <title>My Account · Elken</title>
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
 
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
@@ -441,9 +441,9 @@
 
   <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js?v=1787801078"></script>
-<script src="assets/js/app.js?v=20260909a"></script>
-  <script src="assets/js/website.js?v=1787801078"></script>
+  <script src="assets/i18n/strings.js?v=20260909c"></script>
+<script src="assets/js/app.js?v=20260909c"></script>
+  <script src="assets/js/website.js?v=20260909c"></script>
   <script>
     /* ---------- i18n apply ---------- */
     function applyI18n() {
@@ -1670,10 +1670,10 @@
       if (shareBtn && linkEl) {
         shareBtn.addEventListener('click', () => {
           const text = linkEl.value || '';
-          const shareText = 'Join AquaLife through my referral link: ' + text;
+          const shareText = 'Join Elken through my referral link: ' + text;
           try {
             if (navigator.share) {
-              navigator.share({ title: 'AquaLife', text: shareText }).catch(() => {});
+              navigator.share({ title: 'Elken', text: shareText }).catch(() => {});
             } else if (navigator.clipboard) {
               navigator.clipboard.writeText(shareText).then(() => toast('Referral link copied')).catch(() => {});
             } else { if (window.toast) window.toast(shareText, 'info'); }

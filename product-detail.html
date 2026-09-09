@@ -6,8 +6,8 @@
   <meta http-equiv="Expires" content="0" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Product Detail · AquaLife</title>
-  <meta name="description" content="AquaLife product detail page with wellness product benefits, ingredients and quality notes." />
+  <title>Product Detail · Elken</title>
+  <meta name="description" content="Elken product detail page with wellness product benefits, ingredients and quality notes." />
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
   <link rel="stylesheet" href="assets/css/elken-ui.css">
@@ -27,7 +27,7 @@
           <div class="crumbs"><a href="index.html" data-detail-i18n="home">Home</a> <span>/</span> <a href="products.html" data-detail-i18n="products">Products</a> <span>/</span> <span id="detailCrumb">Product</span></div>
           <p class="eyebrow eyebrow-ink" id="detailCategory">Product Center</p>
           <h1 id="detailTitle">Product Detail</h1>
-          <p id="detailIntro">AquaLife product information for the selected category.</p>
+          <p id="detailIntro">Elken product information for the selected category.</p>
           <div class="detail-chip-row" id="detailTags"></div>
           <div class="detail-bv-row" id="detailBV" hidden></div>
           <div class="detail-actions">
@@ -91,9 +91,9 @@
   </main>
 
   <div id="app-footer" class="ek-site-footer"></div>
-  <script src="assets/i18n/strings.js?v=20260819-2"></script>
-<script src="assets/js/app.js?v=20260909a"></script>
-  <script src="assets/js/website.js?v=20260819-2"></script>
+  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
+<script src="assets/js/app.js?v=20260909c"></script>
+  <script src="assets/js/website.js?v=20260909c-2"></script>
   <script>
     const productDetails = {
       'spirulina': {
@@ -250,7 +250,7 @@
       const meta = findProductMeta(name);
       const metaName = meta ? meta[0] : name;
       const metaCategory = meta ? meta[1] : (category ? category.replace(/-/g, ' ') : 'Product Center');
-      const metaIntro = meta ? meta[2] : 'AquaLife product information for everyday wellness and lifestyle routines.';
+      const metaIntro = meta ? meta[2] : 'Elken product information for everyday wellness and lifestyle routines.';
       const metaTags = meta ? meta[3] : ['Product education', 'Everyday use', 'Quality focused'];
       return {
         name: metaName,
@@ -263,7 +263,7 @@
           [metaTags[1] || 'Daily routine', 'Organized for simple customer education and quick product comparison.'],
           [metaTags[2] || 'Quality focused', 'Presented with benefit notes, product story and everyday use cases.'],
         ],
-        formulaIntro: `This detail page summarizes ${metaName} using the AquaLife product catalogue structure and category-level product positioning.`,
+        formulaIntro: `This detail page summarizes ${metaName} using the Elken product catalogue structure and category-level product positioning.`,
         formula: metaTags.map(tag => `${tag} positioning`).concat(['Daily routine guidance']).slice(0, 4),
         scenarios: [`Customers exploring ${metaCategory}`, 'Lifestyle shopping journeys', 'Support conversations and product education'],
       };
@@ -315,7 +315,7 @@ function localizedDetail(detail) { return detail; }
       const detail = localizedDetail(baseDetail, slug);
       const meta = findProductMeta(name);
       applyDetailText();
-      document.title = detail.name + ' · AquaLife';
+      document.title = detail.name + ' · Elken';
       document.getElementById('detailTitle').textContent = detail.name;
       document.getElementById('detailCrumb').textContent = detail.name;
       document.getElementById('detailCategory').textContent = detail.category;

@@ -1,5 +1,5 @@
 /* ============================================================
-   AquaLife · App shell · i18n · shared interactions
+   Elken · App shell · i18n · shared interactions
    ============================================================ */
 (function () {
   'use strict';
@@ -251,8 +251,8 @@
      step with the home page range cards and the footer column. */
   const RANGES_NAV = [
     { name: 'Health',   href: 'products-health.html', items: [
-      { label: 'AquaLife Calmag', href: 'product-calmag.html' },
-      { label: 'AquaLife Spirulina', href: 'product-spirulina.html' },
+      { label: 'Elken Calmag', href: 'product-calmag.html' },
+      { label: 'Elken Spirulina', href: 'product-spirulina.html' },
       { label: 'LivXtra Yang', href: 'product-livxtra-yang.html' },
     ] },
     { name: 'Wellness', href: 'products-wellness.html', items: [
@@ -270,7 +270,7 @@
   ];
 
   const WHO_WE_ARE_NAV = [
-    { label: 'About AquaLife Nigeria', href: 'about.html' },
+    { label: 'About Elken Nigeria',    href: 'about.html' },
     { label: 'Our Global Strength',    href: 'about-global-strength.html' },
     { label: 'Leadership',             href: 'about-leadership.html' },
     { label: 'Our Journey',            href: 'about-journey.html' },
@@ -314,7 +314,7 @@
     const headerHTML = `
       <header class="ek-header">
         <div class="ek-container--nav">
-          <a class="ek-logo" href="index.html" aria-label="AquaLife, home">
+          <a class="ek-logo" href="index.html" aria-label="Elken, home">
             <img class="ek-logo__colour"   src="assets/img/brand/elken-logo-colour.svg?v=20260909a" alt="Elken">
             <img class="ek-logo__reversed" src="assets/img/brand/elken-logo-white-v4.svg?v=20260909a" alt="" aria-hidden="true">
           </a>
@@ -348,7 +348,7 @@
           <div class="drawer-head">
             <a href="index.html" class="brand">
               <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 C 8 9 6 12 6 15 a6 6 0 0 0 12 0c0-3-2-6-6-12z"/></svg></span>
-              <span class="word">AquaLife<small>Better living</small></span>
+              <span class="word">Elken<small>Better living</small></span>
             </a>
             <button class="icon-btn" id="closeDrawer" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
           </div>
@@ -426,19 +426,20 @@
   function renderFooter() {
     const host = document.getElementById('app-footer');
     if (!host) return;
+    /* Footer mirrors the marketing site's sec-footer exactly (labels, address,
+       legal line, social handles). Only the hrefs are local. */
     const whoLinks = [
-      { label: 'About AquaLife Nigeria', href: 'about.html' },
-      { label: 'Our Global Strength',    href: 'about-global-strength.html' },
-      { label: 'Leadership',             href: 'about-leadership.html' },
-      { label: 'Our Journey',            href: 'about-journey.html' },
-      { label: 'Community',              href: 'about-community.html' },
+      { label: 'About Elken Nigeria', href: 'about.html' },
+      { label: 'Our Global Strength', href: 'about-global-strength.html' },
+      { label: 'Leadership',          href: 'about-leadership.html' },
+      { label: 'Our Journey',         href: 'about-journey.html' },
+      { label: 'Community',           href: 'about-community.html' },
     ];
     const prodLinks = [
-      { label: 'Health',           href: 'products-health.html' },
-      { label: 'Wellness',         href: 'products-wellness.html' },
-      { label: 'Water Filters',    href: 'products-water-filters.html' },
-      { label: 'Beauty',           href: 'products-beauty.html' },
-      { label: 'See all products', href: 'products.html' },
+      { label: 'Health',   href: 'products-health.html' },
+      { label: 'Wellness', href: 'products-wellness.html' },
+      { label: 'Water',    href: 'products-water-filters.html' },
+      { label: 'Beauty',   href: 'products-beauty.html' },
     ];
     const col = (title, links) => `
         <div class="ek-fcol"><h2>${title}</h2><ul>
@@ -455,16 +456,16 @@
               <address class="ek-faddr"><strong>NIGERIA</strong><br>HEAD OFFICE<br>
               19A IBM Haruna Street,<br>Utako, Abuja.<br>
               Tel : <a href="tel:+2349131178401">+234 913 117 8401</a><br>
-              <a href="mailto:contact@aqualife.ng">contact@aqualife.ng</a></address>
+              <a href="mailto:contact@elkenafrica.com">contact@elkenafrica.com</a></address>
             </div>
           </div>
           <div class="sec-footer__bar">
-            <p>&copy; 2026 AquaLife Nigeria. All rights reserved.</p>
-            <p>&copy; Copyright 2026, AquaLife International &nbsp;&middot;&nbsp;
+            <p>&copy; 2026 Elken Nigeria. All rights reserved.</p>
+            <p>&copy; Copyright 2026, ELKEN SDN. BHD. 199501005790 (334986-W)(AJL 93727) &nbsp;&middot;&nbsp;
               <a href="privacy.html">Privacy</a> | <a href="terms.html">Terms Of Use</a> | <a href="shipping.html">Policies</a> | <a href="service.html">Support</a></p>
             <div class="ek-social">
-              <a href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="AquaLife on Facebook"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M8.4 13V7.6h1.8l.3-2.1H8.4V4.2c0-.6.2-1 1-1h1.1V1.3C10.2 1.3 9.6 1.2 9 1.2c-1.7 0-2.9 1-2.9 2.9v1.4H4.3v2.1h1.8V13h2.3z" fill="#F4F5F5"/></svg></a>
-              <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="AquaLife on Instagram"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1.6" y="1.6" width="10.8" height="10.8" rx="3.2" stroke="#F4F5F5" stroke-width="1.2"/><circle cx="7" cy="7" r="2.6" stroke="#F4F5F5" stroke-width="1.2"/><circle cx="10.2" cy="3.8" r=".8" fill="#F4F5F5"/></svg></a>
+              <a href="https://www.facebook.com/ElkenNigeria/" target="_blank" rel="noopener" aria-label="Elken Nigeria on Facebook"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M8.4 13V7.6h1.8l.3-2.1H8.4V4.2c0-.6.2-1 1-1h1.1V1.3C10.2 1.3 9.6 1.2 9 1.2c-1.7 0-2.9 1-2.9 2.9v1.4H4.3v2.1h1.8V13h2.3z" fill="#F4F5F5"/></svg></a>
+              <a href="https://www.instagram.com/elkennigeria/" target="_blank" rel="noopener" aria-label="Elken Nigeria on Instagram"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1.6" y="1.6" width="10.8" height="10.8" rx="3.2" stroke="#F4F5F5" stroke-width="1.2"/><circle cx="7" cy="7" r="2.6" stroke="#F4F5F5" stroke-width="1.2"/><circle cx="10.2" cy="3.8" r=".8" fill="#F4F5F5"/></svg></a>
             </div>
           </div>
         </div>
@@ -658,7 +659,7 @@
     memberId: 'NG09246375',
     firstName: 'Adaeze',
     name: 'Adaeze Okonkwo',
-    email: 'adaeze@aqualife.ng',
+    email: 'adaeze@elkenafrica.com',
     phone: '+234 803 123 4567',
     signedInAt: Date.UTC(2026, 5, 3, 8, 52, 21), // 2026-06-03T08:52:21Z = join date
   };

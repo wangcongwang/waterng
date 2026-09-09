@@ -6,8 +6,8 @@
   <meta http-equiv="Expires" content="0" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Order Details · AquaLife</title>
-  <meta name="description" content="View your AquaLife order details." />
+  <title>Order Details · Elken</title>
+  <meta name="description" content="View your Elken order details." />
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
@@ -27,7 +27,7 @@
         <a href="index.html">Home</a> <span>›</span> <span>Order details</span>
       </div>
       <h1>Order details</h1>
-      <p>Reference for your AquaLife purchase. Shareable via the link below.</p>
+      <p>Reference for your Elken purchase. Shareable via the link below.</p>
 
       <div id="orderHost"></div>
     </div>
@@ -35,9 +35,9 @@
 
   <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js?v=20260819-2"></script>
-<script src="assets/js/app.js?v=20260909a"></script>
-  <script src="assets/js/website.js?v=20260819-2"></script>
+  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
+<script src="assets/js/app.js?v=20260909c"></script>
+  <script src="assets/js/website.js?v=20260909c-2"></script>
   <script>
     const PICKUP_LOCATIONS = {
       lagos: { name: 'Lagos HQ', addr: '12B Admiralty Way, Lekki Phase 1', hours: 'Mon–Sat · 8:00 – 18:00' },
@@ -63,18 +63,18 @@
       const methodLabel = isPickup ? 'Self-pickup' : 'Door delivery';
       const payLabel = PAY_LABELS[order.payment] || order.payment || 'Not specified';
       const link = orderDetailLink(order.id);
-      const subject = 'AquaLife Order ' + order.id + ': Your order details';
+      const subject = 'Elken Order ' + order.id + ': Your order details';
       const body =
         'Hello ' + (order.customer && order.customer.name ? order.customer.name : 'there') + ',\n\n' +
-        'Thank you for your order with AquaLife.\n\n' +
+        'Thank you for your order with Elken.\n\n' +
         'Order: ' + order.id + '\n' +
         'Product: ' + (item.name || 'Unnamed product') + ' × ' + qty + '\n' +
         'Total: N' + (order.total || 0).toLocaleString() + '\n' +
         'Delivery: ' + methodLabel + '\n' +
         'Payment: ' + payLabel + '\n\n' +
         'View your full order details here:\n' + link + '\n\n' +
-        'If you have any questions, reply to this email or contact hello@aqualife.ng.\n\n' +
-        'Best regards,\nAquaLife Nigeria';
+        'If you have any questions, reply to this email or contact hello@elkenafrica.com.\n\n' +
+        'Best regards,\nElken Nigeria';
       const email = (order.customer && order.customer.email) || '';
       return 'mailto:' + encodeURIComponent(email) +
         '?subject=' + encodeURIComponent(subject) +
@@ -161,7 +161,7 @@
               We couldn't find this order on this device. Orders are stored locally in your browser,
               so a link opened on a different phone or computer won't show the details.
               Please open the link on the device where you placed the order, or contact
-              <a href="mailto:hello@aqualife.ng">hello@aqualife.ng</a> with your order ID.
+              <a href="mailto:hello@elkenafrica.com">hello@elkenafrica.com</a> with your order ID.
             </p>
             <a href="index.html" class="ek-btn ek-btn--primary ek-btn--sm">Back to home</a>
           </div>`;
