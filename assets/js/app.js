@@ -315,8 +315,8 @@
       <header class="ek-header">
         <div class="ek-container--nav">
           <a class="ek-logo" href="index.html" aria-label="AquaLife, home">
-            <img class="ek-logo__colour"   src="assets/img/brand/elken-logo-colour.svg" alt="AquaLife">
-            <img class="ek-logo__reversed" src="assets/img/brand/elken-logo-white-v4.svg" alt="" aria-hidden="true">
+            <img class="ek-logo__colour"   src="assets/img/brand/elken-logo-colour.svg?v=20260909a" alt="Elken">
+            <img class="ek-logo__reversed" src="assets/img/brand/elken-logo-white-v4.svg?v=20260909a" alt="" aria-hidden="true">
           </a>
           <button class="ek-burger" type="button" id="openDrawer" aria-expanded="false" aria-label="Menu">
             <span></span><span></span><span></span>
@@ -448,7 +448,7 @@
       <footer class="sec-footer">
         <div class="ek-container--nav">
           <div class="sec-footer__inner">
-            <div><img class="sec-footer__logo" src="assets/img/brand/elken-logo-white-v4.svg" alt="AquaLife"></div>
+            <div><img class="sec-footer__logo" src="assets/img/brand/elken-logo-white-v4.svg?v=20260909a" alt="Elken"></div>
             ${col('Who We Are', whoLinks)}
             ${col('Products', prodLinks)}
             <div class="ek-fcol"><h2>Contact Us</h2>
