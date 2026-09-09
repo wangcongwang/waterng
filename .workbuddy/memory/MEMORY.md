@@ -26,6 +26,11 @@
 - `cart.html` 基本已样式化（cart-* 主类在 `water-pages.css`），仅 `cart-item-qty/-remove/-unit` 3 个子类待补。
 - 同样遵守 CLAUDE.md 硬规则（--ek- token、无 hex/px/!important）。
 
+### 数据层 API 形态约定（2026-09-09 踩坑）
+- **`window.ProductCatalog.allProducts` 是数组，不是函数**（website.js 第 585 行 `allProducts,` 简写导出）。任何按 `pc.allProducts()` 调用或 `typeof === 'function'` 判断的解析器都会失效——必须同时处理「函数」与「数组」两种形态。
+- 商品图片字段统一是 **`img`**（如 `calmag.webp`），不是 `image`；目录路径 `assets/img/products/<category>/<img>`。
+- 订单项图片解析（`_resolveOrderItemImage`，order.html 与 account.html 各一份）现已按 id 精确 → 名称精确/部分(双向 includes)/忽略大小写 → sku/code 健壮匹配，并兼容 `allProducts` 数组。复购/自动维护等只存 `id` 的订单项也能回查到真实图片。
+
 ## 项目结构（2026-09-08 定稿）
 - **纯 HTML 静态项目**：所有 `*.html` 页面 + `assets/` + `robots.txt` + `sitemap.xml`，无后端。
 - **WordPress 已彻底移除（2026-09-08 用户确认）**：`wp-demo/`（329MB）、`wp-migration/`（迁移文档+商品CSV）、`CONTENT_DIFF_REPORT.md` 均已移入 `~/.Trash/`，用户明确不再需要 WordPress。不要再建议任何 WP 相关方案。
