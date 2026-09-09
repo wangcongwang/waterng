@@ -66,9 +66,13 @@
 .order-link-row {
   display: flex;
   gap: var(--ek-8);
-  align-items: stretch;
+  align-items: center;
+  margin-bottom: var(--ek-16);
 }
 .order-link-row .ek-input { flex: 1; min-width: 0; }
+
+/* ---------- Help sidebar: vertical spacing between stacked buttons ---------- */
+.shipping-side .checkout-card > .ek-btn--block + .ek-btn--block { margin-top: var(--ek-12); }
 
 /* ---------- Responsive: stack to single column ---------- */
 @media (max-width: 767px) {
