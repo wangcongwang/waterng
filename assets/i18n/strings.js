@@ -167,7 +167,7 @@ window.I18N = {
       labels: ['Free installation', 'Expert support', '24/7 service'],
     },
     promise: {
-      eyebrow: 'Why AquaLease',
+      eyebrow: 'Why AquaLife',
       title: 'A water system that simply works — month after month.',
       items: [
         { t: 'Free installation', d: 'Professional setup at your location — no hidden fees, no waiting.' },
@@ -487,7 +487,7 @@ window.I18N = {
       collection_t: 'Payment reminder', collection_d: 'Your account is {days} days overdue. Please settle to avoid service interruption.',
       pay_now: 'Pay now',
     },
-    about: { title: 'About AquaLease', sub: 'A Nigerian water infrastructure company, on a mission to make safe water affordable for every household.' },
+    about: { title: 'About AquaLife', sub: 'A Nigerian water infrastructure company, on a mission to make safe water affordable for every household.' },
     service: { title: 'Our service promise', sub: 'What you get with every purchase.' },
     shipping: {
       title: 'Awaiting delivery',
@@ -510,7 +510,7 @@ window.I18N = {
       help_action: 'Contact support',
     },
     cookie: {
-      title: 'Cookies on AquaLease',
+      title: 'Cookies on AquaLife',
       text: 'We use essential cookies to run the site and optional analytics cookies to improve it. You can accept all, reject all, or customise your choice. Nigeria Data Protection Regulation (NDPR) requires your explicit consent before non-essential cookies are set.',
       accept: 'Accept all',
       reject: 'Reject all',
@@ -527,19 +527,19 @@ window.I18N = {
     legal: {
       privacy: {
         title: 'Privacy Policy',
-        sub: 'How AquaLease Nigeria collects, uses and protects your personal data — fully aligned with the Nigeria Data Protection Regulation (NDPR) issued by NITDA.',
+        sub: 'How AquaLife Nigeria collects, uses and protects your personal data — fully aligned with the Nigeria Data Protection Regulation (NDPR) issued by NITDA.',
         updated: 'Last updated: 9 June 2026',
         sections: [
-          { h2: '1. Who we are', body: ['AquaLease Nigeria Limited ("AquaLease", "we", "us") is a company registered in Nigeria with RC-1938472. Our registered office is at 14 Adeola Odeku Street, Victoria Island, Lagos. For the purposes of the Nigeria Data Protection Regulation (NDPR), AquaLease is the Data Controller of your personal information.'] },
+          { h2: '1. Who we are', body: ['AquaLife Nigeria Limited ("AquaLife", "we", "us") is a company registered in Nigeria with RC-1938472. Our registered office is at 14 Adeola Odeku Street, Victoria Island, Lagos. For the purposes of the Nigeria Data Protection Regulation (NDPR), AquaLife is the Data Controller of your personal information.'] },
           { h2: '2. What personal data we collect', body: ['We collect data you give us directly (name, phone, email, delivery address, payment information), data we receive from your use of our service (support interactions), and data from third parties for order fulfillment.'] },
           { h2: '3. How we use your data', body: ['We process your personal data to (a) fulfill and deliver your orders, (b) process payments, (c) send service reminders, (d) comply with Nigerian tax and anti-money-laundering law, and (e) improve our products. We do not sell your data.'] },
-          { h2: '4. Your rights under the NDPR', body: ['You have the right to (a) access the personal data we hold about you, (b) correct inaccurate data, (c) request deletion of data that we are not legally required to keep, (d) object to processing for direct marketing, and (e) withdraw consent at any time. To exercise any right, email privacy@aqualease.ng — we respond within 30 days.'] },
+          { h2: '4. Your rights under the NDPR', body: ['You have the right to (a) access the personal data we hold about you, (b) correct inaccurate data, (c) request deletion of data that we are not legally required to keep, (d) object to processing for direct marketing, and (e) withdraw consent at any time. To exercise any right, email privacy@aqualife.ng — we respond within 30 days.'] },
           { h2: '5. Lawful basis for processing', body: ['We rely on (a) performance of a contract (your order), (b) compliance with legal obligations (CBN KYC, FIRS reporting), and (c) your explicit consent (marketing communications, non-essential cookies). You can withdraw consent at any time without affecting the lawfulness of processing carried out before withdrawal.'] },
           { h2: '6. Who we share data with', body: ['We share data only with vetted processors who act on our instructions: Paystack and Flutterwave (payment processing), GIG Logistics (delivery), and Twilio (SMS/WhatsApp). All processors are bound by NDPR-compliant data processing agreements.'] },
           { h2: '7. International data transfers', body: ['Some of our processors (e.g. Twilio, our cloud host) may store data outside Nigeria. Whenever we transfer data abroad we ensure an adequate level of protection through Standard Contractual Clauses or by relying on a NDPR adequacy decision. A list of current transfer destinations is available on request.'] },
           { h2: '8. Data retention', body: ['We keep your account data for 7 years (required by Nigerian tax law). Marketing-consent records are kept until you withdraw consent. Support call recordings are kept for 90 days. After these periods the data is securely deleted or anonymised.'] },
           { h2: '9. Security', body: ['We use TLS encryption in transit, AES-256 at rest, role-based access control for staff, and quarterly third-party security audits. No method of transmission over the internet, however, is 100% secure — if a breach affects your rights we will notify NITDA and you within 72 hours.'] },
-          { h2: '10. Contact our Data Protection Officer', body: ['Email: privacy@aqualease.ng · Phone: +234 800 000 0000 · Post: Data Protection Officer, AquaLease Nigeria, 14 Adeola Odeku Street, Victoria Island, Lagos. If you believe we have not handled your data lawfully you may also lodge a complaint with the Nigeria Data Protection Commission (NDPC).'] },
+          { h2: '10. Contact our Data Protection Officer', body: ['Email: privacy@aqualife.ng · Phone: +234 800 000 0000 · Post: Data Protection Officer, AquaLife Nigeria, 14 Adeola Odeku Street, Victoria Island, Lagos. If you believe we have not handled your data lawfully you may also lodge a complaint with the Nigeria Data Protection Commission (NDPC).'] },
         ],
       },
       terms: {
@@ -552,9 +552,9 @@ window.I18N = {
           { h2: '3. Pricing and payment', body: ['Payment is due when you place your order. Late payment may attract a fee. A 7-day grace period applies to all payments.'] },
           { h2: '4. Delivery and installation', body: ['Standard delivery and installation within Lagos, Abuja, Port Harcourt and Ibadan is free. Other cities attract a one-off logistics fee shown at checkout. Our engineer will contact you within 48 hours of signing to schedule a 2-hour installation window.'] },
           { h2: '5. Your obligations', body: ['You agree to (a) use products only for their intended purpose, (b) keep your registration details up to date, and (c) notify us within 48 hours of any change of address.'] },
-          { h2: '6. Maintenance, filters and warranty', body: ['AquaLease provides free quarterly filter changes and a 1-year full warranty on parts and labour. Warranty does not cover damage caused by misuse, power surges, force majeure, or unauthorised repairs. After year 1, an extended warranty is available at checkout.'] },
+          { h2: '6. Maintenance, filters and warranty', body: ['AquaLife provides free quarterly filter changes and a 1-year full warranty on parts and labour. Warranty does not cover damage caused by misuse, power surges, force majeure, or unauthorised repairs. After year 1, an extended warranty is available at checkout.'] },
           { h2: '7. Upgrades and swaps', body: ['You may exchange a product for a different model within 30 days of purchase, subject to availability and any price difference.'] },
-          { h2: '8. Default and termination by AquaLease', body: ['We may cancel an order if (a) payment is not received within the grace period, (b) you provide false information, or (c) the product is unavailable.'] },
+          { h2: '8. Default and termination by AquaLife', body: ['We may cancel an order if (a) payment is not received within the grace period, (b) you provide false information, or (c) the product is unavailable.'] },
           { h2: '9. Limitation of liability', body: ['To the maximum extent permitted by Nigerian law, AquaLife is not liable for indirect, consequential or punitive damages. Our total liability is capped at the total amount you have paid us. Nothing in these Terms excludes liability for fraud or death / personal injury caused by negligence.'] },
           { h2: '10. Governing law and disputes', body: ['These Terms are governed by the laws of the Federal Republic of Nigeria. Disputes are first referred to mediation at the Lagos Multi-Door Courthouse. If mediation fails within 30 days, the dispute is referred to arbitration under the Arbitration and Mediation Act 2023. Consumer rights under the Federal Competition and Consumer Protection Act 2018 are preserved.'] },
         ],
@@ -566,11 +566,11 @@ window.I18N = {
         sections: [
           { h2: '1. 7-day cooling-off period', body: ['You may cancel an order within 7 calendar days of delivery for a full refund. The product must be returned in the same condition, including original packaging. We refund within 14 business days to the original payment method.'] },
           { h2: '2. After 7 days — early termination by you', body: ['You may cancel an order after the cooling-off period. A cancellation fee of 10% of the order value may apply. Once processed, any used products cannot be returned.'] },
-          { h2: '3. Early termination by AquaLease', body: ['We may cancel an order early only for the reasons in Section 8 of the Terms of Service. In those cases we refund any amount paid within 14 business days.'] },
+          { h2: '3. Early termination by AquaLife', body: ['We may cancel an order early only for the reasons in Section 8 of the Terms of Service. In those cases we refund any amount paid within 14 business days.'] },
           { h2: '4. Damaged or defective units', body: ['If the device is defective within 14 days of installation we will repair, replace or refund at your choice. After 14 days we will repair or replace under the 1-year warranty. "Defective" means it does not perform as described in the product spec sheet — not normal wear and tear.'] },
           { h2: '5. Non-refundable items', body: ['Filter consumables that have been opened, custom installations (e.g. extra piping), and any service already rendered (e.g. emergency callouts, water-quality testing) are non-refundable.'] },
           { h2: '6. Refund method and timing', body: ['Refunds are made to the original payment method: card refunds appear in 5–10 business days, USSD / bank-transfer refunds within 3 business days, cash refunds collected in person at our Lagos office. You will receive an email receipt for every refund.'] },
-          { h2: '7. Disputes', body: ['If you disagree with a refund decision, email refunds@aqualease.ng with your order number. We acknowledge within 2 business days and resolve within 10. If we cannot agree you may refer the dispute to the Lagos Multi-Door Courthouse or the Federal Competition and Consumer Protection Commission (FCCPC).'] },
+          { h2: '7. Disputes', body: ['If you disagree with a refund decision, email refunds@aqualife.ng with your order number. We acknowledge within 2 business days and resolve within 10. If we cannot agree you may refer the dispute to the Lagos Multi-Door Courthouse or the Federal Competition and Consumer Protection Commission (FCCPC).'] },
         ],
       },
     },
