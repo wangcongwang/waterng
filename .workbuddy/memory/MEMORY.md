@@ -23,8 +23,14 @@
 ### 结算/购物车模块样式（2026-09-09 定稿）
 - **`assets/css/checkout.css`** 承载结账页 `checkout.html` 的 UI（步骤条 / 配送与支付方式选择 / 自提点 / USSD / 银行卡 / 订单摘要子项 / 数量控件 / 主按钮）。同样 token-only、纯 CSS 覆盖，链接在 `water-pages.css` 之后（`?v=20260909g`）。
 - **根因教训**：结算类只存在于 `pages.css`，而 `pages.css` 用旧令牌（`--ink-*/--brand-*/--paper-*`），且**没有任何页面链接 `pages.css` 或 `design-system.css`**（旧令牌已无定义）。新增结算样式必须写 `--ek-` 版，不能复用 `pages.css`。
-- `cart.html` 基本已样式化（cart-* 主类在 `water-pages.css`），仅 `cart-item-qty/-remove/-unit` 3 个子类待补。
+- `assets/css/cart.css`（2026-09-09 新增，`?v=20260909a`）：购物车页完整 UI（商品卡片 / 边框式数量步进器 / 红色 Remove / sticky 订单摘要 / 空态卡）。≤840px 摘要不 sticky，≤600px 商品行改 grid。
 - 同样遵守 CLAUDE.md 硬规则（--ek- token、无 hex/px/!important）。
+
+### 认证页（login / signup）样式约定（2026-09-09 定稿）
+- **独立页面**：两页均剥离站点 chrome（`#app-header/#app-footer/#offline-banner`、`elken-chrome.css`），仅加载 kit + `water-pages.css` + `login.css`（signup 额外加载 `signup.css`）。
+- **`assets/css/login.css`**：分屏外壳 `.auth-page`（品牌面板 + 表单卡）+ 品牌面板（深蓝渐变/噪点/光晕）+ `.brand-logo-img`（白色 `elken-logo-white-v4.svg` 用于深底、彩色 `elken-logo-colour.svg` 用于白底卡片）+ Toast/Cookie 自包含样式。
+- **`assets/css/signup.css`**（链接在 login.css 之后）：`.auth-page--signup`（360px 品牌栏 + 1fr 表单侧）、`.auth-card--wide`(720px)、`.reg-grid` 两列字段网格、`.sec-block` 分区、商品选择/支付四宫格（与 checkout 同语言）。≤900px 单列、≤640px 字段单列。
+- 注册/登录 JS 逻辑与所有 id/name 不变；新增 i18n key 走 `strings.js` 的 `window.I18N` 点路径（如 `signup.join_eyebrow`）。
 
 ### 数据层 API 形态约定（2026-09-09 踩坑）
 - **`window.ProductCatalog.allProducts` 是数组，不是函数**（website.js 第 585 行 `allProducts,` 简写导出）。任何按 `pc.allProducts()` 调用或 `typeof === 'function'` 判断的解析器都会失效——必须同时处理「函数」与「数组」两种形态。
