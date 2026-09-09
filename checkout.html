@@ -204,7 +204,7 @@
             <h2 data-i18n="checkout.pay_method">Payment method</h2>
             <div class="pay-method-grid" id="payMethodGrid">
               <label class="pay-method">
-                <input type="radio" name="payMethod" value="cod" checked />
+                <input type="radio" name="payMethod" value="cod" />
                 <div class="pay-method-icon" aria-hidden="true">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                     <path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 7.7l5.4-.8z"/>
@@ -850,9 +850,23 @@
         if (picker) picker.style.display = 'none';
       }
       renderSummary();
-      // Initialize the summary "Method" row with the default-selected payment
-      // method (COD is checked by default but was only set on a change event).
-      const defPay = document.querySelector('input[name="payMethod"]:checked');
+      // Default-select the FIRST payment method. Previously the COD radio was
+      // hardcoded as `checked`; now the default is driven by DOM order so it
+      // always tracks the first option (and skips any disabled/hidden method
+      // such as Account balance when unavailable).
+      const payRadios = Array.from(document.querySelectorAll('input[name="payMethod"]'))
+        .filter(r => !r.disabled && r.closest('.pay-method') && r.closest('.pay-method').offsetParent !== null);
+      let defPay = payRadios.find(r => r.checked) || payRadios[0] || null;
+      if (defPay) {
+        defPay.checked = true;
+        state.payMethod = defPay.value;
+        const panels = { card: 'cardPanel', ussd: 'ussdPanel', bank: 'bankPanel', cod: 'codPanel', balance: 'balancePanel' };
+        Object.keys(panels).forEach(k => {
+          const el = document.getElementById(panels[k]);
+          if (el) el.style.display = (k === defPay.value) ? 'block' : 'none';
+        });
+      }
+      // Initialize the summary "Method" row with the default-selected payment method.
       const summaryMethod = document.getElementById('summaryMethod');
       if (defPay && summaryMethod) {
         const names = { cod: 'Cash on delivery', card: 'Debit / credit card', ussd: 'USSD', bank: 'Bank transfer', balance: 'Account balance' };

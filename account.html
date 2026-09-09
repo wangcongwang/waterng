@@ -943,24 +943,31 @@
       if (it.image) return it.image;
       if (it.category && it.img) return 'assets/img/products/' + it.category + '/' + it.img;
       const pc = window.ProductCatalog;
-      if (pc && typeof pc.allProducts === 'function') {
-        const list = pc.allProducts();
-        const iid = String(it.id || '');
-        const iname = String(it.name || '').trim();
-        const match = list.find(p => p && ((iid && String(p.id) === iid) || (iname && String(p.name).trim() === iname)));
-        if (match) {
-          if (match.image) return match.image;
-          if (match.category && match.img) return 'assets/img/products/' + match.category + '/' + match.img;
+      // ProductCatalog.allProducts is exposed as an ARRAY (not a function) in
+      // website.js — handle both shapes so the catalog lookup actually runs.
+      let list = [];
+      if (pc) {
+        if (typeof pc.allProducts === 'function') list = pc.allProducts();
+        else if (Array.isArray(pc.allProducts)) list = pc.allProducts;
+        else if (pc.PRODUCTS) {
+          Object.keys(pc.PRODUCTS).forEach(k => {
+            const arr = pc.PRODUCTS[k];
+            if (Array.isArray(arr)) for (let j = 0; j < arr.length; j++) list.push(arr[j]);
+          });
         }
-      } else if (pc && pc.PRODUCTS) {
-        const list = [];
-        Object.keys(pc.PRODUCTS).forEach(k => {
-          const arr = pc.PRODUCTS[k];
-          if (Array.isArray(arr)) { for (let j = 0; j < arr.length; j++) list.push(arr[j]); }
+      }
+      if (list.length) {
+        const iid = String(it.id || '').trim();
+        const iname = String(it.name || '').trim().toLowerCase();
+        const isku = String(it.sku || it.code || it.productCode || '').trim().toLowerCase();
+        const match = list.find(p => {
+          if (!p) return false;
+          if (iid && String(p.id || '').trim() === iid) return true;
+          const pn = String(p.name || '').trim().toLowerCase();
+          if (iname && (pn === iname || pn.includes(iname) || iname.includes(pn))) return true;
+          if (isku && String(p.sku || p.code || '').trim().toLowerCase() === isku) return true;
+          return false;
         });
-        const iid = String(it.id || '');
-        const iname = String(it.name || '').trim();
-        const match = list.find(p => p && ((iid && String(p.id) === iid) || (iname && String(p.name).trim() === iname)));
         if (match) {
           if (match.image) return match.image;
           if (match.category && match.img) return 'assets/img/products/' + match.category + '/' + match.img;
