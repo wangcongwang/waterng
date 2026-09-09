@@ -1,0 +1,170 @@
+/* ============================================================================
+   Login / Sign in — original split-screen layout, Elken UI Kit tokens
+   ----------------------------------------------------------------------------
+   The markup (login.html) already carries the original two-pane layout:
+   .auth-shell (form card + brand value panel). This file restores that layout
+   and styles every node with the --ek- design tokens so the page follows the
+   design system instead of the orphaned --ink rules in the deprecated pages.css.
+   原分屏布局在 HTML 中已保留，这里用 --ek- token 还原并规范化样式。
+   ============================================================================ */
+
+/* ---------- Shell: split screen — form card (left) + brand panel (right) ---- */
+.auth-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 520px) 1fr;
+  gap: 0;
+  place-items: stretch;                 /* override marketing.css place-items:center */
+  padding: 0;                           /* override marketing.css padding */
+  min-height: calc(100vh - var(--ek-header-h));
+  background: var(--ek-surface-sunken);
+}
+
+/* ---------- Form card (left pane) ------------------------------------------- */
+.auth-card {
+  width: auto;                          /* override marketing.css min(520px,…) */
+  padding: var(--ek-48) clamp(var(--ek-24), 5vw, var(--ek-56)) var(--ek-56);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ek-20);
+  background: var(--ek-surface);
+  border: 0;
+  border-radius: 0;                     /* flush to the split edge */
+  border-right: 1px solid var(--ek-border);
+  box-shadow: none;
+}
+
+/* Mobile-only brand mark — hidden in the desktop split layout */
+.auth-mark { display: none; }
+
+/* ---------- Headline -------------------------------------------------------- */
+.auth-head h1 {
+  font-size: clamp(var(--ek-h1), 4vw, 36px);
+  font-weight: var(--ek-w-medium);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--ek-charcoal-deep);
+  margin: 0;
+}
+.auth-head p { margin: var(--ek-8) 0 0; font-size: var(--ek-small); color: var(--ek-muted); }
+
+/* ---------- Form: single column (override .ek-form 2-col grid) ------------- */
+.auth-form { display: flex; flex-direction: column; gap: var(--ek-16); margin-top: var(--ek-4); }
+
+/* Kit label is <label>; login markup uses a <span> — style it to match the kit */
+.auth-card .ek-field > span {
+  font-size: var(--ek-small);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal);
+}
+
+/* Password reveal button must not overlap the typed text */
+.auth-form .pwd input,
+.auth-card .pwd input { padding-right: calc(var(--ek-32) + var(--ek-12)); }
+
+/* ---------- Remember / forgot row + switch link ----------------------------- */
+.auth-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--ek-12); font-size: var(--ek-small); margin-top: var(--ek-4);
+}
+.auth-row .link { color: var(--ek-blue); }
+.auth-row .link:hover { text-decoration: underline; }
+
+.auth-switch { text-align: center; font-size: var(--ek-small); color: var(--ek-muted); margin: var(--ek-8) 0 0; }
+.auth-switch a { color: var(--ek-blue); font-weight: var(--ek-w-medium); margin-left: var(--ek-4); }
+.auth-switch a:hover { text-decoration: underline; }
+
+/* ---------- Brand value panel (right pane) --------------------------------- */
+.auth-aside {
+  position: relative;
+  background: linear-gradient(135deg, var(--ek-stat-2) 0%, var(--ek-blue) 55%, var(--ek-stat-3) 100%);
+  color: var(--ek-white);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.auth-aside .aside-grain {
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.auth-aside::before {
+  content: ''; position: absolute;
+  width: 360px; height: 360px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 70%);
+  top: -120px; right: -100px;
+  pointer-events: none;
+}
+.auth-aside::after {
+  content: ''; position: absolute;
+  width: 280px; height: 280px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.08) 0%, transparent 70%);
+  bottom: -80px; left: -60px;
+  pointer-events: none;
+}
+.aside-inner {
+  position: relative; z-index: 1;
+  max-width: 480px;
+  padding: 0 8% 0 12%;
+  display: flex; flex-direction: column; gap: var(--ek-16);
+}
+.aside-inner .eyebrow { color: var(--ek-panel-cool); }
+.aside-inner h2 {
+  font-size: clamp(36px, 4.5vw, 56px);
+  font-weight: var(--ek-w-medium);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--ek-white);
+  margin: 0;
+}
+.aside-inner h2 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ek-panel-cool);
+}
+.aside-inner p {
+  font-size: var(--ek-text);
+  color: rgba(255,255,255,.85);
+  max-width: 380px;
+  margin: var(--ek-4) 0 var(--ek-8);
+}
+.aside-bullets { display: flex; flex-direction: column; gap: var(--ek-12); margin: var(--ek-8) 0 0; }
+.aside-bullets li { display: flex; align-items: center; gap: var(--ek-12); font-size: var(--ek-text); color: var(--ek-panel-cool); }
+.aside-bullets svg { color: var(--ek-panel-cool); flex-shrink: 0; }
+.aside-foot {
+  display: flex; gap: var(--ek-24); margin-top: var(--ek-32);
+  padding-top: var(--ek-24); border-top: 1px solid rgba(255,255,255,.12);
+}
+.aside-stat { display: flex; flex-direction: column; gap: var(--ek-4); }
+.aside-stat b { font-size: var(--ek-24); font-weight: var(--ek-w-medium); color: var(--ek-white); }
+.aside-stat span { font-size: var(--ek-caption); color: rgba(255,255,255,.6); letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---------- Mobile brand mark ---------------------------------------------- */
+.auth-mark { align-items: center; gap: var(--ek-12); margin-bottom: var(--ek-8); }
+.auth-mark .mark {
+  width: 36px; height: 36px; border-radius: var(--ek-radius-lg);
+  background: var(--ek-blue); color: var(--ek-white);
+  display: grid; place-items: center;
+}
+.auth-mark .word {
+  display: flex; flex-direction: column; line-height: 1.05;
+  font-size: calc(var(--ek-text) + 3px); font-weight: var(--ek-w-medium); color: var(--ek-charcoal-deep);
+}
+.auth-mark .word small { font-size: var(--ek-caption); color: var(--ek-muted); font-weight: 400; text-transform: uppercase; letter-spacing: .15em; }
+
+/* ---------- Responsive: collapse split to a single column ------------------- */
+@media (max-width: 900px) {
+  .auth-shell { grid-template-columns: 1fr; min-height: auto; }
+  .auth-card {
+    border-right: 0;
+    border-bottom: 1px solid var(--ek-border);
+    padding: var(--ek-32) var(--ek-page-pad) var(--ek-40);
+  }
+  .auth-mark { display: flex; }
+  .auth-aside { min-height: 320px; }
+}
+@media (max-width: 600px) {
+  .auth-card { padding: var(--ek-24) var(--ek-16) var(--ek-32); }
+  .aside-inner { padding: 0 var(--ek-24); }
+}
