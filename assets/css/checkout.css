@@ -268,6 +268,21 @@
 .cart-qty-static { font-size: var(--ek-small); color: var(--ek-muted); }
 .summary .row.method-row { display: flex; justify-content: space-between; align-items: center; }
 
+/* ---------- Order summary is a dark card (water-pages.css: bg --ek-blue-hover, white ink).
+   The generic summary-item-* colours above are meant for light surfaces; override them
+   inside .summary so text remains readable on the dark blue background. ---------- */
+.summary .summary-item-name { color: var(--ek-white); }
+.summary .summary-item-meta { color: var(--ek-panel-cool); }
+.summary .summary-item-line { color: var(--ek-white); }
+.summary .cart-qty-static { color: var(--ek-panel-cool); }
+.summary .summary-item-img { background: var(--ek-stat-3); }
+.summary .summary-item-img svg { color: var(--ek-panel-cool); }
+.summary .qty-btn { background: var(--ek-stat-3); border-color: var(--ek-stat-2); color: var(--ek-white); }
+.summary .qty-btn:hover { background: var(--ek-stat-2); border-color: var(--ek-aqua); }
+.summary .orderQty { background: var(--ek-stat-3); border-color: var(--ek-stat-2); color: var(--ek-white); }
+.summary .link-btn { color: var(--ek-aqua); }
+.summary .link-btn:hover { color: var(--ek-white); }
+
 /* ---------- Quantity controls ---------- */
 .qty-control, .summary-qty { display: inline-flex; align-items: center; gap: var(--ek-4); }
 .qty-btn {

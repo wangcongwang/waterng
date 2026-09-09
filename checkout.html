@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/checkout.css?v=20260909g">
+  <link rel="stylesheet" href="assets/css/checkout.css?v=20260909h">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="checkout">
@@ -384,16 +384,39 @@
 
     // Layered image resolver so even items with missing / malformed image fields
     // still resolve to a real product picture (or fall through to the SVG placeholder).
+    // Mirrors order.html / account.html: ProductCatalog.allProducts is exposed as an
+    // ARRAY in website.js, so we must handle both function and array shapes.
     function resolveItemImage(it) {
       if (!it) return '';
       if (it.image) return it.image;
-      if (it.img && it.category) return 'assets/img/products/' + it.category + '/' + it.img;
+      if (it.category && it.img) return 'assets/img/products/' + it.category + '/' + it.img;
       const pc = window.ProductCatalog;
-      const list = (pc && pc.allProducts) ? pc.allProducts() : [];
-      const iid = String(it.id || '');
-      const iname = String(it.name || '').trim();
-      const m = list.find(p => p && ((iid && String(p.id) === iid) || (iname && String(p.name).trim() === iname)));
-      if (m) return m.image || (m.category && m.img ? 'assets/img/products/' + m.category + '/' + m.img : '');
+      let list = [];
+      if (pc) {
+        if (typeof pc.allProducts === 'function') list = pc.allProducts();
+        else if (Array.isArray(pc.allProducts)) list = pc.allProducts;
+        else if (pc.PRODUCTS) {
+          Object.keys(pc.PRODUCTS).forEach(k => {
+            const arr = pc.PRODUCTS[k];
+            if (Array.isArray(arr)) for (let j = 0; j < arr.length; j++) list.push(arr[j]);
+          });
+        }
+      }
+      if (list.length) {
+        const iid = String(it.id || '').trim();
+        const iname = String(it.name || '').trim().toLowerCase();
+        const isku = String(it.sku || it.code || it.productCode || '').trim().toLowerCase();
+        const m = list.find(p => {
+          if (!p) return false;
+          if (iid && String(p.id || '').trim() === iid) return true;
+          const pn = String(p.name || '').trim().toLowerCase();
+          if (iname && (pn === iname || pn.includes(iname) || iname.includes(pn))) return true;
+          if (isku && String(p.sku || p.code || '').trim().toLowerCase() === isku) return true;
+          return false;
+        });
+        if (m) return m.image || (m.category && m.img ? 'assets/img/products/' + m.category + '/' + m.img : '');
+      }
+      if (it.pic) return it.pic;
       if (it.img) return it.img;
       return '';
     }
