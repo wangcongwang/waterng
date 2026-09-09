@@ -20,6 +20,12 @@
 - **CLAUDE.md 硬规则**：新样式必须用 `--ek-` token（设计令牌）；禁止 hex 颜色、禁止 px 字号、禁止 `!important`、禁止新增依赖/Google Fonts、禁止去掉 focus ring。组件本体在 `elken-ui.css`，页面内容以 `.ek-pagehead` 开头。
 - 响应式断点：≤767 单栏、按钮满宽、product-list 收列。
 
+### 结算/购物车模块样式（2026-09-09 定稿）
+- **`assets/css/checkout.css`** 承载结账页 `checkout.html` 的 UI（步骤条 / 配送与支付方式选择 / 自提点 / USSD / 银行卡 / 订单摘要子项 / 数量控件 / 主按钮）。同样 token-only、纯 CSS 覆盖，链接在 `water-pages.css` 之后（`?v=20260909g`）。
+- **根因教训**：结算类只存在于 `pages.css`，而 `pages.css` 用旧令牌（`--ink-*/--brand-*/--paper-*`），且**没有任何页面链接 `pages.css` 或 `design-system.css`**（旧令牌已无定义）。新增结算样式必须写 `--ek-` 版，不能复用 `pages.css`。
+- `cart.html` 基本已样式化（cart-* 主类在 `water-pages.css`），仅 `cart-item-qty/-remove/-unit` 3 个子类待补。
+- 同样遵守 CLAUDE.md 硬规则（--ek- token、无 hex/px/!important）。
+
 ## 项目结构（2026-09-08 定稿）
 - **纯 HTML 静态项目**：所有 `*.html` 页面 + `assets/` + `robots.txt` + `sitemap.xml`，无后端。
 - **WordPress 已彻底移除（2026-09-08 用户确认）**：`wp-demo/`（329MB）、`wp-migration/`（迁移文档+商品CSV）、`CONTENT_DIFF_REPORT.md` 均已移入 `~/.Trash/`，用户明确不再需要 WordPress。不要再建议任何 WP 相关方案。
