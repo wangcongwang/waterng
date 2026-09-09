@@ -1,0 +1,210 @@
+/* ============================================================================
+   Signup — standalone registration page, Elken UI Kit tokens only
+   ----------------------------------------------------------------------------
+   Shares the split-screen auth shell + brand panel with login.css (which is
+   linked first). This file adds the wider form card and the registration-only
+   components: sectioned fields, product picker, delivery/payment selectors and
+   the method info cards. No hex, no px font-sizes, no !important.
+   注册页为「独立页面」，与 login.css 共用左右分屏外壳与品牌面板；本文件只补充
+   更宽的表单卡片及注册专属组件（分区字段、商品选择、配送/支付方式、明细卡）。
+   ============================================================================ */
+
+/* ---------- Split shell: slimmer brand rail + roomy form side -------------- */
+.auth-page--signup {
+  grid-template-columns: 360px minmax(0, 1fr);
+}
+.auth-page--signup .auth-main {
+  align-items: flex-start;
+  padding-block: var(--ek-48);
+}
+.auth-page--signup .auth-card--wide {
+  max-width: 720px;
+  gap: var(--ek-24);
+}
+
+/* ---------- Form sections -------------------------------------------------- */
+.sec-block {
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-sm);
+  padding: var(--ek-24);
+}
+.sec-block + .sec-block { margin-top: var(--ek-20); }
+.sec-title {
+  margin: 0 0 var(--ek-16);
+  padding-bottom: var(--ek-12);
+  border-bottom: 1px solid var(--ek-border);
+  font-size: var(--ek-h4);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-blue);
+}
+
+/* Two-column responsive field grid */
+.reg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ek-16); }
+.field-row { grid-column: auto; }
+.field-row--full { grid-column: 1 / -1; }
+
+/* Label above input (matches .ek-field styling from the kit) */
+.field-row > label {
+  display: block;
+  font-size: var(--ek-small);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal);
+  margin-bottom: var(--ek-8);
+}
+.field-row > label .req-star { color: var(--ek-blue); margin-left: 2px; }
+.field-row .ek-input,
+.field-row .ek-select,
+.field-row textarea.ek-input { width: 100%; }
+
+/* Inline field error (set by signup.html) */
+.field-err-text,
+.field-err {
+  display: block;
+  color: var(--fail, rgba(199, 56, 56, 1));
+  font-size: var(--ek-caption);
+  margin-top: var(--ek-4);
+}
+
+/* ---------- Product picker ------------------------------------------------- */
+.prod-list { display: flex; flex-direction: column; gap: var(--ek-12); }
+.prod-item {
+  display: flex; align-items: center; gap: var(--ek-16);
+  padding: var(--ek-12) var(--ek-16);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  background: var(--ek-surface);
+}
+.prod-check-wrap { flex: 0 0 auto; }
+.prod-info { display: flex; align-items: center; gap: var(--ek-12); flex: 1; min-width: 0; }
+.prod-img-thumb {
+  width: 44px; height: 44px; object-fit: contain; flex: 0 0 auto;
+  border-radius: var(--ek-radius-sm);
+  background: var(--ek-surface-sunken); padding: var(--ek-4);
+}
+.prod-text { min-width: 0; }
+.prod-name-row { display: flex; align-items: baseline; gap: var(--ek-8); flex-wrap: wrap; }
+.prod-name { font-weight: var(--ek-w-bold); font-size: var(--ek-small); color: var(--ek-charcoal-deep); }
+.prod-sku { font-size: var(--ek-caption); color: var(--ek-muted); letter-spacing: .04em; }
+.prod-meta { display: flex; gap: var(--ek-12); flex-wrap: wrap; margin-top: 2px; }
+.prod-meta span { font-size: var(--ek-caption); color: var(--ek-muted); }
+.prod-meta .prod-dp { color: var(--ek-charcoal); font-weight: var(--ek-w-medium); }
+.prod-qty-col { flex: 0 0 auto; }
+
+/* Quantity stepper (mirrors checkout) */
+.qty-stepper {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--ek-border); border-radius: var(--ek-radius);
+  overflow: hidden; background: var(--ek-surface);
+}
+.qty-stepper button {
+  width: 32px; height: 36px; border: 0; background: transparent;
+  color: var(--ek-charcoal); cursor: pointer; font-size: var(--ek-h4);
+  display: grid; place-items: center;
+}
+.qty-stepper button:hover { background: var(--ek-surface-sunken); }
+.qty-stepper .qty-val {
+  width: 44px; height: 36px; border: 0; text-align: center;
+  font-size: var(--ek-small); color: var(--ek-charcoal-deep);
+  -moz-appearance: textfield; appearance: textfield; background: var(--ek-surface);
+}
+.qty-stepper .qty-val:disabled { color: var(--ek-muted); background: var(--ek-surface-sunken); }
+.qty-stepper .qty-val::-webkit-outer-spin-button,
+.qty-stepper .qty-val::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Subtotal bar */
+.prod-summary-bar {
+  display: flex; align-items: center; gap: var(--ek-16); flex-wrap: wrap;
+  margin-top: var(--ek-16); padding: var(--ek-12) var(--ek-16);
+  background: var(--ek-info-tint); border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius); font-size: var(--ek-small); color: var(--ek-charcoal);
+}
+.prod-summary-bar b { color: var(--ek-blue); }
+
+/* ---------- Delivery method (radio group) ---------------------------------- */
+.radio-group { display: flex; gap: var(--ek-12); flex-wrap: wrap; }
+.radio-item {
+  display: flex; align-items: center; gap: var(--ek-8);
+  padding: var(--ek-12) var(--ek-16);
+  border: 1.5px solid var(--ek-border); border-radius: var(--ek-radius);
+  cursor: pointer; background: var(--ek-surface);
+  font-size: var(--ek-small); color: var(--ek-charcoal);
+}
+.radio-item:has(input:checked) { border-color: var(--ek-blue); background: var(--ek-info-tint); color: var(--ek-charcoal-deep); }
+.radio-item:has(input:focus-visible) { box-shadow: var(--ek-focus-ring); }
+
+/* ---------- Payment method selector (matches checkout) --------------------- */
+.pay-method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--ek-12); }
+.pay-method {
+  position: relative; display: flex; align-items: center; gap: var(--ek-12);
+  padding: var(--ek-16);
+  border: 1.5px solid var(--ek-border); border-radius: var(--ek-radius);
+  cursor: pointer; background: var(--ek-surface);
+  transition: border-color var(--ek-fast) var(--ek-ease), background var(--ek-fast) var(--ek-ease), transform var(--ek-fast) var(--ek-ease);
+}
+.pay-method:hover { border-color: var(--ek-border-strong); transform: translateY(-1px); }
+.pay-method input { position: absolute; opacity: 0; pointer-events: none; }
+.pay-method-icon {
+  width: var(--ek-40); height: var(--ek-40); border-radius: var(--ek-radius-sm);
+  display: grid; place-items: center; flex-shrink: 0;
+  background: var(--ek-surface-sunken); color: var(--ek-charcoal);
+}
+.pay-method-body { flex: 1; min-width: 0; }
+.pay-method-name { font-weight: var(--ek-w-medium); font-size: var(--ek-small); color: var(--ek-charcoal); }
+.pay-method-sub { font-size: var(--ek-caption); color: var(--ek-muted); margin-top: 2px; }
+.pay-method-check {
+  width: 20px; height: 20px; border-radius: var(--ek-radius-pill);
+  border: 1.5px solid var(--ek-border); display: grid; place-items: center;
+  color: transparent; flex-shrink: 0; transition: all var(--ek-fast) var(--ek-ease);
+}
+.pay-method:has(input:checked) { border-color: var(--ek-blue); background: var(--ek-info-tint); }
+.pay-method:has(input:checked) .pay-method-icon { background: var(--ek-blue); color: var(--ek-white); }
+.pay-method:has(input:checked) .pay-method-check { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); }
+.pay-method:has(input:focus-visible) { box-shadow: var(--ek-focus-ring); }
+
+/* ---------- Method info cards (card / ussd / bank / cod) ------------------- */
+.method-info-card {
+  margin-top: var(--ek-16); padding: var(--ek-20);
+  background: var(--ek-surface); border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-lg); box-shadow: var(--ek-shadow-sm);
+}
+.method-info-card > div:first-child {
+  margin-bottom: var(--ek-8); font-size: var(--ek-h4);
+  font-weight: var(--ek-w-bold); color: var(--ek-charcoal);
+}
+.method-info-card p { margin: 0 0 var(--ek-12); font-size: var(--ek-small); color: var(--ek-muted); }
+
+.ussd-code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue);
+  padding: var(--ek-16) var(--ek-20);
+  background: var(--ek-info-tint); border: 1.5px dashed var(--ek-blue);
+  border-radius: var(--ek-radius); text-align: center; letter-spacing: .04em;
+}
+.bank-rows { display: flex; flex-direction: column; gap: var(--ek-8); margin-bottom: var(--ek-12); }
+.bank-row { display: flex; justify-content: space-between; gap: var(--ek-12); font-size: var(--ek-small); }
+.bank-row span { color: var(--ek-muted); }
+.bank-row b { color: var(--ek-charcoal-deep); }
+
+/* ---------- Submit + switch ------------------------------------------------ */
+.reg-submit-wrap { margin-top: var(--ek-24); }
+.reg-submit-wrap .ek-btn { width: 100%; }
+.auth-switch-reg {
+  text-align: center; font-size: var(--ek-small); color: var(--ek-muted);
+  margin: var(--ek-16) 0 0;
+}
+.auth-switch-reg a { color: var(--ek-blue); font-weight: var(--ek-w-medium); margin-left: var(--ek-4); }
+.auth-switch-reg a:hover { text-decoration: underline; }
+
+/* ---------- Responsive: stack to a single column --------------------------- */
+@media (max-width: 900px) {
+  .auth-page--signup { grid-template-columns: 1fr; }
+  .auth-page--signup .auth-main { padding-block: var(--ek-32); }
+  .auth-page--signup .auth-card--wide { padding: var(--ek-32) var(--ek-24); }
+}
+@media (max-width: 640px) {
+  .reg-grid { grid-template-columns: 1fr; }
+  .sec-block { padding: var(--ek-20); }
+  .pay-method-grid { grid-template-columns: 1fr 1fr; }
+}

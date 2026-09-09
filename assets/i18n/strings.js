@@ -102,6 +102,7 @@ window.I18N = {
     signup: {
       title: 'Create Account',
       subtitle: 'Fill in your details to register as a member',
+      join_eyebrow: 'Join Elken',
       sec_basic: 'Basic Information',
       sec_products: 'Products',
       sec_network: 'Network Information',

@@ -91,6 +91,8 @@
 
 /* ---------- Shared brand logo (mark + word) -------------------------------- */
 .brand-logo { display: inline-flex; align-items: center; gap: var(--ek-12); text-decoration: none; }
+.brand-logo-img { display: block; height: 34px; width: auto; }
+.auth-card__brand .brand-logo-img { height: 30px; }
 .brand-logo__mark {
   width: 40px; height: 40px; border-radius: var(--ek-radius);
   display: grid; place-items: center; flex: 0 0 auto;
