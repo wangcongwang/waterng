@@ -304,8 +304,12 @@
        1fr/auto/1fr grid off centre; icons keep both end columns equal so the
        navigation sits on the true centre line. Labels live in the tooltips
        and in the mobile drawer. */
+    /* Signed in: "My Account" (user icon → account.html) plus Sign out (door
+       icon). Keep both as icons so the utility group stays narrow and the
+       navigation keeps its position; labels live in the tooltips and the drawer. */
     const accountUtil = loggedIn
-      ? `<button class="ek-util ek-util--icon" type="button" id="headerLogout" title="Sign out" aria-label="Sign out">${ICON_LOGOUT}</button>`
+      ? `<a class="ek-util ek-util--icon" href="account.html" title="My Account" aria-label="My Account">${ICON_USER}</a>
+         <button class="ek-util ek-util--icon" type="button" id="headerLogout" title="Sign out" aria-label="Sign out">${ICON_LOGOUT}</button>`
       : `<a class="ek-util ek-util--icon" href="login.html${nextParam}" title="Sign in" aria-label="Sign in">${ICON_USER}</a>`;
 
     const cartUtil = `<a class="ek-util ek-util--icon" href="cart.html" id="headerCart" title="Cart" aria-label="Cart">${ICON_CART}<span class="ek-util__badge" id="cartBadge"></span></a>`;
