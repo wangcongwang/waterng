@@ -200,7 +200,7 @@ window.I18N = {
     },
     checkout: {
       title: 'Confirm your order',
-      step1: 'Delivery & contact', step2: 'Payment method', step3: 'Card details', step4: 'Review & pay', step5: 'Sign agreement', step6: 'Shipping / pickup',
+      step1: 'Delivery & contact', step2: 'Payment method', step3: 'Card details', step4: 'Review & pay', step5: 'Sign agreement', step6: 'Review & place',
       addr: 'Delivery address', contact: 'Contact person', phone: 'Phone', email: 'Email',
       agree_contact: 'I confirm the phone and email above are correct for delivery and support purposes.',
       agree_terms: 'I have read and agree to the',

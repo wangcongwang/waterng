@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
+  <link rel="stylesheet" href="assets/css/checkout.css?v=20260909g">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="checkout">
@@ -828,6 +829,16 @@
         if (picker) picker.style.display = 'none';
       }
       renderSummary();
+      // Initialize the summary "Method" row with the default-selected payment
+      // method (COD is checked by default but was only set on a change event).
+      const defPay = document.querySelector('input[name="payMethod"]:checked');
+      const summaryMethod = document.getElementById('summaryMethod');
+      if (defPay && summaryMethod) {
+        const names = { cod: 'Cash on delivery', card: 'Debit / credit card', ussd: 'USSD', bank: 'Bank transfer', balance: 'Account balance' };
+        summaryMethod.textContent = names[defPay.value] || defPay.value;
+        const mrow = document.getElementById('summaryMethodRow');
+        if (mrow) mrow.style.display = 'flex';
+      }
       bindDelivMethod();
       bindPayMethod();
       bindCardInputs();
