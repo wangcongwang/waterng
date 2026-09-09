@@ -15,86 +15,40 @@
   <link rel="stylesheet" href="assets/css/elken-base.css">
   <link rel="stylesheet" href="assets/css/elken-ui.css">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
-  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/login.css?v=20260909a">
+  <link rel="stylesheet" href="assets/css/login.css?v=20260909b">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 
 <body data-page="login">
-  <div id="offline-banner" class="offline-banner">Connection status</div>
-  <div id="app-header" class="ek-site-header">
-  </div>
 
-  <main class="auth-shell" data-mode="signin">
-    <div class="auth-card ek-card" data-mode="signin">
-      <!-- Logo / brand mark (mobile only) -->
-      <a href="index.html" class="auth-mark" aria-label="Elken">
-        <span class="mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-            stroke-linejoin="round">
-            <path d="M12 3 C 8 9 6 12 6 15 a6 6 0 0 0 12 0 c0-3-2-6-6-12z"></path>
-          </svg>
-        </span>
-        <span class="word">Elken<small>Water · on terms</small></span>
-      </a>
+  <!-- ============ Standalone login: brand panel + form card (no site chrome) ============ -->
+  <main class="auth-page">
 
-      <!-- Headline + sub -->
-      <div class="auth-head">
-        <h1 data-i18n="login.title">login.title</h1>
-        <p data-i18n="login.sub" class="muted">login.sub</p>
+    <!-- Left: brand value panel -->
+    <aside class="auth-brand">
+      <div class="brand-grain" aria-hidden="true"></div>
+
+      <div class="auth-brand__top">
+        <a class="brand-logo" href="index.html" aria-label="Elken, home">
+          <span class="brand-logo__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M12 3 C 8 9 6 12 6 15 a6 6 0 0 0 12 0 c0-3-2-6-6-12z"></path>
+            </svg>
+          </span>
+          <span class="brand-logo__word">Elken<small>Water · on terms</small></span>
+        </a>
       </div>
 
-      <!-- ============ SIGN IN form — minimal: account + password ============ -->
-      <form id="signinForm" class="ek-form auth-form" novalidate="">
-        <label class="ek-field">
-          <span data-i18n="login.email_label">login.email_label</span>
-          <input class="ek-input" type="text" name="email" autocomplete="username" required="" data-i18n-ph="login.email_ph"
-            placeholder="Enter your member ID" value="">
-        </label>
-        <label class="ek-field">
-          <span data-i18n="login.password_label">login.password_label</span>
-          <div class="pwd">
-            <input class="ek-input" type="password" name="password" autocomplete="current-password" required=""
-              data-i18n-ph="login.password_ph" placeholder="••••••••" minlength="6" value="aqua2026">
-            <button type="button" class="pwd-toggle" data-toggle-pwd="" aria-label="Show password">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-            </button>
-          </div>
-        </label>
-        <div class="auth-row">
-          <label class="ek-check">
-            <input type="checkbox" name="remember">
-            <span data-i18n="login.remember">login.remember</span>
-          </label>
-          <a href="#" class="link" data-i18n="login.forgot">login.forgot</a>
-        </div>
-        <button type="submit" class="ek-btn ek-btn--block btn-loading" id="signinSubmit"
-          data-i18n="login.submit">login.submit</button>
-      </form>
-
-      <!-- Switch link to signup page -->
-      <p class="auth-switch">
-        <span data-i18n="login.no_account">login.no_account</span>
-        <a href="signup.html" data-i18n="login.create">login.create</a>
-      </p>
-    </div>
-
-    <!-- Right side: brand value panel (signin) -->
-    <aside class="auth-aside auth-aside-signin">
-      <div class="aside-grain"></div>
-      <div class="aside-inner">
-        <div class="eyebrow" data-i18n="common.welcome">common.welcome</div>
-        <h2>
+      <div class="auth-brand__center">
+        <span class="auth-brand__eyebrow" data-i18n="common.welcome">Welcome</span>
+        <h2 class="auth-brand__title">
           <em>Clean water,</em>
           <span>one tap away.</span>
         </h2>
-        <p>Manage your orders, track water quality, and pay with ease — wherever you are in Nigeria.</p>
-        <ul class="aside-bullets">
+        <p class="auth-brand__lede">Manage your orders, track water quality, and pay with ease — wherever you are in Nigeria.</p>
+        <ul class="auth-brand__bullets">
           <li>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
@@ -117,20 +71,131 @@
             Exclusive rewards on every purchase
           </li>
         </ul>
-        <div class="aside-foot">
-          <div class="aside-stat"><b>12,400+</b><span>happy customers</span></div>
-          <div class="aside-stat"><b>36</b><span>cities</span></div>
-          <div class="aside-stat"><b>98.6%</b><span>on-time</span></div>
-        </div>
+      </div>
+
+      <div class="auth-brand__foot">
+        <div class="stat"><b>12,400+</b><span>happy customers</span></div>
+        <div class="stat"><b>36</b><span>cities</span></div>
+        <div class="stat"><b>98.6%</b><span>on-time</span></div>
       </div>
     </aside>
+
+    <!-- Right: form card -->
+    <section class="auth-main">
+      <div class="auth-card">
+
+        <!-- Brand mark — only visible on mobile where the panel collapses -->
+        <a class="auth-card__brand brand-logo" href="index.html" aria-label="Elken, home">
+          <span class="brand-logo__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M12 3 C 8 9 6 12 6 15 a6 6 0 0 0 12 0 c0-3-2-6-6-12z"></path>
+            </svg>
+          </span>
+          <span class="brand-logo__word">Elken<small>Water · on terms</small></span>
+        </a>
+
+        <header class="auth-head">
+          <h1 data-i18n="login.title">Sign in</h1>
+          <p data-i18n="login.sub" class="muted">Welcome back — sign in to manage your orders and water quality.</p>
+        </header>
+
+        <form id="signinForm" class="ek-form auth-form" novalidate="">
+          <label class="ek-field">
+            <span data-i18n="login.email_label">Member ID</span>
+            <input class="ek-input" type="text" name="email" autocomplete="username" required=""
+              data-i18n-ph="login.email_ph" placeholder="Enter your member ID" value="">
+          </label>
+
+          <label class="ek-field">
+            <span data-i18n="login.password_label">Password</span>
+            <div class="pwd">
+              <input class="ek-input" type="password" name="password" autocomplete="current-password" required=""
+                data-i18n-ph="login.password_ph" placeholder="••••••••" minlength="6" value="aqua2026">
+              <button type="button" class="pwd-toggle" data-toggle-pwd="" aria-label="Show password">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </label>
+
+          <div class="auth-row">
+            <label class="ek-check">
+              <input type="checkbox" name="remember">
+              <span data-i18n="login.remember">Remember me</span>
+            </label>
+            <a href="#" class="link" data-i18n="login.forgot">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="ek-btn ek-btn--block btn-loading" id="signinSubmit"
+            data-i18n="login.submit">Sign in</button>
+        </form>
+
+        <p class="auth-switch">
+          <span data-i18n="login.no_account">No account yet?</span>
+          <a href="signup.html" data-i18n="login.create">Create one</a>
+        </p>
+      </div>
+    </section>
   </main>
 
-  <div id="app-footer" class="ek-site-footer">
+  <!-- Cookie consent (NDPR) — kept on the standalone page -->
+  <div id="cookieBanner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie consent">
+    <span class="cookie-icon" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 1 0 10 10c0-.46-.04-.92-.1-1.36a5.5 5.5 0 0 1-7.78-7.78A9.97 9.97 0 0 0 12 2Z"></path>
+        <circle cx="9" cy="13" r="1" fill="currentColor"></circle>
+        <circle cx="14" cy="9" r="1" fill="currentColor"></circle>
+        <circle cx="16" cy="14" r="1" fill="currentColor"></circle>
+      </svg>
+    </span>
+    <div class="cookie-body">
+      <strong data-i18n="cookie.title">cookie.title</strong>
+      <span>We use essential cookies to run the site and optional analytics cookies to improve it. You can accept all,
+        reject all, or customise your choice. Nigeria Data Protection Regulation (NDPR) requires your explicit consent
+        before non-essential cookies are set. <a href="privacy.html"
+          data-i18n="cookie.learn_more">cookie.learn_more</a></span>
+    </div>
+    <div class="cookie-actions">
+      <button type="button" class="cb-btn" data-cookie="customise" data-i18n="cookie.custom">cookie.custom</button>
+      <button type="button" class="cb-btn" data-cookie="reject" data-i18n="cookie.reject">cookie.reject</button>
+      <button type="button" class="cb-btn cb-primary" data-cookie="accept"
+        data-i18n="cookie.accept">cookie.accept</button>
+    </div>
+    <div class="cookie-prefs" aria-hidden="true">
+      <div class="row">
+        <div class="text">
+          <strong>Essential</strong>
+          <small>Required for sign-in, shopping cart and security. Cannot be turned off.</small>
+        </div>
+        <div class="toggle on locked" data-cookie-pref="essential" aria-label="Essential cookies (always on)"></div>
+      </div>
+      <div class="row">
+        <div class="text">
+          <strong>Analytics</strong>
+          <small>Helps us understand which pages are useful so we can improve the product.</small>
+        </div>
+        <div class="toggle" data-cookie-pref="analytics" role="switch" aria-checked="false" tabindex="0"></div>
+      </div>
+      <div class="row">
+        <div class="text">
+          <strong>Marketing</strong>
+          <small>Used to measure the effectiveness of campaigns. Off by default.</small>
+        </div>
+        <div class="toggle" data-cookie-pref="marketing" role="switch" aria-checked="false" tabindex="0"></div>
+      </div>
+      <div class="cookie-actions cookie-actions--prefs">
+        <button type="button" class="cb-btn cb-primary" data-cookie="save" data-i18n="cookie.save">cookie.save</button>
+      </div>
+    </div>
   </div>
 
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-<script src="assets/js/app.js?v=20260909e"></script>
+  <script src="assets/js/app.js?v=20260909e"></script>
   <script src="assets/js/website.js?v=20260909c-2"></script>
   <script>
     /* ---------- i18n apply ---------- */
@@ -142,7 +207,7 @@
 
     /* ---------- Validation helpers ---------- */
     function setError(input, msg) {
-      const field = input.closest('.field, .check');
+      const field = input.closest('.ek-field, .ek-check');
       let err = field?.querySelector('.field-err');
       if (!err && field) {
         err = document.createElement('small');
@@ -166,12 +231,6 @@
       btn.removeAttribute('aria-busy');
       btn.disabled = false;
       if (btn.dataset._old) btn.innerHTML = btn.dataset._old;
-    }
-
-    function deriveNameFromEmail(email) {
-      const local = (email.split('@')[0] || '').replace(/[._-]+/g, ' ').trim();
-      if (!local) return 'Friend';
-      return local.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     }
 
     function redirectAfterAuth() {
@@ -219,9 +278,7 @@
       });
     }
 
-    /* ---------- Social buttons (stub) ---------- */
-    // For demo determinism: WhatsApp always logs into the fixed demo account (NG09246375)
-    // so both http:// and file:// show the same member + orders on first-click login.
+    /* ---------- Demo account for deterministic previews ---------- */
     const DEMO_ACCOUNT = {
       memberId: 'NG09246375',
       firstName: 'Adaeze',
@@ -234,20 +291,14 @@
     document.addEventListener('DOMContentLoaded', () => {
       applyI18n();
 
-      // Fixed demo member ID + password (aqua2026 is already prefilled in HTML).
-      // Using a fixed value guarantees identical form content on both http:// and file:// protocols.
+      // Pre-fill the fixed demo member ID + password so http:// and file:// previews match.
       const emailInput = document.querySelector('#signinForm input[name="email"]');
-      if (emailInput && !emailInput.value) {
-        emailInput.value = DEMO_ACCOUNT.memberId;
-      }
+      if (emailInput && !emailInput.value) emailInput.value = DEMO_ACCOUNT.memberId;
       const pwdInput = document.querySelector('#signinForm input[name="password"]');
-      if (pwdInput && !pwdInput.value) {
-        pwdInput.value = 'aqua2026';
-      }
+      if (pwdInput && !pwdInput.value) pwdInput.value = 'aqua2026';
 
       const signinForm = document.getElementById('signinForm');
       const signinBtn = document.getElementById('signinSubmit');
-
       signinForm.addEventListener('submit', e => { e.preventDefault(); doSignIn(signinForm, signinBtn); });
 
       // clear error on input
@@ -260,57 +311,6 @@
       wirePasswordToggles();
     });
   </script>
-
-  <div id="cookieBanner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie consent">
-      <span class="cookie-icon" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2a10 10 0 1 0 10 10c0-.46-.04-.92-.1-1.36a5.5 5.5 0 0 1-7.78-7.78A9.97 9.97 0 0 0 12 2Z"></path>
-          <circle cx="9" cy="13" r="1" fill="currentColor"></circle>
-          <circle cx="14" cy="9" r="1" fill="currentColor"></circle>
-          <circle cx="16" cy="14" r="1" fill="currentColor"></circle>
-        </svg>
-      </span>
-      <div class="cookie-body">
-        <strong data-i18n="cookie.title">cookie.title</strong>
-        <span>We use essential cookies to run the site and optional analytics cookies to improve it. You can accept all,
-          reject all, or customise your choice. Nigeria Data Protection Regulation (NDPR) requires your explicit consent
-          before non-essential cookies are set. <a href="privacy.html"
-            data-i18n="cookie.learn_more">cookie.learn_more</a></span>
-      </div>
-      <div class="cookie-actions">
-        <button type="button" class="cb-btn" data-cookie="customise" data-i18n="cookie.custom">cookie.custom</button>
-        <button type="button" class="cb-btn" data-cookie="reject" data-i18n="cookie.reject">cookie.reject</button>
-        <button type="button" class="cb-btn cb-primary" data-cookie="accept"
-          data-i18n="cookie.accept">cookie.accept</button>
-      </div>
-      <div class="cookie-prefs" aria-hidden="true">
-        <div class="row">
-          <div class="text">
-            <strong>Essential</strong>
-            <small>Required for sign-in, shopping cart and security. Cannot be turned off.</small>
-          </div>
-          <div class="toggle on locked" data-cookie-pref="essential" aria-label="Essential cookies (always on)"></div>
-        </div>
-        <div class="row">
-          <div class="text">
-            <strong>Analytics</strong>
-            <small>Helps us understand which pages are useful so we can improve the product.</small>
-          </div>
-          <div class="toggle" data-cookie-pref="analytics" role="switch" aria-checked="false" tabindex="0"></div>
-        </div>
-        <div class="row">
-          <div class="text">
-            <strong>Marketing</strong>
-            <small>Used to measure the effectiveness of campaigns. Off by default.</small>
-          </div>
-          <div class="toggle" data-cookie-pref="marketing" role="switch" aria-checked="false" tabindex="0"></div>
-        </div>
-        <div class="cookie-actions" style="width:100%;justify-content:flex-end;padding-top:8px">
-          <button type="button" class="cb-btn cb-primary" data-cookie="save" data-i18n="cookie.save">cookie.save</button>
-        </div>
-      </div>
-    </div>
 </body>
 
 </html>
