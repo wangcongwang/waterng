@@ -377,6 +377,27 @@
 
     function money(n) { return 'N' + (Number(n) || 0).toLocaleString(); }
 
+    // SVG placeholder icon used when a product image is missing / path is wrong.
+    // Mirrors account.html so the whole site degrades consistently.
+    // Referenced via window.__ORDER_PIC_SVG so the inline onerror handler can reach it.
+    window.__ORDER_PIC_SVG = '<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z"/><path d="M5 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/></svg>';
+
+    // Layered image resolver so even items with missing / malformed image fields
+    // still resolve to a real product picture (or fall through to the SVG placeholder).
+    function resolveItemImage(it) {
+      if (!it) return '';
+      if (it.image) return it.image;
+      if (it.img && it.category) return 'assets/img/products/' + it.category + '/' + it.img;
+      const pc = window.ProductCatalog;
+      const list = (pc && pc.allProducts) ? pc.allProducts() : [];
+      const iid = String(it.id || '');
+      const iname = String(it.name || '').trim();
+      const m = list.find(p => p && ((iid && String(p.id) === iid) || (iname && String(p.name).trim() === iname)));
+      if (m) return m.image || (m.category && m.img ? 'assets/img/products/' + m.category + '/' + m.img : '');
+      if (it.img) return it.img;
+      return '';
+    }
+
     function customerDefaults() {
       const p = window.AL && window.AL.loadProfile ? window.AL.loadProfile() : null;
       const addr = window.AL && window.AL.getAddresses ? (window.AL.getAddresses()[0] || null) : null;
@@ -467,10 +488,10 @@
                <button type="button" class="qty-btn" data-qty="1" data-idx="${idx}" aria-label="Increase quantity">+</button>
              </span>`
           : `<span class="cart-qty-static">Qty ${it.qty || 1}</span>`;
-        const imgSrc = it.image || (it.img ? (it.category ? `assets/img/products/${it.category}/${it.img}` : it.img) : '');
+        const imgSrc = resolveItemImage(it);
         return `
           <div class="summary-item">
-            <div class="summary-item-img"><img src="${imgSrc}" alt="${it.name}" /></div>
+            <div class="summary-item-img"><img src="${imgSrc}" alt="${it.name}" onerror="this.outerHTML=window.__ORDER_PIC_SVG" /></div>
             <div class="summary-item-body">
               <div class="summary-item-name">${it.name}</div>
               <div class="summary-item-meta">${money(it.price || 0)} each</div>
