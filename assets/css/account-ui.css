@@ -33,7 +33,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--ek-8);
-  padding: var(--btn-pad-y) var(--ek-pad-x, var(--btn-pad-x));
+  padding: var(--btn-pad-y) var(--btn-pad-x);
   border: 1px solid var(--btn-border);
   border-radius: var(--ek-radius);
   background: var(--btn-bg);
@@ -484,12 +484,24 @@
   border-bottom: 1px solid var(--ek-border);
 }
 .profile-card-head h2 { margin: 0; font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue); }
-.profile-form { display: grid; gap: var(--ek-16); }
+.profile-form {
+  display: grid; gap: var(--ek-16);
+  /* Override the kit's .ek-form two-column template: profile rows must stack
+     full width. Without this the .row blocks (and the password modules'
+     fields) are squeezed into half-width columns and the action buttons end up
+     beside the fields instead of below them.
+     覆盖 kit .ek-form 的两列网格：profile 的 .row 必须整行堆叠，否则字段被挤进
+     半栏、操作按钮跑到字段右侧。 */
+  grid-template-columns: minmax(0, 1fr);
+}
+.profile-form > * { min-width: 0; }
 .profile-form .row {
-  display: grid; gap: var(--ek-16); margin-bottom: var(--ek-16);
+  display: grid; gap: var(--ek-16); margin-bottom: 0;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
-.profile-form .row.cols-3 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+/* 180px min made Current / New / Confirm wrap to 2 + 1 inside the half-width
+   password cards; 150px lets all three sit on one row (>= ~512px). */
+.profile-form .row.cols-3 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 .profile-form .field { display: flex; flex-direction: column; gap: var(--ek-8); min-width: 0; }
 .profile-form .field > label {
   font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
@@ -500,7 +512,35 @@
   display: flex; gap: var(--ek-12); flex-wrap: wrap; justify-content: flex-end;
   margin-top: var(--ek-8);
 }
+/* Give action buttons a consistent footprint so a lone Save does not look
+   cramped next to a Cancel + Save pair. */
+.profile-actions .ek-btn { min-width: 132px; }
+/* The two password modules wrap their form in a .sec-block inside an .ek-card —
+   flatten it so we do not render a card inside a card.
+   密码模块在 .ek-card 内又套了一层 .sec-block，这里压平，避免出现卡片套卡片。 */
+.profile-card > .sec-block {
+  background: transparent; border: 0; box-shadow: none;
+  padding: 0; margin: 0; border-radius: 0;
+}
 .phone-field { display: flex; gap: var(--ek-8); flex-wrap: wrap; }
+/* Dial code + number render as one joined control. These classes come from
+   ProductCatalog.phoneFieldHTML() and had no styles anywhere, so the select and
+   input were stacking at full width.
+   区号 + 号码渲染为一个组合控件；这两个类由 phoneFieldHTML() 生成，此前全站无样式，
+   导致 select 与 input 各占满宽上下堆叠。 */
+.phone-input-wrap {
+  display: flex; align-items: stretch; flex: 1 1 260px;
+  min-width: 0; max-width: 420px;          /* keep dial + number in proportion */
+}
+.phone-dial {
+  flex: 0 0 140px; width: 140px;
+  border-top-right-radius: 0; border-bottom-right-radius: 0;
+}
+.phone-number {
+  flex: 1 1 auto; min-width: 0; margin-left: -1px;
+  border-top-left-radius: 0; border-bottom-left-radius: 0;
+}
+.phone-dial:focus, .phone-number:focus { position: relative; z-index: 1; }
 .sec-block + .sec-block { margin-top: 0; }
 .basic-info-bar {
   display: grid; gap: var(--ek-16);
