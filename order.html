@@ -39,6 +39,7 @@
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
 <script src="assets/js/app.js?v=20260909e"></script>
   <script src="assets/js/website.js?v=20260909c-2"></script>
+  <script src="assets/js/order-receipt.js?v=20260915a"></script>
   <script>
     const PICKUP_LOCATIONS = {
       lagos: { name: 'Lagos HQ', addr: '12B Admiralty Way, Lekki Phase 1', hours: 'Mon–Sat · 8:00 – 18:00' },
@@ -303,6 +304,18 @@
             </div>
 
             <aside class="odet-side">
+              <!-- ---------- Receipt (works signed in AND as a guest) ---------- -->
+              <section class="odet-card">
+                <h3 class="odet-card-title">Receipt</h3>
+                <p class="odet-lines">Download a copy of this order receipt to keep for warranty or bonus enquiries.</p>
+                <button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="downloadReceipt">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                    <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/>
+                  </svg>
+                  <span>Download receipt</span>
+                </button>
+              </section>
+
               <!-- ---------- Delivery ---------- -->
               <section class="odet-card">
                 <h3 class="odet-card-title">${isPickup ? 'Pickup' : 'Delivery'}</h3>
@@ -371,6 +384,19 @@
       });
       const emailBtn = document.getElementById('emailOrderLink');
       if (emailBtn) emailBtn.addEventListener('click', () => { location.href = buildOrderMailto(order); });
+
+      // Download receipt — delegated to the shared module so the signed-in and
+      // guest (share-link) cases produce the identical document.
+      const receiptBtn = document.getElementById('downloadReceipt');
+      if (receiptBtn) receiptBtn.addEventListener('click', () => {
+        try {
+          if (!window.OrderReceipt) throw new Error('Receipt module unavailable');
+          window.OrderReceipt.download(order, { showBV });
+        } catch (err) {
+          console.error(err);
+          if (window.toast) window.toast(String(err.message || err), 'danger');
+        }
+      });
     }
 
     document.addEventListener('DOMContentLoaded', render);

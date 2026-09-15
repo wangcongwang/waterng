@@ -77,6 +77,12 @@
             <div class="sign-side">
               <div class="terms-meta" id="orderMeta"></div>
             </div>
+            <button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="downloadReceipt">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/>
+              </svg>
+              <span>Download receipt</span>
+            </button>
           </div>
 
           <!-- Order detail link + email -->
@@ -102,6 +108,7 @@
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
 <script src="assets/js/app.js?v=20260909e"></script>
   <script src="assets/js/website.js?v=20260909c-2"></script>
+  <script src="assets/js/order-receipt.js?v=20260915a"></script>
   <script>
     const PICKUP_LOCATIONS = {
       lagos: { nameKey: 'checkout.pickup_hq_name', addrKey: 'checkout.pickup_hq_addr', hoursKey: 'checkout.pickup_hq_hours', tag: 'HQ' },
@@ -166,6 +173,21 @@
       const metaHost = document.getElementById('orderMeta');
       const pickupCard = document.getElementById('pickupCard');
       const emailWrap = document.getElementById('orderEmailWrap');
+      const receiptBtn = document.getElementById('downloadReceipt');
+      // Download receipt — same shared document as order.html / the account list,
+      // and it works for guest orders too (no member data required).
+      if (receiptBtn) {
+        receiptBtn.hidden = !order;
+        receiptBtn.onclick = order ? () => {
+          try {
+            if (!window.OrderReceipt) throw new Error('Receipt module unavailable');
+            window.OrderReceipt.download(order);
+          } catch (err) {
+            console.error(err);
+            if (window.toast) window.toast(String(err.message || err), 'danger');
+          }
+        } : null;
+      }
       if (!order) {
         if (metaHost) metaHost.innerHTML = '<p>No order found.</p>';
         if (emailWrap) emailWrap.style.display = 'none';
@@ -187,8 +209,10 @@
       };
       const payLabel = payLabels[order.payment] || order.payment || '—';
 
-      // Show BV only when logged in (visitor orders credit BV to referrer)
-      const showBV = !!(window.Auth && window.Auth.isLoggedIn);
+      // Show BV only when logged in (visitor orders credit BV to referrer).
+      // NOTE: previously `!!(window.Auth && window.Auth.isLoggedIn)` — that is a
+      // function reference, always truthy, so guests were shown "BV earned".
+      const showBV = !!(window.Auth && typeof window.Auth.isLoggedIn === 'function' && window.Auth.isLoggedIn());
       const rows = `
         <div class="row"><span>Order</span><b>${order.id}</b></div>
         <div class="row"><span>Product</span><b>${item.name || '—'} × ${qty}</b></div>

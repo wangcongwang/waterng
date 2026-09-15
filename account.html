@@ -389,6 +389,7 @@
   <script src="assets/i18n/strings.js?v=20260909c"></script>
 <script src="assets/js/app.js?v=20260909e"></script>
   <script src="assets/js/website.js?v=20260909c"></script>
+  <script src="assets/js/order-receipt.js?v=20260915a"></script>
   <script>
     /* ---------- i18n apply ---------- */
     function applyI18n() {
@@ -1272,187 +1273,24 @@
       });
     }
 
-    /* ---------- Export Order Details Document (.doc) ---------- */
+    /* ---------- Export Order Details Document (.doc) ----------
+       Delegates to the shared receipt module (assets/js/order-receipt.js) so the
+       account list, order.html and shipping.html all emit one identical receipt —
+       including for guest orders, which carry no member record. */
     function exportOrderDocument(order) {
       if (!order) return;
-      const pc = window.ProductCatalog || {};
-      const memberData = JSON.parse(localStorage.getItem('al.memberData') || '{}');
-      const user = (window.Auth && window.Auth.user) || {};
-      const profile = (window.AL && window.AL.loadProfile) ? (window.AL.loadProfile() || {}) : {};
-
-      // 1. Meta information
-      const memberId = order.memberId || user.memberId || memberData.memberId || 'NG48655323';
-      const memberName = order.customer?.name || memberData.memberName || user.name || profile.name || 'S4';
-      
-      const deliv = order.delivery || {};
-      const cust = order.customer || {};
-      let shippingAddress = 'Self Pick-up';
-      if (deliv.method === 'pickup') {
-        shippingAddress = deliv.pickupLoc ? `Self Pick-up (${deliv.pickupLoc})` : 'Self Pick-up';
-      } else {
-        const addrParts = [cust.address, cust.city, cust.state, cust.country].filter(Boolean);
-        shippingAddress = addrParts.length ? addrParts.join(', ') : (memberData.commonAddress || 'Self Pick-up');
+      if (!window.OrderReceipt) {
+        if (window.toast) window.toast('Receipt module unavailable', 'danger');
+        return;
       }
-
-      const phone = cust.phone || user.mobile || memberData.mobile || '5474534543';
-      const orderId = order.id || 'OS202608101159248578';
-      
-      // Creation timestamp formatting YYYY-MM-DD HH:mm:ss
-      const ts = order.date || order.createdAt || order.placeTime || Date.now();
-      const dt = new Date(ts);
-      const pad = n => String(n).padStart(2, '0');
-      const createTime = isNaN(dt.getTime())
-        ? '2026-08-10 09:02:39'
-        : `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())} ${pad(dt.getHours())}:${pad(dt.getMinutes())}:${pad(dt.getSeconds())}`;
-
-      // Helper for currency / amount formatting with commas and 2 decimals
-      const fmtMoney = (n) => Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-      // Tax rate
-      const taxRate = typeof _taxRate === 'function' ? _taxRate(order) : 0.075;
-      const taxRatePct = (taxRate * 100).toFixed(2) + '%';
-      
-      const rawItems = (order.items && order.items.length) ? order.items : [
-        { id: 'EHNH5', name: 'HYDROMI EASYPAY 3/3NGR', price: 1000000, qty: 1 }
-      ];
-
-      let sumQty = 0;
-      let sumTax = 0;
-      let sumTotal = 0;
-
-      const rowsHtml = rawItems.map(it => {
-        const code = it.code || it.sku || (it.id && String(it.id).length < 10 ? String(it.id).toUpperCase() : '') || 'EHNH5';
-        const name = it.name || 'HYDROMI EASYPAY 3/3NGR';
-        const price = Number(it.price) || 0;
-        const qty = Number(it.qty) || 1;
-        const itemTotal = price * qty;
-        const itemTax = typeof it.taxAmount === 'number' ? it.taxAmount : (itemTotal * taxRate);
-
-        sumQty += qty;
-        sumTax += itemTax;
-        sumTotal += itemTotal;
-
-        return `
-          <tr>
-            <td>${code}</td>
-            <td>${name}</td>
-            <td>${fmtMoney(price)}</td>
-            <td>${qty}</td>
-            <td>${taxRatePct}</td>
-            <td>${fmtMoney(itemTax)}</td>
-            <td>${fmtMoney(itemTotal)}</td>
-          </tr>
-        `;
-      }).join('');
-
-      const docHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-<head>
-  <meta charset='utf-8'>
-  <title>Order Details</title>
-  <!--[if gte mso 9]>
-  <xml>
-   <w:WordDocument>
-    <w:View>Print</w:View>
-    <w:Zoom>100</w:Zoom>
-    <w:DoNotOptimizeForBrowser/>
-   </w:WordDocument>
-  </xml>
-  <![endif]-->
-  </head>
-<body>
-  <div>
-    <!-- Top Bar: Logo left, Title center -->
-    <table>
-      <tr>
-        <td>
-          <div>ELKEN</div>
-          <div>GLOBAL</div>
-        </td>
-        <td>
-          <h2>Order Details</h2>
-        </td>
-      </tr>
-    </table>
-
-    <!-- Main Content Table -->
-    <table>
-      <tr>
-        <td colspan="2">Member ID</td>
-        <td colspan="5">${memberId}</td>
-      </tr>
-      <tr>
-        <td colspan="2">Member Name</td>
-        <td colspan="5">${memberName}</td>
-      </tr>
-      <tr>
-        <td colspan="2">Shipping Address</td>
-        <td colspan="5">${shippingAddress}</td>
-      </tr>
-      <tr>
-        <td colspan="2">Phone Number</td>
-        <td colspan="5">${phone}</td>
-      </tr>
-      <tr>
-        <td colspan="2">Order No.</td>
-        <td colspan="5">${orderId}</td>
-      </tr>
-      <tr>
-        <td colspan="2">Created At</td>
-        <td colspan="5">${createTime}</td>
-      </tr>
-      
-      <!-- Section Divider Header -->
-      <tr>
-        <td colspan="7">Order Details</td>
-      </tr>
-
-      <!-- Products Table Headers -->
-      <tr>
-        <td>Product ID</td>
-        <td>Product Name</td>
-        <td>Unit Price</td>
-        <td>Qty</td>
-        <td>Tax Rate</td>
-        <td>Amount</td>
-        <td>Total</td>
-      </tr>
-
-      <!-- Item Rows -->
-      ${rowsHtml}
-
-      <!-- Total Summary Row -->
-      <tr>
-        <td colspan="3">Grand Total</td>
-        <td>${sumQty}</td>
-        <td></td>
-        <td>${fmtMoney(sumTax)}</td>
-        <td>${fmtMoney(sumTotal)}</td>
-      </tr>
-    </table>
-
-    <!-- Signature and Date section -->
-    <table>
-      <tr>
-        <td></td>
-        <td>
-          <div><strong>Signature:</strong></div>
-          <div><strong>Date:</strong></div>
-        </td>
-      </tr>
-    </table>
-  </div>
-</body>
-</html>`;
-
-      const blob = new Blob(['\ufeff' + docHtml], { type: 'application/msword;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `order_details_${String(order.id || '').replace(/[^A-Za-z0-9_-]/g, '_')}.doc`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      if (window.toast) window.toast('Order details exported as Word document (.doc)', 'success');
+      try {
+        window.OrderReceipt.download(order, {
+          showBV: !!(window.Auth && typeof window.Auth.isLoggedIn === 'function' && window.Auth.isLoggedIn())
+        });
+      } catch (err) {
+        console.error(err);
+        if (window.toast) window.toast(String(err.message || err), 'danger');
+      }
     }
 
     /* ---------- Member Overview: Bonus + Ecoin KPIs ---------- */

@@ -63,10 +63,20 @@
 
 ### 订单详情页（order.html）版式（2026-09-15 重做）
 - **用户明确不喜欢「表单式」排布**：不要再把信息放成「标签在上、值在下」的字段网格，也不要用多列财务表格。现在整页是**凭据式**结构，类名统一 `.odet-*`，样式集中在 `account-ui.css` **§14**（旧的 `.order-grid/.order-side/.order-status/.order-meta-*/.order-sub` 已删除，别再用）。
-- 结构：`.odet-hero`（状态徽标 + `Order <ID>` + placed 行 + 右侧总额）→ `.odet-grid`（左 `.odet-main` Items 卡：商品行 `.odet-item` + 金额块 `.odet-money`；右 `.odet-side` 四张卡：Delivery / Payment / Member / 分享链接）。
+- 结构：`.odet-hero`（状态徽标 + `Order <ID>` + placed 行 + 右侧总额）→ `.odet-grid`（左 `.odet-main` Items 卡：商品行 `.odet-item` + 金额块 `.odet-money`；右 `.odet-side` 五张卡：**Receipt** / Delivery / Payment / Member / 分享链接）。
 - 状态色：`.odet-badge` + `.is-paid` / `.is-pending` / `.is-fail` / `.is-neutral`。
 - ⚠️ `.odet-grid` 是 `minmax(0,1fr) 320px`：**grid/flex 子项默认 `min-width:auto`**，侧栏里那条只读分享 URL `<input>` 与长按钮会把 320px 轨道撑成 374px、文字被裁。已用 `min-width:0` 修好；往侧栏加长内容时记得保持这个约束。
 - `.sign-side` 与 `.order-link-*` 仍被 `shipping.html` 共用，**不要删**。
+
+### 下载小票（receipt）—— 全站唯一实现（2026-09-15）
+- **`assets/js/order-receipt.js` → `window.OrderReceipt`**：`build(order,opts)` / `model(order,opts)` / `filename(order)` / `download(order,opts)`。`order.html`、`shipping.html`、`account.html` 都加载它（`?v=20260915a`），**别再写第二份导出逻辑**。
+- 输出 = Word 兼容 `.doc`（`application/msword` + BOM），文件名 **`receipt_<orderId>.doc`**。⚠️ 模块内**字面色值 / pt 字号是有意的**（导出产物，不是站点样式表），不受 token-only 规则约束。
+- **访客必须可用**：member 缺失 → Member 列 `Not registered (guest order)`、姓名回落 `Guest`；全部数据只取自 `order` 自身字段。
+- **BV 行按登录态**（`opts.showBV` 默认 `Auth.isLoggedIn()`）：登录 → `BV earned +N BV`；未登录但有 `order.referrerId` → `BV credited to <id>`；两者皆无 → 不出现该行。
+- 接入点：`order.html` `.odet-side` 的 **Receipt 卡**（`#downloadReceipt`）、`shipping.html` Order summary 卡内同 id 按钮、`account.html` 订单列表 `.o-download`（原来 180 行内联 `exportOrderDocument()` 已删，改为薄封装调用本模块）。
+- ⚠️ `shipping.html` 的 `renderOrder()` 在 DOMContentLoaded 与 `al:langchange` 都会跑 —— 绑定用 `btn.onclick =`，**不要 addEventListener**（会叠监听）。
+- ⚠️ 老坑复现并已修：`!!(window.Auth && window.Auth.isLoggedIn)` 是**函数引用恒为真**，访客会看到 BV。判断登录态**必须调用** `isLoggedIn()`。
+- 验证脚本：`.workbuddy/preview/verify-receipt.js`（登录/访客/订单不存在/shipping 两态/account 列表 5 组）。⚠️ 同一 browser 的多个 page **共享同 origin 的 localStorage**，夹具前必须先清 `localStorage`，否则会出现「访客被自动登录」的假失败。
 
 ### Member Upgrade 页（member-upgrade.html，2026-09-15）
 - **Member Level 只能升到 Silver / Gold**（用户明确要求）：`#memberLevel` 的 `<option>` 只有这两项，脚本常量 `LEVELS = ['Silver','Gold']` **同时是 doSave() 的白名单**。要加档位必须同时改这两处，别只改 HTML。

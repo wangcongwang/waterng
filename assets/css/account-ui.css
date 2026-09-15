@@ -901,6 +901,10 @@
 
 .odet-back { display: inline-block; margin-top: var(--ek-16); font-size: var(--ek-small); color: var(--ek-blue); }
 
+/* Receipt card: the intro paragraph collapses its own margin, so the download
+   button needs explicit breathing room. */
+.odet-card > .odet-lines + .ek-btn { margin-top: var(--ek-16); }
+
 @media (max-width: 560px) {
   .odet-hero { padding: var(--ek-20); }
   .odet-card { padding: var(--ek-20); }
