@@ -60,6 +60,11 @@
 - ⚠️ `.odet-grid` 是 `minmax(0,1fr) 320px`：**grid/flex 子项默认 `min-width:auto`**，侧栏里那条只读分享 URL `<input>` 与长按钮会把 320px 轨道撑成 374px、文字被裁。已用 `min-width:0` 修好；往侧栏加长内容时记得保持这个约束。
 - `.sign-side` 与 `.order-link-*` 仍被 `shipping.html` 共用，**不要删**。
 
+### Member Upgrade 页（member-upgrade.html，2026-09-15）
+- **Member Level 只能升到 Silver / Gold**（用户明确要求）：`#memberLevel` 的 `<option>` 只有这两项，脚本常量 `LEVELS = ['Silver','Gold']` **同时是 doSave() 的白名单**。要加档位必须同时改这两处，别只改 HTML。
+- 档案级别不在白名单时（历史 Bronze/Platinum/Diamond/Corporate），`loadMember()` 会临时插一条 `Xxx (current)` 选项（`dataset.transient='1'`），只为显示现状、不可作为升级目标；`loadMember()` 与 `clearMember()` 每次都会先清掉所有 `option[data-transient]`，保证列表不越滚越长。
+- 该页无登录守卫，独立读 `al.memberLevels` 覆盖值并派发 `al:member-level-changed` / 写 `al.memberLevels:ping` 通知账户页。
+
 ### 数据层 API 形态约定（2026-09-09 踩坑）
 - **`window.ProductCatalog.allProducts` 是数组，不是函数**（website.js 第 585 行 `allProducts,` 简写导出）。任何按 `pc.allProducts()` 调用或 `typeof === 'function'` 判断的解析器都会失效——必须同时处理「函数」与「数组」两种形态。
 - 商品图片字段统一是 **`img`**（如 `calmag.webp`），不是 `image`；目录路径 `assets/img/products/<category>/<img>`。

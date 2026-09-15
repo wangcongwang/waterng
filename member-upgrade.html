@@ -31,7 +31,7 @@
 
       <div class="mug-card">
         <h1>Member Upgrade</h1>
-        <p class="mug-intro">Look up a member by their ID to view basic profile information. Only the member level can be adjusted — all other fields are read-only. Save to apply the new level.</p>
+        <p class="mug-intro">Look up a member by their ID to view basic profile information. Only the member level can be adjusted — the level can be set to <strong>Silver</strong> or <strong>Gold</strong>, all other fields are read-only. Save to apply the new level.</p>
 
         <!-- Section 1: Member ID search -->
         <div class="mug-field">
@@ -46,16 +46,12 @@
 
         <!-- Section 2-4: Member fields (populated after search) -->
         <div id="mugFields" class="mug-fields">
-          <!-- Member level (editable) -->
+          <!-- Member level (editable) — only Silver / Gold are valid upgrade targets -->
           <div class="mug-field is-editable">
             <label for="memberLevel">Member Level</label>
             <select class="ek-select" id="memberLevel" disabled>
-              <option value="Bronze">Bronze</option>
               <option value="Silver">Silver</option>
               <option value="Gold">Gold</option>
-              <option value="Platinum">Platinum</option>
-              <option value="Diamond">Diamond</option>
-              <option value="Corporate">Corporate</option>
             </select>
           </div>
 
@@ -111,7 +107,9 @@
         'NG00000001': { name: 'Elken HQ',           level: 'Corporate',joinDate: '2019-08-01' },
       };
 
-      const LEVELS = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Corporate'];
+      /* Only Silver / Gold can be picked. The list is also the save-time whitelist:
+         selecting anything else is rejected by doSave(). */
+      const LEVELS = ['Silver', 'Gold'];
 
       /* ---------- Persistence ----------
          al.memberLevels = { [memberId]: 'Gold', ... } overrides demo values.
@@ -177,24 +175,28 @@
         $('memberNameDisplay').value = m.name || '—';
         $('memberJoinDateDisplay').value = formatJoinDate(m.joinDate);
         const sel = $('memberLevel');
-        if (LEVELS.indexOf(m.level) >= 0) sel.value = m.level;
+        const lvl = (m.level || '').trim() || 'Silver';
+        // Drop the transient "current level" option left over from a previous lookup, so the
+        // list never grows beyond Silver / Gold (+ the loaded member's own level).
+        Array.from(sel.querySelectorAll('option[data-transient]')).forEach(o => o.remove());
+        if (LEVELS.indexOf(lvl) >= 0) sel.value = lvl;
         else {
-          // unknown level — add as a transient option so the user sees it
-          let opt = Array.from(sel.options).find(o => o.value === m.level);
-          if (!opt) {
-            opt = document.createElement('option');
-            opt.value = m.level;
-            opt.textContent = m.level;
-            sel.appendChild(opt);
-          }
-          sel.value = m.level;
+          // Level outside the upgradeable set (legacy Bronze / Platinum / Diamond / Corporate):
+          // show it as the member's current level so the field is never blank, but it is not a
+          // selectable target — Save only accepts Silver / Gold.
+          const opt = document.createElement('option');
+          opt.value = lvl;
+          opt.textContent = lvl + ' (current)';
+          opt.dataset.transient = '1';
+          sel.appendChild(opt);
+          sel.value = lvl;
         }
         sel.disabled = false;
         $('mugFields').style.display = 'grid';
         $('mugActions').style.display = 'flex';
         levelDirty = false;
         $('saveBtn').disabled = true;
-        setStatus('Member found. Only the level can be adjusted.', 'info');
+        setStatus('Member found. Level can be set to Silver or Gold.', 'info');
       }
 
       function clearMember() {
@@ -203,8 +205,11 @@
         $('mugActions').style.display = 'none';
         $('memberNameDisplay').value = '';
         $('memberJoinDateDisplay').value = '';
-        $('memberLevel').value = 'Silver';
-        $('memberLevel').disabled = true;
+        // Drop any transient "current level" option so the list is Silver / Gold again.
+        const sel = $('memberLevel');
+        Array.from(sel.querySelectorAll('option[data-transient]')).forEach(o => o.remove());
+        sel.value = 'Silver';
+        sel.disabled = true;
         levelDirty = false;
       }
 
