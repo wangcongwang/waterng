@@ -32,10 +32,33 @@
 - **`assets/css/signup.css`**（链接在 login.css 之后）：`.auth-page--signup`（360px 品牌栏 + 1fr 表单侧）、`.auth-card--wide`(720px)、`.reg-grid` 两列字段网格、`.sec-block` 分区、商品选择/支付四宫格（与 checkout 同语言）。≤900px 单列、≤640px 字段单列。
 - 注册/登录 JS 逻辑与所有 id/name 不变；新增 i18n key 走 `strings.js` 的 `window.I18N` 点路径（如 `signup.join_eyebrow`）。
 
+### 支付方式（2026-09-15 按尼日利亚规范重做，细节见当日日志第 5、8 节）
+- **5 种渠道**：Debit Card / USSD / Bank Transfer / Pay with Bank / Pay with Visa QR（取值 `card`/`ussd`/`bank`/`paybank`/`visaqr`）；**checkout 额外保留 `balance`（Ecoin 钱包）**。**`cod` 全线移除**（仅旧订单的只读文案里保留字面兜底）。
+- **共享层**（5 个下单页都加载）：`assets/js/payment-methods.js`、`assets/js/qr.js`、`assets/css/payment-methods.css`。
+  - 高层入口 **`PayMethods.wire(host, opts)`**（推荐用法）：内部 `renderGrid` + 懒挂载 `mount`，返回 `{ select, value, label, reference, isComplete, refresh, grid }`。
+  - `opts` 关键项：`name`（radio 名）、`selected`、`panelHost`（面板容器）、`panelClass`、`prefix`（面板内元素 id 前缀）、`amount()`（总价）、`includeBalance`、`balanceAmountId/balanceSubId`、`extraPanels`（页面自渲染的面板，如 checkout 的 `#balancePanel`）、`extraComplete`、`companions`（同一块页面自有标记可被多个渠道共用，如 signup 的 remittance 字段）、`onChange`。
+  - 页面标记只留两个空壳：`<div class="pay-method-grid" id="…"></div>` + `<div id="…PayPanels"></div>`；**不要**再在页面里硬写渠道选项或面板内容。新加渠道 = 只改 `CATALOGUE` + `payment.*` i18n。
+  - ⚠️ **`onChange` 里不能调 `payMethods.refresh()`** —— 卡片面板的 `refresh()` 会回调用 `onChange`，会无限递归。分工：`onPayMethodChange()`（只更新按钮/摘要）vs `refreshPayPanels()`（仅在总价变化时调）。
+  - ⚠️ `signup.html` / `member-welcome.html` **没有 `state` 对象、也没有 `updatePayBtn`**，别在这两页引用。
+  - ⚠️ `applyI18nCheckout()` 是**无条件** `textContent = T.tr(key)`，缺 key 会把文案写成 key 字符串本身 —— renderGrid 用到的 `payment.*` key 必须存在于 `strings.js`。
+- 订单统一落 `payment` + `paymentLabel`（`PayMethods.label()`）+ `paymentReference` + `payStatus`。`order.html` / `shipping.html` / `account.html` **不加载共享层**，用各自的字面标签表（已含 `paybank`/`visaqr`/`balance`）。
+- `PayMethods.label()` 对未知值回退原值；`PayMethods.money()` 输出 `N25,000` 风格。
+- ⚠️ `.bank-row` 的布局以前只在已弃用的 `pages.css` 里定义过 → 银行行会“标签值挤在一起”；现由 `payment-methods.css` 的 `.bank-rows .bank-row` 提供。
+
+### 账户页两处固定结构（2026-09-15）
+- **Basic Information 常驻顶部卡**：`#profileBasicInfoBar`（5 项：系统时间/结算周期/会员等级/最高荣耀/Elite）**在 `.dash-head` 内**，不是 Profile 标签页的独立卡（那张已删除）。`renderProfileBasicBar()` 必须在 `DOMContentLoaded` 里 `showView()` **之前**调一次，否则首屏 Overview 是空的。布局由 `account-ui.css` §3 的 `.dash-head > .basic-info-bar` 负责（内容自适应 flex + `space-between` + 上方 hairline；≤767px 转 grid）。**不要**改回等宽 grid——系统时间值会折行并把该列顶歪。
+- **两个账户内弹窗**（Historical Cumulative Bonus / Recharge and Transfer）内部类 `.hc-bonus-*`、`.rt-*` 全站样式在 `account-ui.css` **§18**；它们是 JS 动态 innerHTML，只加 CSS、别动 JS。
+
 ### 数据层 API 形态约定（2026-09-09 踩坑）
 - **`window.ProductCatalog.allProducts` 是数组，不是函数**（website.js 第 585 行 `allProducts,` 简写导出）。任何按 `pc.allProducts()` 调用或 `typeof === 'function'` 判断的解析器都会失效——必须同时处理「函数」与「数组」两种形态。
 - 商品图片字段统一是 **`img`**（如 `calmag.webp`），不是 `image`；目录路径 `assets/img/products/<category>/<img>`。
 - 订单项图片解析（`_resolveOrderItemImage`，order.html 与 account.html 各一份）现已按 id 精确 → 名称精确/部分(双向 includes)/忽略大小写 → sku/code 健壮匹配，并兼容 `allProducts` 数组。复购/自动维护等只存 `id` 的订单项也能回查到真实图片。
+- **BV 一律按登录态显示**（未登录完全不出现 BV 文案/列）：商品卡、商品详情徽标、购物车摘要、结算摘要、`order.html` 的 Total BV 列（未登录 8 列 / 登录 9 列，grand 行 colspan 同步）、`shipping.html` 的 BV earned。取数用商品真实 `bv` 字段，不用 `price/1000` 近似。
+
+### 认证态（调试必读）
+- Auth 的 localStorage 键是 **`al.auth.user`**（`assets/js/app.js` 的 `STORAGE.AUTH`），**不是** `al.auth`。
+- `seedDemoIfEmpty()`：只要 `al.auth.user` 存在就**不会**自动种入 demo；空 profile 首访会自动登录 `NG09246375`（Adaeze）。
+- 想模拟真访客态：`localStorage.setItem('al.auth.user','null')`（字符串 `'null'` 使 `getItem` 为真值从而跳过种子，`JSON.parse` 得到 `null` → `isLoggedIn()` 为假）。
 
 ## 项目结构（2026-09-08 定稿）
 - **纯 HTML 静态项目**：所有 `*.html` 页面 + `assets/` + `robots.txt` + `sitemap.xml`，无后端。
@@ -48,3 +71,9 @@
 - CfT 内置浏览器对 `localhost` 是远程沙箱视角，需经白名单（shield allow）才能访问本机服务；home 页 `snapshot -i` 会稳定返回 about:blank（hero 轮播活动导致），`screenshot`/`set viewport` 正常。
 - `workbuddy_cloudstudio_deploy` 在 2026-08-26 试 3 次均 `fetch failed`，不可用。
 - **Finder 自动化（osascript delete）在本机无权限**（错误 -10004）；移文件进废纸篓用 `/usr/bin/trash` 或直接 `mv ~/.Trash/` 可行。
+- **本机视觉/功能验证可行且强烈推荐**：写**单进程** node 脚本（脚本内先 `http.createServer` 起静态服务，再启 puppeteer）→ 避免后台服务被沙箱回收。
+  - 命令：`NODE_PATH=/Users/wang/.workbuddy/binaries/node/workspace/node_modules /Users/wang/.workbuddy/binaries/node/versions/22.22.2/bin/node <script>.js`
+  - Chrome 路径：`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`
+  - 预设登录态用 `page.evaluateOnNewDocument` 写 **`al.auth.user`** + `al.memberData` + `al.cart`。
+  - 验证要点：监听 `pageerror` / `console` error；**截图要按元素截**（`elementHandle.screenshot()`），整页视口截图会因目标在折叠下方而完全看不出差异（还会出现多个渠道截图字节数相同的假象）。
+  - 现成脚本：`.workbuddy/preview/verify-pay.js`（渠道/门控/访客态断言）、`verify-panels.js`（逐渠道元素级截图 + 面板文案去重）。
