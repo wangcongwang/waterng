@@ -237,6 +237,35 @@
   }
 }
 
+/* Referral row — part of the header card (identity row · basic info bar · referral),
+   hairline-separated so it reads as another band of the same card. Text sits left,
+   the link field takes the middle, Share / Copy close the row on the right. */
+.dash-head > .dash-referral {
+  flex: 1 1 100%;
+  display: flex; flex-direction: row; align-items: flex-end; flex-wrap: wrap;
+  gap: var(--ek-12) var(--ek-24);
+  margin-top: var(--ek-4);
+  padding-top: var(--ek-16);
+  border-top: 1px solid var(--ek-border);
+}
+.dash-referral-copy { flex: 1 1 320px; min-width: 0; }
+.dash-referral-eyebrow {
+  display: block; margin-bottom: var(--ek-4);
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ek-info);
+}
+.dash-referral-title { margin: 0 0 var(--ek-4); font-size: var(--ek-h4); color: var(--ek-blue); }
+.dash-referral-desc { margin: 0; font-size: var(--ek-caption); color: var(--ek-muted); }
+.dash-referral-field { flex: 1 1 260px; min-width: 0; display: flex; }
+.dash-referral-field .ek-input { flex: 1 1 220px; min-width: 0; }
+.dash-referral-actions { flex: 0 0 auto; display: flex; gap: var(--ek-8); flex-wrap: wrap; }
+.dash-referral-actions .ek-btn { gap: var(--ek-8); }
+@media (max-width: 767px) {
+  .dash-referral-field,
+  .dash-referral-actions { flex: 1 1 100%; }
+  .dash-referral-actions .ek-btn { flex: 1 1 auto; justify-content: center; }
+}
+
 /* --------------------------------------------------------------------------
    4. Tabs — .tabs reads as .ek-tabs (underline-active, not a filled pill)
    -------------------------------------------------------------------------- */
@@ -354,35 +383,6 @@
 .referral-row-sub { font-size: var(--ek-caption); color: var(--ek-muted); }
 .referral-row-bv { margin-left: auto; color: var(--ek-blue); font-weight: var(--ek-w-bold); font-variant-numeric: tabular-nums; }
 .referral-empty { font-size: var(--ek-small); color: var(--ek-muted); }
-
-/* --------------------------------------------------------------------------
-   7b. Referral spotlight — full-width "invite & earn" band at the top of Overview
-   The Share action used to be a small ghost button buried at the bottom of the
-   left column of the overview grid; it now leads the page as the primary CTA.
-   `.ek-card` is a flex column, so the row direction must be set explicitly.
-   -------------------------------------------------------------------------- */
-.ref-spotlight {
-  display: flex; flex-direction: row; align-items: center;
-  justify-content: space-between; gap: var(--ek-24); flex-wrap: wrap;
-  padding: var(--ek-24) var(--ek-32);
-  background: var(--ek-info-tint);
-  border-color: var(--ek-panel-cool);
-}
-.ref-spotlight-copy { flex: 1 1 420px; min-width: 0; }
-.ref-spotlight-eyebrow {
-  display: block; margin-bottom: var(--ek-8);
-  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
-  letter-spacing: .12em; text-transform: uppercase; color: var(--ek-info);
-}
-.ref-spotlight-title { margin: 0 0 var(--ek-8); font-size: var(--ek-h2); color: var(--ek-blue); }
-.ref-spotlight-desc { margin: 0 0 var(--ek-16); font-size: var(--ek-small); color: var(--ek-muted); }
-.ref-spotlight-field { display: flex; gap: var(--ek-8); }
-.ref-spotlight-field .ek-input { flex: 1 1 220px; min-width: 0; background: var(--ek-surface); }
-.ref-spotlight-actions { display: flex; flex-direction: column; gap: var(--ek-8); flex: 0 1 240px; min-width: 200px; }
-.ref-spotlight-actions .ek-btn { width: 100%; justify-content: center; gap: var(--ek-8); }
-.ref-share-btn { font-size: var(--ek-lead); }
-.ref-share-btn svg { flex: 0 0 auto; }
-.ref-spotlight-hint { margin: 0; font-size: var(--ek-caption); color: var(--ek-muted); text-align: center; }
 
 /* --------------------------------------------------------------------------
    8. Orders — segmented control + order cards
@@ -985,8 +985,6 @@
   .profile-actions .ek-btn,
   .mug-actions .ek-btn,
   .mrp-actions .ek-btn { width: 100%; }
-  .ref-spotlight { padding: var(--ek-20); }
-  .ref-spotlight-actions { flex: 1 1 100%; min-width: 0; }
   .dash-head { flex-wrap: wrap; }
   .dash-actions { margin-left: 0; width: 100%; }
   .dash-actions .ek-btn { width: 100%; }

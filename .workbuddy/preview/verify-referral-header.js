@@ -10,16 +10,18 @@ p.on('console',m=>{if(m.type()==='error'&&!/favicon/.test(m.text()))errs.push('c
 await p.setViewport({width:1280,height:1200});
 await p.evaluateOnNewDocument(()=>{
   localStorage.setItem('al.auth.user',JSON.stringify({memberId:'NG09246375',name:'Adaeze Okoro',email:'a@b.com',phone:'8031234567'}));
-  localStorage.setItem('al.cookieConsent',JSON.stringify({essential:true,ts:Date.now()}));
+  localStorage.setItem('al.cookies',JSON.stringify({essential:true,analytics:true,marketing:true,ts:Date.now()}));
 });
 await p.goto('http://localhost:'+PORT+'/account.html',{waitUntil:'networkidle2'});
 await new Promise(r=>setTimeout(r,1000));
 console.log('ORDER',JSON.stringify(await p.evaluate(()=>{
+  const h=document.querySelector('.dash-head');
   const v=document.querySelector('.dash-view[data-view="overview"]');
-  return [...v.children].map(c=>c.className||c.tagName);
+  return {header:[...h.children].map(c=>c.className||c.tagName),
+          overview:[...v.children].map(c=>c.className||c.tagName)};
 })));
 console.log('SPOT',JSON.stringify(await p.evaluate(()=>{
-  const el=document.querySelector('.ref-spotlight');
+  const el=document.querySelector('.dash-referral');
   const link=document.getElementById('referralLink');
   const share=document.getElementById('referralShare');
   const copy=document.getElementById('referralCopy');
@@ -34,8 +36,10 @@ console.log('SPOT',JSON.stringify(await p.evaluate(()=>{
     panelBg:cs.backgroundColor, flexDir:cs.flexDirection,
     // is the old small card gone from the left column?
     oldCardInColumn:!!document.querySelector('.overview-grid .order-link-row'),
-    // is the spotlight above the hub grid in document order?
-    aboveHub:(el.compareDocumentPosition(document.getElementById('hubGrid')) & Node.DOCUMENT_POSITION_FOLLOWING) > 0,
+    inHeader:el.parentElement.classList.contains('dash-head'),
+    headerHasIdentity:!!el.parentElement.querySelector('#dashAvatar'),
+    afterBasicInfo:(el.previousElementSibling||{}).id==='profileBasicInfoBar',
+    onlyOneInstance:document.querySelectorAll('.dash-referral').length,
   };
 })));
 // share button: three paths — resolves / aborts / fails
@@ -77,27 +81,27 @@ console.log('COPY CLICK',JSON.stringify(await p.evaluate(async ()=>{
 // overflow check
 console.log('OVERFLOW',JSON.stringify(await p.evaluate(()=>({
   docScrollW:document.documentElement.scrollWidth, innerW:window.innerWidth,
-  overflows:[...document.querySelectorAll('.ref-spotlight, .ref-spotlight *')]
+  overflows:[...document.querySelectorAll('.dash-head, .dash-referral, .dash-referral *')]
     .filter(e=>e.getBoundingClientRect().right>window.innerWidth+1)
     .map(e=>e.className||e.tagName)
 }))));
-const el=await p.$('.ref-spotlight'); if(el) await el.screenshot({path:path.join(OUT,'referral-spotlight-d.png')}).catch(()=>{});
-const ov=await p.$('.dash-view[data-view="overview"]'); if(ov) await ov.screenshot({path:path.join(OUT,'referral-overview-d.png'),fullPage:false}).catch(()=>{});
+const el=await p.$('.dash-head'); if(el) await el.screenshot({path:path.join(OUT,'referral-header-d.png')}).catch(()=>{});
+const ov=await p.$('.dash-view[data-view="overview"]'); if(ov) await ov.screenshot({path:path.join(OUT,'referral-header-page-d.png'),fullPage:false}).catch(()=>{});
 // tab switch then back, to be sure the spotlight is not duplicated / lost
 await p.evaluate(()=>{document.querySelector('#dashTabs a[data-tab="orders"]').click();});
 await new Promise(r=>setTimeout(r,400));
 await p.evaluate(()=>{document.querySelector('#dashTabs a[data-tab="overview"]').click();});
 await new Promise(r=>setTimeout(r,400));
 console.log('AFTER TAB',JSON.stringify(await p.evaluate(()=>({
-  count:document.querySelectorAll('.ref-spotlight').length,
+  count:document.querySelectorAll('.dash-referral').length,
   linkValue:document.getElementById('referralLink').value,
   shareHandlersOK:(()=>{const s=document.getElementById('referralShare');return !!s;})()
 }))));
 await p.setViewport({width:390,height:900});
 await new Promise(r=>setTimeout(r,400));
-const el2=await p.$('.ref-spotlight'); if(el2) await el2.screenshot({path:path.join(OUT,'referral-spotlight-m.png')}).catch(()=>{});
+const el2=await p.$('.dash-head'); if(el2) await el2.screenshot({path:path.join(OUT,'referral-header-m.png')}).catch(()=>{});
 console.log('MOBILE',JSON.stringify(await p.evaluate(()=>{
-  const el=document.querySelector('.ref-spotlight'); const r=el.getBoundingClientRect();
+  const el=document.querySelector('.dash-referral'); const r=el.getBoundingClientRect();
   const s=document.getElementById('referralShare').getBoundingClientRect();
   return {width:Math.round(r.width), height:Math.round(r.height), shareW:Math.round(s.width),
           docScrollW:document.documentElement.scrollWidth, innerW:window.innerWidth};

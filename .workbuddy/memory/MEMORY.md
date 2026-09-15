@@ -50,9 +50,10 @@
 - ⚠️ `.bank-row` 的布局以前只在已弃用的 `pages.css` 里定义过 → 银行行会“标签值挤在一起”；现由 `payment-methods.css` 的 `.bank-rows .bank-row` 提供。
 
 ### 账户页 Overview 版式（2026-09-15）
-- 顺序：`.dash-head` → KPI 行（`.kpi-grid.two-kpi`）→ **referral spotlight** → 九宫格 `#hubGrid` → `.overview-grid`。
-- **Referral 分享区在全宽 band `.ref-spotlight`**（用户要求「分享功能放在显眼一点的地方」）：左 = `INVITE & EARN` eyebrow + 标题 + 只读 `#referralLink`，右 = **Share link（primary `ek-btn--lg`）** + Copy link（secondary）+ hint。样式在 `account-ui.css` **§7b**，移动端在 §17。⚠️ `.ek-card` 自身是 `flex-direction:column`，`.ref-spotlight` 必须显式 `flex-direction: row`。不要再把这块塞回 `.overview-grid` 左列（原来那样要滚动才看得到）。
-- `#referralLink` / `#referralCopy` / `#referralShare` 三个 id 是 `wireReferralLink()` 的锚点，**改名等于断掉分享逻辑**。Share 用 `navigator.share`，失败（非 `AbortError`）自动回退剪贴板。
+- **`.dash-head` 是唯一的头部卡片**，子元素顺序：`ek-avatar` → `dash-head-id` → `dash-actions`(Sign out) → `basic-info-bar`(5 项) → **`dash-referral`**（各段用 hairline 分隔）。它在 `.dash-view` 之外 → **所有标签页都可见**。
+- **Referral 分享区在头部卡内**（用户要求「和头部那块合并在一块儿」）：左 = `INVITE & EARN` + 标题 + 说明，中 = 只读 `#referralLink`，右 = **Share link（primary）** + Copy link（secondary）。样式在 `account-ui.css` **§3b**（`.dash-referral*`，含 ≤767px 规则）；内容宽由 `flex: 1 1 100%` 撑满一行。
+  - 历史：曾短暂做过独立的 `.ref-spotlight` 全宽 band（在 KPI 行下方），已删除，**不要再复活这个类**。
+  - `#referralLink` / `#referralCopy` / `#referralShare` 三个 id 是 `wireReferralLink()` 的锚点，改名等于断掉分享逻辑。Share 用 `navigator.share`，失败（非 `AbortError`）自动回退剪贴板。
 
 ### 账户页两处固定结构（2026-09-15）
 - **Basic Information 常驻顶部卡**：`#profileBasicInfoBar`（5 项：系统时间/结算周期/会员等级/最高荣耀/Elite）**在 `.dash-head` 内**，不是 Profile 标签页的独立卡（那张已删除）。`renderProfileBasicBar()` 必须在 `DOMContentLoaded` 里 `showView()` **之前**调一次，否则首屏 Overview 是空的。布局由 `account-ui.css` §3 的 `.dash-head > .basic-info-bar` 负责（内容自适应 flex + `space-between` + 上方 hairline；≤767px 转 grid）。**不要**改回等宽 grid——系统时间值会折行并把该列顶歪。
@@ -95,7 +96,7 @@
 - **本机视觉/功能验证可行且强烈推荐**：写**单进程** node 脚本（脚本内先 `http.createServer` 起静态服务，再启 puppeteer）→ 避免后台服务被沙箱回收。
   - 命令：`NODE_PATH=/Users/wang/.workbuddy/binaries/node/workspace/node_modules /Users/wang/.workbuddy/binaries/node/versions/22.22.2/bin/node <script>.js`
   - Chrome 路径：`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`
-  - 预设登录态用 `page.evaluateOnNewDocument` 写 **`al.auth.user`** + `al.memberData` + `al.cart`。
+  - 预设登录态用 `page.evaluateOnNewDocument` 写 **`al.auth.user`** + `al.memberData` + `al.cart`；**关掉 cookie 横幅要写 `al.cookies`**（`{essential:true,analytics:true,marketing:true,ts}` 的 JSON），写 `al.cookieConsent` 无效（键名不对，横幅照旧显示并挡住截图底部）。
   - 验证要点：监听 `pageerror` / `console` error；**截图要按元素截**（`elementHandle.screenshot()`），整页视口截图会因目标在折叠下方而完全看不出差异（还会出现多个渠道截图字节数相同的假象）。
   - 现成脚本：`.workbuddy/preview/verify-pay.js`（渠道/门控/访客态断言）、`verify-panels.js`（逐渠道元素级截图 + 面板文案去重）、`verify-account-prefs.js`（Profile 标签页结构）、`verify-country-lock.js`（Country 锁定）。
   - ⚠️ **account.html 的 Personal information 表单（`#profileForm`）有 HTML5 校验门槛**：Phone 是 `ProductCatalog.phoneFieldHTML()` 生成的 `required` tel 输入。夹具里 `al.auth.user` 若没有 `phone`，`form.checkValidity()` 为 false → **Chrome 直接不派发 submit**（只在 console 打一条不可聚焦 warning），表现为「点保存没反应」。写自动化前先把 `phone` 塞进夹具；调试表单提交不要用点击，直接 `form.requestSubmit()` / `dispatchEvent(new Event('submit',{cancelable:true,bubbles:true}))`。

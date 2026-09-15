@@ -10,7 +10,7 @@ p.on('console',m=>{if(m.type()==='error'&&!/favicon/.test(m.text()))errs.push('c
 await p.setViewport({width:1280,height:1000});
 await p.evaluateOnNewDocument(()=>{
   localStorage.setItem('al.auth.user',JSON.stringify({memberId:'NG09246375',name:'Adaeze Okoro',email:'a@b.com'}));
-  localStorage.setItem('al.cookieConsent',JSON.stringify({essential:true,ts:Date.now()}));
+  localStorage.setItem('al.cookies',JSON.stringify({essential:true,analytics:true,marketing:true,ts:Date.now()}));
 });
 await p.goto('http://localhost:'+PORT+'/account.html',{waitUntil:'networkidle2'});
 await new Promise(r=>setTimeout(r,900));
