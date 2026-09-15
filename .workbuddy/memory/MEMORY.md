@@ -49,6 +49,13 @@
 - **Basic Information 常驻顶部卡**：`#profileBasicInfoBar`（5 项：系统时间/结算周期/会员等级/最高荣耀/Elite）**在 `.dash-head` 内**，不是 Profile 标签页的独立卡（那张已删除）。`renderProfileBasicBar()` 必须在 `DOMContentLoaded` 里 `showView()` **之前**调一次，否则首屏 Overview 是空的。布局由 `account-ui.css` §3 的 `.dash-head > .basic-info-bar` 负责（内容自适应 flex + `space-between` + 上方 hairline；≤767px 转 grid）。**不要**改回等宽 grid——系统时间值会折行并把该列顶歪。
 - **两个账户内弹窗**（Historical Cumulative Bonus / Recharge and Transfer）内部类 `.hc-bonus-*`、`.rt-*` 全站样式在 `account-ui.css` **§18**；它们是 JS 动态 innerHTML，只加 CSS、别动 JS。
 
+### 订单详情页（order.html）版式（2026-09-15 重做）
+- **用户明确不喜欢「表单式」排布**：不要再把信息放成「标签在上、值在下」的字段网格，也不要用多列财务表格。现在整页是**凭据式**结构，类名统一 `.odet-*`，样式集中在 `account-ui.css` **§14**（旧的 `.order-grid/.order-side/.order-status/.order-meta-*/.order-sub` 已删除，别再用）。
+- 结构：`.odet-hero`（状态徽标 + `Order <ID>` + placed 行 + 右侧总额）→ `.odet-grid`（左 `.odet-main` Items 卡：商品行 `.odet-item` + 金额块 `.odet-money`；右 `.odet-side` 四张卡：Delivery / Payment / Member / 分享链接）。
+- 状态色：`.odet-badge` + `.is-paid` / `.is-pending` / `.is-fail` / `.is-neutral`。
+- ⚠️ `.odet-grid` 是 `minmax(0,1fr) 320px`：**grid/flex 子项默认 `min-width:auto`**，侧栏里那条只读分享 URL `<input>` 与长按钮会把 320px 轨道撑成 374px、文字被裁。已用 `min-width:0` 修好；往侧栏加长内容时记得保持这个约束。
+- `.sign-side` 与 `.order-link-*` 仍被 `shipping.html` 共用，**不要删**。
+
 ### 数据层 API 形态约定（2026-09-09 踩坑）
 - **`window.ProductCatalog.allProducts` 是数组，不是函数**（website.js 第 585 行 `allProducts,` 简写导出）。任何按 `pc.allProducts()` 调用或 `typeof === 'function'` 判断的解析器都会失效——必须同时处理「函数」与「数组」两种形态。
 - 商品图片字段统一是 **`img`**（如 `calmag.webp`），不是 `image`；目录路径 `assets/img/products/<category>/<img>`。

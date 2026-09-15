@@ -726,28 +726,178 @@
 .mrp-actions { display: flex; gap: var(--ek-12); justify-content: flex-end; margin-top: var(--ek-16); }
 
 /* --------------------------------------------------------------------------
-   14. Order detail page
-   -------------------------------------------------------------------------- */
-.order-grid { display: grid; gap: var(--ek-20); }
-@media (min-width: 1024px) { .order-grid { grid-template-columns: minmax(0, 1fr) 320px; align-items: start; } }
-.order-side { display: grid; gap: var(--ek-20); }
-.order-status {
-  display: inline-flex; align-items: center;
-  padding: 3px var(--ek-8); border-radius: var(--ek-radius-pill);
-  font-size: var(--ek-caption); font-weight: var(--ek-w-bold); text-transform: uppercase;
-  background: var(--ek-info-tint); color: var(--ek-info);
+   14. Order detail page — receipt-style layout
+   --------------------------------------------------------------------------
+   Reads as an order record, not a form: a hero states reference / state /
+   amount, items are product rows with one money block underneath, and
+   delivery · payment · member live in narrow side cards using definition rows
+   (label left, value right) instead of stacked label-over-input fields.
+   订单详情页：把「标签在上、值在下」的表单式字段改成凭据式排版。 */
+.odet { display: grid; gap: var(--ek-20); }
+
+/* --- Hero --- */
+.odet-hero {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--ek-20); flex-wrap: wrap;
+  padding: var(--ek-24);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-sm);
 }
-.order-meta-grid { display: grid; gap: var(--ek-12); }
-.order-meta-item { display: flex; flex-direction: column; gap: 2px; }
-.order-meta-item.wide { grid-column: 1 / -1; }
-.order-meta-item .k { font-size: var(--ek-caption); text-transform: uppercase; letter-spacing: .05em; color: var(--ek-muted); }
-.order-meta-item .v { color: var(--ek-charcoal); font-weight: var(--ek-w-medium); }
+.odet-hero-main { display: grid; gap: var(--ek-8); min-width: 0; }
+.odet-ref {
+  margin: 0; font-size: var(--ek-h2); line-height: var(--ek-h2-lh);
+  font-weight: var(--ek-w-bold); color: var(--ek-blue);
+}
+.odet-hero-sub { margin: 0; font-size: var(--ek-small); color: var(--ek-muted); }
+.odet-hero-total { display: grid; gap: var(--ek-4); justify-items: end; text-align: right; }
+.odet-k { font-size: var(--ek-caption); text-transform: uppercase; letter-spacing: .05em; color: var(--ek-muted); }
+.odet-amount {
+  font-size: var(--ek-h2); line-height: var(--ek-h2-lh);
+  font-weight: var(--ek-w-bold); color: var(--ek-charcoal-deep);
+}
+
+/* --- State badges --- */
+.odet-badge {
+  display: inline-flex; align-items: center; width: fit-content;
+  padding: var(--ek-4) var(--ek-8);
+  border-radius: var(--ek-radius-pill);
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
+  text-transform: uppercase; letter-spacing: .04em;
+  background: var(--ek-neutral-tint); color: var(--ek-muted);
+}
+.odet-badge.is-paid { background: var(--ek-success-tint); color: var(--ek-success); }
+.odet-badge.is-pending { background: var(--ek-warning-tint); color: var(--ek-warning); }
+.odet-badge.is-fail { background: var(--ek-error-tint); color: var(--ek-error); }
+.odet-badge.is-neutral { background: var(--ek-neutral-tint); color: var(--ek-muted); }
+
+/* --- Columns --- */
+.odet-grid { display: grid; gap: var(--ek-20); }
+@media (min-width: 1024px) { .odet-grid { grid-template-columns: minmax(0, 1fr) 320px; align-items: start; } }
+.odet-main { display: grid; gap: var(--ek-20); }
+.odet-side { display: grid; gap: var(--ek-20); }
+
+/* --- Cards --- */
+.odet-card {
+  padding: var(--ek-24);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-sm);
+}
+.odet-card-head { display: flex; align-items: center; gap: var(--ek-8); margin-bottom: var(--ek-16); }
+.odet-card-title { margin: 0; font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue); }
+.odet-card > .odet-card-title { margin-bottom: var(--ek-16); }
+.odet-pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: var(--ek-24); padding: 2px var(--ek-8);
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-info-tint); color: var(--ek-blue);
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
+}
+
+/* --- Item rows --- */
+.odet-items { list-style: none; margin: 0; padding: 0; }
+.odet-item {
+  display: grid;
+  grid-template-columns: var(--ek-56) minmax(0, 1fr) auto auto;
+  align-items: center; gap: var(--ek-16);
+  padding: var(--ek-12) 0;
+  border-bottom: 1px solid var(--ek-border);
+}
+.odet-item:last-child { border-bottom: 0; }
+.odet-item-img {
+  width: var(--ek-56); height: var(--ek-56);
+  display: grid; place-items: center; overflow: hidden;
+  background: var(--ek-surface-sunken);
+  border-radius: var(--ek-radius);
+}
+.odet-item-img img, .odet-item-img svg { width: 100%; height: 100%; object-fit: contain; }
+.odet-item-body { display: grid; gap: 2px; min-width: 0; }
+.odet-item-name { font-weight: var(--ek-w-medium); color: var(--ek-charcoal-deep); }
+.odet-item-meta { font-size: var(--ek-caption); color: var(--ek-muted); }
+.odet-item-qty { font-size: var(--ek-small); color: var(--ek-muted); font-variant-numeric: tabular-nums; }
+.odet-item-line {
+  font-weight: var(--ek-w-bold); color: var(--ek-charcoal);
+  white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+
+/* --- Money block --- */
+.odet-money {
+  display: grid; gap: var(--ek-8);
+  margin-top: var(--ek-16); padding-top: var(--ek-16);
+  border-top: 1px solid var(--ek-border);
+}
+.odet-money-row {
+  display: flex; justify-content: space-between; gap: var(--ek-16);
+  font-size: var(--ek-small); color: var(--ek-muted);
+}
+.odet-money-row b { color: var(--ek-charcoal); font-weight: var(--ek-w-medium); font-variant-numeric: tabular-nums; }
+.odet-money-row .odet-bv { color: var(--ek-aqua); }
+.odet-money-total {
+  display: flex; justify-content: space-between; align-items: baseline; gap: var(--ek-16);
+  margin-top: var(--ek-4); padding-top: var(--ek-12);
+  border-top: 1px solid var(--ek-border);
+  font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-charcoal-deep);
+}
+.odet-money-total b { color: var(--ek-blue); font-variant-numeric: tabular-nums; }
+
+/* --- Side cards --- */
+.odet-person { margin: 0 0 var(--ek-4); font-weight: var(--ek-w-bold); color: var(--ek-charcoal-deep); }
+.odet-lines { margin: 0; font-size: var(--ek-small); color: var(--ek-muted); line-height: var(--ek-small-lh); }
+.odet-note {
+  margin: var(--ek-12) 0 0; padding: var(--ek-12);
+  background: var(--ek-surface-sunken); border-radius: var(--ek-radius);
+  font-size: var(--ek-caption); color: var(--ek-charcoal);
+}
+.odet-pay-row { display: flex; align-items: center; justify-content: space-between; gap: var(--ek-12); flex-wrap: wrap; }
+.odet-pay-name { color: var(--ek-charcoal-deep); font-weight: var(--ek-w-bold); }
+.odet-ref-line { margin: var(--ek-8) 0 0; font-size: var(--ek-caption); color: var(--ek-muted); }
+.odet-mono { font-family: var(--ek-num); letter-spacing: .04em; color: var(--ek-charcoal); }
+
+/* Definition rows: label left, value right — deliberately NOT stacked like a form */
+.odet-rows { display: grid; gap: 0; margin: 0; }
+.odet-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--ek-16);
+  padding: var(--ek-8) 0;
+  border-bottom: 1px solid var(--ek-border);
+}
+.odet-row:last-child { border-bottom: 0; }
+.odet-row dt { font-size: var(--ek-caption); text-transform: uppercase; letter-spacing: .04em; color: var(--ek-muted); }
+.odet-row dd {
+  margin: 0; text-align: right;
+  font-size: var(--ek-small); color: var(--ek-charcoal-deep);
+  overflow-wrap: anywhere;
+}
+
+.odet-back { display: inline-block; margin-top: var(--ek-16); font-size: var(--ek-small); color: var(--ek-blue); }
+
+@media (max-width: 560px) {
+  .odet-hero { padding: var(--ek-20); }
+  .odet-card { padding: var(--ek-20); }
+  .odet-hero-total { justify-items: start; text-align: left; }
+  .odet-item { grid-template-columns: var(--ek-48) minmax(0, 1fr) auto; row-gap: var(--ek-4); }
+  .odet-item-img { width: var(--ek-48); height: var(--ek-48); }
+  .odet-item-qty { grid-column: 2; }
+  .odet-item-line { grid-column: 3; grid-row: 1 / span 2; }
+}
+
+/* Grid/flex children default to min-width:auto, so the read-only share URL or
+   the long "Email order link to …" button would stretch the 320px side column
+   past its track. Zero the floor so the cards always fit. */
+.odet-grid > *,
+.odet-main,
+.odet-side,
+.odet-card { min-width: 0; }
+
+/* Still shared with shipping.html and the shareable-link box */
 .sign-side { margin-top: var(--ek-16); }
-.order-sub { margin: 0 0 var(--ek-8); font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue); }
 .order-link-box { display: grid; gap: var(--ek-12); }
 .order-link-box p { margin: 0; font-size: var(--ek-caption); color: var(--ek-muted); }
 .order-link-row { display: flex; gap: var(--ek-8); flex-wrap: wrap; }
-.order-link-row .ek-input { flex: 1 1 200px; }
+.order-link-row .ek-input { flex: 1 1 200px; min-width: 0; }
+.odet-card .order-link-box .ek-btn { white-space: normal; }
 
 /* --------------------------------------------------------------------------
    15. Team Inquiry
@@ -869,7 +1019,7 @@
   .profile-form .row,
   .profile-form .row.cols-3,
   .overview-grid,
-  .order-grid,
+  .odet-grid,
   .profile-grid,
   .row2,
   .row3 { grid-template-columns: 1fr; }
