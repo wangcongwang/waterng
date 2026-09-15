@@ -10,7 +10,6 @@
     AUTH: 'al.auth.user',
     PROFILE: 'al.profile',
     ADDRESSES: 'al.addresses',
-    PREFS: 'al.prefs',
   };
 
   /* ---------- Auth state ---------- */
@@ -690,7 +689,7 @@
         address: '14 Admiralty Way, Lekki Phase 1, Lagos, Nigeria',
       }));
 
-      // 2) Profile mirror (used by prefs / address defaults / subviews)
+      // 2) Profile mirror (used by address defaults / subviews)
       localStorage.setItem(STORAGE.PROFILE, JSON.stringify({
         firstName: DEMO_MEMBER.firstName,
         name: DEMO_MEMBER.name,
@@ -888,10 +887,5 @@
       if (arr.length && !arr.some(x => x.isDefault)) arr[0].isDefault = true;
       this.saveAddresses(arr);
     },
-    loadPrefs() {
-      try { return JSON.parse(localStorage.getItem(STORAGE.PREFS) || 'null') || { email: true, sms: true, wa: true }; }
-      catch { return { email: true, sms: true, wa: true }; }
-    },
-    savePrefs(p) { localStorage.setItem(STORAGE.PREFS, JSON.stringify(p)); },
   };
 })();

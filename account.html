@@ -374,62 +374,6 @@
             </div>
             <div id="addressList" class="address-list"></div>
           </div>
-
-          <!-- Preferences -->
-          <div class="ek-card profile-card profile-card-wide">
-            <div class="profile-card-head">
-              <h2 data-i18n="account.profile_prefs">Notification preferences</h2>
-              <button class="btn-link" id="prefsSaveBtn" data-i18n="account.profile_save">Save</button>
-            </div>
-            <form id="prefsForm" class="prefs-form">
-              <div class="prefs-grid">
-                <!-- Section 1: Notification Channels -->
-                <div class="prefs-section">
-                  <div class="prefs-section-head">
-                    <div>
-                      <h3 data-i18n="account.profile_prefs_channels_title">Notification channels</h3>
-                      <p data-i18n="account.profile_prefs_channels_desc">Choose where to receive updates</p>
-                    </div>
-                  </div>
-                  <div class="prefs-channels-list">
-                    <label class="pref-toggle-card">
-                      <input type="checkbox" name="email" />
-                      <div class="pref-toggle-info">
-                        <div>
-                          <div class="ch-title" data-i18n="account.profile_pref_email">Email notifications</div>
-                          <div class="ch-desc" data-i18n="account.profile_pref_email_desc">Receipts & order confirmations</div>
-                        </div>
-                      </div>
-                      <span class="custom-switch"></span>
-                    </label>
-
-                    <label class="pref-toggle-card">
-                      <input type="checkbox" name="sms" />
-                      <div class="pref-toggle-info">
-                        <div>
-                          <div class="ch-title" data-i18n="account.profile_pref_sms">SMS notifications</div>
-                          <div class="ch-desc" data-i18n="account.profile_pref_sms_desc">Instant delivery & status alerts</div>
-                        </div>
-                      </div>
-                      <span class="custom-switch"></span>
-                    </label>
-
-                    <label class="pref-toggle-card">
-                      <input type="checkbox" name="wa" />
-                      <div class="pref-toggle-info">
-                        <div>
-                          <div class="ch-title" data-i18n="account.profile_pref_wa">WhatsApp notifications</div>
-                          <div class="ch-desc" data-i18n="account.profile_pref_wa_desc">WhatsApp order & delivery alerts</div>
-                        </div>
-                      </div>
-                      <span class="custom-switch"></span>
-                    </label>
-                  </div>
-                </div>
-
-              </div>
-            </form>
-          </div>
         </div>
       </section>
     </div>
@@ -873,22 +817,6 @@
     function closeAddressEditor() {
       const editor = document.getElementById('addrEditor');
       if (editor) editor.hidden = true;
-    }
-
-    /* ---------- Preferences ---------- */
-    function loadPrefs() {
-      const p = window.AL.loadPrefs();
-      const form = document.getElementById('prefsForm');
-      if (!form) return;
-      ['email','sms','wa'].forEach(k => { if (form[k]) form[k].checked = !!p[k]; });
-      const langSel = form.querySelector('[name="lang"]');
-      const cur = (p && p.lang) || (window.T && window.T.current) || 'en';
-      if (langSel) {
-        langSel.value = (langSel.querySelector('option[value="' + cur + '"]') ? cur : 'en');
-      }
-      form.querySelectorAll('.lang-card').forEach(btn => {
-        btn.classList.toggle('is-active', btn.dataset.langVal === cur);
-      });
     }
 
     /* ---------- Orders ---------- */
@@ -2036,7 +1964,6 @@
         loadProfileForm();
         setProfileMode('view');
         renderAddresses();
-        loadPrefs();
       }
       if (name === 'sponsor') {
         renderSponsorNetwork();
@@ -2186,7 +2113,7 @@
         const email = (form.email ? form.email.value : '').trim();
         const phone = (pc.readPhone ? pc.readPhone(form, 'phone') : (form.querySelector('[name="phone"]') || {}).value || '').trim();
 
-        // 1) Update al.profile (still used for prefs/address defaults; drop legacy nin)
+        // 1) Update al.profile (still used for address defaults; drop legacy nin)
         const existingP = window.AL.loadProfile() || {};
         const p = {
           ...existingP,
@@ -2344,32 +2271,6 @@
         window.toast(window.T.tr('account.profile_addr_saved'), 'success');
       });
 
-      // Preferences & Language Chips
-      document.querySelectorAll('#prefsForm .lang-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const val = card.dataset.langVal;
-          const select = document.getElementById('pfLang');
-          if (select) select.value = val;
-          document.querySelectorAll('#prefsForm .lang-card').forEach(c => c.classList.toggle('is-active', c === card));
-        });
-      });
-      document.getElementById('pfLang')?.addEventListener('change', (e) => {
-        const val = e.target.value;
-        document.querySelectorAll('#prefsForm .lang-card').forEach(c => c.classList.toggle('is-active', c.dataset.langVal === val));
-      });
-
-      document.getElementById('prefsSaveBtn').addEventListener('click', () => {
-        const form = document.getElementById('prefsForm');
-        const p = {};
-        ['email','sms','wa'].forEach(k => p[k] = !!form[k].checked);
-        const newLang = (form.lang && form.lang.value) || 'en';
-        p.lang = newLang;
-        window.AL.savePrefs(p);
-        const prevLang = (window.T && window.T.current) || 'en';
-        if (window.T && newLang !== prevLang) window.T.switchLang(newLang);
-        window.toast(window.T.tr('account.profile_save_ok'), 'success');
-      });
-
       // React to language changes (T.switchLang dispatches al:langchange) — re-render this page's own dynamic blocks + i18n
       window.addEventListener('al:langchange', () => {
         applyI18n();
@@ -2377,7 +2278,6 @@
         renderProfileBasicBar();
         // Profile info: re-render country select (i18n labels) + member id placeholder
         loadProfileForm();
-        loadPrefs();
         renderAddresses();
         renderOrders();
         renderMemberOverview && renderMemberOverview();
