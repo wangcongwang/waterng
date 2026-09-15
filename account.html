@@ -233,7 +233,7 @@
                   <label data-i18n="account.profile_member_id">Member ID</label>
                   <input class="ek-input input-locked" name="memberId" id="pfMemberId" maxlength="10" autocomplete="off"
                          data-i18n-ph="account.profile_member_id_ph" placeholder="NG12345678" disabled />
-                  <span class="hint member-id-locked-hint">This ID is fixed and cannot be changed.</span>
+                  <span class="hint member-id-locked-hint" data-i18n="account.profile_member_id_locked">This ID is fixed and cannot be changed.</span>
                 </div>
                 <div class="field">
                   <label data-i18n="account.profile_member_name">Member name</label>
@@ -243,9 +243,10 @@
               <div class="row">
                 <div class="field">
                   <label data-i18n="account.profile_country">Country</label>
-                  <select class="ek-select" name="country" id="pfCountry" disabled>
+                  <select class="ek-select input-locked" name="country" id="pfCountry" disabled>
                     <!-- Rendered by JS with i18n -->
                   </select>
+                  <span class="hint country-locked-hint" hidden data-i18n="account.profile_country_locked">Country is fixed and cannot be changed.</span>
                 </div>
                 <div class="field">
                   <label>Email</label>
@@ -729,14 +730,22 @@
       const form = document.getElementById('profileForm');
       form.dataset.mode = mode;
       const editing = mode === 'edit';
-      // Country / member name / email / phone — toggled by edit. Member ID stays read-only to protect NG+8 format.
+      // Permanently locked fields (never editable, even in edit mode):
+      //   Member ID — protects the NG+8 format
+      //   Country   — fixed to the registered market; changing it would invalidate
+      //               currency / BV / shipping rules, so it always stays read-only.
       form.querySelectorAll('input, select').forEach(el => {
         const name = (el.name || el.id || '').toLowerCase();
+        if (name === 'country' || el.id === 'pfCountry') { el.disabled = true; return; }
         if (name === 'memberid' || el.id === 'pfMemberId') el.disabled = true;
         else el.disabled = !editing;
       });
       document.querySelector('#profileForm .profile-actions').hidden = !editing;
       document.getElementById('profileEditBtn').hidden = editing;
+      // The "country is fixed" note only matters while editing — in view mode
+      // every field is disabled already, so it would just add noise.
+      const countryHint = form.querySelector('.country-locked-hint');
+      if (countryHint) countryHint.hidden = !editing;
     }
 
     /* ---------- Addresses ---------- */
@@ -2104,7 +2113,14 @@
           window.toast((msg && msg !== 'account.profile_member_id_invalid') ? msg : 'Member ID must be NG + 8 digits (e.g. NG12345678).', 'danger');
           return;
         }
-        const countryCode = (form.country ? form.country.value : document.getElementById('pfCountry').value || '').trim();
+        // Country is a permanently locked field (see setProfileMode): the stored value wins.
+        // The select is only pre-filled from storage and can never be picked by the user, so
+        // this also protects against a stale cached page whose select was still editable.
+        const countryEl = document.getElementById('pfCountry');
+        if (countryEl) countryEl.disabled = true;
+        const storedCountry = (JSON.parse(localStorage.getItem('al.memberData') || '{}').country || '').trim();
+        const lockedCountry = PROFILE_COUNTRIES.some(c => c.code === storedCountry) ? storedCountry : '';
+        const countryCode = (lockedCountry || (form.country ? form.country.value : (countryEl ? countryEl.value : '')) || '').trim();
         if (!countryCode) {
           window.toast(window.T.tr('account.profile_country_ph') || 'Please select a country.', 'danger');
           return;

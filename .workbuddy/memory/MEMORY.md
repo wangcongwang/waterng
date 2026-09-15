@@ -10,9 +10,13 @@
   - 登录页 `login.html:361` 的 `isMemberId()` 也应收紧为 `/^NG\d{8}$/.test(v.trim().toUpperCase())`（2026-08-26 修正前只是 `length >= 3`，会放过非法 ID）。
 - 硬编码 demo/seed ID 一律遵循：`NG09246375`（demo 账户）、`NG27187710`（referrer）、`NG66051653`（reporting center）、`NG48655323`（订单兜底）。
 - **Member ID 字段永远不可编辑**（2026-08-26 用户明确要求）：
-  - 账户页 Personal information 表单的 `pfMemberId` 输入框：HTML 上加 `disabled`，再加 `class="input input-locked"` 提供锁定视觉（灰底 + 锁图标 + "This ID is fixed and cannot be changed." 提示）。
-  - `account.html` 的 `setProfileMode('edit')` 循环里要保持 `pfMemberId.disabled = true`（不能被其它字段的 `el.disabled = !editing` 覆盖），现有 line 891 已正确处理：`if (name === 'memberid' || el.id === 'pfMemberId') el.disabled = true;`。
-  - 锁定样式集中在 `pages.css` 的 `.profile-form .field .input.input-locked`（含 SVG 锁图标的 data URI）。修改 Member ID 字段时不要去掉 `input-locked` 类或 `disabled` 属性。
+  - 账户页 Personal information 表单的 `pfMemberId` 输入框：HTML 上加 `disabled` + `class="ek-input input-locked"`，字段下配 `span.hint.member-id-locked-hint`（文案走 i18n `account.profile_member_id_locked`）。
+  - `account.html` 的 `setProfileMode()` 循环里要保持 `pfMemberId.disabled = true`（不能被其它字段的 `el.disabled = !editing` 覆盖）：`if (name === 'memberid' || el.id === 'pfMemberId') el.disabled = true;`。
+  - ⚠️ `input-locked` 目前是**纯语义类、全站没有任何 CSS 规则**（`pages.css` 里已不存在锁定样式，该文件也已无页面引用）。灰底 + `not-allowed` 光标全靠 kit 的 `.ek-input:disabled, .ek-select:disabled`。不要以为去掉类会掉样式，也不要依赖它做视觉。
+- **Country 字段同样永久锁定**（2026-09-15 用户要求「编辑时 Country 不可修改」）：
+  - `account.html` `#pfCountry`：`disabled` + `ek-select input-locked`，字段下 `span.hint.country-locked-hint`（`hidden` 默认、仅编辑态显示；文案 `account.profile_country_locked`）。
+  - `setProfileMode()` 里 country 与 memberId 一样先拦截；`#profileForm` 的 submit 处理器**再压一次** `countryEl.disabled = true`，并以 storage 中的合法国别码优先（`lockedCountry || 表单值`）——防止旧缓存页面仍可改国别。
+  - 业务原因：改国别会让币种 / BV / 运费规则失效。
 
 ### 我的账户模块样式（2026-09-09 定稿）
 - **单一文件 `assets/css/account-ui.css`** 承载"我的账户"全部 7 个页面的 UI 覆盖（account / order / member-welcome / member-repurchase / member-auto-maintenance / member-upgrade / team-inquiry）。
@@ -83,4 +87,5 @@
   - Chrome 路径：`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`
   - 预设登录态用 `page.evaluateOnNewDocument` 写 **`al.auth.user`** + `al.memberData` + `al.cart`。
   - 验证要点：监听 `pageerror` / `console` error；**截图要按元素截**（`elementHandle.screenshot()`），整页视口截图会因目标在折叠下方而完全看不出差异（还会出现多个渠道截图字节数相同的假象）。
-  - 现成脚本：`.workbuddy/preview/verify-pay.js`（渠道/门控/访客态断言）、`verify-panels.js`（逐渠道元素级截图 + 面板文案去重）。
+  - 现成脚本：`.workbuddy/preview/verify-pay.js`（渠道/门控/访客态断言）、`verify-panels.js`（逐渠道元素级截图 + 面板文案去重）、`verify-account-prefs.js`（Profile 标签页结构）、`verify-country-lock.js`（Country 锁定）。
+  - ⚠️ **account.html 的 Personal information 表单（`#profileForm`）有 HTML5 校验门槛**：Phone 是 `ProductCatalog.phoneFieldHTML()` 生成的 `required` tel 输入。夹具里 `al.auth.user` 若没有 `phone`，`form.checkValidity()` 为 false → **Chrome 直接不派发 submit**（只在 console 打一条不可聚焦 warning），表现为「点保存没反应」。写自动化前先把 `phone` 塞进夹具；调试表单提交不要用点击，直接 `form.requestSubmit()` / `dispatchEvent(new Event('submit',{cancelable:true,bubbles:true}))`。
