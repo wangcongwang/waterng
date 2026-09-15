@@ -1,0 +1,293 @@
+/* ---------------------------------------------------------------------------
+   payment-methods.css — shared UI for the payment panels used by every order
+   flow (checkout / signup / member-welcome / member-repurchase /
+   member-auto-maintenance).
+
+   Scope: USSD bank chooser + generated code, Bank Transfer details, Pay with
+   Bank bank grid, Pay with Visa QR code block, gateway status lines and the
+   notes each flow requires.
+
+   Conventions: design tokens only (no literal colours), no `!important`,
+   no px font sizes, native focus rings preserved.
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   Bank chooser — used by USSD (code list) and Pay with Bank (bank grid)
+   -------------------------------------------------------------------------- */
+.pm-bank-list {
+  display: grid;
+  gap: var(--ek-8);
+  margin: var(--ek-16) 0;
+  max-height: 286px;
+  overflow-y: auto;
+  padding-right: var(--ek-4);
+  scrollbar-width: thin;
+}
+
+.pm-bank {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-12);
+  width: 100%;
+  padding: var(--ek-12) var(--ek-16);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-sm);
+  font: inherit;
+  font-size: var(--ek-small);
+  color: var(--ek-text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--ek-fast) var(--ek-ease),
+              background var(--ek-fast) var(--ek-ease);
+}
+
+.pm-bank:hover { border-color: var(--ek-border-strong); }
+.pm-bank:focus-visible { box-shadow: var(--ek-focus-ring); outline: none; }
+
+.pm-bank.is-selected {
+  border-color: var(--ek-blue);
+  background: var(--ek-info-tint);
+}
+
+.pm-bank-name {
+  font-weight: var(--ek-w-medium);
+  min-width: 0;
+}
+
+.pm-bank-code {
+  margin-left: auto;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: var(--ek-caption);
+  color: var(--ek-muted);
+  white-space: nowrap;
+}
+
+.pm-bank.is-selected .pm-bank-code { color: var(--ek-blue); }
+
+.pm-banks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(184px, 1fr));
+  gap: var(--ek-8);
+  margin: var(--ek-16) 0;
+  max-height: 322px;
+  overflow-y: auto;
+  padding-right: var(--ek-4);
+  scrollbar-width: thin;
+}
+
+.pm-bank-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--ek-32);
+  height: var(--ek-32);
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-neutral-tint);
+  color: var(--ek-charcoal);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  letter-spacing: .02em;
+}
+
+.pm-bank.is-selected .pm-bank-avatar {
+  background: var(--ek-blue);
+  color: var(--ek-white);
+}
+
+/* --------------------------------------------------------------------------
+   USSD result — generated code + dialling instructions
+   -------------------------------------------------------------------------- */
+.pm-ussd-result[hidden] { display: none; }
+
+.pm-code-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-12);
+  flex-wrap: wrap;
+}
+
+.pm-code-row .ussd-code {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  word-break: break-all;
+}
+
+.pm-copy { flex: none; }
+.pm-copy.is-copied { color: var(--ek-success); border-color: var(--ek-success); }
+
+/* --------------------------------------------------------------------------
+   Numbered instructions
+   -------------------------------------------------------------------------- */
+.pm-steps {
+  display: grid;
+  gap: var(--ek-8);
+  margin: var(--ek-16) 0 0;
+  padding-left: var(--ek-20);
+  font-size: var(--ek-small);
+  color: var(--ek-muted);
+  line-height: 1.55;
+}
+
+/* --------------------------------------------------------------------------
+   Notes — the "Important" callout from the guide plus quiet hints
+   -------------------------------------------------------------------------- */
+.pm-note {
+  margin-top: var(--ek-16);
+  font-size: var(--ek-small);
+  line-height: 1.6;
+  color: var(--ek-muted);
+}
+
+.pm-note--important {
+  padding: var(--ek-12) var(--ek-16);
+  background: var(--ek-warning-tint);
+  border-left: 4px solid var(--ek-warning);
+  border-radius: var(--ek-radius-sm);
+  color: var(--ek-body-ink);
+  font-weight: var(--ek-w-medium);
+}
+
+/* --------------------------------------------------------------------------
+   Gateway status line
+   -------------------------------------------------------------------------- */
+.pm-status {
+  margin-top: var(--ek-16);
+  padding: var(--ek-12) var(--ek-16);
+  background: var(--ek-info-tint);
+  border-radius: var(--ek-radius-sm);
+  font-size: var(--ek-small);
+  line-height: 1.6;
+  color: var(--ek-body-ink);
+}
+
+.pm-status[hidden] { display: none; }
+.pm-status.is-warning { background: var(--ek-warning-tint); }
+
+/* --------------------------------------------------------------------------
+   Action row (copy / regenerate)
+   -------------------------------------------------------------------------- */
+.pm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ek-8);
+  margin-top: var(--ek-16);
+}
+
+/* --------------------------------------------------------------------------
+   Detail rows — bank transfer / QR side panel
+
+   NOTE: `.bank-row` was only ever defined in pages.css, which no page links,
+   so these label/value rows rendered run-together before. The shared payment
+   layer supplies them with design tokens (account-ui.css / signup.css already
+   define their own, but a scoped rule here keeps all five flows identical).
+   -------------------------------------------------------------------------- */
+.pm-rows { margin-top: var(--ek-16); }
+
+.bank-rows .bank-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--ek-12);
+  padding: var(--ek-8) 0;
+  border-bottom: 1px dashed var(--ek-border);
+  font-size: var(--ek-small);
+}
+
+.bank-rows .bank-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.bank-rows .bank-row > span { color: var(--ek-muted); }
+
+.bank-rows .bank-row > b {
+  color: var(--ek-charcoal);
+  font-weight: var(--ek-w-medium);
+  text-align: right;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.pm-mono {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  letter-spacing: .03em;
+}
+
+.is-expired { color: var(--ek-error); }
+
+/* --------------------------------------------------------------------------
+   Visa QR
+   -------------------------------------------------------------------------- */
+.pm-qr-wrap {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--ek-20);
+  align-items: start;
+  margin-top: var(--ek-16);
+}
+
+.pm-qr {
+  width: 208px;
+  max-width: 100%;
+  padding: var(--ek-12);
+  background: var(--ek-white);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  color: var(--ek-charcoal);
+}
+
+.pm-qr svg { display: block; width: 100%; height: auto; }
+
+.pm-qr-side .bank-rows { margin-top: 0; }
+
+/* --------------------------------------------------------------------------
+   Method chooser
+
+   The five channels must read well in both a wide checkout column and the
+   narrow registration column, so the grid sizes its own tracks instead of
+   relying on each page's fixed column count.
+   -------------------------------------------------------------------------- */
+.pay-method-grid {
+  grid-template-columns: repeat(auto-fill, minmax(212px, 1fr));
+}
+
+/* Panel title — the pages styled this differently (some a plain div, some an
+   h2), so pin one treatment for every flow. */
+.method-info-card > .pm-title {
+  margin: 0 0 var(--ek-8);
+  font-size: var(--ek-h4);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal);
+}
+
+/* Amount suffix on the Account Balance option */
+.pay-method-amount {
+  color: var(--ek-muted);
+  font-weight: var(--ek-w-regular);
+  font-size: var(--ek-caption);
+}
+
+/* --------------------------------------------------------------------------
+   Small screens
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .pm-banks { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 344px; }
+
+  .bank-rows .bank-row { flex-direction: column; align-items: flex-start; gap: var(--ek-4); }
+  .bank-rows .bank-row > b { text-align: left; }
+
+  .pm-code-row { flex-direction: column; align-items: stretch; }
+  .pm-code-row .ussd-code { font-size: var(--ek-h3); }
+  .pm-copy { width: 100%; }
+
+  .pm-qr-wrap { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .pm-qr-side { width: 100%; }
+
+  .pm-actions .ek-btn { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .pm-banks { grid-template-columns: minmax(0, 1fr); }
+}

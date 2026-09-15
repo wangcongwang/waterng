@@ -1,0 +1,4 @@
+=== boot pid=83840 ts=2026-09-14 13:30:59.726 cwd=/Users/wang/Documents/trae_projects/water/docs argv=/Users/wang/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-stop --project /Users/wang/Documents/trae_projects/water/docs/walkthrough-ppt ===
+[2026-09-14 13:30:59.726] [INFO ] [pid=83840] [stop] invoked pid=83840 cwd=/Users/wang/Documents/trae_projects/water/docs projectDir=/Users/wang/Documents/trae_projects/water/docs/walkthrough-ppt force=no timeoutMs=10000
+[2026-09-14 13:30:59.727] [INFO ] [pid=83840] [stop] killing targetPid=51551 signal=SIGTERM timeoutMs=10000 projectDir=/Users/wang/Documents/trae_projects/water/docs/walkthrough-ppt
+[2026-09-14 13:30:59.931] [INFO ] [pid=83840] [stop] ok targetPid=51551 signal=SIGTERM ms=205

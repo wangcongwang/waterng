@@ -368,6 +368,7 @@ function localizedDetail(detail) { return detail; }
         price: matched.price,
         img: matched.img,
         category: matched.category,
+        bv: matched.bv,
       } : {
         id: 'pd-' + (slugify(baseDetail.name) || 'item'),
         name: baseDetail.name,
@@ -408,16 +409,20 @@ function localizedDetail(detail) { return detail; }
         };
       }
 
-      // Show BV rewards (always visible; ordering requires sign-in anyway)
+      // Show BV rewards — gated by login state per project convention
       const bvRow = document.getElementById('detailBV');
       if (bvRow) {
-        const price = meta ? meta[5] : 0;
-        const bv = window.ProductCatalog.getBV ? window.ProductCatalog.getBV({ price: price || 0 }) : Math.round((price || 0) / 1000);
-        if (bv > 0) {
-          bvRow.hidden = false;
-          bvRow.innerHTML = `<span class="bv-badge">Earn <b>${bv} BV</b> with this purchase</span>`;
-        } else {
+        const loggedIn = !!(window.Auth && window.Auth.isLoggedIn);
+        if (!loggedIn) {
           bvRow.hidden = true;
+        } else {
+          const bv = window.ProductCatalog.getBV ? window.ProductCatalog.getBV(catalogProduct) : 0;
+          if (bv > 0) {
+            bvRow.hidden = false;
+            bvRow.innerHTML = `<span class="bv-badge">Earn <b>${bv} BV</b> with this purchase</span>`;
+          } else {
+            bvRow.hidden = true;
+          }
         }
       }
     }

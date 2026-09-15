@@ -1,0 +1,130 @@
+{
+  "filePath": "/Users/wang/Documents/trae_projects/water/docs/walkthrough-ppt/下单与会员系统讲解.pptx",
+  "lastCommit": {
+    "slide_01_cover": {
+      "revisionId": "e4ca41af92bdc74b60202cd5cbbd0e73fcb6123a",
+      "version": 29,
+      "at": "2026-09-14 11:23:45.492"
+    },
+    "slide_02_agenda": {
+      "revisionId": "aefc448666537fee19bbd4d116c0d07ac09be2a5",
+      "version": 2,
+      "at": "2026-09-14 11:17:43.301"
+    },
+    "slide_03_landscape": {
+      "revisionId": "43d4e8df9e7239e5dd70448bec34a0df74406395",
+      "version": 3,
+      "at": "2026-09-14 11:18:09.231"
+    },
+    "slide_04_pagemap": {
+      "revisionId": "3c1b8147c84f5518ee13600073570facae918dee",
+      "version": 4,
+      "at": "2026-09-14 11:18:09.334"
+    },
+    "slide_05_section_flow": {
+      "revisionId": "f60eec40f5feedb1180d722ab72177674c9a5aa6",
+      "version": 30,
+      "at": "2026-09-14 11:23:45.588"
+    },
+    "slide_06_flow_steps": {
+      "revisionId": "ec3942a60cd1bdb1433bcc2500ee2dcbb63703bb",
+      "version": 6,
+      "at": "2026-09-14 11:18:22.753"
+    },
+    "slide_07_cart": {
+      "revisionId": "297223222eafff113bf9437766979681349cff2a",
+      "version": 7,
+      "at": "2026-09-14 11:18:44.397"
+    },
+    "slide_08_shipping": {
+      "revisionId": "e431f5e0dd3f30b612ffbecc4cc09b9ae9026129",
+      "version": 8,
+      "at": "2026-09-14 11:18:44.617"
+    },
+    "slide_09_payment": {
+      "revisionId": "adf9d69e7db14212deb76f764d9e565dfb718d2d",
+      "version": 26,
+      "at": "2026-09-14 11:21:58.477"
+    },
+    "slide_10_summary": {
+      "revisionId": "107876d86c07cf153e50fcd7fa827dd452c5360f",
+      "version": 27,
+      "at": "2026-09-14 11:21:58.556"
+    },
+    "slide_11_orderdata": {
+      "revisionId": "0338678c5deee33d488cbc034483dd8ab72b2997",
+      "version": 28,
+      "at": "2026-09-14 11:22:05.321"
+    },
+    "slide_12_bv": {
+      "revisionId": "3a6a37e6c0cb2a0ad1c8c4f953661ef79ba6da34",
+      "version": 12,
+      "at": "2026-09-14 11:19:26.082"
+    },
+    "slide_13_flow_notes": {
+      "revisionId": "df23ee322f84cb3a0b0a6c5501337be680fd9772",
+      "version": 13,
+      "at": "2026-09-14 11:19:38.511"
+    },
+    "slide_14_section_signup": {
+      "revisionId": "fe99a1882a44f943988c1251eb5c27c609bda699",
+      "version": 31,
+      "at": "2026-09-14 11:23:45.628"
+    },
+    "slide_15_signup_form": {
+      "revisionId": "cd93672dbffbbc673a781237faa8b396de0fac5e",
+      "version": 15,
+      "at": "2026-09-14 11:19:56.530"
+    },
+    "slide_16_memberid": {
+      "revisionId": "924694602b872f75ec580c071ddbc65da5601d90",
+      "version": 16,
+      "at": "2026-09-14 11:19:56.591"
+    },
+    "slide_17_submit": {
+      "revisionId": "93e4d7a7f7b12d6054f689f2e4200179fdbb416a",
+      "version": 17,
+      "at": "2026-09-14 11:20:08.456"
+    },
+    "slide_18_section_account": {
+      "revisionId": "e7a59c7bc12219a18b7d164daf0297e09a6cd227",
+      "version": 32,
+      "at": "2026-09-14 11:23:45.661"
+    },
+    "slide_19_tabs": {
+      "revisionId": "976971799e894ab2c9d2f84eb830c55ea4c10a04",
+      "version": 19,
+      "at": "2026-09-14 11:20:23.953"
+    },
+    "slide_20_bonus_kpi": {
+      "revisionId": "950b7853400879e160fdbb5d36b3cf16cfe1616d",
+      "version": 20,
+      "at": "2026-09-14 11:20:24.021"
+    },
+    "slide_21_bonus_system": {
+      "revisionId": "76bb04bd1e7d40871134f937d3913d914db8cf9e",
+      "version": 21,
+      "at": "2026-09-14 11:20:48.608"
+    },
+    "slide_22_funds": {
+      "revisionId": "933e02e6b392224770f411413571d6f22eb1e08f",
+      "version": 22,
+      "at": "2026-09-14 11:20:48.690"
+    },
+    "slide_23_member_biz": {
+      "revisionId": "dfed80f21acb25acd6515e3092957e3ea641614f",
+      "version": 23,
+      "at": "2026-09-14 11:21:08.448"
+    },
+    "slide_24_demo": {
+      "revisionId": "c9d5d71242078b43c442484cbf6cb914c5f5b14b",
+      "version": 24,
+      "at": "2026-09-14 11:21:08.559"
+    },
+    "slide_25_end": {
+      "revisionId": "f9b72d35332c24a05db976456a4d1bbc80b08b98",
+      "version": 25,
+      "at": "2026-09-14 11:21:15.318"
+    }
+  }
+}

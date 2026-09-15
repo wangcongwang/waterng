@@ -206,6 +206,9 @@
       const orderTypeLabel = isMemberOrder ? 'Member order' : 'My order';
       const payStatusLabel = order.payStatus || statusLabel;
 
+      // Show BV column only when logged in (visitor orders credit BV to referrer)
+      const showBV = !!(window.Auth && window.Auth.isLoggedIn);
+
       // ---- Items product table (mirrors the Orders tab: Code / Product / Qty / Price /
       //      Total Price / Total BV / Tax Rate / Total Tax) with Subtotal + Total (incl. tax) ----
       const TAX_RATE = (typeof order.taxRate === 'number') ? order.taxRate
@@ -233,7 +236,7 @@
             <td class="num">${qty}</td>
             <td class="num">${sym}${fmtNum(price)}</td>
             <td class="num">${sym}${fmtNum(totalPrice)}</td>
-            <td class="num">${totalBV}</td>
+            ${showBV ? `<td class="num">${totalBV}</td>` : ''}
             <td class="num">${TAX_RATE}</td>
             <td class="num">${sym}${fmtNum(totalTax)}</td>
           </tr>`;
@@ -256,7 +259,7 @@
                 <th class="num">Qty</th>
                 <th class="num">Price</th>
                 <th class="num">Total Price</th>
-                <th class="num">Total BV</th>
+                ${showBV ? '<th class="num">Total BV</th>' : ''}
                 <th class="num">Tax Rate</th>
                 <th class="num">Total Tax</th>
               </tr>
@@ -269,14 +272,15 @@
                 <td class="num">${totalQty}</td>
                 <td></td>
                 <td class="num">${sym}${fmtNum(subtotal)}</td>
-                <td class="num">${sumBV}</td>
+                ${showBV ? `<td class="num">${sumBV}</td>` : ''}
                 <td></td>
                 <td class="num">${sym}${fmtNum(sumTax)}</td>
               </tr>
               <tr class="ocard__grand">
                 <td class="col-img"></td>
-                <td colspan="5" class="lbl">Total (incl. tax)</td>
+                <td colspan="${showBV ? '5' : '4'}" class="lbl">Total (incl. tax)</td>
                 <td></td>
+                ${showBV ? '<td></td>' : ''}
                 <td></td>
                 <td class="num">${sym}${fmtNum(grand)}</td>
               </tr>
@@ -300,7 +304,7 @@
           ${metaItem('Placed', placedStr)}
           ${metaItem('Paid', paidStr)}
           ${metaItem('Pay status', payStatusLabel)}
-          ${metaItem('BV earned', '+' + (order.bv != null ? order.bv : sumBV) + ' BV')}
+          ${showBV ? metaItem('BV earned', '+' + (order.bv != null ? order.bv : sumBV) + ' BV') : ''}
           ${metaItem('Address', addressStr, true)}
           ${(order.customer && order.customer.note) ? metaItem('Note', order.customer.note, true) : ''}
         </div>`;
