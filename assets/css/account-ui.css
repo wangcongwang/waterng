@@ -870,3 +870,120 @@
   .product-list-row > .row-stock,
   .product-list-row > .row-qty { display: none; }
 }
+
+/* --------------------------------------------------------------------------
+   18. Account modals — Historical Cumulative Bonus + Recharge & Transfer
+   --------------------------------------------------------------------------
+   Both modals are rendered by JS (account.html inline) as dynamic innerHTML.
+   Their inner classes had NO CSS anywhere, which is why they looked broken.
+   This section gives them the same Elken UI Kit visual language as the rest
+   of the account portal.
+   两个弹窗内部类此前全站无任何 CSS，本段统一覆盖。 */
+
+/* ---- Historical Cumulative Bonus ---- */
+.hc-bonus-grid {
+  display: grid; gap: var(--ek-16);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+.hc-bonus-card {
+  display: flex; flex-direction: column; align-items: center; gap: var(--ek-8);
+  padding: var(--ek-16); text-align: center;
+  background: var(--ek-surface); border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-sm);
+}
+.hc-bonus-icon {
+  width: 40px; height: 40px; color: var(--ek-blue); opacity: .85;
+}
+.hc-bonus-name {
+  font-size: var(--ek-small); font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal-deep); line-height: 1.3;
+}
+.hc-bonus-value {
+  font-size: var(--ek-h4); font-weight: var(--ek-w-bold);
+  color: var(--ek-blue); margin-top: var(--ek-4);
+}
+
+/* ---- Recharge & Transfer ---- */
+.rt-tabs {
+  display: flex; gap: var(--ek-8); border-bottom: 2px solid var(--ek-border);
+  margin-bottom: var(--ek-20);
+}
+.rt-tab {
+  flex: 1; padding: var(--ek-12) var(--ek-16);
+  font-size: var(--ek-small); font-weight: var(--ek-w-bold);
+  color: var(--ek-muted); background: transparent; border: none;
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  cursor: pointer; transition: color var(--ek-fast) var(--ek-ease),
+                              border-color var(--ek-fast) var(--ek-ease);
+}
+.rt-tab:hover { color: var(--ek-blue); }
+.rt-tab.active { color: var(--ek-blue); border-bottom-color: var(--ek-blue); }
+.rt-panel { display: none; }
+.rt-panel.active { display: block; }
+.rt-toolbar {
+  display: flex; gap: var(--ek-8); margin-bottom: var(--ek-16);
+}
+.rt-table-wrap { overflow-x: auto; }
+.rt-table {
+  width: 100%; border-collapse: collapse; font-size: var(--ek-small);
+}
+.rt-table th, .rt-table td {
+  padding: var(--ek-10) var(--ek-12); text-align: left;
+  border-bottom: 1px solid var(--ek-border);
+}
+.rt-table th {
+  font-weight: var(--ek-w-bold); color: var(--ek-muted);
+  text-transform: uppercase; letter-spacing: .04em; font-size: var(--ek-caption);
+}
+.rt-empty {
+  padding: var(--ek-24); text-align: center;
+  color: var(--ek-muted); font-size: var(--ek-small);
+}
+.rt-status-badge {
+  display: inline-flex; padding: var(--ek-4) var(--ek-8);
+  border-radius: var(--ek-radius-pill); font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+}
+.rt-status-badge.pending { background: var(--ek-warning-tint); color: var(--ek-warning); }
+.rt-status-badge.approved { background: var(--ek-success-tint); color: var(--ek-success); }
+.rt-filter-bar {
+  display: flex; gap: var(--ek-8); flex-wrap: wrap;
+  margin-bottom: var(--ek-16);
+}
+.rt-form-row {
+  display: flex; flex-direction: column; gap: var(--ek-6);
+  flex: 1 1 200px;
+}
+.rt-form-row label {
+  font-size: var(--ek-small); font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal-deep);
+}
+.rt-amount-field {
+  position: relative; flex: 1;
+}
+.rt-amount-field::before {
+  content: 'N'; position: absolute; left: var(--ek-12); top: 50%;
+  transform: translateY(-50%); font-size: var(--ek-small);
+  color: var(--ek-muted); pointer-events: none;
+}
+.rt-amount-field input { padding-left: calc(var(--ek-12) + 1.2em); }
+.rt-form-actions {
+  display: flex; gap: var(--ek-12); margin-top: var(--ek-16);
+}
+.rt-form-actions .ek-btn { flex: 1; }
+.rt-filter-bar input,
+.rt-filter-bar select,
+.rt-form-row input,
+.rt-form-row select,
+.rt-form-row textarea,
+.rt-amount-field input {
+  border-color: var(--ek-border);
+}
+
+@media (max-width: 767px) {
+  .hc-bonus-grid { grid-template-columns: repeat(2, 1fr); gap: var(--ek-12); }
+  .rt-form-actions { flex-direction: column; }
+  .rt-filter-bar { flex-direction: column; }
+  .rt-form-row { flex: 1 1 100%; }
+}

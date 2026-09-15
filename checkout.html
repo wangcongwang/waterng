@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
   <link rel="stylesheet" href="assets/css/checkout.css?v=20260909h">
+  <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="checkout">
@@ -353,6 +354,8 @@
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
 <script src="assets/js/app.js?v=20260909e"></script>
   <script src="assets/js/website.js?v=20260909c-2"></script>
+  <script src="assets/js/qr.js?v=20260915a"></script>
+  <script src="assets/js/payment-methods.js?v=20260915a"></script>
   <script>
     /* ============================================================
        Elken checkout — direct purchase
@@ -519,8 +522,10 @@
               <div class="summary-item-name">${it.name}</div>
               <div class="summary-item-meta">${money(it.price || 0)} each</div>
             </div>
-            <div class="summary-item-qty">${qtyControl}</div>
-            <div class="summary-item-line">${money(lineTotal)}</div>
+            <div class="summary-item-right">
+              <div class="summary-item-qty">${qtyControl}</div>
+              <div class="summary-item-line">${money(lineTotal)}</div>
+            </div>
           </div>`;
       }).join('');
 
