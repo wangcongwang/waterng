@@ -54,6 +54,8 @@
 - **Referral 分享区在头部卡内**（用户要求「和头部那块合并在一块儿」）：左 = `INVITE & EARN` + 标题 + 说明，中 = 只读 `#referralLink`，右 = **Share link（primary）** + Copy link（secondary）。样式在 `account-ui.css` **§3b**（`.dash-referral*`，含 ≤767px 规则）；内容宽由 `flex: 1 1 100%` 撑满一行。
   - 历史：曾短暂做过独立的 `.ref-spotlight` 全宽 band（在 KPI 行下方），已删除，**不要再复活这个类**。
   - `#referralLink` / `#referralCopy` / `#referralShare` 三个 id 是 `wireReferralLink()` 的锚点，改名等于断掉分享逻辑。Share 用 `navigator.share`，失败（非 `AbortError`）自动回退剪贴板。
+- **Overview 视图（`data-view="overview"`）子元素只有 3 个**：`.kpi-grid` → `#hubGrid`（9 格）→ `.overview-grid`（内含**唯一一个 `<section>`**：`Quick actions` 卡 + `Referrals` 卡）。⚠️ `.overview-grid` 在 ≥1024px 是**两列** grid，但只有一个 section 子项 → 右列本来是空的（历史如此，不是 bug）。
+- **`Product catalog` 模块已删除**（2026-09-15 用户要求「Product catalog 模块去除吧」）：原来在 Quick actions 与 Referrals 之间那张「💧 / Quality products for your health… / Browse all products」卡，纯 HTML 删除、0 CSS、0 JS。**不要再加回来**；「逛商品」入口已有 Quick actions 的 `Browse products` + 九宫格 `Repeat Purchase` + Orders 页按钮覆盖。
 
 ### 账户页两处固定结构（2026-09-15）
 - **Basic Information 常驻顶部卡**：`#profileBasicInfoBar`（5 项：系统时间/结算周期/会员等级/最高荣耀/Elite）**在 `.dash-head` 内**，不是 Profile 标签页的独立卡（那张已删除）。`renderProfileBasicBar()` 必须在 `DOMContentLoaded` 里 `showView()` **之前**调一次，否则首屏 Overview 是空的。布局由 `account-ui.css` §3 的 `.dash-head > .basic-info-bar` 负责（内容自适应 flex + `space-between` + 上方 hairline；≤767px 转 grid）。**不要**改回等宽 grid——系统时间值会折行并把该列顶歪。
