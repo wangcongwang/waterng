@@ -262,7 +262,7 @@
 .summary-item-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .summary-item-img svg { width: 56%; height: 56%; color: var(--ek-muted); }
 .summary-item-body { min-width: 0; }
-.summary-item-name { font-weight: var(--ek-w-medium); font-size: var(--ek-small); color: var(--ek-charcoal); }
+.summary-item-name { font-weight: var(--ek-w-medium); font-size: var(--ek-small); color: var(--ek-charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .summary-item-meta { font-size: var(--ek-caption); color: var(--ek-muted); margin-top: 2px; }
 .summary-item-qty { display: flex; align-items: center; }
 .summary-item-line { font-weight: var(--ek-w-bold); color: var(--ek-charcoal); white-space: nowrap; }
@@ -349,7 +349,7 @@
 @media (max-width: 560px) {
   .pay-method-grid { grid-template-columns: 1fr; }
   .summary-item { grid-template-columns: var(--ek-48) 1fr auto; }
-  .summary-item-qty { grid-column: 1 / -1; justify-content: flex-start; }
+  .summary-item-right { min-width: 64px; }
   .stepper { gap: var(--ek-8); }
   .stepper .sep { width: var(--ek-16); }
 }

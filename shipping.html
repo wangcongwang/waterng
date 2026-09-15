@@ -136,7 +136,11 @@
       const qty = item.qty || 1;
       const isPickup = order.delivery && order.delivery.method === 'pickup';
       const methodLabel = isPickup ? 'Self-pickup' : 'Door delivery';
-      const payLabels = { cod: 'Cash on delivery', card: 'Debit / credit card', ussd: 'USSD', bank: 'Bank transfer' };
+      const payLabels = {
+        card: 'Debit Card', ussd: 'USSD', bank: 'Bank Transfer',
+        paybank: 'Pay with Bank', visaqr: 'Pay with Visa QR', balance: 'Account Balance',
+        cod: 'Cash on delivery', transfer: 'Bank Transfer', cash: 'Cash', account: 'Account Balance',
+      };
       const payLabel = payLabels[order.payment] || order.payment || '—';
       const link = orderDetailLink(order.id);
       const subject = 'Elken Order ' + order.id + ' — Your order details';
@@ -173,10 +177,13 @@
       const isPickup = order.delivery && order.delivery.method === 'pickup';
       const methodLabel = isPickup ? window.T.tr('account.orders_method_pickup') : window.T.tr('account.orders_method_delivery');
       const payLabels = {
-        cod: 'Cash on delivery',
-        card: 'Debit / credit card',
+        card: 'Debit Card',
         ussd: 'USSD',
-        bank: 'Bank transfer',
+        bank: 'Bank Transfer',
+        paybank: 'Pay with Bank',
+        visaqr: 'Pay with Visa QR',
+        balance: 'Account Balance',
+        cod: 'Cash on delivery',
       };
       const payLabel = payLabels[order.payment] || order.payment || '—';
 

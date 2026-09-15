@@ -137,116 +137,12 @@
         <div class="mrp-card">
           <h2>Payment method</h2>
           <p class="hint">Payment is processed through the unified Elken payment gateway.</p>
-          <div class="mrp-pay-grid" id="mrpPayGrid">
-            <label class="mrp-pay">
-              <input type="radio" name="mrpPay" value="cod" checked />
-              <div class="mrp-pay-icon" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                  <path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 7.7l5.4-.8z"/>
-                </svg>
-              </div>
-              <div class="mrp-pay-body">
-                <div class="mrp-pay-name">Cash on delivery</div>
-                <div class="mrp-pay-sub">Pay when you receive your order</div>
-              </div>
-              <div class="mrp-pay-check" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>
-              </div>
-            </label>
-            <label class="mrp-pay">
-              <input type="radio" name="mrpPay" value="card" />
-              <div class="mrp-pay-icon" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                  <rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>
-                </svg>
-              </div>
-              <div class="mrp-pay-body">
-                <div class="mrp-pay-name">Debit / credit card</div>
-                <div class="mrp-pay-sub">Instant · Visa, MC, Verve</div>
-              </div>
-              <div class="mrp-pay-check" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>
-              </div>
-            </label>
-            <label class="mrp-pay">
-              <input type="radio" name="mrpPay" value="ussd" />
-              <div class="mrp-pay-icon" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                  <rect x="6" y="2" width="12" height="20" rx="2"/><circle cx="12" cy="18" r="1"/>
-                </svg>
-              </div>
-              <div class="mrp-pay-body">
-                <div class="mrp-pay-name">USSD</div>
-                <div class="mrp-pay-sub">All Nigerian banks</div>
-              </div>
-              <div class="mrp-pay-check" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>
-              </div>
-            </label>
-            <label class="mrp-pay">
-              <input type="radio" name="mrpPay" value="bank" />
-              <div class="mrp-pay-icon" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                  <path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/>
-                </svg>
-              </div>
-              <div class="mrp-pay-body">
-                <div class="mrp-pay-name">Bank transfer</div>
-                <div class="mrp-pay-sub">Manual · 1–2 hrs</div>
-              </div>
-              <div class="mrp-pay-check" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>
-              </div>
-            </label>
-          </div>
+          <div class="pay-method-grid" id="mrpPayGrid"></div>
         </div>
 
-        <!-- Payment method detail panels (mirror the unified checkout) -->
-        <div class="mrp-card mrp-method-panel" id="codPanel">
-          <h2>Cash on delivery</h2>
-          <p>Pay in cash or by card when your order arrives. Our delivery team will confirm the amount before dispatch. No advance payment required.</p>
-        </div>
-        <div class="mrp-card mrp-method-panel" id="cardPanel">
-          <h2>Card details</h2>
-          <p>Secured by Paystack · 256-bit encryption · PCI-DSS Level 1</p>
-          <div class="field">
-            <label>Card number</label>
-            <div class="card-input-wrap">
-              <input class="ek-input" id="cardNumberMRP" placeholder="4242 4242 4242 4242" maxlength="19" inputmode="numeric" autocomplete="cc-number" />
-              <div class="card-brand" id="cardBrandMRP" aria-hidden="true"></div>
-            </div>
-          </div>
-          <div class="field">
-            <label>Cardholder name</label>
-            <input class="ek-input" id="cardNameMRP" autocomplete="cc-name" />
-          </div>
-          <div class="row">
-            <div class="field">
-              <label>Expiry (MM/YY)</label>
-              <input class="ek-input" id="cardExpiryMRP" placeholder="12/27" maxlength="5" inputmode="numeric" autocomplete="cc-exp" />
-            </div>
-            <div class="field">
-              <label>CVV</label>
-              <input class="ek-input" id="cardCvvMRP" placeholder="123" maxlength="4" inputmode="numeric" autocomplete="cc-csc" />
-            </div>
-          </div>
-        </div>
-        <div class="mrp-card mrp-method-panel" id="ussdPanel">
-          <h2>Pay via USSD</h2>
-          <p>Dial the code below on the phone number linked to your bank, then enter your PIN to confirm.</p>
-          <div class="ussd-code" id="ussdCodeMRP">*737*50*100000#</div>
-          <p>Dial this code on your registered phone, then enter your bank PIN to confirm.</p>
-        </div>
-        <div class="mrp-card mrp-method-panel" id="bankPanel">
-          <h2>Bank transfer details</h2>
-          <div class="bank-rows">
-            <div class="bank-row"><span>Bank</span><b>GTBank Plc</b></div>
-            <div class="bank-row"><span>Account number</span><b>012 345 6789</b></div>
-            <div class="bank-row"><span>Account name</span><b>Elken Nigeria Ltd</b></div>
-            <div class="bank-row"><span>Amount</span><b id="bankAmountMRP">N0</b></div>
-          </div>
-          <p>Use your order ID as the reference when transferring.</p>
-        </div>
+        <!-- Method panels are built on demand by the shared payment layer
+             (assets/js/payment-methods.js) so every flow behaves the same. -->
+        <div id="mrpPayPanels"></div>
 
         <!-- Section 6: Summary + actions -->
         <div class="mrp-card" id="summaryCard">
@@ -341,8 +237,7 @@
         reportingCenter: null,       // { id, name }
         items: {},                   // { productId: qty }
         savedAddresses: [],
-        payMethod: 'cod',
-        cardValid: true,
+        payMethod: null,
       };
 
       /* ---------- Helpers ---------- */
@@ -365,8 +260,7 @@
         renderProducts();
         renderSavedAddresses();
         bindMemberSearch();
-        bindPayMethod();
-        bindCardInputsMRP();
+        buildPayMethods();
         bindSummary();
         bindFormSubmit();
         updatePayBtn();
@@ -651,71 +545,45 @@
         });
       }
 
-      /* ---------- Payment method (same 4 options as unified checkout) ---------- */
-      const PAY_LABELS = { cod: 'Cash on delivery', card: 'Debit / credit card', ussd: 'USSD', bank: 'Bank transfer' };
-      const PAY_PANELS = { card: 'cardPanel', ussd: 'ussdPanel', bank: 'bankPanel', cod: 'codPanel' };
+      /* ---------- Shared payment layer (assets/js/payment-methods.js) ----------
+         The chooser and every method panel come from PayMethods, so this flow
+         behaves exactly like checkout. */
+      let payMethods = null;
 
-      function bindPayMethod() {
-        const radios = document.querySelectorAll('input[name="mrpPay"]');
-        const setPanel = (val) => {
-          Object.keys(PAY_PANELS).forEach(k => {
-            document.getElementById(PAY_PANELS[k]).classList.toggle('show', k === val);
-          });
-        };
-        radios.forEach(r => {
-          r.addEventListener('change', () => {
-            state.payMethod = r.value;
-            setPanel(r.value);
-            validateCardMRP();
-            updatePayBtn();
-          });
-        });
-        const checked = document.querySelector('input[name="mrpPay"]:checked');
-        state.payMethod = checked ? checked.value : 'cod';
-        setPanel(state.payMethod);
+      function orderSubtotal() {
+        const products = getProducts();
+        return Object.keys(state.items || {}).reduce((sum, pid) => {
+          const p = products.find(x => x.id === pid);
+          return p ? sum + (p.price || 0) * (state.items[pid] || 0) : sum;
+        }, 0);
       }
 
-      function validateCardMRP() {
-        if (state.payMethod !== 'card') { state.cardValid = true; return true; }
-        const num = document.getElementById('cardNumberMRP');
-        const name = document.getElementById('cardNameMRP');
-        const exp = document.getElementById('cardExpiryMRP');
-        const cvv = document.getElementById('cardCvvMRP');
-        const ok = num && (num.value.replace(/\s/g, '').length >= 13)
-          && name && name.value.trim().length >= 2
-          && exp && /^\d{2}\/\d{2}$/.test(exp.value)
-          && cvv && cvv.value.length >= 3;
-        state.cardValid = !!ok;
-        return !!ok;
+      function buildPayMethods() {
+        payMethods = window.PayMethods.wire('#mrpPayGrid', {
+          name: 'mrpPay',
+          panelHost: '#mrpPayPanels',
+          panelClass: 'method-info-card',
+          prefix: 'mam',
+          amount: orderSubtotal,
+          selected: 'card',
+          onChange: onPayMethodChange,
+        });
+        return payMethods;
       }
 
-      function bindCardInputsMRP() {
-        const num = document.getElementById('cardNumberMRP');
-        const exp = document.getElementById('cardExpiryMRP');
-        const cvv = document.getElementById('cardCvvMRP');
-        const brand = document.getElementById('cardBrandMRP');
-        if (num) num.addEventListener('input', e => {
-          let v = e.target.value.replace(/\D/g, '').slice(0, 16);
-          e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
-          brand.className = 'card-brand';
-          if (/^4/.test(v)) brand.classList.add('visa');
-          else if (/^(5[1-5]|2[2-7])/.test(v)) brand.classList.add('mc');
-          else if (/^506[01]|^650/.test(v)) brand.classList.add('verve');
-          else if (/^3[47]/.test(v)) brand.classList.add('amex');
-          validateCardMRP(); updatePayBtn();
-        });
-        document.getElementById('cardNameMRP')?.addEventListener('input', () => { validateCardMRP(); updatePayBtn(); });
-        if (exp) exp.addEventListener('input', e => {
-          let v = e.target.value.replace(/\D/g, '').slice(0, 4);
-          if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
-          e.target.value = v;
-          validateCardMRP(); updatePayBtn();
-        });
-        if (cvv) cvv.addEventListener('input', e => {
-          e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
-          validateCardMRP(); updatePayBtn();
-        });
+      /* Fired by the shared layer on every selection / field change.
+         Must NOT call payMethods.refresh() — the card panel's refresh()
+         re-runs onChange, which would recurse. */
+      function onPayMethodChange(value) {
+        state.payMethod = value || (payMethods && payMethods.value()) || null;
+        updatePayBtn();
       }
+      function refreshPayPanels() { if (payMethods) payMethods.refresh(); }
+      function selectPayMethod(value) { if (payMethods) payMethods.select(value); }
+      function payMethodComplete() {
+        return !!(payMethods && payMethods.value() && payMethods.isComplete());
+      }
+      function paymentReference() { return payMethods ? payMethods.reference : null; }
 
       /* ---------- Summary ---------- */
       function renderSummary() {
@@ -748,8 +616,8 @@
         document.getElementById('summarySubtotal').textContent = money(subtotal);
         document.getElementById('summaryBV').textContent = Number.isInteger(bv) ? bv : bv.toFixed(1);
         document.getElementById('summaryTotal').textContent = money(subtotal);
-        const bankAmt = document.getElementById('bankAmountMRP');
-        if (bankAmt) bankAmt.textContent = money(subtotal).replace('NGN', '').trim();
+        // Keep the open payment panel's amount in sync with the selection
+        if (payMethods) payMethods.refresh();
         // for payBtn enable check
         state.subtotal = subtotal;
         state.bv = bv;
@@ -784,7 +652,7 @@
           && document.getElementById('shipAddress').value.trim()
           && !!state.reportingCenter && !!state.reportingCenter.id
           && (state.subtotal || 0) > 0
-          && (state.payMethod !== 'card' || state.cardValid)
+          && payMethodComplete()
           && bvOk;
         payBtn.disabled = !ok;
         // Live BV requirement indicator
@@ -867,7 +735,8 @@
           customer: customer,
           delivery: { method: 'delivery' },
           payment: state.payMethod,
-          paymentLabel: PAY_LABELS[state.payMethod] || state.payMethod,
+          paymentLabel: (window.PayMethods && window.PayMethods.label(state.payMethod)) || state.payMethod,
+          paymentReference: paymentReference(),
           payStatus: 'Unpaid',
           source: 'member-auto-maintenance',
           status: 'pending',
@@ -883,12 +752,9 @@
         // Same unified flow as the regular checkout:
         // - cod → order confirmed, paid on delivery (status stays pending)
         // - card / ussd / bank → route to the secure payment step (order.html)
-        const needsGateway = state.payMethod !== 'cod';
-        if (needsGateway) {
-          showSuccess(order, { next: 'gateway' });
-        } else {
-          showSuccess(order);
-        }
+        // Every channel now settles through the secure payment step — the old
+        // cash-on-delivery branch went away with the Nigeria payment rework.
+        showSuccess(order, { next: 'gateway' });
       }
 
       function showSuccess(order, opts) {

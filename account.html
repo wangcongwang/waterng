@@ -26,12 +26,17 @@
     <div class="container">
       <div class="dash-head">
         <div class="ek-avatar" id="dashAvatar">A</div>
-        <div>
+        <div class="dash-head-id">
           <h1 id="dashName">My account</h1>
           <div class="muted" id="dashSubtitle">Member ID: —</div>
         </div>
         <div class="dash-actions">
           <button type="button" class="ek-btn ek-btn--ghost" id="accountLogout" data-i18n="common.logout">Sign out</button>
+        </div>
+        <!-- Basic Information — lives in the header card so it is visible on every tab.
+             Items: 系统时间 / 结算周期 / 会员等级 / 最高荣耀等级 / Elite 级别 -->
+        <div class="basic-info-bar" id="profileBasicInfoBar">
+          <!-- Rendered by JS: 5 items with icon + label + value -->
         </div>
       </div>
 
@@ -216,16 +221,6 @@
       <!-- ============ PROFILE ============ -->
       <section class="dash-view" data-view="profile" hidden>
         <div class="profile-grid">
-          <!-- Basic Info Bar (top, full width) — matches: 系统时间 / 结算周期 / 会员等级 / 最高荣耀等级 / Elite 级别 -->
-          <div class="ek-card profile-card profile-card-wide">
-            <div class="profile-card-head">
-              <h2 data-i18n="account.profile_basic_bar">Basic Information</h2>
-            </div>
-            <div class="basic-info-bar" id="profileBasicInfoBar">
-              <!-- Rendered by JS: 5 rows with icon + label + value -->
-            </div>
-          </div>
-
           <!-- Personal info -->
           <div class="ek-card profile-card profile-card-wide">
             <div class="profile-card-head">
@@ -996,7 +991,7 @@
         // ---- My orders (I am the target member) ----
         mk({
           date: now - 3 * DAY, paidAt: now - 3 * DAY + 3600000,
-          status: 'paid', payStatus: 'Paid', payment: 'card', paymentLabel: 'Card',
+          status: 'paid', payStatus: 'Paid', payment: 'card', paymentLabel: 'Debit Card',
           memberId: me, memberName: 'Adaeze Okoro',
           customer: { name: 'Adaeze Okoro', phone: '+234 803 123 4567', address: '14 Bourdillon Road, Ikoyi', city: 'Lagos', state: 'Lagos' },
           items: [
@@ -1007,7 +1002,7 @@
         }),
         mk({
           date: now - 12 * 3600000, paidAt: null,
-          status: 'pending', payStatus: 'Unpaid', payment: 'cod', paymentLabel: 'Pay on delivery',
+          status: 'pending', payStatus: 'Unpaid', payment: 'bank', paymentLabel: 'Bank Transfer',
           memberId: me, memberName: 'Adaeze Okoro',
           customer: { name: 'Adaeze Okoro', phone: '+234 803 123 4567', address: '14 Bourdillon Road, Ikoyi', city: 'Lagos', state: 'Lagos' },
           items: [
@@ -1018,7 +1013,7 @@
         // ---- Member orders (I placed these on behalf of another member) ----
         mk({
           date: now - 5 * DAY, paidAt: now - 5 * DAY + 7200000,
-          status: 'paid', payStatus: 'Paid', payment: 'bank', paymentLabel: 'Bank transfer',
+          status: 'paid', payStatus: 'Paid', payment: 'bank', paymentLabel: 'Bank Transfer',
           memberId: 'NG27187710', memberName: 'Chinedu Eze', operatorId: me,
           customer: { name: 'Chinedu Eze', phone: '+234 805 987 6543', address: '7 Marina Street', city: 'Lagos', state: 'Lagos' },
           items: [
@@ -1028,7 +1023,7 @@
         }),
         mk({
           date: now - 2 * DAY, paidAt: null,
-          status: 'pending', payStatus: 'Unpaid', payment: 'ussd', paymentLabel: 'USSD',
+          status: 'pending', payStatus: 'Unpaid', payment: 'visaqr', paymentLabel: 'Pay with Visa QR',
           memberId: 'NG66051653', memberName: 'Reporting Center', operatorId: me,
           customer: { name: 'Reporting Center', phone: '+234 809 222 3344', address: '22 Broad Street', city: 'Lagos', state: 'Lagos' },
           items: [
@@ -1162,10 +1157,12 @@
       const payMethodLabel = (pm) => {
         if (!pm) return '—';
         const labels = {
-          'card': 'Card', 'ussd': 'USSD', 'bank': 'Bank transfer', 'transfer': 'Bank transfer',
-          'cod': 'Pay on delivery', 'cash-on-delivery': 'Pay on delivery',
-          'cash': 'Cash', 'account': 'Account Balance', 'bonus': 'Performance Bonus',
+          'card': 'Debit Card', 'ussd': 'USSD', 'bank': 'Bank Transfer', 'transfer': 'Bank Transfer',
+          'paybank': 'Pay with Bank', 'visaqr': 'Pay with Visa QR', 'balance': 'Account Balance',
+          'account': 'Account Balance', 'bonus': 'Performance Bonus',
           'wallet': 'Wallet',
+          // legacy values still readable on older stored orders
+          'cod': 'Cash on delivery', 'cash-on-delivery': 'Cash on delivery', 'cash': 'Cash',
         };
         return (labels[pm] || pm).toUpperCase();
       };
@@ -2095,6 +2092,9 @@
       updateMemberOverview();
       renderReferrals();
       wireReferralLink();
+      // The Basic Information bar now lives in the header card and must be
+      // populated on the first paint too (not only when the Profile tab opens).
+      renderProfileBasicBar();
       showView(currentView());
 
       // Sponsor Network confirm button

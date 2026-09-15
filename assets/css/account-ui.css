@@ -196,6 +196,7 @@
    -------------------------------------------------------------------------- */
 .dash-head {
   display: flex; align-items: center; gap: var(--ek-16);
+  flex-wrap: wrap;
   margin-bottom: var(--ek-24);
   padding: var(--ek-24);
   background: var(--ek-surface);
@@ -213,7 +214,28 @@
 .dash-head .muted,
 .dash-head .dash-sub { font-size: var(--ek-small); color: var(--ek-muted); }
 .dash-head .ek-avatar { --size: 48px; }
+.dash-head-id { min-width: 0; }
 .dash-actions { margin-left: auto; display: flex; gap: var(--ek-8); flex-wrap: wrap; }
+
+/* Basic Information — moved out of the Profile tab into the header card so it
+   stays visible on every tab. Content-sized flex keeps all five items on one
+   baseline (an equal-width grid used to wrap the System time value and knock
+   that column out of alignment). */
+.dash-head > .basic-info-bar {
+  flex: 1 1 100%;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: var(--ek-16);
+  margin-top: var(--ek-4);
+  padding-top: var(--ek-16);
+  border-top: 1px solid var(--ek-border);
+}
+@media (max-width: 767px) {
+  .dash-head > .basic-info-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--ek-16);
+  }
+}
 
 /* --------------------------------------------------------------------------
    4. Tabs — .tabs reads as .ek-tabs (underline-active, not a filled pill)

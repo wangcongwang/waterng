@@ -648,10 +648,147 @@
     return fn(el, ctx);
   }
 
+  /* --- High-level wiring ------------------------------------------------
+     Builds the chooser + lazily mounted panels for one order page, and
+     exposes a tiny state API so the page can drive its own pay-button gate.
+
+     opts:
+       name            radio name                    (default 'payMethod')
+       selected        initially selected value
+       panelHost       element / selector that receives the panels
+       panelClass      class(es) for each panel wrapper
+       prefix          id prefix handed to the mounters
+       amount()        current order total
+       includeBalance  add the Account Balance option to the chooser
+       balanceAmountId / balanceSubId / balanceLabelId
+       extraPanels     { value: element|selector }  page-rendered panels
+       extraComplete   { value: () => bool }        completeness for those
+       companions      { value: element|selector|[..] } blocks shown alongside
+                       a panel (e.g. a page's own remittance fields)
+       onChange()      fired on every state change
+
+     returns { select, value, label, reference, isComplete, refresh, grid }
+     -------------------------------------------------------------------- */
+  function wire(host, opts) {
+    const o = opts || {};
+    const grid = (typeof host === 'string') ? document.querySelector(host) : host;
+    if (!grid) return null;
+    const panelHost = (typeof o.panelHost === 'string')
+      ? document.querySelector(o.panelHost) : o.panelHost;
+    const name = o.name || 'payMethod';
+    const prefix = o.prefix || 'pm';
+    const ref = o.reference || reference();
+    const handles = {};   // value -> { el, handle }  (PayMethods-rendered)
+    const extras = {};    // value -> element          (page-rendered)
+    const extraDone = o.extraComplete || {};
+    let current = null;
+
+    renderGrid(grid, {
+      name,
+      selected: o.selected,
+      includeBalance: !!o.includeBalance,
+      balanceName: o.balanceName,
+      balanceSub: o.balanceSub,
+      balanceAmountId: o.balanceAmountId || null,
+      balanceSubId: o.balanceSubId || null,
+      balanceLabelId: o.balanceLabelId || null
+    });
+
+    if (o.extraPanels) {
+      Object.keys(o.extraPanels).forEach(k => {
+        const el = (typeof o.extraPanels[k] === 'string')
+          ? document.querySelector(o.extraPanels[k]) : o.extraPanels[k];
+        if (el) { extras[k] = el; el.style.display = 'none'; }
+      });
+    }
+
+    // Companion blocks (page-owned markup shown together with one method)
+    const companions = {};
+    if (o.companions) {
+      Object.keys(o.companions).forEach(k => {
+        const raw = Array.isArray(o.companions[k]) ? o.companions[k] : [o.companions[k]];
+        companions[k] = raw
+          .map(item => (typeof item === 'string') ? document.querySelector(item) : item)
+          .filter(Boolean);
+        companions[k].forEach(el => { el.style.display = 'none'; });
+      });
+    }
+
+    function build(value) {
+      if (handles[value] || extras[value] || !panelHost) return;
+      const wrap = document.createElement('div');
+      wrap.className = o.panelClass || 'method-info-card';
+      wrap.setAttribute('data-pm-panel', value);
+      wrap.style.display = 'none';
+      panelHost.appendChild(wrap);
+      const handle = mount(wrap, value, {
+        prefix,
+        amount: o.amount || function () { return 0; },
+        reference: ref,
+        onChange: function () { if (o.onChange) o.onChange(); }
+      });
+      if (handle) handles[value] = { el: wrap, handle: handle };
+    }
+
+    function show(value) {
+      Object.keys(handles).forEach(k => { handles[k].el.style.display = (k === value) ? '' : 'none'; });
+      Object.keys(extras).forEach(k => { extras[k].style.display = (k === value) ? '' : 'none'; });
+      // Companions are hidden first and then revealed for the active value, so a
+      // single block shared by several methods (e.g. one remittance panel used by
+      // both Bank Transfer and Pay with Bank) is not hidden by a later key.
+      const allCompanions = [];
+      Object.keys(companions).forEach(k => companions[k].forEach(el => {
+        if (allCompanions.indexOf(el) === -1) allCompanions.push(el);
+      }));
+      allCompanions.forEach(el => { el.style.display = 'none'; });
+      (companions[value] || []).forEach(el => { el.style.display = ''; });
+    }
+
+    function select(value) {
+      if (!value) return;
+      current = value;
+      build(value);
+      show(value);
+      const h = handles[value];
+      if (h && h.handle.refresh) h.handle.refresh();
+      if (o.onChange) o.onChange(current);
+    }
+
+    function isComplete() {
+      if (!current) return false;
+      if (handles[current]) return !!handles[current].handle.isComplete();
+      if (extras[current]) return extraDone[current] ? !!extraDone[current]() : true;
+      return true;
+    }
+
+    const radios = Array.prototype.slice.call(grid.querySelectorAll('input[name="' + name + '"]'));
+    radios.forEach(r => {
+      r.addEventListener('change', () => { if (r.checked) select(r.value); });
+    });
+
+    const initial = o.selected
+      || ((radios.filter(r => r.checked)[0] || radios[0] || {}).value);
+    if (initial) {
+      const radio = grid.querySelector('input[name="' + name + '"][value="' + initial + '"]');
+      if (radio) radio.checked = true;
+      select(initial);
+    }
+
+    return {
+      reference: ref,
+      grid: grid,
+      select: select,
+      value: () => current,
+      label: () => LABELS[current] || current || null,
+      isComplete: isComplete,
+      refresh: () => { const h = handles[current]; if (h && h.handle.refresh) h.handle.refresh(); }
+    };
+  }
+
   global.PayMethods = {
     MERCHANT, CURRENCY, LABELS, PHRASES, CATALOGUE, BALANCE_METHOD,
     USSD_BANKS, PARTICIPATING_BANKS, SETTLEMENT_ACCOUNTS,
     label: (value) => LABELS[value] || value || null,
-    methods, renderGrid, mount, reference, money, ussdCode, initials, esc, tr
+    methods, renderGrid, mount, wire, reference, money, ussdCode, initials, esc, tr
   };
 })(window);

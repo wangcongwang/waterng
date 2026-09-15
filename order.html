@@ -45,7 +45,14 @@
       abuja: { name: 'Abuja branch', addr: 'Plot 24, Wuse Zone 5', hours: 'Mon–Fri · 9:00 – 17:00' },
       ph:    { name: 'Port Harcourt branch', addr: '5 Aba Road, GRA Phase 2', hours: 'Mon–Fri · 9:00 – 17:00' },
     };
-    const PAY_LABELS = { cod: 'Cash on delivery', card: 'Debit / credit card', ussd: 'USSD', bank: 'Bank transfer' };
+    // Literal fallback for stored orders (this page does not load the shared
+    // payment layer, so the Nigeria channels are spelled out here too).
+    const PAY_LABELS = {
+      card: 'Debit Card', ussd: 'USSD', bank: 'Bank Transfer',
+      paybank: 'Pay with Bank', visaqr: 'Pay with Visa QR', balance: 'Account Balance',
+      // legacy values still readable on older stored orders
+      cod: 'Cash on delivery', transfer: 'Bank Transfer', cash: 'Cash', account: 'Account Balance'
+    };
 
     function getOrder() {
       const id = new URLSearchParams(location.search).get('order');

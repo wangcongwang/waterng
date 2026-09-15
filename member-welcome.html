@@ -214,77 +214,17 @@
         <div class="sec-block">
           <div class="sec-title" data-i18n="signup.sec_payment">Payment Method</div>
 
-          <div class="pay-method-grid" id="signupPayGrid">
-            <label class="pay-method">
-              <input type="radio" name="paymentMethod" value="cod" checked />
-              <div class="pay-method-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 7.7l5.4-.8z"/></svg></div>
-              <div class="pay-method-body">
-                <div class="pay-method-name">Cash on delivery</div>
-                <div class="pay-method-sub">Pay when you receive your order</div>
-              </div>
-              <div class="pay-method-check" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg></div>
-            </label>
-            <label class="pay-method">
-              <input type="radio" name="paymentMethod" value="card" />
-              <div class="pay-method-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div>
-              <div class="pay-method-body">
-                <div class="pay-method-name" data-i18n="checkout.pay_card">Debit / credit card</div>
-                <div class="pay-method-sub" data-i18n="checkout.pay_card_sub">Instant · Visa, MC, Verve</div>
-              </div>
-              <div class="pay-method-check" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg></div>
-            </label>
-            <label class="pay-method">
-              <input type="radio" name="paymentMethod" value="ussd" />
-              <div class="pay-method-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="2" width="12" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg></div>
-              <div class="pay-method-body">
-                <div class="pay-method-name" data-i18n="checkout.pay_ussd">USSD</div>
-                <div class="pay-method-sub" data-i18n="checkout.pay_ussd_sub">All Nigerian banks</div>
-              </div>
-              <div class="pay-method-check" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg></div>
-            </label>
-            <label class="pay-method">
-              <input type="radio" name="paymentMethod" value="bank" />
-              <div class="pay-method-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/></svg></div>
-              <div class="pay-method-body">
-                <div class="pay-method-name" data-i18n="checkout.pay_bank">Bank transfer</div>
-                <div class="pay-method-sub" data-i18n="checkout.pay_bank_sub">Manual · 1–2 hrs</div>
-              </div>
-              <div class="pay-method-check" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg></div>
-            </label>
-          </div>
+          <div class="pay-method-grid" id="signupPayGrid"></div>
 
-          <!-- Card panel -->
-          <div class="method-info-card" id="signupCardPanel">
-            <div data-i18n="checkout.card_title">Card details</div>
-            <p data-i18n="checkout.secure_note">Secured by Paystack · 256-bit encryption · PCI-DSS Level 1</p>
-            <div class="field-row ek-field"><label data-i18n="checkout.card_number">Card number</label><input class="ek-input" type="text" id="regCardNumber" placeholder="4242 4242 4242 4242" maxlength="19" inputmode="numeric" autocomplete="cc-number" /></div>
-            <div class="field-row ek-field"><label data-i18n="checkout.card_name">Cardholder name</label><input class="ek-input" type="text" id="regCardName" autocomplete="cc-name" /></div>
-            <div>
-              <div class="field-row ek-field"><label data-i18n="checkout.card_expiry">Expiry (MM/YY)</label><input class="ek-input" type="text" id="regCardExpiry" placeholder="12/27" maxlength="5" inputmode="numeric" autocomplete="cc-exp" /></div>
-              <div class="field-row ek-field"><label data-i18n="checkout.card_cvv">CVV</label><input class="ek-input" type="text" id="regCardCvv" placeholder="123" maxlength="4" inputmode="numeric" autocomplete="cc-csc" /></div>
-            </div>
-          </div>
+          <!-- Method panels are built on demand by the shared payment layer
+               (assets/js/payment-methods.js) so every flow behaves the same. -->
+          <div id="signupPayPanels"></div>
 
-          <!-- USSD panel -->
-          <div class="method-info-card" id="signupUssdPanel">
-            <div data-i18n="checkout.ussd_title">Pay via USSD</div>
-            <p>Dial the code below on the phone number linked to your bank, then enter your PIN to confirm.</p>
-            <div class="ussd-code" id="signupUssdCode">*737*50*100000#</div>
-            <p data-i18n="checkout.ussd_hint">Dial this code on your registered phone, then enter your bank PIN to confirm.</p>
-          </div>
-
-          <!-- Bank transfer panel (includes user's bank fields) -->
-          <div class="method-info-card" id="signupBankPanel">
-            <div data-i18n="checkout.bank_title">Bank transfer details</div>
-            <div class="bank-rows">
-              <div class="bank-row"><span data-i18n="checkout.bank_name">Bank</span><b>GTBank Plc</b></div>
-              <div class="bank-row"><span data-i18n="checkout.bank_account">Account number</span><b>012 345 6789</b></div>
-              <div class="bank-row"><span data-i18n="checkout.bank_beneficiary">Account name</span><b>Elken Nigeria Ltd</b></div>
-              <div class="bank-row"><span data-i18n="checkout.bank_amount">Amount</span><b id="signupBankAmount">N0</b></div>
-            </div>
-            <p>Use your order ID as the reference when transferring.</p>
-            <div>
-              <div>Your Remittance Details</div>
+          <!-- Remittance details — shown for Bank Transfer / Pay with Bank only -->
+          <div class="method-info-card" id="signupRemitFields">
+            <div data-i18n="signup.remit_title">Remittance details</div>
+            <p>Tell us which bank the transfer will come from so we can match it faster.</p>
+            <div class="reg-grid">
               <div class="field-row ek-field">
                 <label data-i18n="signup.bank_name">Remittance Bank</label>
                 <select class="ek-select" name="bankName" id="regBankName">
@@ -309,18 +249,12 @@
                 <input class="ek-input" type="text" name="bankBranch" id="regBankBranch"
                        data-i18n-ph="signup.branch_ph" placeholder="Enter branch name" />
               </div>
-              <div class="field-row ek-field">
+              <div class="field-row ek-field field-row--full">
                 <label data-i18n="signup.bank_account">Account Number</label>
                 <input class="ek-input" type="text" name="bankAccount" id="regBankAccount"
                        placeholder="10-digit account number" maxlength="10" inputmode="numeric" />
               </div>
             </div>
-          </div>
-
-          <!-- COD panel -->
-          <div class="method-info-card" id="signupCodPanel">
-            <div>Cash on delivery</div>
-            <p>Pay in cash or by card when your order arrives. Our delivery team will confirm the amount before dispatch. No advance payment required.</p>
           </div>
         </div>
 
@@ -427,31 +361,41 @@
       deliveryRadios.forEach(r => r.addEventListener('change', syncAddressVisibility));
       syncAddressVisibility();
 
-      /* ---------- Payment Method panel switching (matches checkout flow) ---------- */
-      const payPanels = { card: 'signupCardPanel', ussd: 'signupUssdPanel', bank: 'signupBankPanel', cod: 'signupCodPanel' };
-      const payRadios = document.querySelectorAll('input[name="paymentMethod"]');
-      function syncPayMethod() {
-        const checked = document.querySelector('input[name="paymentMethod"]:checked');
-        const val = (checked && checked.value) || 'cod';
-        Object.keys(payPanels).forEach(k => {
-          const el = document.getElementById(payPanels[k]);
-          if (el) el.style.display = (k === val) ? '' : 'none';
+      /* ---------- Shared payment layer (assets/js/payment-methods.js) ----------
+         The chooser and every method panel come from PayMethods, so this flow
+         behaves exactly like checkout. */
+      let payMethods = null;
+
+      function selectedTotal() {
+        let total = 0;
+        Object.keys(selectedProds || {}).forEach(pid => {
+          const p = products.find(x => x.id === pid);
+          if (p) total += (p.price || 0) * ((selectedProds[pid] || {}).qty || 1);
         });
-        // Update bank amount when bank is selected
-        if (val === 'bank') {
-          const amtEl = document.getElementById('signupBankAmount');
-          if (amtEl) {
-            let total = 0;
-            Object.keys(selectedProds || {}).forEach(pid => {
-              const p = products.find(x => x.id === pid);
-              if (p) total += p.price * ((selectedProds[pid] || {}).qty || 1);
-            });
-            amtEl.textContent = 'NGN ' + total.toLocaleString();
-          }
-        }
+        return total;
       }
-      payRadios.forEach(r => r.addEventListener('change', syncPayMethod));
-      syncPayMethod(); // show COD panel by default
+
+      function buildPayMethods() {
+        payMethods = window.PayMethods.wire('#signupPayGrid', {
+          name: 'paymentMethod',
+          panelHost: '#signupPayPanels',
+          panelClass: 'method-info-card',
+          prefix: 'mw',
+          amount: selectedTotal,
+          selected: 'card',
+          companions: { bank: '#signupRemitFields', paybank: '#signupRemitFields' },
+          // no onChange: this flow has no live pay button — the form's own
+          // validation runs on submit, so a channel change needs no callback.
+        });
+        return payMethods;
+      }
+
+      function refreshPayPanels() { if (payMethods) payMethods.refresh(); }
+      function selectPayMethod(value) { if (payMethods) payMethods.select(value); }
+      function payMethodComplete() {
+        return !!(payMethods && payMethods.value() && payMethods.isComplete());
+      }
+      function paymentReference() { return payMethods ? payMethods.reference : null; }
 
       /* ---------- Render product list (all products, no category tabs) ---------- */
       const prodList = document.getElementById('prodList');
@@ -528,9 +472,8 @@
         if (priceEl) priceEl.textContent = 'NGN ' + total.toLocaleString();
         if (bvEl) bvEl.textContent = totalBV.toFixed(totalBV % 1 === 0 ? 0 : 1);
         if (taxEl) taxEl.textContent = 'NGN 0';
-        // Keep bank transfer amount in sync
-        const baEl = document.getElementById('signupBankAmount');
-        if (baEl) baEl.textContent = 'NGN ' + total.toLocaleString();
+        // Keep the open payment panel's amount in sync with the selection
+        refreshPayPanels();
       }
 
       // Set/reset a product's quantity. qty<=0 deselects the product (removes it
@@ -580,6 +523,7 @@
 
       // Initial render
       renderProducts();
+      buildPayMethods();
 
       /* ---------- Form validation & submit ---------- */
       const form = document.getElementById('regForm');
@@ -639,6 +583,12 @@
           ok = false;
         }
 
+        // The selected payment channel must carry every detail it needs
+        if (!payMethodComplete()) {
+          window.toast(tr('payment.err_incomplete'), 'error');
+          ok = false;
+        }
+
         if (!ok) {
           const first = firstInvalid();
           if (first) first.focus();
@@ -694,7 +644,8 @@
             bankName: form.bankName.value,
             bankBranch: form.bankBranch.value.trim(),
             bankAccount: form.bankAccount.value.trim(),
-            paymentMethod: form.paymentMethod.value,
+            paymentMethod: (payMethods && payMethods.value()) || form.paymentMethod.value,
+            paymentReference: paymentReference(),
             type: 'member',
             signedInAt: Date.now(),
           };
@@ -737,6 +688,10 @@
             city: userData.city,
             area: userData.area,
             paymentMethod: userData.paymentMethod,
+            payment: userData.paymentMethod,
+            paymentLabel: (window.PayMethods && window.PayMethods.label(userData.paymentMethod)) || userData.paymentMethod || null,
+            paymentReference: userData.paymentReference || null,
+            payStatus: 'Unpaid',
             orderLevel: userData.orderLevel,
             centerId: userData.centerId,
           };

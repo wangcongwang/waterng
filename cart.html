@@ -93,8 +93,9 @@
         const subtotal = cart.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
         const count = cart.reduce((s, i) => s + (i.qty || 1), 0);
 
-        // Calculate real BV from allProducts catalog
-        const loggedIn = !!(window.Auth && window.Auth.isLoggedIn);
+        // BV rewards — members only. Real per-unit `bv` comes from the catalogue
+        // (looked up by product id), so the total never drifts from the cards.
+        const loggedIn = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
         let totalBV = 0;
         if (loggedIn && window.ProductCatalog && window.ProductCatalog.allProducts) {
           const catalog = window.ProductCatalog.allProducts;
@@ -113,8 +114,8 @@
                 <h2>Order summary</h2>
                 <div class="row"><span class="k">Items</span><span class="v">${count}</span></div>
                 <div class="row"><span class="k">Subtotal</span><span class="v">${N(subtotal)}</span></div>
-                ${loggedIn && totalBV > 0 ? `<div class="row"><span class="k">BV rewards</span><span class="v">+${totalBV} BV</span></div>` : ''}
                 <div class="row"><span class="k">Shipping</span><span class="v">Calculated at checkout</span></div>
+                ${loggedIn && totalBV > 0 ? `<div class="row"><span class="k">BV rewards</span><span class="v">+${totalBV} BV</span></div>` : ''}
                 <div class="total"><span class="k">Total</span><span class="v" id="cartTotal">${N(subtotal)}</span></div>
                 <a class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" href="checkout.html?cart=1">Proceed to checkout</a>
                 <button type="button" class="ek-btn ek-btn--ghost ek-btn--block" id="clearCart">Clear cart</button>

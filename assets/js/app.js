@@ -779,7 +779,10 @@
         tax: 0,
         total: 156000,
         bv: 312,
-        paymentMethod: 'cod',
+        paymentMethod: 'card',
+        payment: 'card',
+        paymentLabel: 'Debit Card',
+        payStatus: 'Paid',
         deliveryMethod: 'home',
         shippingAddress: {
           recipient: DEMO_MEMBER.name,
