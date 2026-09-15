@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260909f">
+  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260915b">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="order">
@@ -301,6 +301,44 @@
                 <ul class="odet-items">${itemRows}</ul>
                 ${totalsHtml}
               </section>
+
+              <!-- ---------- Delivery · Payment · Member ----------
+                   Kept in the left (wide) column, under the items, so the order
+                   facts read as one block and the narrow right column is left for
+                   the keep-a-copy actions. -->
+              <div class="odet-info">
+                <!-- ---------- Delivery ---------- -->
+                <section class="odet-card">
+                  <h3 class="odet-card-title">${isPickup ? 'Pickup' : 'Delivery'}</h3>
+                  <p class="odet-person">${esc(recipient)}</p>
+                  <p class="odet-lines">${esc(phone)}<br>${esc(addressStr)}<br>${esc(country)}</p>
+                  ${noteText ? `<p class="odet-note">${esc(noteText)}</p>` : ''}
+                </section>
+
+                <!-- ---------- Payment ---------- -->
+                <section class="odet-card">
+                  <h3 class="odet-card-title">Payment</h3>
+                  <div class="odet-pay-row">
+                    <b class="odet-pay-name">${esc(payMethod)}</b>
+                    <span class="odet-badge ${badgeClass(payStatusLabel)}">${esc(payStatusLabel)}</span>
+                  </div>
+                  ${order.paymentReference
+                    ? `<p class="odet-ref-line">Reference <b class="odet-mono">${esc(order.paymentReference)}</b></p>`
+                    : ''}
+                </section>
+
+                <!-- ---------- Member ---------- -->
+                <section class="odet-card">
+                  <h3 class="odet-card-title">Member</h3>
+                  <dl class="odet-rows">
+                    <div class="odet-row"><dt>Member ID</dt><dd>${esc(memberId)}</dd></div>
+                    <div class="odet-row"><dt>Name</dt><dd>${esc(memberName)}</dd></div>
+                    <div class="odet-row"><dt>Placed</dt><dd>${esc(placedStr)}</dd></div>
+                    <div class="odet-row"><dt>Paid</dt><dd>${esc(paidStr)}</dd></div>
+                    <div class="odet-row"><dt>Currency</dt><dd>${esc(currency)}</dd></div>
+                  </dl>
+                </section>
+              </div>
             </div>
 
             <aside class="odet-side">
@@ -314,38 +352,6 @@
                   </svg>
                   <span>Download receipt</span>
                 </button>
-              </section>
-
-              <!-- ---------- Delivery ---------- -->
-              <section class="odet-card">
-                <h3 class="odet-card-title">${isPickup ? 'Pickup' : 'Delivery'}</h3>
-                <p class="odet-person">${esc(recipient)}</p>
-                <p class="odet-lines">${esc(phone)}<br>${esc(addressStr)}<br>${esc(country)}</p>
-                ${noteText ? `<p class="odet-note">${esc(noteText)}</p>` : ''}
-              </section>
-
-              <!-- ---------- Payment ---------- -->
-              <section class="odet-card">
-                <h3 class="odet-card-title">Payment</h3>
-                <div class="odet-pay-row">
-                  <b class="odet-pay-name">${esc(payMethod)}</b>
-                  <span class="odet-badge ${badgeClass(payStatusLabel)}">${esc(payStatusLabel)}</span>
-                </div>
-                ${order.paymentReference
-                  ? `<p class="odet-ref-line">Reference <b class="odet-mono">${esc(order.paymentReference)}</b></p>`
-                  : ''}
-              </section>
-
-              <!-- ---------- Member ---------- -->
-              <section class="odet-card">
-                <h3 class="odet-card-title">Member</h3>
-                <dl class="odet-rows">
-                  <div class="odet-row"><dt>Member ID</dt><dd>${esc(memberId)}</dd></div>
-                  <div class="odet-row"><dt>Name</dt><dd>${esc(memberName)}</dd></div>
-                  <div class="odet-row"><dt>Placed</dt><dd>${esc(placedStr)}</dd></div>
-                  <div class="odet-row"><dt>Paid</dt><dd>${esc(paidStr)}</dd></div>
-                  <div class="odet-row"><dt>Currency</dt><dd>${esc(currency)}</dd></div>
-                </dl>
               </section>
 
               <!-- ---------- Shareable link ---------- -->

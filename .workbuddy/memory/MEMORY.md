@@ -63,7 +63,8 @@
 
 ### 订单详情页（order.html）版式（2026-09-15 重做）
 - **用户明确不喜欢「表单式」排布**：不要再把信息放成「标签在上、值在下」的字段网格，也不要用多列财务表格。现在整页是**凭据式**结构，类名统一 `.odet-*`，样式集中在 `account-ui.css` **§14**（旧的 `.order-grid/.order-side/.order-status/.order-meta-*/.order-sub` 已删除，别再用）。
-- 结构：`.odet-hero`（状态徽标 + `Order <ID>` + placed 行 + 右侧总额）→ `.odet-grid`（左 `.odet-main` Items 卡：商品行 `.odet-item` + 金额块 `.odet-money`；右 `.odet-side` 五张卡：**Receipt** / Delivery / Payment / Member / 分享链接）。
+- 结构：`.odet-hero`（状态徽标 + `Order <ID>` + placed 行 + 右侧总额）→ `.odet-grid`：左 `.odet-main` = Items 卡（商品行 `.odet-item` + 金额块 `.odet-money`）**+ `.odet-info`**（Delivery / Payment / Member 三张卡）；右 `.odet-side` = **Receipt 卡 + 分享链接卡**。⚠️ `.odet-info` 必须在 `.odet-main` **内部**（`.odet-grid` 只有 2 个轨道，多插一个直接子元素会被排到第二行）。
+- `.odet-info` 是 `display:grid; gap: var(--ek-20)`（**只做竖排**，2026-09-15 用户要求「Member/Delivery/Payment 都放在左侧」+「上下间距调整一下」）。⚠️ 这三张卡原本是为 320px 窄栏设计的（`.odet-row` 是 dt 左 / dd 右、`.odet-pay-row` 是 `space-between`），拉满左侧 876px 后标签与值会相隔 800px+；若用户想更紧凑，把 `.odet-info` 改成 `grid-template-columns: repeat(auto-fit, minmax(240px,1fr))` 即成 3 列（~279px/列，已验证视觉更好）。
 - 状态色：`.odet-badge` + `.is-paid` / `.is-pending` / `.is-fail` / `.is-neutral`。
 - ⚠️ `.odet-grid` 是 `minmax(0,1fr) 320px`：**grid/flex 子项默认 `min-width:auto`**，侧栏里那条只读分享 URL `<input>` 与长按钮会把 320px 轨道撑成 374px、文字被裁。已用 `min-width:0` 修好；往侧栏加长内容时记得保持这个约束。
 - `.sign-side` 与 `.order-link-*` 仍被 `shipping.html` 共用，**不要删**。

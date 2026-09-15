@@ -805,6 +805,10 @@
 @media (min-width: 1024px) { .odet-grid { grid-template-columns: minmax(0, 1fr) 320px; align-items: start; } }
 .odet-main { display: grid; gap: var(--ek-20); }
 .odet-side { display: grid; gap: var(--ek-20); }
+/* Delivery · Payment · Member live under the items in the left column; they need
+   the same 20px vertical rhythm as every other stack on the page, otherwise the
+   cards butt against each other. */
+.odet-info { display: grid; gap: var(--ek-20); }
 
 /* --- Cards --- */
 .odet-card {
