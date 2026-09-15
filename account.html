@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260915c">
+  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260915d">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="account">
@@ -65,7 +65,6 @@
         <a href="#overview" data-tab="overview" data-i18n="account.overview"></a>
         <a href="#orders" data-tab="orders" data-i18n="account.orders"></a>
         <a href="#profile" data-tab="profile" data-i18n="account.profile"></a>
-        <a href="#sponsor" data-tab="sponsor">Sponsor Network</a>
       </nav>
 
       <!-- ============ OVERVIEW (default) ============ -->
@@ -94,6 +93,42 @@
             <button type="button" class="ek-btn ek-btn--sm ek-btn--primary mt-2" id="ecoinHistoryBtn">View History</button>
           </div>
         </div>
+
+        <!-- ===== Sponsor Network — first-class module =====
+             Promoted out of the tab bar: it is the one member function with its
+             own live tree, so it leads the Overview (right under the KPIs) with a
+             stats strip and the tree visible without a click. -->
+        <section class="ek-card sn-module" aria-labelledby="snModuleTitle">
+          <div class="sn-module-head">
+            <div class="sn-module-copy">
+              <span class="sn-module-eyebrow">Downline</span>
+              <h2 class="sn-module-title" id="snModuleTitle">Sponsor Network</h2>
+              <p class="sn-module-desc">See who is in your organisation, their level and PCV, and how deep you spread.</p>
+            </div>
+            <div class="sn-mode-toggle" role="tablist" aria-label="Sponsor Network mode">
+              <button type="button" class="sn-mode-btn active" data-mode="normal">Sponsor Network</button>
+              <button type="button" class="sn-mode-btn" data-mode="ex">Sponsor Network Ex</button>
+            </div>
+          </div>
+
+          <div class="sn-stats" id="snStats"><!-- Rendered by JS --></div>
+
+          <div class="sponsor-toolbar">
+            <div class="sponsor-field">
+              <label for="snTopMember">Top Member</label>
+              <input type="text" id="snTopMember" placeholder="Member ID / Name / PCV" value="">
+            </div>
+            <div class="sponsor-field">
+              <label for="snSpreadDepth">Spread Depth</label>
+              <input type="number" id="snSpreadDepth" min="1" max="10" value="5">
+            </div>
+            <button type="button" class="ek-btn ek-btn--primary" id="snConfirmBtn">Confirm</button>
+          </div>
+
+          <div class="sponsor-tree" id="sponsorTree">
+            <!-- Rendered by JS -->
+          </div>
+        </section>
 
         <!-- ===== 九宫格多功能入口 ===== -->
         <div class="hub-grid" id="hubGrid">
@@ -194,30 +229,6 @@
         </div>
         <div class="orders-segment-panel" data-segment-panel="member" hidden>
           <div id="ordersTableMember" class="orders-table-wrap"></div>
-        </div>
-      </section>
-
-      <!-- ============ SPONSOR NETWORK ============ -->
-      <section class="dash-view" data-view="sponsor" hidden>
-        <div class="ek-card sponsor-network-card">
-          <div class="sn-mode-toggle" role="tablist" aria-label="Sponsor Network mode">
-            <button type="button" class="sn-mode-btn active" data-mode="normal">Sponsor Network</button>
-            <button type="button" class="sn-mode-btn" data-mode="ex">Sponsor Network Ex</button>
-          </div>
-          <div class="sponsor-toolbar">
-            <div class="sponsor-field">
-              <label>Top Member</label>
-              <input type="text" id="snTopMember" placeholder="Member ID / Name / PCV" value="">
-            </div>
-            <div class="sponsor-field">
-              <label>Spread Depth</label>
-              <input type="number" id="snSpreadDepth" min="1" max="10" value="5">
-            </div>
-            <button type="button" class="ek-btn" id="snConfirmBtn">Confirm</button>
-          </div>
-          <div class="sponsor-tree" id="sponsorTree">
-            <!-- Rendered by JS -->
-          </div>
         </div>
       </section>
 
@@ -1832,14 +1843,13 @@
         setProfileMode('view');
         renderAddresses();
       }
-      if (name === 'sponsor') {
-        renderSponsorNetwork();
-      }
     }
 
     function currentView() {
       const hash = (location.hash || '#overview').replace(/^#/, '').replace(/[?#].*$/, '');
-      return ['overview', 'orders', 'profile', 'sponsor'].includes(hash) ? hash : 'overview';
+      // 'sponsor' is no longer a view — it lives inside Overview as a module, so
+      // stale #sponsor bookmarks fall back to the default view.
+      return ['overview', 'orders', 'profile'].includes(hash) ? hash : 'overview';
     }
 
     /* ---------- Header sync ---------- */
@@ -1890,6 +1900,9 @@
       // populated on the first paint too (not only when the Profile tab opens).
       renderProfileBasicBar();
       showView(currentView());
+      // Sponsor Network is a permanent Overview module now, so its tree has to be
+      // painted on the first load rather than on a tab click.
+      renderSponsorNetwork();
 
       // Sponsor Network confirm button
       const snConfirm = document.getElementById('snConfirmBtn');
@@ -3281,6 +3294,38 @@
       }).filter(Boolean);
     }
 
+    /* ---------- Sponsor Network: header stats ----------
+       Counts the whole organisation (never the filtered view) so the numbers stay
+       put while the Top Member box is being typed into. */
+    function sponsorStats(roots) {
+      let members = 0, pcv = 0, levels = 0, direct = 0;
+      (roots || []).forEach(root => {
+        direct += (root.children || []).length;
+        levels = Math.max(levels, 1);
+        const walk = (node, level) => {
+          levels = Math.max(levels, level);
+          members += 1;
+          pcv += Number(node.pcv) || 0;
+          (node.children || []).forEach(c => walk(c, level + 1));
+        };
+        (root.children || []).forEach(c => walk(c, 2));
+      });
+      return { members, direct, levels, pcv };
+    }
+
+    function renderSponsorSummary(roots) {
+      const host = document.getElementById('snStats');
+      if (!host) return;
+      const s = sponsorStats(roots);
+      const stat = (label, value) =>
+        `<div class="sn-stat"><span class="sn-stat-k">${label}</span><b class="sn-stat-v">${value}</b></div>`;
+      host.innerHTML =
+        stat('Downline members', s.members.toLocaleString()) +
+        stat('Direct', s.direct.toLocaleString()) +
+        stat('Levels', s.levels.toLocaleString()) +
+        stat('Downline PCV', s.pcv.toLocaleString());
+    }
+
     function renderSponsorNetwork() {
       const mid = currentMemberId();
       if (!mid) return;
@@ -3291,6 +3336,7 @@
       const query = topMember ? topMember.value : '';
       const depth = Math.max(1, Math.min(10, Number(spreadDepth ? spreadDepth.value : 5) || 5));
       const data = snMode === 'ex' ? getSponsorNetworkEx(mid) : getSponsorNetwork(mid);
+      renderSponsorSummary(data);
       const filtered = filterSponsorTree(data, query, depth);
       if (!filtered.length) {
         host.innerHTML = '<div class="sn-empty">No matching sponsor network records found.</div>';

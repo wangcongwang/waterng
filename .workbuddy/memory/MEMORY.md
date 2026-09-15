@@ -49,6 +49,14 @@
 - `PayMethods.label()` 对未知值回退原值；`PayMethods.money()` 输出 `N25,000` 风格。
 - ⚠️ `.bank-row` 的布局以前只在已弃用的 `pages.css` 里定义过 → 银行行会“标签值挤在一起”；现由 `payment-methods.css` 的 `.bank-rows .bank-row` 提供。
 
+### Sponsor Network = 账户页一等模块（2026-09-15 用户要求，别改回标签页）
+- **不再是一个标签**：`#dashTabs` 只有 `overview / orders / profile`。`currentView()` 的白名单也**不含 `sponsor`**（旧书签 `account.html#sponsor` 会落到 overview）。
+- 模块位置：Overview 里、KPI 行之下、`#hubGrid` 之上 —— `section.ek-card.sn-module`。`DOMContentLoaded` 里在 `showView()` **之后**必须调一次 `renderSponsorNetwork()`（树要首屏可见，不能等点击）。
+- 结构：`.sn-module-head`（`--ek-info-tint` 头部带：`DOWNLINE` eyebrow + 标题 + 说明；右侧 `.sn-mode-toggle` 两档）→ `#snStats`（JS 填 4 张 `.sn-stat`）→ `.sponsor-toolbar` → `#sponsorTree`。
+- 统计：`sponsorStats()` + `renderSponsorSummary()`；**在 `filterSponsorTree()` 之前调用**，且统计取全量组织 → 搜索时不跳动。口径：Downline 不含根 / Direct = 根的直接下级 / Levels 根算第 1 层 / Downline PCV = 下级之和。
+- 四个 id（`#snTopMember` `#snSpreadDepth` `#snConfirmBtn` `#sponsorTree`）与 `.sn-mode-btn` 是绑定锚点，改名等于断掉功能。
+- 样式在 `account-ui.css` **§9b**；头部带靠负 margin 贴边缘（`calc(var(--ek-24) * -1)`），≤560px 另有 `--ek-20` 版本。验证脚本 `.workbuddy/preview/verify-sponsor-module.js`。
+
 ### i18n 占位符词条（2026-09-15 踩坑）
 - `assets/i18n/strings.js` 里带 `{name}` 的词条（如 `account.orders_count: '{n} orders in total'`）**必须在调用时传 params**：`window.T.tr(key, { n: total })`（`tr(path, params)` 内部 `replaceAll('{k}', val)`）。
 - ⚠️ 各页常见的局部 helper `const t = (k, fb) => …` **第二参是 fallback、不参与替换** —— 直接 `t(key, '1 orders in total')` 会把字面量 `{n} orders in total` 渲染到页面上。需要替换时用 `t(k, fb, params)` 形态（`account.html` 的 `renderOrders()` 已扩成三参）或直接调 `T.tr`。

@@ -527,6 +527,67 @@
 }
 
 /* --------------------------------------------------------------------------
+   9b. Sponsor Network — first-class Overview module
+   --------------------------------------------------------------------------
+   Promoted out of the tab bar (user: "单独拿出来，做的明显一点，作为一个重要模块").
+   Sits directly under the KPI row with a tinted header band, a four-up stats
+   strip and the tree always rendered, so it reads as a headline module rather
+   than a tab nobody opens. */
+.sn-module { border-color: var(--ek-panel-cool); }
+.sn-module-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--ek-16) var(--ek-24); flex-wrap: wrap;
+  margin: calc(var(--ek-24) * -1) calc(var(--ek-24) * -1) 0;
+  padding: var(--ek-20) var(--ek-24);
+  background: var(--ek-info-tint);
+  border-bottom: 1px solid var(--ek-panel-cool);
+  border-radius: var(--ek-radius-lg) var(--ek-radius-lg) 0 0;
+}
+.sn-module-copy { flex: 1 1 340px; min-width: 0; }
+.sn-module-eyebrow {
+  display: block; margin-bottom: var(--ek-8);
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ek-info);
+}
+.sn-module-title { margin: 0 0 var(--ek-8); font-size: var(--ek-h2); color: var(--ek-blue); }
+.sn-module-desc { margin: 0; font-size: var(--ek-small); color: var(--ek-muted); }
+.sn-module .sn-mode-toggle { margin-bottom: 0; }
+/* Top Member's placeholder ("Member ID / Name / PCV") was clipped by the input's
+   default width, and the depth box only ever holds two digits. */
+#snTopMember { width: 230px; }
+#snSpreadDepth { width: 96px; }
+
+.sn-stats {
+  display: grid; gap: var(--ek-16);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin: var(--ek-20) 0;
+}
+.sn-stat {
+  display: grid; gap: var(--ek-4);
+  padding: var(--ek-12) var(--ek-16);
+  background: var(--ek-surface-sunken);
+  border-radius: var(--ek-radius);
+}
+.sn-stat-k {
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
+  letter-spacing: .05em; text-transform: uppercase; color: var(--ek-muted);
+}
+.sn-stat-v {
+  font-size: var(--ek-h3); line-height: var(--ek-h3-lh);
+  font-weight: var(--ek-w-bold); color: var(--ek-blue);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 560px) {
+  .sn-module-head {
+    margin: calc(var(--ek-20) * -1) calc(var(--ek-20) * -1) 0;
+    padding: var(--ek-16) var(--ek-20);
+  }
+  .sn-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #snTopMember { width: 100%; }
+}
+
+/* --------------------------------------------------------------------------
    10. Profile — forms, cards, basic-info bar
    -------------------------------------------------------------------------- */
 .profile-grid { display: grid; gap: var(--ek-20); align-items: start; }
