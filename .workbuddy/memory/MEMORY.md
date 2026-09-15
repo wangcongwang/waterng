@@ -49,6 +49,11 @@
 - `PayMethods.label()` 对未知值回退原值；`PayMethods.money()` 输出 `N25,000` 风格。
 - ⚠️ `.bank-row` 的布局以前只在已弃用的 `pages.css` 里定义过 → 银行行会“标签值挤在一起”；现由 `payment-methods.css` 的 `.bank-rows .bank-row` 提供。
 
+### i18n 占位符词条（2026-09-15 踩坑）
+- `assets/i18n/strings.js` 里带 `{name}` 的词条（如 `account.orders_count: '{n} orders in total'`）**必须在调用时传 params**：`window.T.tr(key, { n: total })`（`tr(path, params)` 内部 `replaceAll('{k}', val)`）。
+- ⚠️ 各页常见的局部 helper `const t = (k, fb) => …` **第二参是 fallback、不参与替换** —— 直接 `t(key, '1 orders in total')` 会把字面量 `{n} orders in total` 渲染到页面上。需要替换时用 `t(k, fb, params)` 形态（`account.html` 的 `renderOrders()` 已扩成三参）或直接调 `T.tr`。
+- strings.js 目前**只有 `en` 一个语言块**（没有 zh/yo/ig/ha/fr/pcm）。
+
 ### 账户页 Overview 版式（2026-09-15）
 - **`.dash-head` 是唯一的头部卡片**，子元素顺序：`ek-avatar` → `dash-head-id` → `dash-actions`(Sign out) → `basic-info-bar`(5 项) → **`dash-referral`**（各段用 hairline 分隔）。它在 `.dash-view` 之外 → **所有标签页都可见**。
 - **Referral 分享区在头部卡内**（用户要求「和头部那块合并在一块儿」）：左 = `INVITE & EARN` + 标题 + 说明，中 = 只读 `#referralLink`，右 = **Share link（primary）** + Copy link（secondary）。样式在 `account-ui.css` **§3b**（`.dash-referral*`，含 ≤767px 规则）；内容宽由 `flex: 1 1 100%` 撑满一行。

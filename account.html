@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260915a">
+  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260915c">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="account">
@@ -178,7 +178,6 @@
             <h2 class="panel-title" data-i18n="account.orders">Orders</h2>
             <p class="muted" id="ordersSubtitle"></p>
           </div>
-          <a class="ek-btn ek-btn--primary ek-btn--sm" href="products.html" data-i18n="account.orders_browse">Browse products</a>
         </div>
         <div class="orders-segments" role="tablist" aria-label="Order categories">
           <button type="button" class="orders-segment is-active" data-segment="self" role="tab" aria-selected="true">
@@ -1003,7 +1002,10 @@
 
     function renderOrders() {
       const pc = window.ProductCatalog || {};
-      const t = (k, fb) => { const v = window.T && window.T.tr(k); return (v && v !== k) ? v : fb; };
+      // `params` feeds T.tr()'s `{placeholder}` substitution (e.g. {n}). Forgetting
+      // to pass it prints the raw template — that is how "{n} orders in total"
+      // leaked into the Orders subtitle.
+      const t = (k, fb, params) => { const v = window.T && window.T.tr(k, params); return (v && v !== k) ? v : fb; };
 
       // First-run demo: populate illustrative orders + ecoin ledger (with values) when none exist.
       if (pc.getCurrentMemberId && pc.getOrders && pc.getOrders().length === 0) {
@@ -1023,7 +1025,11 @@
       if (sub) {
         const total = selfOrders.length + memberOrders.length;
         sub.textContent = total
-          ? t('account.orders_count', total + ' orders in total')
+          ? t(
+              total === 1 ? 'account.orders_count_one' : 'account.orders_count',
+              total === 1 ? '1 order in total' : `${total} orders in total`,
+              { n: total }
+            )
           : t('account.orders_empty', 'No orders yet. Browse our product range to find what you need.');
       }
 

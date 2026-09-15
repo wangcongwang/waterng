@@ -297,6 +297,7 @@ window.I18N = {
       tabs_locked: 'To prioritise your overdue balance, some features are temporarily restricted.',
       orders_empty: 'No orders yet. Browse our product range to find what you need.',
       orders_count: '{n} orders in total',
+      orders_count_one: '{n} order in total',
       orders_tab_self: 'My orders',
       orders_tab_member: 'Member orders',
       orders_type_self: 'My order',
