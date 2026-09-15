@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260909f">
+  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="account">
@@ -73,6 +73,29 @@
             <button type="button" class="ek-btn ek-btn--sm ek-btn--primary mt-2" id="ecoinHistoryBtn">View History</button>
           </div>
         </div>
+
+        <!-- ===== Referral spotlight: invite & earn =====
+             Moved to the top of Overview (full width, right under the KPI row) so the
+             Share action is impossible to miss — it used to hide in a small ghost
+             button at the bottom of the left column. -->
+        <section class="ek-card ref-spotlight" aria-labelledby="refSpotlightTitle">
+          <div class="ref-spotlight-copy">
+            <span class="ref-spotlight-eyebrow">Invite &amp; earn</span>
+            <h2 class="ref-spotlight-title" id="refSpotlightTitle">Your referral link</h2>
+            <p class="ref-spotlight-desc">Share this link. When friends order <b>without signing in</b>, their order's BV is credited to your member ID.</p>
+            <div class="ref-spotlight-field">
+              <input class="ek-input" id="referralLink" readonly aria-label="Your referral link" />
+            </div>
+          </div>
+          <div class="ref-spotlight-actions">
+            <button class="ek-btn ek-btn--lg ref-share-btn" id="referralShare" type="button">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 1 0-3-3c0 .24.04.47.09.7L8.04 9.81A3 3 0 1 0 6 15c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65a2.92 2.92 0 1 0 2.92-2.92z"/></svg>
+              <span>Share link</span>
+            </button>
+            <button class="ek-btn ek-btn--secondary" id="referralCopy" type="button">Copy link</button>
+            <p class="ref-spotlight-hint">Opens your share sheet</p>
+          </div>
+        </section>
 
         <!-- ===== 九宫格多功能入口 ===== -->
         <div class="hub-grid" id="hubGrid">
@@ -142,16 +165,6 @@
               <div>💧</div>
               <div>Quality products for your health, beauty and wellness needs.</div>
               <a class="ek-btn ek-btn--primary ek-btn--sm" href="products.html">Browse all products</a>
-            </div>
-
-            <h2 class="panel-title">Your referral link</h2>
-            <div class="ek-card referral-card">
-              <p class="referral-desc">Share this link. When friends order <b>without signing in</b>, their order's BV is credited to your member ID.</p>
-              <div class="order-link-row">
-                <input class="ek-input" id="referralLink" readonly aria-label="Your referral link" />
-                <button class="ek-btn ek-btn--primary ek-btn--sm" id="referralCopy" type="button">Copy</button>
-                <button class="ek-btn ek-btn--ghost ek-btn--sm" id="referralShare" type="button">Share</button>
-              </div>
             </div>
 
             <h2 class="panel-title">Referrals · BV credited to you</h2>
@@ -1599,15 +1612,19 @@
       const copyBtn = document.getElementById('referralCopy');
       const shareBtn = document.getElementById('referralShare');
       const toast = (m) => { if (window.toast) window.toast(m, 'success'); };
+      // Single clipboard helper (async API + legacy fallback) shared by Copy and Share.
+      const copyToClipboard = (text, ok) => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => ok('Referral link copied')).catch(() => {});
+          } else if (linkEl) {
+            linkEl.select();
+            try { document.execCommand('copy'); ok('Referral link copied'); } catch (e) {}
+          }
+        } catch (e) {}
+      };
       if (copyBtn && linkEl) {
-        copyBtn.addEventListener('click', () => {
-          const text = linkEl.value || '';
-          try {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-              navigator.clipboard.writeText(text).then(() => toast('Referral link copied')).catch(() => {});
-            } else { linkEl.select(); try { document.execCommand('copy'); } catch (e) {} }
-          } catch (e) {}
-        });
+        copyBtn.addEventListener('click', () => copyToClipboard(linkEl.value || '', toast));
       }
       if (shareBtn && linkEl) {
         shareBtn.addEventListener('click', () => {
@@ -1615,11 +1632,17 @@
           const shareText = 'Join Elken through my referral link: ' + text;
           try {
             if (navigator.share) {
-              navigator.share({ title: 'Elken', text: shareText }).catch(() => {});
+              // Share sheet (mobile + desktop Safari/Chrome). If it is unavailable,
+              // blocked, or fails for any reason other than the user dismissing it,
+              // fall back to the clipboard so the prominent Share button always works.
+              navigator.share({ title: 'Elken', text: shareText }).catch(err => {
+                if (err && err.name === 'AbortError') return;
+                copyToClipboard(shareText, toast);
+              });
             } else if (navigator.clipboard) {
-              navigator.clipboard.writeText(shareText).then(() => toast('Referral link copied')).catch(() => {});
+              copyToClipboard(shareText, toast);
             } else { if (window.toast) window.toast(shareText, 'info'); }
-          } catch (e) {}
+          } catch (e) { copyToClipboard(shareText, toast); }
         });
       }
     }

@@ -49,6 +49,11 @@
 - `PayMethods.label()` 对未知值回退原值；`PayMethods.money()` 输出 `N25,000` 风格。
 - ⚠️ `.bank-row` 的布局以前只在已弃用的 `pages.css` 里定义过 → 银行行会“标签值挤在一起”；现由 `payment-methods.css` 的 `.bank-rows .bank-row` 提供。
 
+### 账户页 Overview 版式（2026-09-15）
+- 顺序：`.dash-head` → KPI 行（`.kpi-grid.two-kpi`）→ **referral spotlight** → 九宫格 `#hubGrid` → `.overview-grid`。
+- **Referral 分享区在全宽 band `.ref-spotlight`**（用户要求「分享功能放在显眼一点的地方」）：左 = `INVITE & EARN` eyebrow + 标题 + 只读 `#referralLink`，右 = **Share link（primary `ek-btn--lg`）** + Copy link（secondary）+ hint。样式在 `account-ui.css` **§7b**，移动端在 §17。⚠️ `.ek-card` 自身是 `flex-direction:column`，`.ref-spotlight` 必须显式 `flex-direction: row`。不要再把这块塞回 `.overview-grid` 左列（原来那样要滚动才看得到）。
+- `#referralLink` / `#referralCopy` / `#referralShare` 三个 id 是 `wireReferralLink()` 的锚点，**改名等于断掉分享逻辑**。Share 用 `navigator.share`，失败（非 `AbortError`）自动回退剪贴板。
+
 ### 账户页两处固定结构（2026-09-15）
 - **Basic Information 常驻顶部卡**：`#profileBasicInfoBar`（5 项：系统时间/结算周期/会员等级/最高荣耀/Elite）**在 `.dash-head` 内**，不是 Profile 标签页的独立卡（那张已删除）。`renderProfileBasicBar()` 必须在 `DOMContentLoaded` 里 `showView()` **之前**调一次，否则首屏 Overview 是空的。布局由 `account-ui.css` §3 的 `.dash-head > .basic-info-bar` 负责（内容自适应 flex + `space-between` + 上方 hairline；≤767px 转 grid）。**不要**改回等宽 grid——系统时间值会折行并把该列顶歪。
 - **两个账户内弹窗**（Historical Cumulative Bonus / Recharge and Transfer）内部类 `.hc-bonus-*`、`.rt-*` 全站样式在 `account-ui.css` **§18**；它们是 JS 动态 innerHTML，只加 CSS、别动 JS。
