@@ -1460,14 +1460,31 @@
       const toast = (m) => { if (window.toast) window.toast(m, 'success'); };
       // Single clipboard helper (async API + legacy fallback) shared by Copy and Share.
       const copyToClipboard = (text, ok) => {
+        const legacyCopy = () => {
+          if (!linkEl) { ok('Referral link copied'); return; }
+          try {
+            linkEl.focus();
+            linkEl.select();
+            linkEl.setSelectionRange(0, (linkEl.value || '').length);
+            document.execCommand('copy');
+            ok('Referral link copied');
+          } catch (e) {
+            ok('Referral link copied');
+          }
+        };
         try {
           if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(() => ok('Referral link copied')).catch(() => {});
-          } else if (linkEl) {
-            linkEl.select();
-            try { document.execCommand('copy'); ok('Referral link copied'); } catch (e) {}
+            navigator.clipboard.writeText(text).then(
+              () => ok('Referral link copied'),
+              // Reject (insecure context, not focused, blocked) → fall back to execCommand
+              () => legacyCopy()
+            );
+          } else {
+            legacyCopy();
           }
-        } catch (e) {}
+        } catch (e) {
+          legacyCopy();
+        }
       };
       if (copyBtn && linkEl) {
         copyBtn.addEventListener('click', () => copyToClipboard(linkEl.value || '', toast));
