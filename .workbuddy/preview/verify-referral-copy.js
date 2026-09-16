@@ -24,38 +24,48 @@ await new Promise(r=>setTimeout(r,900));
 
 // --- Scenario 1: clipboard rejects -> fallback must fire + toast must show ---
 const s1=await p.evaluate(()=>{
-  // install a recording stub for execCommand
   window.__execLog=[];
-  const orig=document.execCommand.bind(document);
   document.execCommand=function(c){ if(c==='copy') window.__execLog.push('copy'); return true; };
-  // force the failing clipboard API
   Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:()=>Promise.reject(new Error('blocked'))}});
   const value=document.getElementById('referralLink').value;
   document.getElementById('referralCopy').click();
-  return {value};
+  const btn=document.getElementById('referralCopy');
+  return {value, btnText:btn.textContent.trim(), btnCopied:btn.classList.contains('is-copied')};
 });
 await new Promise(r=>setTimeout(r,400)); // let promise reject + fallback run
-const s1after=await p.evaluate(()=>({
-  execLog:window.__execLog,
-  toast:[...document.querySelectorAll('.toast, [data-toast], .ek-toast')].map(t=>t.textContent.trim()).slice(-1)[0]||'',
-}));
-console.log('SCENARIO1 value=',s1.value);
-console.log('SCENARIO1 execLog=',JSON.stringify(s1after.execLog),' toast=',JSON.stringify(s1after.toast));
+const s1after=await p.evaluate(()=>{
+  const toastEl=[...document.querySelectorAll('.toast')].slice(-1)[0]||null;
+  return {
+    execLog:window.__execLog,
+    toastText:toastEl?toastEl.textContent.trim():'',
+    toastVisible: toastEl ? (getComputedStyle(toastEl).position!=='static') : false,
+    btnText:document.getElementById('referralCopy').textContent.trim(),
+    btnCopied:document.getElementById('referralCopy').classList.contains('is-copied'),
+  };
+});
+console.log('SCENARIO1 value=',s1.value,' immediateBtn=',JSON.stringify({t:s1.btnText,c:s1.btnCopied}));
+console.log('SCENARIO1 execLog=',JSON.stringify(s1after.execLog),' toast=',JSON.stringify(s1after.toastText),' toastVisible=',s1after.toastVisible,' btn=',JSON.stringify({t:s1after.btnText,c:s1after.btnCopied}));
 
-// --- Scenario 2: clipboard succeeds (secure context / localhost) -> toast must show, no execCommand needed ---
+// --- Scenario 2: clipboard succeeds (secure context / localhost) -> toast + button flash, no execCommand ---
 const s2=await p.evaluate(()=>{
   window.__execLog=[];
   let wrote=null;
   Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:(t)=>{wrote=t;return Promise.resolve();}}});
+  const btn=document.getElementById('referralCopy');
   document.getElementById('referralCopy').click();
-  return {wrote};
+  return {wrote, btnText:btn.textContent.trim(), btnCopied:btn.classList.contains('is-copied')};
 });
 await new Promise(r=>setTimeout(r,300));
-const s2after=await p.evaluate(()=>({
-  execLog:window.__execLog,
-  toast:[...document.querySelectorAll('.toast, [data-toast], .ek-toast')].map(t=>t.textContent.trim()).slice(-1)[0]||'',
-}));
-console.log('SCENARIO2 wrote=',s2.wrote,' toast=',JSON.stringify(s2after.toast),' execLog(should be empty)=',JSON.stringify(s2after.execLog));
+const s2after=await p.evaluate(()=>{
+  const toastEl=[...document.querySelectorAll('.toast')].slice(-1)[0]||null;
+  return {
+    execLog:window.__execLog,
+    toastText:toastEl?toastEl.textContent.trim():'',
+    btnText:document.getElementById('referralCopy').textContent.trim(),
+    btnCopied:document.getElementById('referralCopy').classList.contains('is-copied'),
+  };
+});
+console.log('SCENARIO2 wrote=',s2.wrote,' immediateBtn=',JSON.stringify({t:s2.btnText,c:s2.btnCopied}),' toast=',JSON.stringify(s2after.toastText),' execLog(empty expected)=',JSON.stringify(s2after.execLog),' btn=',JSON.stringify({t:s2after.btnText,c:s2after.btnCopied}));
 
 console.log('errors:', errs.length?errs.join(' | '):'none');
 await b.close();s.close();})();

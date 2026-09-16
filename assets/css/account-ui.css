@@ -1191,3 +1191,46 @@
   .rt-filter-bar { flex-direction: column; }
   .rt-form-row { flex: 1 1 100%; }
 }
+
+/* ============================================================
+   §15  Toast (account pages) — design-system.css is NOT loaded here,
+   so the global toast host would render unstyled/invisible. Provide a
+   self-contained, token-only toast so success/error prompts are visible.
+   ============================================================ */
+.toast-host {
+  position: fixed;
+  bottom: var(--ek-24);
+  right: var(--ek-24);
+  z-index: var(--ek-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ek-8);
+  pointer-events: none;
+  max-width: min(92vw, 360px);
+}
+.toast {
+  pointer-events: auto;
+  background: var(--ek-charcoal);
+  color: var(--ek-white);
+  padding: var(--ek-12) var(--ek-16);
+  border-radius: var(--ek-radius);
+  box-shadow: var(--ek-shadow-lg);
+  display: flex;
+  gap: var(--ek-8);
+  align-items: center;
+  min-width: 240px;
+  font: var(--ek-w-medium) var(--ek-small) / var(--ek-small-lh) var(--ek-font);
+  animation: ek-toast-in var(--ek-fast) var(--ek-ease);
+}
+.toast-success { background: var(--ek-success); color: var(--ek-white); }
+@keyframes ek-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Referral "Copy link" button — inline confirmation state */
+#referralCopy.is-copied {
+  background: var(--ek-success);
+  border-color: var(--ek-success);
+  color: var(--ek-white);
+}

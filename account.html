@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260915d">
+  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260916a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="account">
@@ -1458,6 +1458,19 @@
       const copyBtn = document.getElementById('referralCopy');
       const shareBtn = document.getElementById('referralShare');
       const toast = (m) => { if (window.toast) window.toast(m, 'success'); };
+      // Inline confirmation directly on the button the user clicked — independent of
+      // the global toast host, so feedback is always visible even if toast styling is missing.
+      const flashCopy = () => {
+        if (!copyBtn) return;
+        const original = copyBtn.textContent;
+        copyBtn.textContent = 'Copied ✓';
+        copyBtn.classList.add('is-copied');
+        clearTimeout(copyBtn.__copyTimer);
+        copyBtn.__copyTimer = setTimeout(() => {
+          copyBtn.textContent = original;
+          copyBtn.classList.remove('is-copied');
+        }, 1600);
+      };
       // Single clipboard helper (async API + legacy fallback) shared by Copy and Share.
       const copyToClipboard = (text, ok) => {
         const legacyCopy = () => {
@@ -1487,7 +1500,7 @@
         }
       };
       if (copyBtn && linkEl) {
-        copyBtn.addEventListener('click', () => copyToClipboard(linkEl.value || '', toast));
+        copyBtn.addEventListener('click', () => copyToClipboard(linkEl.value || '', (m) => { toast(m); flashCopy(); }));
       }
       if (shareBtn && linkEl) {
         shareBtn.addEventListener('click', () => {
