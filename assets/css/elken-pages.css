@@ -1769,7 +1769,9 @@ a.ek-recog__card .ek-link { margin-top: auto; font-size: 15px; }
     radial-gradient(ellipse 84% 70% at 50% 50%,
       rgba(var(--ek-scrim-rgb),.62) 0%, rgba(var(--ek-scrim-rgb),.54) 45%,
       rgba(var(--ek-scrim-rgb),.34) 78%, rgba(var(--ek-scrim-rgb),.22) 100%),
-    none;
+    url('../img/cm-blood-hd.jpg');
+  background-size: cover;
+  background-position: center;
 }
 @media (max-width: 1023px) { .ek-split__stat { min-height: 240px; padding: 40px 24px; } .ek-split__stat b { font-size: 44px; } }
 

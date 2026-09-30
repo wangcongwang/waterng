@@ -10,6 +10,7 @@
     AUTH: 'al.auth.user',
     PROFILE: 'al.profile',
     ADDRESSES: 'al.addresses',
+    GUEST: 'al.guestMode',   // 按标签页的 guest 下单标记（sessionStorage）
   };
 
   /* ---------- Auth state ---------- */
@@ -25,16 +26,38 @@
     isLoggedIn() { return !!this.user; },
     login(user) {
       this.user = user;
+      try { sessionStorage.removeItem(STORAGE.GUEST); } catch (e) {}
       window.dispatchEvent(new CustomEvent('al:authchange', { detail: { user } }));
     },
     logout() {
       this.user = null;
       // also clear any order/payment/agreement draft that belongs to this session
       // (keeps the logged-out state consistent for next visitor)
+      try { sessionStorage.removeItem(STORAGE.GUEST); } catch (e) {}
       window.dispatchEvent(new CustomEvent('al:authchange', { detail: { user: null } }));
     },
   };
   window.Auth = Auth;
+
+  /* ---------- Display-only pages ----------
+     纯展示页（首页 index.html）只用于对外展示：既不读取、也不写入任何登录态，
+     顶部/抽屉/页脚/归属条始终按「未登录营销版」渲染，也跳过 demo 账号播种。
+     由 <body data-display-only="true"> 声明。 */
+  function isDisplayOnlyPage() {
+    return !!(document.body && document.body.dataset.displayOnly === 'true');
+  }
+  window.isDisplayOnlyPage = isDisplayOnlyPage;
+
+  /* ---------- WordPress (marketing) pages ----------
+     The WordPress marketing site (index.html is display-only; the product /
+     category marketing pages carry data-wordpress="true") is public-facing.
+     It must never expose AE commerce (add-to-cart) nor the signed-in chrome,
+     even when the demo has seeded a login elsewhere. These pages always read
+     as the "此页面属于Wordpress页面" (unlogged marketing) surface. */
+  function isWordPressPage() {
+    return !!(document.body && document.body.dataset.wordpress === 'true');
+  }
+  window.isWordPressPage = isWordPressPage;
 
   const Money = {
     format(n) {
@@ -230,7 +253,7 @@
     }
     return `
       <div class="drawer-auth drawer-auth-out">
-        <a href="login.html${nextParam}" class="btn btn-primary btn-block">${T.tr('common.sign_in')}</a>
+        <a href="login.html${ACCOUNT_NEXT}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block">${T.tr('common.sign_in')}</a>
         <a href="signup.html${nextParam}" class="drawer-auth-alt">${T.tr('common.create_account')}</a>
       </div>`;
   }
@@ -245,6 +268,10 @@
   const ICON_USER = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.6"/></svg>';
   const ICON_LOGOUT = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const ICON_CART = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="21" r="1.6" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="21" r="1.6" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 3h2l2.2 12.2a1.6 1.6 0 0 0 1.6 1.3h8.7a1.6 1.6 0 0 0 1.6-1.2L21 7H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  /* 个人中心入口：未登录时点击导航/抽屉的账户图标，登录后回跳到 account.html。
+     用独立常量，避免与其它通用回跳(nextParam=当前页)混淆。 */
+  const ACCOUNT_NEXT = '?next=account.html';
 
   /* The four ranges, in the order the design settled on. Labels must stay in
      step with the home page range cards and the footer column. */
@@ -291,11 +318,42 @@
   }
 
   function renderHeader(active) {
-    const user = Auth.user;
+    /* Display-only pages ignore login/guest state entirely and always render the
+       public marketing chrome (full nav, Sign in entry, no cart). */
+    const displayOnly = isDisplayOnlyPage();
+    const wordpress = isWordPressPage();
+    const publicPage = displayOnly || wordpress;
+    const user = publicPage ? null : Auth.user;
     const loggedIn = !!user;
     const currentPage = location.pathname.split('/').pop() || 'index.html';
     const nextParam = '?next=' + encodeURIComponent(currentPage);
     const on = name => (active === name ? ' aria-current="page"' : '');
+    /* Guest ordering flow: entering from the login page's「不登录」button carries
+       ?guest=1; persist it as a per-tab flag so EVERY page in the checkout
+       journey (ranges, product pages, cart, checkout…) keeps the reduced nav.
+       Display-only pages never participate in the guest flow nor write the flag. */
+    let isGuestEntry = false;
+    if (!publicPage) {
+      try {
+        if (new URLSearchParams(location.search).get('guest') === '1') sessionStorage.setItem(STORAGE.GUEST, '1');
+        isGuestEntry = sessionStorage.getItem(STORAGE.GUEST) === '1';
+      } catch (e) {
+        isGuestEntry = new URLSearchParams(location.search).get('guest') === '1';
+      }
+    }
+
+    /* Guest checkout pages (guest-repeat-purchase / cart / checkout / order) drop the
+       top chrome entirely while the tab is in the guest order flow, so the journey
+       stays focused end-to-end. Declared with <body data-guest-no-nav="true">.
+       The trigger is the per-tab guest flag (al.guestMode), not the login state:
+       Auth.login() clears that flag, so a member who signs in normally keeps the
+       full header on these same pages. */
+    if (!publicPage && isGuestEntry &&
+        document.body && document.body.dataset.guestNoNav === 'true') {
+      const hostEl = document.getElementById('app-header');
+      if (hostEl) hostEl.innerHTML = '';
+      return;
+    }
 
     /* Phase 2 utilities: present in the UI, marked, not yet functional. */
     /* Icon-only controls with a P2 corner tag and a tooltip. The labelled
@@ -309,35 +367,56 @@
     const accountUtil = loggedIn
       ? `<a class="ek-util ek-util--icon" href="account.html" title="My Account" aria-label="My Account">${ICON_USER}</a>
          <button class="ek-util ek-util--icon" type="button" id="headerLogout" title="Sign out" aria-label="Sign out">${ICON_LOGOUT}</button>`
-      : `<a class="ek-util ek-util--icon" href="login.html${nextParam}" title="Sign in" aria-label="Sign in">${ICON_USER}</a>`;
+      : `<a class="ek-util ek-util--icon" href="login.html${ACCOUNT_NEXT}" target="_blank" rel="noopener noreferrer" title="Sign in" aria-label="Sign in">${ICON_USER}</a>`;
 
-    const cartUtil = `<a class="ek-util ek-util--icon" href="cart.html" id="headerCart" title="Cart" aria-label="Cart">${ICON_CART}<span class="ek-util__badge" id="cartBadge"></span></a>`;
+    /* 购物车图标：仅登录态或 guest 下单流程（isGuestEntry）显示。
+       普通未登录（完整菜单）不显示购物车按钮；未登录走 guest 购物车时
+       由 guest 流程保留该入口。购物车页/结算页仍按登录态区分 guest/member 分支。 */
+    const cartUtil = (loggedIn || isGuestEntry)
+      ? `<a class="ek-util ek-util--icon" href="cart.html" id="headerCart" title="Cart" aria-label="Cart">${ICON_CART}<span class="ek-util__badge" id="cartBadge"></span></a>`
+      : '';
     const langUtil = `<button class="ek-lang" type="button" id="headerLang" aria-label="Language">EN ${CHEVRON}</button>`;
 
-    const headerHTML = `
-      <header class="ek-header">
-        <div class="ek-container--nav">
-          <a class="ek-logo" href="index.html" aria-label="Elken, home">
-            <img class="ek-logo__colour"   src="assets/img/brand/elken-logo-colour.svg?v=20260909a" alt="Elken">
-            <img class="ek-logo__reversed" src="assets/img/brand/elken-logo-white-v4.svg?v=20260909a" alt="" aria-hidden="true">
-          </a>
-          <button class="ek-burger" type="button" id="openDrawer" aria-expanded="false" aria-label="Menu">
-            <span></span><span></span><span></span>
-          </button>
-          <nav class="ek-nav" data-nav aria-label="Main">
+    const productsNavItem = `
+            <div class="ek-nav__item ek-nav__item--parent">
+              <a class="ek-nav__link" href="products.html" data-submenu-toggle aria-expanded="false" aria-haspopup="true"${on('products')}>Products ${CHEVRON}</a>
+              ${productsPanelNav()}
+            </div>`;
+
+    /* 顶部导航：
+       - 未登录、但从登录页「不登录」进入的 guest 下单流程（isGuestEntry）→ 只保留 Products
+       - 已登录（非 guest）→ 隐藏 Products 菜单（仅保留右上角 account / cart / lang 图标，主导航交给账户中心）
+       - 其余未登录页面 → 完整菜单（Who We Are / Products / Become a Distributor / Contact / FAQ） */
+    const loggedOutNavItems = `
             <div class="ek-nav__item ek-nav__item--parent">
               <a class="ek-nav__link" href="about.html" data-submenu-toggle aria-expanded="false" aria-haspopup="true"${on('about')}>Who We Are ${CHEVRON}</a>
               <div class="ek-nav__panel">
                 ${WHO_WE_ARE_NAV.map(l => `<a href="${l.href}">${l.label}</a>`).join('')}
               </div>
             </div>
-            <div class="ek-nav__item ek-nav__item--parent">
-              <a class="ek-nav__link" href="products.html" data-submenu-toggle aria-expanded="false" aria-haspopup="true"${on('products')}>Products ${CHEVRON}</a>
-              ${productsPanelNav()}
-            </div>
+            ${productsNavItem}
             <div class="ek-nav__item"><a class="ek-nav__link" href="become-a-distributor.html"${on('distributor')}>Become a Distributor</a></div>
             <div class="ek-nav__item"><a class="ek-nav__link" href="contact.html"${on('contact')}>Contact Us</a></div>
-            <div class="ek-nav__item"><a class="ek-nav__link" href="faq.html"${on('faq')}>FAQ</a></div>
+            <div class="ek-nav__item"><a class="ek-nav__link" href="faq.html"${on('faq')}>FAQ</a></div>`;
+    /* 已登录：不显示任何主菜单项（Products 也隐藏）；guest 流程保留 Products；普通未登录显示完整菜单 */
+    const mainNavItems = isGuestEntry
+      ? productsNavItem
+      : loggedIn
+        ? ''
+        : loggedOutNavItems;
+
+    const headerHTML = `
+      <header class="ek-header">
+        <div class="ek-container--nav">
+          <span class="ek-logo" aria-label="Elken">
+            <img class="ek-logo__colour"   src="assets/img/brand/elken-logo-colour.svg?v=20260909a" alt="Elken">
+            <img class="ek-logo__reversed" src="assets/img/brand/elken-logo-white-v4.svg?v=20260909a" alt="" aria-hidden="true">
+          </span>
+          <button class="ek-burger" type="button" id="openDrawer" aria-expanded="false" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+          <nav class="ek-nav" data-nav aria-label="Main">
+            ${mainNavItems}
             <div class="ek-nav__utils">
               ${accountUtil}
               ${cartUtil}
@@ -357,16 +436,20 @@
           </div>
           ${drawerAuthHTML(user, nextParam)}
           <nav class="drawer-nav">
-            <a href="index.html" class="${active === 'home' ? 'active' : ''}">Home</a>
+            ${isGuestEntry
+              ? `<a href="products.html" class="${active === 'products' ? 'active' : ''}">Products</a>
+            <a href="cart.html">Cart</a>`
+              : loggedIn
+                ? `<a href="cart.html">Cart</a>`
+                : `<a href="index.html" class="${active === 'home' ? 'active' : ''}">Home</a>
             <a href="about.html" class="${active === 'about' ? 'active' : ''}">About Us</a>
             <a href="products.html" class="${active === 'products' ? 'active' : ''}">Products</a>
-            <a href="cart.html">Cart</a>
             <a href="become-a-distributor.html" class="${active === 'distributor' ? 'active' : ''}">Become a Distributor</a>
             <a href="team-inquiry.html">Distributor Application</a>
             <a href="contact.html" class="${active === 'contact' ? 'active' : ''}">Contact Us</a>
             <a href="faq.html" class="${active === 'faq' ? 'active' : ''}">FAQ</a>
             <a href="service.html">Service &amp; Support</a>
-            <a href="case-studies.html">Case Studies</a>
+            <a href="case-studies.html">Case Studies</a>`}
           </nav>
         </div>
       </div>
@@ -402,8 +485,12 @@
     document.getElementById('headerLogout')?.addEventListener('click', () => {
       Auth.logout();
       window.toast('Signed out. See you soon.', 'success');
-      // small delay so the toast is visible before navigation
-      setTimeout(() => { window.location.href = 'index.html'; }, 400);
+      // Close the signed-in tab (opened when signing in). If the browser blocks
+      // window.close() (tab wasn't script-opened), fall back to going home.
+      setTimeout(() => {
+        window.close();
+        setTimeout(() => { window.location.href = 'index.html'; }, 200);
+      }, 400);
     });
 
     // Drawer logout (mirrors header logout; closes the drawer first)
@@ -412,12 +499,17 @@
       drawer?.setAttribute('aria-hidden', 'true');
       Auth.logout();
       window.toast('Signed out. See you soon.', 'success');
-      setTimeout(() => { window.location.href = 'index.html'; }, 400);
+      // Same as header logout: close the tab, else fall back to going home.
+      setTimeout(() => {
+        window.close();
+        setTimeout(() => { window.location.href = 'index.html'; }, 200);
+      }, 400);
     });
 
     // Cross-page auth state sync: re-render the header if login state changes
     window.addEventListener('al:authchange', () => {
       renderHeader(document.body.dataset.page);
+      renderEnvBanner();
     });
 
     // Keep the cart badge in sync once the header (with #cartBadge) is in the DOM
@@ -438,23 +530,53 @@
       { label: 'Our Journey',         href: 'about-journey.html' },
       { label: 'Community',           href: 'about-community.html' },
     ];
+
+    /* Signed-in / guest flows should not drop back to the marketing (logged-out)
+       category pages from the footer. Send them to the repeat-purchase listing
+       instead, and keep the page they are on open in the background. */
+    /* Display-only pages read no login state: their footer Products column always
+       points at the marketing category pages. */
+    const displayOnly = isDisplayOnlyPage();
+    const wordpress = isWordPressPage();
+    const publicPage = displayOnly || wordpress;
+    const loggedIn = !publicPage && !!(window.Auth && window.Auth.user);
+    let isGuestEntry = false;
+    if (!publicPage) { try { isGuestEntry = sessionStorage.getItem(STORAGE.GUEST) === '1'; } catch (e) {} }
+    const prodBase = loggedIn
+      ? 'repeat-purchase.html'
+      : (isGuestEntry ? 'guest-repeat-purchase.html?guest=1' : null);
+
+    function prodHref(cat) {
+      const fallback = {
+        'health-wellness': 'products-health.html',
+        'wellness-devices': 'products-wellness.html',
+        'home-appliances': 'products-water-filters.html',
+        'beauty-skincare': 'products-beauty.html',
+      }[cat] || 'products.html';
+      if (!prodBase) return fallback;
+      const sep = prodBase.includes('?') ? '&' : '?';
+      return `${prodBase}${sep}category=${encodeURIComponent(cat)}`;
+    }
+
     const prodLinks = [
-      { label: 'Health',   href: 'products-health.html' },
-      { label: 'Wellness', href: 'products-wellness.html' },
-      { label: 'Water',    href: 'products-water-filters.html' },
-      { label: 'Beauty',   href: 'products-beauty.html' },
+      { label: 'Health',   href: prodHref('health-wellness') },
+      { label: 'Wellness', href: prodHref('wellness-devices') },
+      { label: 'Water',    href: prodHref('home-appliances') },
+      { label: 'Beauty',   href: prodHref('beauty-skincare') },
     ];
-    const col = (title, links) => `
+    const productLinkAttrs = prodBase ? ' target="_blank" rel="noopener noreferrer"' : '';
+
+    const col = (title, links, linkAttrs = '') => `
         <div class="ek-fcol"><h2>${title}</h2><ul>
-          ${links.map(l => `<li><a href="${l.href}">${l.label}</a></li>`).join('')}
+          ${links.map(l => `<li><a href="${l.href}"${linkAttrs}>${l.label}</a></li>`).join('')}
         </ul></div>`;
     host.innerHTML = `
       <footer class="sec-footer">
         <div class="ek-container--nav">
           <div class="sec-footer__inner">
             <div><img class="sec-footer__logo" src="assets/img/brand/elken-logo-white-v4.svg?v=20260909a" alt="Elken"></div>
-            ${col('Who We Are', whoLinks)}
-            ${col('Products', prodLinks)}
+            ${col('Who We Are', whoLinks, ' target="_blank" rel="noopener noreferrer"')}
+            ${col('Products', prodLinks, productLinkAttrs)}
             <div class="ek-fcol"><h2>Contact Us</h2>
               <address class="ek-faddr"><strong>NIGERIA</strong><br>HEAD OFFICE<br>
               19A IBM Haruna Street,<br>Utako, Abuja.<br>
@@ -475,15 +597,11 @@
       </footer>
     `;
   }
-  /* ---------- Toast ---------- */
+  /* ---------- Toast — delegates to ElkenUI.toast() (elken-ui.js §15) ---------- */
   function toast(msg, kind) {
-    let host = document.querySelector('.toast-host');
-    if (!host) { host = document.createElement('div'); host.className = 'toast-host'; document.body.appendChild(host); }
-    const el = document.createElement('div');
-    el.className = 'toast' + (kind === 'success' ? ' toast-success' : '');
-    el.textContent = msg;
-    host.appendChild(el);
-    setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(8px)'; el.style.transition = 'all .2s'; setTimeout(() => el.remove(), 220); }, 2600);
+    if (!window.ElkenUI) return;
+    const type = kind === 'success' ? 'success' : kind === 'danger' ? 'error' : undefined;
+    window.ElkenUI.toast(msg, type ? { type } : undefined);
   }
   window.toast = toast;
 
@@ -803,14 +921,112 @@
     }
   }
 
+  /* ---------- Page ownership banner (env marker) ----------
+     贴在页面顶部的标识条，按登录态区分页面归属：
+       未登录 → 此页面属于Wordpress页面
+       已登录 → 此页面属于外部AE页面
+       data-env="ae" 页面（guest 下单/结算流程）→ 此页面属于AE页面
+       说明：guest 下单/结算流程属于外部 AE 系统，但不带“外部”二字，
+       与 login/signup 的“外部AE页面”在文案上区分。 */
+  const ENV_BANNER_GUEST  = '此页面属于Wordpress页面';
+  const ENV_BANNER_MEMBER = '此页面属于外部AE页面';
+  const ENV_BANNER_AE     = '此页面属于AE页面';
+  // login / signup 属于外部 AE 系统（非 Wordpress），无论登录态都归属外部 AE
+  function isAuthPage() {
+    const path = (location.pathname.split('/').pop() || '').toLowerCase();
+    return path === 'login.html' || path === 'signup.html';
+  }
+  function renderEnvBanner() {
+    if (!document.body) return;
+    /* Display-only pages never claim member ownership — they always read as the
+       public (Wordpress) page, whatever the stored login state is. */
+    const displayOnly = isDisplayOnlyPage();
+    const wordpress = isWordPressPage();
+    const publicPage = displayOnly || wordpress;
+    const loggedIn = !publicPage && !!(window.Auth && window.Auth.user);
+    const memberBanner = loggedIn || (!publicPage && isAuthPage());
+    const aePage = !publicPage && document.body.dataset.env === 'ae';
+    let el = document.getElementById('envBanner');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'envBanner';
+      el.className = 'env-banner';
+      el.setAttribute('role', 'note');
+      document.body.insertBefore(el, document.body.firstChild);
+      document.body.classList.add('has-env-banner');
+    }
+    el.textContent = aePage ? ENV_BANNER_AE : (memberBanner ? ENV_BANNER_MEMBER : ENV_BANNER_GUEST);
+    el.classList.toggle('env-banner--member', memberBanner || aePage);
+  }
+  window.renderEnvBanner = renderEnvBanner;
+
+  /* ---------- Buy Now gate (unlogged / "Wordpress page" product pages) ----------
+     On product pages shown to signed-out visitors (env banner reads "此页面属于Wordpress页面"),
+     the "Add to cart" / "Add to Cart" control is hidden and replaced by a "Buy Now" button.
+     Clicking "Buy Now" opens login.html in a NEW TAB (carrying ?next= back to this product).
+     Logged-in visitors keep the normal add-to-cart flow untouched. */
+  const GATE_ADD_SELECTOR = '[data-demo-add], #detailAddToCart, .ek-card-addcart-btn[data-product]';
+  function isGateUnlogged() {
+    if (window.isDisplayOnlyPage && window.isDisplayOnlyPage()) return true;
+    if (window.isWordPressPage && window.isWordPressPage()) return true;
+    return !(window.Auth && typeof window.Auth.isLoggedIn === 'function' && window.Auth.isLoggedIn());
+  }
+  function openLoginNewTab() {
+    const file = location.pathname.split('/').pop() || 'index.html';
+    const next = '?next=' + encodeURIComponent(file + location.search);
+    const w = window.open('login.html' + next, '_blank', 'noopener');
+    if (!w) location.href = 'login.html' + next; // popup blocked → same tab fallback
+  }
+  function applyBuyNowGate() {
+    const unlogged = isGateUnlogged();
+    const hasDetailBuyNow = !!document.getElementById('detailBuyNow');
+    document.querySelectorAll(GATE_ADD_SELECTOR).forEach(function (btn) {
+      if (!btn.parentNode) return;
+      let buy = btn.parentNode.querySelector(':scope > .ek-buy-now-gate');
+      if (unlogged) {
+        // product-detail.html already ships a "Buy Now"; don't add a second one.
+        if (!buy && !hasDetailBuyNow) {
+          buy = document.createElement('button');
+          buy.type = 'button';
+          buy.className = (btn.className || '') + ' ek-buy-now-gate';
+          buy.textContent = 'Buy Now';
+          buy.addEventListener('click', openLoginNewTab);
+          btn.parentNode.insertBefore(buy, btn.nextSibling);
+        }
+        btn.hidden = true;
+      } else {
+        btn.hidden = false;
+        if (buy) buy.remove();
+      }
+    });
+    // product-detail.html: intercept its existing Buy Now to open login when unlogged
+    // (instead of jumping straight to checkout), and restore it on login.
+    const buyNow = document.getElementById('detailBuyNow');
+    if (buyNow && !buyNow.dataset.gateWrapped) {
+      buyNow.dataset.gateWrapped = '1';
+      buyNow.addEventListener('click', function (e) {
+        if (isGateUnlogged()) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          openLoginNewTab();
+        }
+      });
+    }
+  }
+  window.applyBuyNowGate = applyBuyNowGate;
+  window.openLoginNewTab = openLoginNewTab;
+
   /* ---------- Init ---------- */
   document.addEventListener('DOMContentLoaded', () => {
     // Seed demo account + sample order BEFORE rendering the header so it shows the signed-in state.
     // This guarantees identical first-load content on both http://127.0.0.1:XXXX and file:// protocol.
-    seedDemoIfEmpty();
+    // Display-only pages (index.html) never write login state, so they skip seeding.
+    if (!isDisplayOnlyPage() && !isWordPressPage()) seedDemoIfEmpty();
     renderHeader(document.body.dataset.page);
     renderFooter();
     renderCookieBanner();
+    renderEnvBanner();
+    applyBuyNowGate();
     wireOffline();
     bindLoadingBtns();
     // 首次加载：把所有 data-i18n 标记按当前语言填充
@@ -820,7 +1036,10 @@
       renderHeader(document.body.dataset.page);
       renderFooter();
       T.applyI18n(document.body);
+      applyBuyNowGate();
     });
+    // Re-evaluate the Buy Now gate whenever login state changes (e.g. checkout flow).
+    window.addEventListener('al:authchange', applyBuyNowGate);
   });
 
   /* ---------- Public helpers ---------- */

@@ -10,10 +10,11 @@
   <meta name="description" content="Elken product detail page with wellness product benefits, ingredients and quality notes." />
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
-  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
-  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
+  <link rel="stylesheet" href="assets/css/product-detail.css?v=20260922a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="products">
@@ -29,7 +30,11 @@
           <h1 id="detailTitle">Product Detail</h1>
           <p id="detailIntro">Elken product information for the selected category.</p>
           <div class="detail-chip-row" id="detailTags"></div>
-          <div class="detail-bv-row" id="detailBV" hidden></div>
+          <div class="detail-price-block">
+            <span class="detail-price" id="detailPrice">—</span>
+            <span class="detail-price-was" id="detailPriceWas" hidden></span>
+            <div class="detail-bv-row" id="detailBV" hidden></div>
+          </div>
           <div class="detail-actions">
             <div class="qty-control detail-qty" id="detailQtyControl">
               <button type="button" class="qty-btn" data-qty="-1" aria-label="Decrease quantity">−</button>
@@ -92,7 +97,7 @@
 
   <div id="app-footer" class="ek-site-footer"></div>
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-<script src="assets/js/app.js?v=20260909e"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
   <script src="assets/js/website.js?v=20260909c-2"></script>
   <script>
     const productDetails = {
@@ -347,6 +352,7 @@ function localizedDetail(detail) { return detail; }
 
       // Wire "Add to Cart" + "Buy Now" using a normalized catalog product
       const catalog = window.ProductCatalog || {};
+      const loggedIn = !!(window.Auth && window.Auth.isLoggedIn());
       const catalogList = catalog.allProducts || [];
       const metaPrice = meta ? meta[5] : 0;
       const catKeyMap = {
@@ -366,6 +372,7 @@ function localizedDetail(detail) { return detail; }
         id: matched.id,
         name: matched.name,
         price: matched.price,
+        rp: matched.rp,
         img: matched.img,
         category: matched.category,
         bv: matched.bv,
@@ -381,8 +388,9 @@ function localizedDetail(detail) { return detail; }
 
       const qtyInput = document.getElementById('detailQty');
       const readQty = () => Math.max(1, Math.min(99, parseInt(qtyInput.value, 10) || 1));
+      // The hero already shows the unit price, so the button stays a plain CTA.
       const updateAddLabel = () => {
-        if (addBtn) addBtn.textContent = catalogProduct.price ? `Add to Cart · N${(catalogProduct.price * readQty()).toLocaleString()}` : 'Add to Cart';
+        if (addBtn) addBtn.textContent = 'Add to Cart';
       };
       document.querySelectorAll('#detailQtyControl .qty-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -409,20 +417,36 @@ function localizedDetail(detail) { return detail; }
         };
       }
 
+      // Price block — member price plus the RRP struck through for context
+      const priceEl = document.getElementById('detailPrice');
+      const priceWasEl = document.getElementById('detailPriceWas');
+      if (priceEl) {
+        priceEl.textContent = catalogProduct.price
+          ? `N${Number(catalogProduct.price).toLocaleString()}`
+          : '—';
+      }
+      if (priceWasEl) {
+        const rp = Number(catalogProduct.rp) || 0;
+        if (rp > (Number(catalogProduct.price) || 0)) {
+          priceWasEl.hidden = false;
+          priceWasEl.textContent = `N${rp.toLocaleString()}`;
+        } else {
+          priceWasEl.hidden = true;
+          priceWasEl.textContent = '';
+        }
+      }
+
       // Show BV rewards — gated by login state per project convention
       const bvRow = document.getElementById('detailBV');
       if (bvRow) {
-        const loggedIn = !!(window.Auth && window.Auth.isLoggedIn);
-        if (!loggedIn) {
-          bvRow.hidden = true;
+        const isMember = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
+        const bv = window.ProductCatalog.getBV ? window.ProductCatalog.getBV(catalogProduct) : 0;
+        if (isMember && bv > 0) {
+          bvRow.hidden = false;
+          bvRow.innerHTML = `<span class="bv-badge" title="Bonus volume earned with this purchase">Earn <b>${bv} BV</b> with this purchase</span>`;
         } else {
-          const bv = window.ProductCatalog.getBV ? window.ProductCatalog.getBV(catalogProduct) : 0;
-          if (bv > 0) {
-            bvRow.hidden = false;
-            bvRow.innerHTML = `<span class="bv-badge">Earn <b>${bv} BV</b> with this purchase</span>`;
-          } else {
-            bvRow.hidden = true;
-          }
+          bvRow.hidden = true;
+          bvRow.innerHTML = '';
         }
       }
     }

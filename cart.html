@@ -10,14 +10,14 @@
   <meta name="description" content="Review the items in your Elken shopping cart and proceed to secure checkout." />
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
-  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
-  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/cart.css?v=20260909a">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
+  <link rel="stylesheet" href="assets/css/cart.css?v=20260917a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
-<body data-page="cart">
+<body data-page="cart" data-guest-no-nav="true">
   <div id="offline-banner" class="offline-banner">Connection status</div>
   <div id="app-header" class="ek-site-header"></div>
 
@@ -39,7 +39,7 @@
 
   <div id="app-footer" class="ek-site-footer"></div>
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-<script src="assets/js/app.js?v=20260909e"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
   <script src="assets/js/website.js?v=20260909c-2"></script>
   <script>
     (function() {
@@ -48,6 +48,11 @@
 
       function imgOf(item) {
         if (item.img) {
+          // "Add to cart" buttons on some marketing pages set data-img to a
+          // full path (assets/img/prod-x.png) rather than a bare filename —
+          // prepending the category folder to that mangles it into a
+          // nonexistent nested path. Only prepend when img is actually bare.
+          if (/^(assets\/|https?:)/i.test(item.img)) return item.img;
           return item.category ? `assets/img/products/${item.category}/${item.img}` : item.img;
         }
         return 'assets/img/categories/health-wellness.webp';
@@ -106,6 +111,16 @@
           });
         }
 
+        // "Continue shopping" returns to the product list that matches the
+        // shopper's state: members → repeat-purchase.html, guests → the guest
+        // copy of that page (also keeps the compact guest nav).
+        const guestMode = (() => {
+          try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; }
+        })();
+        const continueHref = (!loggedIn && guestMode)
+          ? 'guest-repeat-purchase.html?guest=1'
+          : 'repeat-purchase.html';
+
         view.innerHTML = `
           <div class="cart-layout">
             <div class="cart-list">${lines}</div>
@@ -119,7 +134,7 @@
                 <div class="total"><span class="k">Total</span><span class="v" id="cartTotal">${N(subtotal)}</span></div>
                 <a class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" href="checkout.html?cart=1">Proceed to checkout</a>
                 <button type="button" class="ek-btn ek-btn--ghost ek-btn--block" id="clearCart">Clear cart</button>
-                <a class="ek-btn ek-btn--secondary ek-btn--block" href="products.html">Continue shopping</a>
+                <a class="ek-btn ek-btn--secondary ek-btn--block" href="${continueHref}">Continue shopping</a>
               </div>
             </div>
           </div>`;

@@ -1,12 +1,13 @@
 /* ==========================================================================
    account-ui.css — My Account content layer (Elken UI Kit v1.1.1)
    --------------------------------------------------------------------------
-   The portal's markup pre-dates the kit and uses its own class names
-   (.dash-head, .kpi, .mrp-card, .ti-card, .ocard, .sn-node, .mug-card …).
-   This file maps every account-module component onto the kit's visual
-   language so the 7 account pages read like demo/account.html — WITHOUT
-   touching a single line of JavaScript. All IDs, data-attributes, event
-   bindings and interaction logic are preserved exactly.
+   The portal's markup pre-dates the kit and uses its own class names for
+   page-specific layout (.dash-head, .mrp-card, .ocard, .mug-card …) while
+   the actual components — tables, chips, cards, stats, tree, empty states,
+   modals — now use the kit's own .ek-* classes directly. This file supplies
+   what the kit deliberately doesn't (page composition, one-off spacing) and
+   documents where a class stands in for a kit component. All IDs,
+   data-attributes, event bindings and interaction logic are preserved exactly.
 
    Rules honoured (per CLAUDE.md):
    - Tokens only. No hex, no px font-size, no arbitrary spacing.
@@ -72,6 +73,11 @@
   text-decoration: none; cursor: pointer;
 }
 .btn-link:hover { background: var(--ek-grey-light); color: var(--ek-blue); text-decoration: none; }
+/* Destructive actions (Delete, Remove) get the error token instead of the
+   default blue ink, so they read as distinct from Edit/Set default at a
+   glance — not just by their label text. */
+.btn-link.danger { --btn-ink: var(--ek-error); --btn-border: var(--ek-error); }
+.btn-link.danger:hover { background: var(--ek-error-tint); color: var(--ek-error); }
 
 /* --------------------------------------------------------------------------
    1. Page shells + content width
@@ -146,24 +152,10 @@
 /* --------------------------------------------------------------------------
    2. Shared card + section-title vocabulary
    -------------------------------------------------------------------------- */
-.mrp-card,
-.reg-card,
-.ti-card,
-.checkout-card,
-.mug-card,
-.sec-block,
-.method-info-card,
-.member-result,
-.ocard {
-  background: var(--ek-surface);
-  border: 1px solid var(--ek-border);
-  border-radius: var(--ek-radius-lg);
-  box-shadow: var(--ek-shadow-sm);
-  padding: var(--ek-24);
-  margin-bottom: var(--ek-24);
-}
+/* .reg-card, .checkout-card, .sec-block (standalone), .method-info-card and
+   .ocard are all .ek-card now (elken-ui.css §2) — only the heading spacing
+   and the info-card title below are still page-specific. */
 .mrp-card > h2,
-.ti-card > h2,
 .checkout-card > h2,
 .mug-card > h1 {
   margin: 0 0 var(--ek-4);
@@ -172,7 +164,6 @@
   color: var(--ek-blue);
 }
 .mrp-card > p,
-.ti-card > p,
 .checkout-card > p,
 .mug-card > p { margin: 0 0 var(--ek-16); }
 .sec-title {
@@ -293,37 +284,10 @@
 }
 
 /* --------------------------------------------------------------------------
-   5. Stat cards — .kpi reads as .ek-stat inside a card
+   5. Stat cards — .ek-card > .ek-stat (elken-ui.css §2/§3). Only the
+   breakdown detail rows below are page-specific, no kit equivalent.
    -------------------------------------------------------------------------- */
-.kpi-grid {
-  display: grid; gap: var(--ek-20); margin-bottom: var(--ek-32);
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-}
-.kpi {
-  display: flex; flex-direction: column; align-items: flex-start;
-  padding: var(--ek-24);
-  background: var(--ek-surface);
-  border: 1px solid var(--ek-border);
-  border-radius: var(--ek-radius-lg);
-  box-shadow: var(--ek-shadow-sm);
-}
-.kpi .k {
-  margin-bottom: var(--ek-8);
-  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
-  letter-spacing: .07em; text-transform: uppercase; color: var(--ek-muted);
-}
-.kpi .v {
-  font-size: var(--ek-h1); line-height: 1.05;
-  font-weight: var(--ek-w-bold); letter-spacing: -.6px;
-  color: var(--ek-blue);
-  font-variant-numeric: tabular-nums lining-nums;
-}
-.kpi .v small {
-  margin-left: 5px; font-size: var(--ek-small); font-weight: var(--ek-w-medium);
-  letter-spacing: 0; color: var(--ek-muted);
-}
-.kpi .delta { margin-top: var(--ek-12); font-size: var(--ek-caption); color: var(--ek-muted); text-wrap: pretty; }
-.kpi-breakdown { margin-top: var(--ek-12); width: 100%; }
+.kpi-breakdown { margin-top: var(--ek-12); }
 .kpi-breakdown-title {
   font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
   text-transform: uppercase; letter-spacing: .05em; color: var(--ek-muted);
@@ -356,21 +320,44 @@
   transition: box-shadow var(--ek-fast) var(--ek-ease), border-color var(--ek-fast) var(--ek-ease);
 }
 .hub-cell:hover { box-shadow: var(--ek-shadow); border-color: var(--ek-blue); }
-.hub-icon { font-size: var(--ek-h3); line-height: 1; }
-.hub-label { font-size: var(--ek-small); font-weight: var(--ek-w-bold); color: var(--ek-blue); }
+.hub-icon {
+  width: 40px; height: 40px; flex: 0 0 auto;
+  display: grid; place-items: center;
+  background: var(--ek-info-tint); color: var(--ek-blue);
+  border-radius: var(--ek-radius);
+}
+/* Reserve two lines for the label so a one-line title ("Repeat Purchase")
+   and a two-line one ("Member Welcome Pack") in the same row still start
+   their description text at the same height. */
+.hub-label {
+  font-size: var(--ek-small); line-height: var(--ek-small-lh); font-weight: var(--ek-w-bold);
+  color: var(--ek-blue); min-height: calc(var(--ek-small-lh) * 2em);
+}
 .hub-desc { font-size: var(--ek-caption); color: var(--ek-muted); }
 
 /* --------------------------------------------------------------------------
    7. Overview columns, quick actions, referral
    -------------------------------------------------------------------------- */
-.overview-grid { display: grid; gap: var(--ek-20); }
+.overview-grid { display: grid; gap: var(--ek-20); align-items: stretch; }
 @media (min-width: 1024px) { .overview-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+/* align-items: stretch only equalizes the two <section> wrappers, which are
+   transparent — the visible white .ek-card underneath (Quick actions vs
+   Referrals, different content length) still ends at its own natural height.
+   Stretch the card to fill its now-equal-height section too. */
+.overview-grid > section { display: flex; flex-direction: column; }
+.overview-grid > section > .ek-card { flex: 1; }
 .panel-title {
   margin: 0 0 var(--ek-12);
   font-size: var(--ek-h3); font-weight: var(--ek-w-bold); color: var(--ek-blue);
 }
-.action-stack { display: flex; flex-direction: column; gap: var(--ek-12); }
-.action-stack .ek-btn { justify-content: space-between; text-align: left; }
+/* The Quick actions card is stretched to match the taller Referrals card
+   beside it (.overview-grid), but .action-stack only ever took its own
+   content height — the two buttons clumped at the top with a large empty
+   gap below, reading as cramped rather than as a card that uses its space.
+   Fill the card and center the actions in it, with a bit more breathing
+   room between them. */
+.action-stack { display: flex; flex-direction: column; justify-content: center; gap: var(--ek-16); flex: 1; }
+.action-stack .ek-btn { justify-content: space-between; text-align: left; padding: var(--ek-16) var(--ek-20); }
 .referral-summary { display: flex; gap: var(--ek-32); flex-wrap: wrap; margin-bottom: var(--ek-12); }
 .referral-summary-k {
   display: block; font-size: var(--ek-caption); letter-spacing: .05em;
@@ -382,8 +369,6 @@
 .referral-row-main { font-weight: var(--ek-w-bold); color: var(--ek-charcoal); }
 .referral-row-sub { font-size: var(--ek-caption); color: var(--ek-muted); }
 .referral-row-bv { margin-left: auto; color: var(--ek-blue); font-weight: var(--ek-w-bold); font-variant-numeric: tabular-nums; }
-.referral-empty { font-size: var(--ek-small); color: var(--ek-muted); }
-
 /* --------------------------------------------------------------------------
    8. Orders — segmented control + order cards
    -------------------------------------------------------------------------- */
@@ -413,6 +398,10 @@
 }
 .orders-segment-panel[hidden] { display: none; }
 
+/* .orders-cards wraps one or more .ocard (order card) elements with no gap
+   rule of its own, so multiple orders rendered flush against each other. */
+.orders-cards { display: grid; gap: var(--ek-16); }
+.o-download { justify-content: center; flex-shrink: 0; }
 .ocard__head { display: flex; align-items: center; gap: var(--ek-12); flex-wrap: wrap; }
 .ocard__id {
   font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue);
@@ -426,21 +415,48 @@
    each chip out as a baseline-aligned row with a 4px gap. */
 .ocard__meta > span { display: inline-flex; align-items: baseline; gap: var(--ek-4); }
 .ocard__meta span { font-size: var(--ek-caption); color: var(--ek-muted); }
-.ocard__meta b { color: var(--ek-charcoal); font-weight: var(--ek-w-medium); }
-.ocard__items { width: 100%; border-collapse: collapse; margin-top: var(--ek-8); }
-.ocard__items th, .ocard__items td { padding: var(--ek-12); text-align: left; border-bottom: 1px solid var(--ek-border); }
-.ocard__items thead th {
-  background: var(--ek-surface-sunken);
-  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
-  letter-spacing: .05em; text-transform: uppercase; color: var(--ek-muted);
-}
-.ocard__items tbody tr:hover td { background: var(--ek-surface-sunken); }
+.ocard__meta b { margin-right: var(--ek-4); color: var(--ek-charcoal); font-weight: var(--ek-w-medium); }
+/* Base table look now comes from .ek-table (elken-ui.css) on the <table> tag.
+   Only genuinely order-card-specific bits stay here. */
+.ocard__items { margin-top: var(--ek-8); }
 .ocard__items .num { text-align: right; font-variant-numeric: tabular-nums; }
-.ocard__items .lbl { display: block; color: var(--ek-muted); }
+.ocard__items .lbl { color: var(--ek-muted); }
 .ocard__thumb { display: inline-block; width: 48px; height: 48px; border-radius: var(--ek-radius); background: var(--ek-surface-sunken); overflow: hidden; }
 .ocard__thumb img, .ocard__thumb svg { width: 100%; height: 100%; object-fit: contain; }
 .ocard__grand td { font-weight: var(--ek-w-bold); color: var(--ek-blue); }
 .col-img { width: 72px; }
+@media (max-width: 639px) {
+  /* The subtotal/grand-total rows are a label + several stat cells, not a
+     normal record row — show the label as its own line instead of pairing
+     it with a data-label prefix. */
+  .ocard__items.ek-table--stack tfoot td.lbl { display: block; text-align: left; }
+}
+/* This table has 9 columns (image, code, product, qty, price, total price,
+   BV, tax rate, tax) — too wide to fit without horizontal scroll on tablet
+   widths, which hides the grand total off-screen. Kit's stack breakpoint
+   (.ek-table--stack, 639px) is too narrow for this specific table, so widen
+   it here rather than globally. */
+@media (min-width: 640px) and (max-width: 899px) {
+  .ocard__items.ek-table--stack thead { display: none; }
+  .ocard__items.ek-table--stack, .ocard__items.ek-table--stack tbody, .ocard__items.ek-table--stack tr, .ocard__items.ek-table--stack td {
+    display: block; width: 100%;
+  }
+  .ocard__items.ek-table--stack tr {
+    border: 1px solid var(--ek-border); border-radius: var(--ek-radius);
+    margin-bottom: var(--ek-12); padding: var(--ek-4) 0; background: var(--ek-surface);
+  }
+  .ocard__items.ek-table--stack td {
+    display: flex; justify-content: space-between; gap: var(--ek-16);
+    border-bottom: 1px dashed var(--ek-border); text-align: right;
+  }
+  .ocard__items.ek-table--stack td:last-child { border-bottom: 0; }
+  .ocard__items.ek-table--stack td::before {
+    content: attr(data-label);
+    font-weight: var(--ek-w-bold); color: var(--ek-muted);
+    text-align: left; flex: none;
+  }
+  .ocard__items.ek-table--stack tfoot td.lbl { display: block; text-align: left; }
+}
 .o-download {
   display: inline-flex; align-items: center; gap: var(--ek-4);
   padding: var(--ek-4) var(--ek-8); border: 1px solid var(--ek-border);
@@ -449,32 +465,6 @@
   cursor: pointer; text-decoration: none;
 }
 .o-download:hover { background: var(--ek-grey-light); }
-
-/* Status chip — kit .ek-chip, applied to portal status classes */
-.o-status {
-  display: inline-flex; align-items: center; gap: var(--ek-4);
-  padding: 3px var(--ek-8); border-radius: var(--ek-radius-pill);
-  background: var(--ek-neutral-tint); color: var(--ek-neutral);
-  font-size: var(--ek-caption); font-weight: var(--ek-w-bold); line-height: 1.5;
-}
-.o-status--paid    { background: var(--ek-success-tint); color: var(--ek-success); }
-.o-status--pending { background: var(--ek-warning-tint); color: var(--ek-warning); }
-.o-status--fail    { background: var(--ek-error-tint);   color: var(--ek-error); }
-.o-status--unpaid  { background: var(--ek-info-tint);    color: var(--ek-info); }
-
-/* Empty state — .ek-empty */
-.orders-empty,
-.sn-empty {
-  display: flex; flex-direction: column; align-items: center; gap: var(--ek-12);
-  padding: var(--ek-40) var(--ek-24);
-  background: var(--ek-surface);
-  border: 1px dashed var(--ek-border); border-radius: var(--ek-radius-lg);
-  text-align: center;
-}
-.orders-empty .icon { font-size: var(--ek-h1); line-height: 1; }
-.orders-empty .txt,
-.sn-empty { font-size: var(--ek-small); color: var(--ek-muted); }
-.orders-empty .ek-btn { margin-top: var(--ek-8); }
 
 /* --------------------------------------------------------------------------
    9. Sponsor network tree
@@ -496,34 +486,15 @@
   font: inherit; font-size: var(--ek-small); color: var(--ek-muted); cursor: pointer;
 }
 .sn-mode-btn.active { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); }
-.sn-node-wrap { margin-bottom: var(--ek-8); }
-.sn-node {
-  display: flex; align-items: center; gap: var(--ek-12);
-  padding: var(--ek-12);
-  background: var(--ek-surface);
-  border: 1px solid var(--ek-border); border-radius: var(--ek-radius);
-}
+/* Sponsor network tree is .ek-tree (elken-ui.css §19); this is just the
+   collapse/expand button, which the kit doesn't define. margin-left: auto
+   keeps it clear of the avatar so the connector-line math in §19 still holds. */
 .sn-toggle {
-  flex: 0 0 auto; width: 28px; height: 28px;
+  flex: 0 0 auto; width: 28px; height: 28px; margin-left: auto;
   display: grid; place-items: center;
   border: 1px solid var(--ek-border); border-radius: var(--ek-radius);
   background: var(--ek-surface); color: var(--ek-muted);
   font: inherit; cursor: pointer;
-}
-.sn-node-avatar {
-  flex: 0 0 auto; width: 36px; height: 36px; border-radius: 50%;
-  background: var(--ek-info-tint); overflow: hidden;
-  display: grid; place-items: center;
-}
-.sn-node-avatar svg { width: 100%; height: 100%; }
-.sn-node-main { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ek-4) var(--ek-12); }
-.sn-code { font-family: var(--ek-num), ui-monospace, monospace; font-weight: var(--ek-w-bold); color: var(--ek-blue); }
-.sn-name { font-weight: var(--ek-w-bold); color: var(--ek-charcoal); }
-.sn-level, .sn-highest, .sn-pcv { font-size: var(--ek-caption); color: var(--ek-muted); }
-.sn-children {
-  margin-left: var(--ek-24);
-  padding-left: var(--ek-16);
-  border-left: 2px solid var(--ek-border);
 }
 
 /* --------------------------------------------------------------------------
@@ -533,7 +504,7 @@
    Sits directly under the KPI row with a tinted header band, a four-up stats
    strip and the tree always rendered, so it reads as a headline module rather
    than a tab nobody opens. */
-.sn-module { border-color: var(--ek-panel-cool); }
+.sn-module { border-color: var(--ek-panel-cool); margin-bottom: var(--ek-32); }
 .sn-module-head {
   display: flex; align-items: flex-start; justify-content: space-between;
   gap: var(--ek-16) var(--ek-24); flex-wrap: wrap;
@@ -559,8 +530,11 @@
 
 .sn-stats {
   display: grid; gap: var(--ek-16);
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   margin: var(--ek-20) 0;
+}
+@media (max-width: 720px) {
+  .sn-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .sn-stat {
   display: grid; gap: var(--ek-4);
@@ -583,7 +557,6 @@
     margin: calc(var(--ek-20) * -1) calc(var(--ek-20) * -1) 0;
     padding: var(--ek-16) var(--ek-20);
   }
-  .sn-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   #snTopMember { width: 100%; }
 }
 
@@ -599,6 +572,41 @@
   border-bottom: 1px solid var(--ek-border);
 }
 .profile-card-head h2 { margin: 0; font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue); }
+
+/* .address-card gets its base card look (padding/border/shadow) from the
+   shared group rule in water-pages.css; only the address-specific inner
+   pieces need styling here. */
+.address-card { display: flex; gap: var(--ek-16); align-items: flex-start; }
+.address-card + .address-card { margin-top: var(--ek-12); }
+.address-card-body { flex: 1; min-width: 0; }
+.address-card-head { display: flex; align-items: center; gap: var(--ek-8); flex-wrap: wrap; margin-bottom: var(--ek-4); }
+.address-label { font-weight: var(--ek-w-bold); color: var(--ek-charcoal); }
+.address-default-badge {
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
+  letter-spacing: .05em; text-transform: uppercase;
+  background: var(--ek-success); color: var(--ek-white);
+  padding: 2px var(--ek-8); border-radius: 999px;
+}
+.address-line { color: var(--ek-muted); font-size: var(--ek-small); }
+.address-actions { display: flex; flex-direction: column; gap: var(--ek-8); flex: none; }
+@media (max-width: 560px) {
+  .address-card { flex-direction: column; }
+  .address-actions { flex-direction: row; flex-wrap: wrap; }
+}
+/* .inline-addr-editor / .inline-addr-head / .inline-addr-foot / the "Set as
+   default" toggle only ever had rules in pages.css, which account.html does
+   not load — the whole panel rendered with no card frame, an unaligned
+   header, and a bare unstyled checkbox. */
+.inline-addr-editor {
+  margin-bottom: var(--ek-16); padding: var(--ek-20);
+  background: var(--ek-surface-sunken); border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+}
+.inline-addr-head { margin-bottom: var(--ek-16); }
+.inline-addr-head h3 { margin: 0; font-size: var(--ek-h4); color: var(--ek-blue); }
+.inline-addr-default { grid-column: 1 / -1; margin-top: var(--ek-4); }
+.inline-addr-foot { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: var(--ek-12); margin-top: var(--ek-4); }
+@media (max-width: 479px) { .inline-addr-foot { flex-direction: column-reverse; } .inline-addr-foot .ek-btn { width: 100%; } }
 .profile-form {
   display: grid; gap: var(--ek-16);
   /* Override the kit's .ek-form two-column template: profile rows must stack
@@ -610,21 +618,18 @@
   grid-template-columns: minmax(0, 1fr);
 }
 .profile-form > * { min-width: 0; }
+/* Personal information and the address editor both live in a full-width
+   card (.profile-card-wide). Their fields are paired into two-column .row
+   groups (Recipient/Phone, Region/City, etc.) so that width is actually
+   used — capping the form to a fixed max-width left the whole right side
+   of the card empty instead. */
 .profile-form .row {
   display: grid; gap: var(--ek-16); margin-bottom: 0;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
-/* 180px min made Current / New / Confirm wrap to 2 + 1 inside the half-width
-   password cards; 150px lets all three sit on one row (>= ~512px).
-   Labels like "Confirm new password" need 179px and still wrap in a ~175px
-   column even with zero letter-spacing, so bottom-align the fields: the label
-   grows upward while the three inputs stay on one line.
-   标签在 175px 列内必然换行（实测需 179px），这里让字段底部对齐——标签向上伸展，
-   三个输入框保持同一水平线。 */
-.profile-form .row.cols-3 {
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  align-items: end;
-}
+/* Current / New / Confirm password fields stack one per row, same as every
+   other profile-form row — not side by side. */
+.profile-form .row.cols-3 { grid-template-columns: 1fr; }
 .profile-form .field { display: flex; flex-direction: column; gap: var(--ek-8); min-width: 0; }
 .profile-form .field > label {
   font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
@@ -638,10 +643,13 @@
 /* Give action buttons a consistent footprint so a lone Save does not look
    cramped next to a Cancel + Save pair. */
 .profile-actions .ek-btn { min-width: 132px; }
-/* The two password modules wrap their form in a .sec-block inside an .ek-card —
-   flatten it so we do not render a card inside a card.
-   密码模块在 .ek-card 内又套了一层 .sec-block，这里压平，避免出现卡片套卡片。 */
-.profile-card > .sec-block {
+/* The password modules (profile-card) and member-welcome.html's whole form
+   (reg-card) wrap each section in a .sec-block inside an .ek-card — flatten
+   it so we do not render a card inside a card.
+   密码模块（profile-card）和 member-welcome.html 的整个表单（reg-card）都是
+   在 .ek-card 内又套了一层 .sec-block，这里压平，避免出现卡片套卡片。 */
+.profile-card > .sec-block,
+.reg-card .sec-block {
   background: transparent; border: 0; box-shadow: none;
   padding: 0; margin: 0; border-radius: 0;
 }
@@ -653,10 +661,15 @@
    导致 select 与 input 各占满宽上下堆叠。 */
 .phone-input-wrap {
   display: flex; align-items: stretch; flex: 1 1 260px;
-  min-width: 0; max-width: 420px;          /* keep dial + number in proportion */
+  min-width: 0;
+  /* No max-width: this always sits inside a bounded grid column (a .row
+     pair, same as every other field), so it should fill that column edge
+     to edge like Country/Email do — a fixed 420px cap left it narrower
+     than the field above it once its column grew past ~420px. */
 }
 .phone-dial {
-  flex: 0 0 140px; width: 140px;
+  /* 168px, not 140 — "Nigeria (+234)" clipped at 140px. */
+  flex: 0 0 168px; width: 168px;
   border-top-right-radius: 0; border-bottom-right-radius: 0;
 }
 .phone-number {
@@ -664,7 +677,11 @@
   border-top-left-radius: 0; border-bottom-left-radius: 0;
 }
 .phone-dial:focus, .phone-number:focus { position: relative; z-index: 1; }
-.sec-block + .sec-block { margin-top: 0; }
+/* Was margin-top: 0, relying on each section's last child (usually a
+   .field-row, margin-bottom: 16px) to create the gap — .prod-summary-bar
+   has no bottom margin, so the Products → Network Information boundary
+   had zero space. Give the boundary itself a guaranteed gap instead. */
+.sec-block + .sec-block { margin-top: var(--ek-24); }
 .basic-info-bar {
   display: grid; gap: var(--ek-16);
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -693,6 +710,16 @@
 .row2, .row3 { display: grid; gap: var(--ek-16); }
 .row2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .row3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* .field/.row2/.row3 are stacked directly as flex children of a form card
+   (e.g. .ship-form) with no gap of its own — consecutive rows had 0px
+   between them, sitting flush against each other. Scoped to .ship-form: the
+   unscoped selector also matched .field siblings placed SIDE BY SIDE inside
+   .profile-form .row's grid, where margin-top pushed the second column's
+   field down out of alignment with the first. */
+.ship-form > .field + .field, .ship-form > .field + .row2, .ship-form > .field + .row3,
+.ship-form > .row2 + .field, .ship-form > .row2 + .row3, .ship-form > .row3 + .field {
+  margin-top: var(--ek-16);
+}
 .reg-head { margin-bottom: var(--ek-24); }
 
 /* --------------------------------------------------------------------------
@@ -781,10 +808,12 @@
    -------------------------------------------------------------------------- */
 .member-search { display: flex; gap: var(--ek-8); flex-wrap: wrap; }
 .member-search .ek-input { flex: 1 1 220px; }
-.member-result { display: flex; align-items: center; gap: var(--ek-12); }
+/* #memberResult (member-repurchase.html / member-auto-maintenance.html) is a
+   plain wrapper JS fills with an .ek-identity row + an .ek-kv detail list
+   (or an .ek-alert--error on a bad lookup) — see showMemberResult(). Only the
+   larger avatar and the monospace member-ID treatment are page-specific. */
 .member-result .ek-avatar { --size: 44px; }
-.member-result .name { font-weight: var(--ek-w-bold); color: var(--ek-charcoal); }
-.member-result .id { font-size: var(--ek-caption); color: var(--ek-muted); font-family: var(--ek-num), ui-monospace, monospace; }
+.member-result .ek-identity__meta { font-family: var(--ek-num), ui-monospace, monospace; }
 .reporting-row { display: grid; gap: var(--ek-16); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 
 /* Product table (grid) */
@@ -829,14 +858,13 @@
 .odet { display: grid; gap: var(--ek-20); }
 
 /* --- Hero --- */
+/* .odet-hero and .odet-card are .ek-card (elken-ui.css §2); .odet-badge is
+   .ek-chip + a semantic --success/--warning/--error variant (§4) — only the
+   layout and the uppercase/tracked badge treatment below are page-specific. */
 .odet-hero {
-  display: flex; align-items: center; justify-content: space-between;
+  /* .ek-card defaults to flex-direction: column — override back to a row. */
+  flex-direction: row; align-items: center; justify-content: space-between;
   gap: var(--ek-20); flex-wrap: wrap;
-  padding: var(--ek-24);
-  background: var(--ek-surface);
-  border: 1px solid var(--ek-border);
-  border-radius: var(--ek-radius-lg);
-  box-shadow: var(--ek-shadow-sm);
 }
 .odet-hero-main { display: grid; gap: var(--ek-8); min-width: 0; }
 .odet-ref {
@@ -852,18 +880,11 @@
 }
 
 /* --- State badges --- */
-.odet-badge {
-  display: inline-flex; align-items: center; width: fit-content;
-  padding: var(--ek-4) var(--ek-8);
-  border-radius: var(--ek-radius-pill);
-  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
-  text-transform: uppercase; letter-spacing: .04em;
-  background: var(--ek-neutral-tint); color: var(--ek-muted);
-}
-.odet-badge.is-paid { background: var(--ek-success-tint); color: var(--ek-success); }
-.odet-badge.is-pending { background: var(--ek-warning-tint); color: var(--ek-warning); }
-.odet-badge.is-fail { background: var(--ek-error-tint); color: var(--ek-error); }
-.odet-badge.is-neutral { background: var(--ek-neutral-tint); color: var(--ek-muted); }
+/* .odet-hero-main is a grid container with no justify-items set, so grid's
+   default (stretch) was pulling this chip to the full column width instead
+   of letting its own inline-flex sizing hug the text ("PAID" stretched out
+   to a long pill spanning the card). */
+.odet-badge { text-transform: uppercase; letter-spacing: .04em; justify-self: start; }
 
 /* --- Columns --- */
 .odet-grid { display: grid; gap: var(--ek-20); }
@@ -876,13 +897,6 @@
 .odet-info { display: grid; gap: var(--ek-20); }
 
 /* --- Cards --- */
-.odet-card {
-  padding: var(--ek-24);
-  background: var(--ek-surface);
-  border: 1px solid var(--ek-border);
-  border-radius: var(--ek-radius-lg);
-  box-shadow: var(--ek-shadow-sm);
-}
 .odet-card-head { display: flex; align-items: center; gap: var(--ek-8); margin-bottom: var(--ek-16); }
 .odet-card-title { margin: 0; font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue); }
 .odet-card > .odet-card-title { margin-bottom: var(--ek-16); }
@@ -1001,32 +1015,12 @@
 .odet-card .order-link-box .ek-btn { white-space: normal; }
 
 /* --------------------------------------------------------------------------
-   15. Team Inquiry
+   15. Team Inquiry — table is .ek-table (elken-ui.css §5) in .ek-card--flush,
+   status is .ek-chip (§4). Only the code column's monospace treatment and the
+   calc-time caption stay here.
    -------------------------------------------------------------------------- */
-.ti-card > h2 { margin-bottom: var(--ek-16); }
-.ti-table-wrap { border: 1px solid var(--ek-border); border-radius: var(--ek-radius-lg); overflow-x: auto; }
-.ti-table { width: 100%; border-collapse: collapse; min-width: 640px; }
-.ti-table th, .ti-table td { padding: var(--ek-12); text-align: left; border-bottom: 1px solid var(--ek-border); }
-.ti-table thead th {
-  position: sticky; top: 0; z-index: 1;
-  background: var(--ek-surface-sunken);
-  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
-  text-transform: uppercase; letter-spacing: .05em; color: var(--ek-muted);
-}
-.ti-table tbody tr:hover td { background: var(--ek-surface-sunken); }
-.ti-table .num { text-align: right; font-variant-numeric: tabular-nums; }
-.ti-table .code { font-family: var(--ek-num), ui-monospace, monospace; color: var(--ek-blue); }
-.ti-empty { text-align: center; color: var(--ek-muted); padding: var(--ek-24); }
+.code { font-family: var(--ek-num), ui-monospace, monospace; color: var(--ek-blue); }
 .ti-calc-time { margin-top: var(--ek-16); font-size: var(--ek-caption); color: var(--ek-muted); }
-.status-badge {
-  display: inline-flex; align-items: center;
-  padding: 3px var(--ek-8); border-radius: var(--ek-radius-pill);
-  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
-  text-transform: uppercase; letter-spacing: .04em;
-}
-.status-badge.active { background: var(--ek-success-tint); color: var(--ek-success); }
-.status-badge.pending { background: var(--ek-warning-tint); color: var(--ek-warning); }
-.status-badge.inactive { background: var(--ek-neutral-tint); color: var(--ek-neutral); }
 
 /* --------------------------------------------------------------------------
    16. Member Upgrade
@@ -1037,10 +1031,6 @@
 .mug-field > label { font-size: var(--ek-small); font-weight: var(--ek-w-bold); color: var(--ek-charcoal); }
 .mug-field > div { display: flex; gap: var(--ek-8); }
 .mug-field > div .ek-input, .mug-field > div .ek-select { flex: 1 1 auto; }
-.mug-status { display: none; margin: var(--ek-12) 0; padding: var(--ek-12) var(--ek-16); border-radius: var(--ek-radius); font-size: var(--ek-small); font-weight: var(--ek-w-medium); }
-.mug-status.info { display: block; background: var(--ek-info-tint); color: var(--ek-info); }
-.mug-status.error { display: block; background: var(--ek-error-tint); color: var(--ek-error); }
-.mug-status.success { display: block; background: var(--ek-success-tint); color: var(--ek-success); }
 .mug-fields { display: grid; gap: var(--ek-12); margin-bottom: var(--ek-16); }
 .mug-actions { display: flex; gap: var(--ek-12); justify-content: flex-end; }
 
@@ -1049,7 +1039,6 @@
    -------------------------------------------------------------------------- */
 @media (max-width: 767px) {
   .profile-form .row,
-  .profile-form .row.cols-3,
   .overview-grid,
   .odet-grid,
   .profile-grid,
@@ -1063,7 +1052,6 @@
   .dash-actions .ek-btn { width: 100%; }
   .mug-field { grid-template-columns: 1fr; gap: var(--ek-4); }
   .mug-field > div { flex-direction: column; }
-  .sn-children { margin-left: var(--ek-12); padding-left: var(--ek-12); }
   .product-list-head, .product-list-row {
     grid-template-columns: 36px 48px 1fr 90px;
     grid-auto-flow: row;
@@ -1076,157 +1064,37 @@
 }
 
 /* --------------------------------------------------------------------------
-   18. Account modals — Historical Cumulative Bonus + Recharge & Transfer
-   --------------------------------------------------------------------------
-   Both modals are rendered by JS (account.html inline) as dynamic innerHTML.
-   Their inner classes had NO CSS anywhere, which is why they looked broken.
-   This section gives them the same Elken UI Kit visual language as the rest
-   of the account portal.
-   两个弹窗内部类此前全站无任何 CSS，本段统一覆盖。 */
-
-/* ---- Historical Cumulative Bonus ---- */
-.hc-bonus-grid {
-  display: grid; gap: var(--ek-16);
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-}
-.hc-bonus-card {
-  display: flex; flex-direction: column; align-items: center; gap: var(--ek-8);
-  padding: var(--ek-16); text-align: center;
-  background: var(--ek-surface); border: 1px solid var(--ek-border);
-  border-radius: var(--ek-radius-lg);
-  box-shadow: var(--ek-shadow-sm);
-}
-.hc-bonus-icon {
-  width: 40px; height: 40px; color: var(--ek-blue); opacity: .85;
-}
-.hc-bonus-name {
-  font-size: var(--ek-small); font-weight: var(--ek-w-bold);
-  color: var(--ek-charcoal-deep); line-height: 1.3;
-}
-.hc-bonus-value {
-  font-size: var(--ek-h4); font-weight: var(--ek-w-bold);
-  color: var(--ek-blue); margin-top: var(--ek-4);
-}
-
-/* ---- Recharge & Transfer ---- */
-.rt-tabs {
-  display: flex; gap: var(--ek-8); border-bottom: 2px solid var(--ek-border);
-  margin-bottom: var(--ek-20);
-}
-.rt-tab {
-  flex: 1; padding: var(--ek-12) var(--ek-16);
-  font-size: var(--ek-small); font-weight: var(--ek-w-bold);
-  color: var(--ek-muted); background: transparent; border: none;
-  border-bottom: 2px solid transparent; margin-bottom: -2px;
-  cursor: pointer; transition: color var(--ek-fast) var(--ek-ease),
-                              border-color var(--ek-fast) var(--ek-ease);
-}
-.rt-tab:hover { color: var(--ek-blue); }
-.rt-tab.active { color: var(--ek-blue); border-bottom-color: var(--ek-blue); }
-.rt-panel { display: none; }
-.rt-panel.active { display: block; }
-.rt-toolbar {
-  display: flex; gap: var(--ek-8); margin-bottom: var(--ek-16);
-}
-.rt-table-wrap { overflow-x: auto; }
-.rt-table {
-  width: 100%; border-collapse: collapse; font-size: var(--ek-small);
-}
-.rt-table th, .rt-table td {
-  padding: var(--ek-10) var(--ek-12); text-align: left;
-  border-bottom: 1px solid var(--ek-border);
-}
-.rt-table th {
-  font-weight: var(--ek-w-bold); color: var(--ek-muted);
-  text-transform: uppercase; letter-spacing: .04em; font-size: var(--ek-caption);
-}
-.rt-empty {
-  padding: var(--ek-24); text-align: center;
-  color: var(--ek-muted); font-size: var(--ek-small);
-}
-.rt-status-badge {
-  display: inline-flex; padding: var(--ek-4) var(--ek-8);
-  border-radius: var(--ek-radius-pill); font-size: var(--ek-caption);
-  font-weight: var(--ek-w-bold);
-}
-.rt-status-badge.pending { background: var(--ek-warning-tint); color: var(--ek-warning); }
-.rt-status-badge.approved { background: var(--ek-success-tint); color: var(--ek-success); }
-.rt-filter-bar {
-  display: flex; gap: var(--ek-8); flex-wrap: wrap;
-  margin-bottom: var(--ek-16);
-}
-.rt-form-row {
-  display: flex; flex-direction: column; gap: var(--ek-6);
-  flex: 1 1 200px;
-}
-.rt-form-row label {
-  font-size: var(--ek-small); font-weight: var(--ek-w-bold);
-  color: var(--ek-charcoal-deep);
-}
+   18. Account modals — Historical Cumulative Bonus + Recharge & Transfer now
+   use elken-ui.css components directly (.ek-grid/.ek-card for the bonus
+   cards, .ek-table/.ek-table--stack + .ek-chip for the recharge/transfer
+   tables and status badges, .ek-tabs/.ek-tab for the tab skin, .ek-form for
+   the forms) — see account.html's createRechargeTransferModal() /
+   openHistoricalCumulativeBonus(). A prior pass gave these dynamically-built
+   modals their own hc-bonus-* / rt-* CSS instead; none of those classes are
+   still emitted by the JS, so only the two bits that ARE still real below
+   survive: the recharge amount field's "N" prefix, and the bonus-detail
+   emphasis modifier.
+   -------------------------------------------------------------------------- */
+/* .rt-amount-field wraps a −/input/+ stepper (Recharge modal), but had no
+   layout rule of its own — the button/input/button (.ek-input is block +
+   full-width) fell onto three separate lines instead of sitting in a row.
+   Its previous rule assumed the input was the field's only child and drew
+   an "N" prefix over its left edge; with a − button there now, that prefix
+   is dropped rather than made to float over the button instead. */
 .rt-amount-field {
-  position: relative; flex: 1;
+  display: flex; align-items: stretch; gap: var(--ek-8);
 }
-.rt-amount-field::before {
-  content: 'N'; position: absolute; left: var(--ek-12); top: 50%;
-  transform: translateY(-50%); font-size: var(--ek-small);
-  color: var(--ek-muted); pointer-events: none;
+.rt-amount-field input { flex: 1; min-width: 0; text-align: center; }
+.rt-amount-field button[data-step] {
+  flex: 0 0 auto; width: 40px;
+  display: grid; place-items: center;
+  border: 1px solid var(--ek-border-strong); border-radius: var(--ek-radius);
+  background: var(--ek-surface); color: var(--ek-charcoal);
+  font-size: var(--ek-h4); line-height: 1; cursor: pointer;
+  transition: background var(--ek-fast) var(--ek-ease), border-color var(--ek-fast) var(--ek-ease);
 }
-.rt-amount-field input { padding-left: calc(var(--ek-12) + 1.2em); }
-.rt-form-actions {
-  display: flex; gap: var(--ek-12); margin-top: var(--ek-16);
-}
-.rt-form-actions .ek-btn { flex: 1; }
-.rt-filter-bar input,
-.rt-filter-bar select,
-.rt-form-row input,
-.rt-form-row select,
-.rt-form-row textarea,
-.rt-amount-field input {
-  border-color: var(--ek-border);
-}
-
-@media (max-width: 767px) {
-  .hc-bonus-grid { grid-template-columns: repeat(2, 1fr); gap: var(--ek-12); }
-  .rt-form-actions { flex-direction: column; }
-  .rt-filter-bar { flex-direction: column; }
-  .rt-form-row { flex: 1 1 100%; }
-}
-
-/* ============================================================
-   §15  Toast (account pages) — design-system.css is NOT loaded here,
-   so the global toast host would render unstyled/invisible. Provide a
-   self-contained, token-only toast so success/error prompts are visible.
-   ============================================================ */
-.toast-host {
-  position: fixed;
-  bottom: var(--ek-24);
-  right: var(--ek-24);
-  z-index: var(--ek-z-toast);
-  display: flex;
-  flex-direction: column;
-  gap: var(--ek-8);
-  pointer-events: none;
-  max-width: min(92vw, 360px);
-}
-.toast {
-  pointer-events: auto;
-  background: var(--ek-charcoal);
-  color: var(--ek-white);
-  padding: var(--ek-12) var(--ek-16);
-  border-radius: var(--ek-radius);
-  box-shadow: var(--ek-shadow-lg);
-  display: flex;
-  gap: var(--ek-8);
-  align-items: center;
-  min-width: 240px;
-  font: var(--ek-w-medium) var(--ek-small) / var(--ek-small-lh) var(--ek-font);
-  animation: ek-toast-in var(--ek-fast) var(--ek-ease);
-}
-.toast-success { background: var(--ek-success); color: var(--ek-white); }
-@keyframes ek-toast-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: none; }
-}
+.rt-amount-field button[data-step]:hover { background: var(--ek-surface-sunken); border-color: var(--ek-blue); }
+.rt-amount-field button[data-step]:focus-visible { box-shadow: var(--ek-focus-ring); }
 
 /* Referral "Copy link" button — inline confirmation state */
 #referralCopy.is-copied {
@@ -1234,3 +1102,6 @@
   border-color: var(--ek-success);
   color: var(--ek-white);
 }
+
+/* Bonus period detail modal — .ek-kv rows that need emphasis (level, total) */
+.bonus-detail-value--highlight { color: var(--ek-blue); font-weight: var(--ek-w-bold); }

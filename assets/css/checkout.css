@@ -38,16 +38,8 @@
 .stepper .step.done .n { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); }
 .stepper .sep { width: var(--ek-24); height: 1px; background: var(--ek-border); align-self: center; flex-shrink: 0; }
 
-/* ---------- Cards & headings: align with UI Kit .ek-card / .ek-card__title ----------
-   elken-marketing.css gives .checkout-card/.summary a surface bg + border + shadow
-   but NO padding and only an 8px radius. The Kit card uses radius-lg (14px) and
-   24px padding, and card titles use --ek-h4 / bold / --ek-blue. Re-align here so
-   the checkout page matches the rest of the product. */
-.checkout-card,
-.summary {
-  border-radius: var(--ek-radius-lg);
-  padding: var(--ek-24);
-}
+/* ---------- Cards & headings: .checkout-card / .summary are .ek-card (elken-ui.css §2)
+   now, so only the card-title treatment below is still page-specific. ---------- */
 .checkout-card > h2 {
   margin: 0 0 var(--ek-16);
   font-size: var(--ek-h4);
@@ -189,7 +181,13 @@
 .pickup-addr { font-size: var(--ek-small); color: var(--ek-body-ink); margin-bottom: var(--ek-4); }
 .pickup-hours { font-size: var(--ek-caption); color: var(--ek-muted); }
 .pickup-hours span:first-child { font-weight: var(--ek-w-medium); color: var(--ek-charcoal); }
-.pickup-check { font-size: var(--ek-caption); font-weight: var(--ek-w-bold); color: var(--ek-blue); }
+.pickup-check {
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold); color: var(--ek-blue);
+  align-self: center; flex-shrink: 0; padding: 2px var(--ek-8);
+  border: 1px solid var(--ek-blue); border-radius: var(--ek-radius-pill);
+  opacity: 0; transition: opacity var(--ek-fast) var(--ek-ease);
+}
+.pickup-item:has(input:checked) .pickup-check { opacity: 1; }
 
 /* ---------- Payment method selector ---------- */
 .pay-method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--ek-12); }
@@ -283,6 +281,19 @@
 .summary .orderQty { background: var(--ek-stat-3); border-color: var(--ek-stat-2); color: var(--ek-white); }
 .summary .link-btn { color: var(--ek-aqua); }
 .summary .link-btn:hover { color: var(--ek-white); }
+
+/* ---------- Place order button ---------- */
+/* .summary is a dark card (see the light-on-dark overrides above/below), but
+   #payBtn kept the default .ek-btn--primary look — brand navy on navy, so it
+   barely read as a button at all. Give it the same light-on-dark treatment
+   as the payment chips just below it. */
+.summary #payBtn { --btn-bg: var(--ek-white); --btn-ink: var(--ek-blue); --btn-border: transparent; }
+/* .ek-btn:hover (elken-ui.css) sets `background` as a literal declaration
+   (background: var(--ek-blue-hover)), not through --btn-bg, so merely
+   reassigning --btn-bg here does nothing — the hover state was falling
+   straight back to brand navy on navy. Set `background` explicitly instead;
+   the ID selector gives this enough specificity to win. */
+.summary #payBtn:hover { background: var(--ek-grey-light); color: var(--ek-blue); }
 
 /* ---------- Pay methods chip container in summary ---------- */
 .summary .pay-methods { display: flex; flex-wrap: wrap; gap: var(--ek-8); margin-top: var(--ek-12); }

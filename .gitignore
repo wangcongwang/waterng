@@ -1,2 +1,6 @@
-.DS_Store
-.trae/
+# internal project memory (do not publish)
+.workbuddy/
+# generated demo artifacts
+outputs/
+# React source (not part of the static demo site)
+docs/

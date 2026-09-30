@@ -10,11 +10,11 @@
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
-  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
-  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/checkout.css?v=20260909h">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
+  <link rel="stylesheet" href="assets/css/checkout.css?v=20260915a">
   <link rel="stylesheet" href="assets/css/shipping.css?v=20260909b">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
@@ -41,20 +41,18 @@
       <div class="shipping-grid">
         <div>
           <!-- Status alert -->
-          <div class="ek-alert alert-info shipping-alert" role="status">
-            <div class="alert-icon" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-              </svg>
-            </div>
+          <div class="ek-alert shipping-alert" role="status">
+            <svg class="ek-alert__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+            </svg>
             <div>
-              <h3 id="shippingAlertTitle" data-i18n="shipping.shipping_title">Awaiting shipping</h3>
-              <p data-i18n="shipping.shipping_desc" id="shippingAlertDesc">Your purchased products are being prepared for delivery.</p>
+              <h3 class="ek-alert__title" id="shippingAlertTitle" data-i18n="shipping.shipping_title">Awaiting shipping</h3>
+              <p class="ek-alert__body" data-i18n="shipping.shipping_desc" id="shippingAlertDesc">Your purchased products are being prepared for delivery.</p>
             </div>
           </div>
 
           <!-- Pickup location card (only for self-pickup) -->
-          <div class="checkout-card" id="pickupCard">
+          <div class="ek-card checkout-card" id="pickupCard">
             <h2 data-i18n="shipping.pickup_at">Pickup location</h2>
             <div class="pickup-list">
               <div class="pickup-item is-active">
@@ -72,7 +70,7 @@
           </div>
 
           <!-- Order summary -->
-          <div class="checkout-card">
+          <div class="ek-card checkout-card">
             <h2>Order summary</h2>
             <div class="sign-side">
               <div class="terms-meta" id="orderMeta"></div>
@@ -86,16 +84,16 @@
           </div>
 
           <!-- Order detail link + email -->
-          <div id="orderEmailWrap" class="checkout-card"></div>
+          <div id="orderEmailWrap" class="ek-card checkout-card"></div>
         </div>
 
         <aside class="shipping-side">
-          <div class="checkout-card">
+          <div class="ek-card checkout-card">
             <h2 data-i18n="shipping.help">Need help?</h2>
             <p id="helpDesc">Our support team is here for you.</p>
-            <button class="ek-btn ek-btn--secondary ek-btn--block" id="contactBtn" data-i18n="shipping.help_action">Contact support</button>
+            <a class="ek-btn ek-btn--secondary ek-btn--block" id="contactBtn" href="https://wa.me/2349131178401" target="_blank" rel="noopener" data-i18n="shipping.help_action">Contact support</a>
             <hr />
-            <button class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" id="accountBtn" data-i18n="shipping.cta_account">Go to my account</button>
+            <a class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" id="accountBtn" href="account.html" data-i18n="shipping.cta_account">Go to my account</a>
             <a href="index.html" class="ek-btn btn-link ek-btn--block" data-i18n="shipping.cta_home">Back to home</a>
           </div>
         </aside>
@@ -106,7 +104,7 @@
   <div id="app-footer" class="ek-site-footer"></div>
 
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-<script src="assets/js/app.js?v=20260909e"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
   <script src="assets/js/website.js?v=20260909c-2"></script>
   <script src="assets/js/order-receipt.js?v=20260915a"></script>
   <script>

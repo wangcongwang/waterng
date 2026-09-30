@@ -626,12 +626,69 @@
     };
   }
 
+  /* --- Account Balance -------------------------------------------------- */
+  /* Pays the order from the member's Ecoin wallet. The balance is read
+     live from ProductCatalog.getEcoinTotal(memberId) so it stays correct
+     after a member search / id change. Completeness rule (mirrors checkout):
+     balance must be positive and cover the order total. */
+  function mountBalance(el, ctx) {
+    const getMid = (typeof ctx.getMemberId === 'function')
+      ? ctx.getMemberId : function () { return null; };
+    const amountId = ctx.balanceAmountId || null;
+
+    el.innerHTML = '' +
+      '<h2 class="pm-title" data-i18n="payment.account_balance">Account Balance</h2>' +
+      '<p data-i18n="payment.balance_lead">Pay for this order directly from the member&rsquo;s Ecoin account balance.</p>' +
+      bankRows([
+        ['Available balance', '<span class="pm-mono" data-pm="avail">—</span>', true],
+        ['Order total', '<span class="pm-mono" data-pm="total">—</span>', true],
+        ['Balance after payment', '<span class="pm-mono" data-pm="after">—</span>', true]
+      ]) +
+      '<p class="pm-status is-warning" data-pm="warning" hidden data-i18n="payment.balance_insufficient">' +
+      'The available balance is not enough to cover this order. Choose another payment method or reduce the quantity.</p>' +
+      '<p class="pm-note" data-i18n="payment.balance_note">The balance is deducted automatically when the order is placed.</p>';
+
+    const availEl = el.querySelector('[data-pm="avail"]');
+    const totalEl = el.querySelector('[data-pm="total"]');
+    const afterEl = el.querySelector('[data-pm="after"]');
+    const warnEl = el.querySelector('[data-pm="warning"]');
+
+    let balance = 0;
+
+    function paint() {
+      const mid = getMid();
+      const pc = global.ProductCatalog || {};
+      balance = (mid && pc.getEcoinTotal) ? Math.max(0, Number(pc.getEcoinTotal(mid)) || 0) : 0;
+      const total = Number(ctx.amount()) || 0;
+      if (availEl) availEl.textContent = money(balance);
+      if (totalEl) totalEl.textContent = money(total);
+      if (afterEl) afterEl.textContent = money(Math.max(0, balance - total));
+      if (warnEl) warnEl.hidden = balance >= total;
+      if (amountId) {
+        const span = document.getElementById(amountId);
+        if (span) span.textContent = (Number(balance) || 0).toLocaleString();
+      }
+      if (ctx.onChange) ctx.onChange();
+    }
+
+    paint();
+
+    return {
+      kind: 'balance',
+      reference: ctx.reference,
+      isComplete: () => balance > 0 && balance >= (Number(ctx.amount()) || 0),
+      value: () => 'balance',
+      refresh: paint
+    };
+  }
+
   const MOUNTERS = {
     card: mountCard,
     ussd: mountUssd,
     bank: mountBankTransfer,
     paybank: mountPayWithBank,
-    visaqr: mountVisaQr
+    visaqr: mountVisaQr,
+    balance: mountBalance
   };
 
   /* Mount one panel. `ctx` must provide { prefix, amount, reference, onChange }. */
@@ -694,6 +751,8 @@
       balanceLabelId: o.balanceLabelId || null
     });
 
+    const balanceMemberId = o.balanceMemberId || null;
+
     if (o.extraPanels) {
       Object.keys(o.extraPanels).forEach(k => {
         const el = (typeof o.extraPanels[k] === 'string')
@@ -725,6 +784,9 @@
         prefix,
         amount: o.amount || function () { return 0; },
         reference: ref,
+        getMemberId: balanceMemberId,
+        balanceAmountId: (value === 'balance') ? (o.balanceAmountId || null) : null,
+        radioName: name,
         onChange: function () { if (o.onChange) o.onChange(); }
       });
       if (handle) handles[value] = { el: wrap, handle: handle };

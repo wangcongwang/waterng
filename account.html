@@ -11,11 +11,11 @@
 
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
-  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
-  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260916a">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260919d">
+  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260919i">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="account">
@@ -61,36 +61,40 @@
         </div>
       </div>
 
-      <nav class="tabs" id="dashTabs">
-        <a href="#overview" data-tab="overview" data-i18n="account.overview"></a>
-        <a href="#orders" data-tab="orders" data-i18n="account.orders"></a>
-        <a href="#profile" data-tab="profile" data-i18n="account.profile"></a>
+      <nav class="tabs ek-tabs" id="dashTabs" role="tablist">
+        <a class="ek-tab" href="#overview" data-tab="overview" role="tab" aria-selected="true" data-i18n="account.overview"></a>
+        <a class="ek-tab" href="#orders" data-tab="orders" role="tab" aria-selected="false" data-i18n="account.orders"></a>
+        <a class="ek-tab" href="#profile" data-tab="profile" role="tab" aria-selected="false" data-i18n="account.profile"></a>
       </nav>
 
       <!-- ============ OVERVIEW (default) ============ -->
-      <section class="dash-view" data-view="overview">
-        <div class="kpi-grid two-kpi">
+      <section class="dash-view ek-tabpanel" data-view="overview" role="tabpanel">
+        <div class="ek-grid" style="--cols: 2; --min: 220px; margin-bottom: var(--ek-32)">
           <!-- Member Bonus -->
-          <div class="kpi">
-            <div class="k">Member Bonus</div>
-            <div class="v" id="kpiBonus">0<small> BV</small></div>
-            <div class="delta" id="kpiBonusDelta">Purchase products to earn points</div>
-            <div class="kpi-breakdown" id="kpiBonusBreakdown" hidden>
-              <div class="kpi-breakdown-title">Breakdown</div>
-              <div class="kpi-breakdown-rows" id="kpiBonusBreakdownRows"></div>
+          <div class="ek-card">
+            <div class="ek-stat">
+              <span class="ek-stat__label">Member Bonus</span>
+              <span class="ek-stat__value" id="kpiBonus">0<span class="ek-stat__unit"> BV</span></span>
+              <p class="ek-stat__note" id="kpiBonusDelta">Purchase products to earn points</p>
+              <div class="ek-stat__full kpi-breakdown" id="kpiBonusBreakdown" hidden>
+                <div class="kpi-breakdown-title">Breakdown</div>
+                <div class="kpi-breakdown-rows" id="kpiBonusBreakdownRows"></div>
+              </div>
+              <button type="button" class="ek-btn ek-btn--sm ek-btn--primary ek-mt-16" id="bonusHistoryBtn">View History</button>
             </div>
-            <button type="button" class="ek-btn ek-btn--sm ek-btn--primary mt-2" id="bonusHistoryBtn">View History</button>
           </div>
           <!-- Member Ecoin -->
-          <div class="kpi">
-            <div class="k">Member Ecoin</div>
-            <div class="v" id="kpiEcoin">0<small> EC</small></div>
-            <div class="delta" id="kpiEcoinDelta">No ecoin yet</div>
-            <div class="kpi-breakdown" id="kpiEcoinBreakdown" hidden>
-              <div class="kpi-breakdown-title">Breakdown</div>
-              <div class="kpi-breakdown-rows" id="kpiEcoinBreakdownRows"></div>
+          <div class="ek-card">
+            <div class="ek-stat">
+              <span class="ek-stat__label">Member Ecoin</span>
+              <span class="ek-stat__value" id="kpiEcoin">0<span class="ek-stat__unit"> EC</span></span>
+              <p class="ek-stat__note" id="kpiEcoinDelta">No ecoin yet</p>
+              <div class="ek-stat__full kpi-breakdown" id="kpiEcoinBreakdown" hidden>
+                <div class="kpi-breakdown-title">Breakdown</div>
+                <div class="kpi-breakdown-rows" id="kpiEcoinBreakdownRows"></div>
+              </div>
+              <button type="button" class="ek-btn ek-btn--sm ek-btn--primary ek-mt-16" id="ecoinHistoryBtn">View History</button>
             </div>
-            <button type="button" class="ek-btn ek-btn--sm ek-btn--primary mt-2" id="ecoinHistoryBtn">View History</button>
           </div>
         </div>
 
@@ -116,11 +120,11 @@
           <div class="sponsor-toolbar">
             <div class="sponsor-field">
               <label for="snTopMember">Top Member</label>
-              <input type="text" id="snTopMember" placeholder="Member ID / Name / PCV" value="">
+              <input class="ek-input" type="text" id="snTopMember" placeholder="Member ID / Name / PCV" value="">
             </div>
             <div class="sponsor-field">
               <label for="snSpreadDepth">Spread Depth</label>
-              <input type="number" id="snSpreadDepth" min="1" max="10" value="5">
+              <input class="ek-input" type="number" id="snSpreadDepth" min="1" max="10" value="5">
             </div>
             <button type="button" class="ek-btn ek-btn--primary" id="snConfirmBtn">Confirm</button>
           </div>
@@ -132,48 +136,48 @@
 
         <!-- ===== 九宫格多功能入口 ===== -->
         <div class="hub-grid" id="hubGrid">
-          <a class="hub-cell" href="products.html">
-            <div class="hub-icon">📦</div>
+          <a class="hub-cell" href="repeat-purchase.html">
+            <div class="hub-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3.5 8.5l8.5-4 8.5 4-8.5 4-8.5-4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3.5 8.5v7l8.5 4 8.5-4v-7M12 12.5v7" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
             <span class="hub-label">Repeat Purchase</span>
             <p class="hub-desc">Browse & buy again</p>
           </a>
           <a class="hub-cell" href="member-welcome.html">
-            <div class="hub-icon">🎁</div>
+            <div class="hub-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="9.5" width="17" height="10.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 13h17M12 9.5v10.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 9.5c-1.8 0-3-1-3-2.5S10 4.5 12 6.5c2-2 3-.5 3 0s-1.2 3-3 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
             <span class="hub-label">Member Welcome Pack</span>
             <p class="hub-desc">Invite & earn rewards</p>
           </a>
           <a class="hub-cell" href="member-repurchase.html">
-            <div class="hub-icon">🔁</div>
+            <div class="hub-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0113.7-5.7L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 01-13.7 5.7L4 15.5M4 20v-4.5h4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <span class="hub-label">Member Repeat Purchase</span>
             <p class="hub-desc">Search member & place order</p>
           </a>
           <a class="hub-cell" href="member-auto-maintenance.html">
-            <div class="hub-icon">⚙️</div>
+            <div class="hub-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.6"/><path d="M12 4v2.2M12 17.8V20M20 12h-2.2M6.2 12H4M17.3 6.7l-1.6 1.6M8.3 15.7l-1.6 1.6M17.3 17.3l-1.6-1.6M8.3 8.3L6.7 6.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
             <span class="hub-label">Member Auto-Maintenance</span>
             <p class="hub-desc">Auto top-up · ≥90 BV</p>
           </a>
           <a class="hub-cell" href="member-upgrade.html">
-            <div class="hub-icon">⬆️</div>
+            <div class="hub-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 19V6M6 11l6-6 6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <span class="hub-label">Member Upgrade</span>
             <p class="hub-desc">Adjust member rank</p>
           </a>
           <div class="hub-cell" id="hubPreviousBonus" onclick="openPeriodBonusList()">
-            <div class="hub-icon">📊</div>
+            <div class="hub-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M10 20V4M16 20v-7M4 20h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <span class="hub-label">Previous Bonus</span>
             <p class="hub-desc">View historical bonus periods</p>
           </div>
           <a class="hub-cell" href="team-inquiry.html">
-            <div class="hub-icon">👥</div>
+            <div class="hub-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8.5" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 19c.6-3 2.7-4.8 5.5-4.8s4.9 1.8 5.5 4.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M15.5 6.2a3 3 0 010 5.6M17.5 14.4c2.2.5 3.7 2 4 4.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
             <span class="hub-label">Team Inquiry</span>
             <p class="hub-desc">View your team details</p>
           </a>
           <div class="hub-cell" id="hubHistoricalCumulativeBonus" onclick="openHistoricalCumulativeBonus()">
-            <div class="hub-icon">🏆</div>
+            <div class="hub-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="5.5" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 13.5L7 20.5l5-2.5 5 2.5-1.5-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <span class="hub-label">Historical Cumulative Bonus</span>
             <p class="hub-desc">View lifetime bonus totals</p>
           </div>
           <div class="hub-cell" id="hubRechargeTransfer" onclick="openRechargeAndTransfer()">
-            <div class="hub-icon">💳</div>
+            <div class="hub-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12.5" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 10.5h18" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 14.5h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
             <span class="hub-label">Recharge and Transfer</span>
             <p class="hub-desc">Recharge bonus & transfer funds</p>
           </div>
@@ -183,7 +187,7 @@
           <section>
             <h2 class="panel-title">Quick actions</h2>
             <div class="ek-card action-stack">
-              <a class="ek-btn ek-btn--secondary" href="products.html">
+              <a class="ek-btn ek-btn--secondary" href="repeat-purchase.html">
                 <span><b>Browse products</b><br><small>View our health & beauty collection</small></span>
                 <span>→</span>
               </a>
@@ -192,7 +196,9 @@
                 <span>→</span>
               </a>
             </div>
+          </section>
 
+          <section>
             <h2 class="panel-title">Referrals · BV credited to you</h2>
             <div class="ek-card">
               <div class="referral-summary">
@@ -200,14 +206,16 @@
                 <div><span class="referral-summary-k">Referred orders</span><b id="referralCount">0</b></div>
               </div>
               <div id="referralList" class="referral-list"></div>
-              <p class="referral-empty" id="referralEmpty" hidden>No referrals yet — share your link so friends' orders earn you BV.</p>
+              <div class="ek-empty" id="referralEmpty" hidden>
+                <p class="ek-empty__body">No referrals yet — share your link so friends' orders earn you BV.</p>
+              </div>
             </div>
           </section>
         </div>
       </section>
 
       <!-- ============ ORDERS ============ -->
-      <section class="dash-view" data-view="orders" hidden>
+      <section class="dash-view ek-tabpanel" data-view="orders" role="tabpanel" hidden>
         <div class="orders-head">
           <div>
             <h2 class="panel-title" data-i18n="account.orders">Orders</h2>
@@ -233,7 +241,7 @@
       </section>
 
       <!-- ============ PROFILE ============ -->
-      <section class="dash-view" data-view="profile" hidden>
+      <section class="dash-view ek-tabpanel" data-view="profile" role="tabpanel" hidden>
         <div class="profile-grid">
           <!-- Personal info -->
           <div class="ek-card profile-card profile-card-wide">
@@ -267,71 +275,17 @@
                   <input class="ek-input" name="email" id="pfEmail" type="email" disabled />
                 </div>
               </div>
-              <div class="field">
-                <label data-i18n="account.addr_phone">Phone</label>
-                <div class="phone-field" id="pfPhoneField"></div>
+              <div class="row" style="grid-template-columns: repeat(2, minmax(0, 1fr))">
+                <div class="field">
+                  <label data-i18n="account.addr_phone">Phone</label>
+                  <div class="phone-field" id="pfPhoneField"></div>
+                </div>
               </div>
               <div class="profile-actions" hidden>
                 <button type="button" class="ek-btn ek-btn--secondary" id="profileCancelBtn" data-i18n="account.profile_cancel">Cancel</button>
                 <button type="submit" class="ek-btn" id="profileSaveBtn" data-i18n="account.profile_save">Save changes</button>
               </div>
             </form>
-          </div>
-
-          <!-- Login password (独立卡片) — 与支付密码卡片同一行 (both single-col profile-card) -->
-          <div class="ek-card profile-card">
-            <div class="profile-card-head">
-              <h2 data-i18n="account.profile_sec_login">Login password</h2>
-            </div>
-            <div class="sec-block">
-              <form id="pwdForm" class="profile-form ek-form">
-                <div class="row cols-3">
-                  <div class="field">
-                    <label data-i18n="account.profile_current_pwd">Current password</label>
-                    <input class="ek-input" type="password" name="current" required minlength="6" autocomplete="current-password" />
-                  </div>
-                  <div class="field">
-                    <label data-i18n="account.profile_new_pwd">New password</label>
-                    <input class="ek-input" type="password" name="new" required minlength="6" autocomplete="new-password" />
-                  </div>
-                  <div class="field">
-                    <label data-i18n="account.profile_confirm_pwd">Confirm new password</label>
-                    <input class="ek-input" type="password" name="confirm" required minlength="6" autocomplete="new-password" />
-                  </div>
-                </div>
-                <div class="profile-actions">
-                  <button type="submit" class="ek-btn" data-i18n="account.profile_pay_save">Save</button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <!-- Payment password (独立卡片) — 按截图：原密码 / 新密码 / 重复新密码 / 保存 -->
-          <div class="ek-card profile-card">
-            <div class="profile-card-head">
-              <h2 data-i18n="account.profile_sec_payment">Payment password</h2>
-            </div>
-            <div class="sec-block">
-              <form id="payPwdForm" class="profile-form ek-form" autocomplete="off">
-                <div class="row cols-3">
-                  <div class="field">
-                    <label data-i18n="account.profile_pay_old_pwd">Old password</label>
-                    <input class="ek-input" type="password" name="oldPay" id="payOld" minlength="6" maxlength="32" autocomplete="new-password" />
-                  </div>
-                  <div class="field">
-                    <label data-i18n="account.profile_pay_new_pwd">New password</label>
-                    <input class="ek-input" type="password" name="newPay" id="payNew" minlength="6" maxlength="32" autocomplete="new-password" />
-                  </div>
-                  <div class="field">
-                    <label data-i18n="account.profile_pay_confirm_pwd">Confirm new password</label>
-                    <input class="ek-input" type="password" name="confirmPay" id="payConfirm" minlength="6" maxlength="32" autocomplete="new-password" />
-                  </div>
-                </div>
-                <div class="profile-actions">
-                  <button type="submit" class="ek-btn" data-i18n="account.profile_pay_save">Save</button>
-                </div>
-              </form>
-            </div>
           </div>
 
           <!-- Addresses -->
@@ -344,7 +298,6 @@
             <div class="inline-addr-editor" id="addrEditor" hidden>
               <div class="inline-addr-head">
                 <h3 id="addrEditorTitle" data-i18n="account.profile_add_address">Add new address</h3>
-                <button class="icon-btn" id="addrEditorClose" aria-label="Close">×</button>
               </div>
               <form id="addrForm" class="auth-form ek-form">
                 <input type="hidden" name="id" />
@@ -363,24 +316,22 @@
                   </select>
                 </div>
                 <div class="field">
-                  <label data-i18n="account.addr_street">Street address</label>
-                  <input class="ek-input" name="street" required />
-                </div>
-                <div class="field">
                   <label data-i18n="account.addr_city">City</label>
                   <input class="ek-input" name="city" required />
+                </div>
+                <div class="field" style="grid-column: 1 / -1;">
+                  <label data-i18n="account.addr_street">Street address</label>
+                  <input class="ek-input" name="street" required />
                 </div>
                 <div class="field">
                   <label data-i18n="account.addr_district">District</label>
                   <input class="ek-input" name="district" required />
                 </div>
-                <div class="field toggle-row">
-                  <span class="toggle-label" data-i18n="account.profile_set_default">Set as default</span>
-                  <label class="toggle-switch">
-                    <input type="checkbox" name="isDefault" />
-                    <span class="toggle-slider"></span>
-                  </label>
-                </div>
+                <label class="ek-switch inline-addr-default">
+                  <input type="checkbox" name="isDefault" />
+                  <span class="ek-switch__track"></span>
+                  <span data-i18n="account.profile_set_default">Set as default</span>
+                </label>
                 <div class="inline-addr-foot">
                   <button type="button" class="ek-btn ek-btn--secondary" id="addrEditorCancel" data-i18n="account.profile_cancel">Cancel</button>
                   <button type="submit" class="ek-btn" data-i18n="account.profile_confirm">Confirm</button>
@@ -388,6 +339,62 @@
               </form>
             </div>
             <div id="addressList" class="address-list"></div>
+          </div>
+
+          <!-- Payment password (独立卡片) — 按截图：原密码 / 新密码 / 重复新密码 / 保存 -->
+          <div class="ek-card profile-card">
+            <div class="profile-card-head">
+              <h2 data-i18n="account.profile_sec_payment">Payment password</h2>
+            </div>
+            <div class="sec-block">
+              <form id="payPwdForm" class="profile-form ek-form" autocomplete="off">
+                <div class="row cols-3">
+                  <div class="field">
+                    <label data-i18n="account.profile_pay_old_pwd">Old password</label>
+                    <input class="ek-input" type="password" name="oldPay" id="payOld" minlength="6" maxlength="32" autocomplete="new-password" placeholder="Enter old password" />
+                  </div>
+                  <div class="field">
+                    <label data-i18n="account.profile_pay_new_pwd">New password</label>
+                    <input class="ek-input" type="password" name="newPay" id="payNew" minlength="6" maxlength="32" autocomplete="new-password" placeholder="Enter new password" />
+                  </div>
+                  <div class="field">
+                    <label data-i18n="account.profile_pay_confirm_pwd">Confirm new password</label>
+                    <input class="ek-input" type="password" name="confirmPay" id="payConfirm" minlength="6" maxlength="32" autocomplete="new-password" placeholder="Confirm new password" />
+                  </div>
+                </div>
+                <div class="profile-actions">
+                  <button type="submit" class="ek-btn" data-i18n="account.profile_pay_save">Save</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Login password -->
+          <div class="ek-card profile-card">
+            <div class="profile-card-head">
+              <h2 data-i18n="account.profile_sec_login">Login password</h2>
+            </div>
+            <div class="sec-block">
+              <form id="pwdForm" class="profile-form ek-form">
+                <div class="row cols-3">
+                  <div class="field">
+                    <label data-i18n="account.profile_current_pwd">Current password</label>
+                    <input class="ek-input" type="password" name="current" required minlength="6" autocomplete="current-password" placeholder="Enter current password" />
+                  </div>
+                  <div class="field">
+                    <label data-i18n="account.profile_new_pwd">New password</label>
+                    <input class="ek-input" type="password" name="new" required minlength="6" autocomplete="new-password" placeholder="Enter new password" />
+                  </div>
+                  <div class="field">
+                    <label data-i18n="account.profile_confirm_pwd">Confirm new password</label>
+                    <input class="ek-input" type="password" name="confirm" required minlength="6" autocomplete="new-password" placeholder="Confirm new password" />
+                  </div>
+                </div>
+                <div class="profile-actions">
+                  <button type="submit" class="ek-btn" data-i18n="account.profile_pay_save">Save</button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </section>
@@ -397,7 +404,7 @@
   <div id="app-footer" class="ek-site-footer"></div>
 
   <script src="assets/i18n/strings.js?v=20260909c"></script>
-<script src="assets/js/app.js?v=20260909e"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
   <script src="assets/js/website.js?v=20260909c"></script>
   <script src="assets/js/order-receipt.js?v=20260915a"></script>
   <script>
@@ -512,12 +519,19 @@
       // Elite 级别：取 highestElite 或 latestElite
       const eliteRaw = memberData.highestElite || memberData.latestElite || '';
 
+      const BIB_ICONS = {
+        clock: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        calendar: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 10h17M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+        star: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4l2.4 5.1 5.6.7-4.1 3.9 1 5.6-4.9-2.8-4.9 2.8 1-5.6-4.1-3.9 5.6-.7z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+        award: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="9" r="5.5" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 13.5L7 20.5l5-2.5 5 2.5-1.5-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        crown: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 18h16M4.5 18l-1-9 4.5 3.5L12 6l4 6.5 4.5-3.5-1 9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+      };
       const rows = [
-        { icon: '🕒', labelKey: 'account.profile_bb_system_time', value: formatSystemTime(), cls: 'bib-time' },
-        { icon: '🗓', labelKey: 'account.profile_bb_settlement_cycle', value: formatSettlementCycle(memberData), cls: 'bib-cycle' },
-        { icon: '★', labelKey: 'account.profile_bb_member_level', value: translateBBValue(levelRaw, 'level'), cls: 'bib-level' },
-        { icon: '🚫', labelKey: 'account.profile_bb_highest_honor', value: translateBBValue(honorRaw, 'honor'), cls: '' },
-        { icon: '♛', labelKey: 'account.profile_bb_elite_level', value: translateBBValue(eliteRaw, 'elite'), cls: '' },
+        { icon: BIB_ICONS.clock, labelKey: 'account.profile_bb_system_time', value: formatSystemTime(), cls: 'bib-time' },
+        { icon: BIB_ICONS.calendar, labelKey: 'account.profile_bb_settlement_cycle', value: formatSettlementCycle(memberData), cls: 'bib-cycle' },
+        { icon: BIB_ICONS.star, labelKey: 'account.profile_bb_member_level', value: translateBBValue(levelRaw, 'level'), cls: 'bib-level' },
+        { icon: BIB_ICONS.award, labelKey: 'account.profile_bb_highest_honor', value: translateBBValue(honorRaw, 'honor'), cls: '' },
+        { icon: BIB_ICONS.crown, labelKey: 'account.profile_bb_elite_level', value: translateBBValue(eliteRaw, 'elite'), cls: '' },
       ];
       host.innerHTML = rows.map(r => {
         const valueCls = ['bib-level'].includes(r.cls) ? ' bib-value ' + r.cls :
@@ -887,7 +901,16 @@
     //   4. it.pic / it.img (last-ditch; onerror will catch if still invalid → SVG icon shows)
     function _resolveOrderItemImage(it) {
       if (!it) return null;
-      if (it.image) return it.image;
+      // Orders placed before the double-prefix bug (below) was fixed have
+      // that mangled path baked into their stored it.image forever — fixing
+      // the builder doesn't repair data already written. Detect and discard
+      // it here too (two "assets/" segments is the telltale sign) so old
+      // orders self-heal instead of showing the placeholder icon forever.
+      if (it.image && !/assets\/.*assets\//i.test(it.image)) return it.image;
+      // it.img may already be a full path (some marketing pages' "Add to
+      // cart" buttons set it that way) — prepending the category folder to
+      // that mangles it into a nonexistent nested path.
+      if (it.img && /^(assets\/|https?:)/i.test(it.img)) return it.img;
       if (it.category && it.img) return 'assets/img/products/' + it.category + '/' + it.img;
       const pc = window.ProductCatalog;
       // ProductCatalog.allProducts is exposed as an ARRAY (not a function) in
@@ -1092,11 +1115,11 @@
           : (window.T ? window.T.tr('account.orders_empty_self') : 'You have no orders yet.');
         const ctaHtml = isMember
           ? `<a class="ek-btn ek-btn--primary ek-btn--sm" href="member-repurchase.html">Member Repeat Purchase</a>`
-          : `<a class="ek-btn ek-btn--primary ek-btn--sm" href="products.html">${window.T ? window.T.tr('account.orders_browse') : 'Browse products'}</a>`;
+          : `<a class="ek-btn ek-btn--primary ek-btn--sm" href="repeat-purchase.html">${window.T ? window.T.tr('account.orders_browse') : 'Browse products'}</a>`;
         host.innerHTML = `
-          <div class="orders-empty">
-            <div class="icon">📦</div>
-            <div class="txt">${emptyText}</div>
+          <div class="ek-empty">
+            <svg class="ek-empty__icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2h12l2 5H4z"/><path d="M5 7v14h14V7"/><path d="M9.5 11h5"/></svg>
+            <p class="ek-empty__title">${emptyText}</p>
             ${ctaHtml}
           </div>`;
         return;
@@ -1125,18 +1148,22 @@
         };
         return (labels[pm] || pm).toUpperCase();
       };
+      // Order matters: "unpaid" contains the substring "paid", so the paid
+      // check must run after the unpaid/pending check or every unpaid order
+      // gets misclassified (and colored) as paid.
       const payStatusClass = (o) => {
         const s = (o.payStatus || (o.status === 'paid' ? 'Paid' : 'Unpaid') || 'Unpaid').toString();
-        if (/paid/i.test(s)) return 'o-status--paid';
-        if (/pending/i.test(s)) return 'o-status--pending';
-        if (/fail|refund|cancel/i.test(s)) return 'o-status--fail';
-        return 'o-status--unpaid';
+        if (/unpaid|pending/i.test(s)) return 'ek-chip--warning';
+        if (/fail|refund|cancel/i.test(s)) return 'ek-chip--error';
+        if (/paid/i.test(s)) return 'ek-chip--success';
+        return 'ek-chip--info';
       };
       const payStatusText = (o) => {
         const s = (o.payStatus || (o.status === 'paid' ? 'Paid' : 'Unpaid') || 'Unpaid').toString();
-        if (/paid/i.test(s)) return t('account.orders_status_paid', 'Paid');
+        if (/unpaid/i.test(s)) return t('account.orders_status_unpaid', 'Unpaid');
         if (/pending/i.test(s)) return t('account.orders_status_pending', 'Pending');
         if (/fail|refund|cancel/i.test(s)) return t('account.orders_status_fail', 'Failed');
+        if (/paid/i.test(s)) return t('account.orders_status_paid', 'Paid');
         return t('account.orders_status_unpaid', 'Unpaid');
       };
 
@@ -1185,15 +1212,15 @@
             : window.__ORDER_PIC_SVG;
           return `
             <tr>
-              <td class="col-img"><span class="ocard__thumb">${picInner}</span></td>
-              <td>${esc(code)}</td>
-              <td>${esc(it.name || 'Unnamed product')}</td>
-              <td class="num">${qty}</td>
-              <td class="num">${sym}${fmtNum(price)}</td>
-              <td class="num">${sym}${fmtNum(totalPrice)}</td>
-              <td class="num">${totalBV}</td>
-              <td class="num">${TAX_RATE}</td>
-              <td class="num">${sym}${fmtNum(totalTax)}</td>
+              <td class="col-img" data-label="Image"><span class="ocard__thumb">${picInner}</span></td>
+              <td data-label="Product Code">${esc(code)}</td>
+              <td data-label="Product">${esc(it.name || 'Unnamed product')}</td>
+              <td class="num" data-label="Qty">${qty}</td>
+              <td class="num" data-label="Price">${sym}${fmtNum(price)}</td>
+              <td class="num" data-label="Total Price">${sym}${fmtNum(totalPrice)}</td>
+              <td class="num" data-label="Total BV">${totalBV}</td>
+              <td class="num" data-label="Tax Rate">${TAX_RATE}</td>
+              <td class="num" data-label="Total Tax">${sym}${fmtNum(totalTax)}</td>
             </tr>`;
         }).join('');
 
@@ -1207,14 +1234,13 @@
         const chip = (k, v, wide) => `<span${wide ? ' class="wide"' : ''}><b data-i18n="account.${k}">${t('account.' + k, v.fb)}</b><span>${esc(v.val)}</span></span>`;
 
         return `
-          <article class="ocard" data-order-id="${esc(o.id || '')}">
-            <header class="ocard__head">
+          <article class="ek-card ocard" data-order-id="${esc(o.id || '')}">
+            <header class="ek-card__head ocard__head">
               <a class="ocard__id" href="order.html?order=${encodeURIComponent(o.id || '')}">${esc(o.id || '—')}</a>
               <span class="orders-type ${typeClass}">${esc(t(typeKey, typeFallback))}</span>
-              <span class="o-status ${payStatusClass(o)}">${esc(payStatusText(o))}</span>
+              <span class="ek-chip ${payStatusClass(o)}">${esc(payStatusText(o))}</span>
               <span class="ocard__spacer"></span>
               <button type="button" class="o-download" data-order-download="${esc(o.id)}" title="${esc(t('account.orders_action_download', 'Download'))}">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 <span data-i18n="account.orders_action_download">Download</span>
               </button>
             </header>
@@ -1226,8 +1252,8 @@
               ${chip('orders_col_phone',        { fb: 'Phone',        val: phone })}
             </div>
 
-            <div class="ocard__table-wrap">
-              <table class="ocard__items">
+            <div class="ek-table-wrap">
+              <table class="ocard__items ek-table ek-table--stack">
                 <thead>
                   <tr>
                     <th class="col-img" aria-label="Image"></th>
@@ -1244,21 +1270,21 @@
                 <tbody>${itemRows}</tbody>
                 <tfoot>
                   <tr>
-                    <td class="col-img"></td>
+                    <td class="col-img" data-label="Image"></td>
                     <td colspan="2" class="lbl" data-i18n="account.orders_label_subtotal">Subtotal</td>
-                    <td class="num">${items.reduce((s, it) => s + (Number(it.qty) || 1), 0)}</td>
-                    <td></td>
-                    <td class="num">${sym}${fmtNum(subtotal)}</td>
-                    <td class="num">${sumBV}</td>
-                    <td></td>
-                    <td class="num">${sym}${fmtNum(sumTax)}</td>
+                    <td class="num" data-label="Qty">${items.reduce((s, it) => s + (Number(it.qty) || 1), 0)}</td>
+                    <td data-label="Price"></td>
+                    <td class="num" data-label="Total Price">${sym}${fmtNum(subtotal)}</td>
+                    <td class="num" data-label="Total BV">${sumBV}</td>
+                    <td data-label="Tax Rate"></td>
+                    <td class="num" data-label="Total Tax">${sym}${fmtNum(sumTax)}</td>
                   </tr>
                   <tr class="ocard__grand">
-                    <td class="col-img"></td>
+                    <td class="col-img" data-label="Image"></td>
                     <td colspan="5" class="lbl" data-i18n="account.orders_label_total">Total (incl. tax)</td>
-                    <td></td>
-                    <td></td>
-                    <td class="num">${sym}${fmtNum(grand)}</td>
+                    <td data-label="Total BV"></td>
+                    <td data-label="Tax Rate"></td>
+                    <td class="num" data-label="">${sym}${fmtNum(grand)}</td>
                   </tr>
                 </tfoot>
               </table>
@@ -1323,7 +1349,7 @@
       const totalBonus = ownBV + referralBV;
 
       const bonusEl = document.getElementById('kpiBonus');
-      if (bonusEl) bonusEl.innerHTML = (totalBonus || 0) + '<small> BV</small>';
+      if (bonusEl) bonusEl.innerHTML = (totalBonus || 0) + '<span class="ek-stat__unit"> BV</span>';
       const bonusDelta = document.getElementById('kpiBonusDelta');
       if (bonusDelta) {
         if (totalBonus) {
@@ -1339,10 +1365,10 @@
       const bd = document.getElementById('kpiBonusBreakdown');
       const rowsEl = document.getElementById('kpiBonusBreakdownRows');
       if (bd && rowsEl) {
-        const t = (window.T && typeof window.T === 'function') ? window.T : (c) => c;
+        const t = (k, fb) => { const v = window.T && window.T.tr(k); return (v && v !== k) ? v : fb; };
         const rows = [];
-        if (ownBV) rows.push({ label: t('account.bv_self'), val: ownBV });
-        if (referralBV) rows.push({ label: t('account.bv_referral'), val: referralBV });
+        if (ownBV) rows.push({ label: t('account.bv_self', 'Own purchases'), val: ownBV });
+        if (referralBV) rows.push({ label: t('account.bv_referral', 'Referral orders'), val: referralBV });
         if (!rows.length) {
           bd.hidden = true;
           rowsEl.innerHTML = '';
@@ -1363,7 +1389,7 @@
       const ecoinTotal = (window.ProductCatalog && window.ProductCatalog.getEcoinTotal)
         ? window.ProductCatalog.getEcoinTotal(mid) : 0;
       const ecoinEl = document.getElementById('kpiEcoin');
-      if (ecoinEl) ecoinEl.innerHTML = (ecoinTotal || 0) + '<small> EC</small>';
+      if (ecoinEl) ecoinEl.innerHTML = (ecoinTotal || 0) + '<span class="ek-stat__unit"> EC</span>';
 
       // Most recent earn / spend notification → shown in the delta line.
       const ecoinRecords = (window.ProductCatalog && window.ProductCatalog.getMemberEcoinRecords)
@@ -1416,11 +1442,11 @@
       const linkEl = document.getElementById('referralLink');
       if (linkEl && mid) {
         try {
-          const url = new URL('index.html', location.href);
+          const url = new URL('login.html', location.href);
           url.searchParams.set('ref', mid);
           linkEl.value = url.toString();
         } catch (e) {
-          linkEl.value = location.origin + location.pathname.replace(/[^/]*$/, '') + 'index.html?ref=' + mid;
+          linkEl.value = location.origin + location.pathname.replace(/[^/]*$/, '') + 'login.html?ref=' + mid;
         }
       }
       // 2) Totals + list
@@ -1862,7 +1888,9 @@
     function showView(name) {
       document.querySelectorAll('.dash-view').forEach(v => v.hidden = (v.dataset.view !== name));
       document.querySelectorAll('#dashTabs a[data-tab]').forEach(a => {
-        a.classList.toggle('active', a.dataset.tab === name);
+        const selected = a.dataset.tab === name;
+        a.classList.toggle('active', selected);
+        a.setAttribute('aria-selected', selected);
       });
       if (name === 'orders') {
         renderOrders();
@@ -2147,7 +2175,6 @@
 
       // Addresses
       document.getElementById('addrAddBtn').addEventListener('click', () => openAddressEditor(null));
-      document.getElementById('addrEditorClose').addEventListener('click', closeAddressEditor);
       document.getElementById('addrEditorCancel').addEventListener('click', closeAddressEditor);
       document.getElementById('addressList').addEventListener('click', e => {
         const edit = e.target.closest('[data-addr-edit]');
@@ -2236,17 +2263,16 @@
       const btn = document.getElementById(btnId);
       if (!btn) return;
 
-      const thHeaders = columns.map(c => `<th>${c.header}</th>`).join('');
-      const modal = document.createElement('div');
-      modal.className = 'modal-overlay';
+      const thHeaders = columns.map(c => `<th${c.right ? ' class="ek-table__num"' : ''}>${c.header}</th>`).join('');
+      const modal = document.createElement('dialog');
+      modal.className = 'ek-modal ek-modal--wide';
       modal.id = modalId;
       modal.innerHTML = `
-        <div class="modal-panel">
-          <div class="modal-head">
-            <h3>${title}</h3>
-            <button type="button" class="modal-close" data-close>&times;</button>
+          <div class="ek-modal__head">
+            <h3 class="ek-modal__title">${title}</h3>
+            <button type="button" class="modal-close" data-close aria-label="Close">&times;</button>
           </div>
-          <div class="modal-body">
+          <div class="ek-modal__body">
             <div class="modal-filter-bar">
               <input type="date" id="${modalId}-start" title="Start date">
               <input type="date" id="${modalId}-end" title="End date">
@@ -2257,32 +2283,33 @@
               </select>` : ''}
               <input type="text" id="${modalId}-remark" placeholder="Remark">
             </div>
-            <div class="modal-table-wrap">
-              <table class="modal-table">
+            <div class="ek-table-wrap">
+              <table class="ek-table ek-table--stack">
                 <thead><tr>${thHeaders}</tr></thead>
-                <tbody id="${modalId}-body"><tr><td colspan="${columns.length}" class="modal-empty">Loading…</td></tr></tbody>
+                <tbody id="${modalId}-body"><tr><td colspan="${columns.length}"><div class="ek-empty"><p class="ek-empty__title">Loading…</p></div></td></tr></tbody>
               </table>
             </div>
           </div>
-          <div class="modal-foot">
+          <div class="ek-modal__foot">
             <button type="button" class="ek-btn ek-btn--sm" id="${modalId}-reset">Reset</button>
             <button type="button" class="ek-btn ek-btn--sm ek-btn--primary" id="${modalId}-select">Select</button>
-          </div>
-        </div>`;
+          </div>`;
       document.body.appendChild(modal);
 
       const tbody = modal.querySelector(`#${modalId}-body`);
       let allRecords = [];
 
+      function setRecords(records) {
+        allRecords = records;
+        renderTable(filterRecords(allRecords));
+      }
       function openModal() {
-        modal.classList.add('open');
-        document.body.style.overflow = 'hidden';
-        if (!allRecords.length) loadRecords();
+        modal.showModal();
+        if (!allRecords.length) loadRecords(setRecords);
         else renderTable(filterRecords(allRecords));
       }
       function closeModal() {
-        modal.classList.remove('open');
-        document.body.style.overflow = '';
+        modal.close();
       }
       function filterRecords(records) {
         const s = modal.querySelector('#' + modalId + '-start').value;
@@ -2297,20 +2324,18 @@
           return true;
         });
       }
-      function fmt(v) { return v == null ? '—' : Number(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
       function renderTable(records) {
-        if (!records.length) { tbody.innerHTML = `<tr><td colspan="${columns.length}" class="modal-empty">No Data</td></tr>`; return; }
+        if (!records.length) { tbody.innerHTML = `<tr><td colspan="${columns.length}"><div class="ek-empty"><p class="ek-empty__title">No Data</p></div></td></tr>`; return; }
         tbody.innerHTML = records.map(r => `<tr>${columns.map(c => {
           let val = c.render ? c.render(r) : (r[c.key] ?? '—');
-          const cls = [`mono`.concat(c.right ? ' right' : ''), c.amtClass && r.amount >= 0 ? 'amt-pos' : '', c.amtClass && r.amount < 0 ? 'amt-neg' : ''].filter(Boolean).join(' ');
-          return `<td${cls ? ` class="${cls}"` : ''}>${val}</td>`;
+          const cls = [`mono`.concat(c.right ? ' ek-table__num' : ''), c.amtClass && r.amount >= 0 ? 'amt-pos' : '', c.amtClass && r.amount < 0 ? 'amt-neg' : ''].filter(Boolean).join(' ');
+          return `<td${cls ? ` class="${cls}"` : ''} data-label="${c.header}">${val}</td>`;
         }).join('')}</tr>`).join('');
       }
 
       btn.addEventListener('click', openModal);
       modal.querySelector('[data-close]').addEventListener('click', closeModal);
       modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
       modal.querySelector('#' + modalId + '-reset').addEventListener('click', () => {
         modal.querySelector('#' + modalId + '-start').value = '';
         modal.querySelector('#' + modalId + '-end').value = '';
@@ -2338,19 +2363,18 @@
       columns: [
         { key: 'date', header: 'Trans Date', right: true },
         { key: 'type', header: 'Trans Type', render: r => `<span class="type-badge ${r.type}">${r.type === 'credit' ? 'Credit' : 'Debit'}</span>` },
-        { key: 'preBalance', header: 'Pre Trans Balance', right: true, render: r => fmt(r.preBalance) },
-        { key: 'postBalance', header: 'Post Trans Balance', right: true, render: r => fmt(r.postBalance) },
-        { key: 'amount', header: 'Trans Amount', right: true, amtClass: true, render: r => `${r.amount >= 0 ? '+' : ''}${fmt(r.amount)}` },
+        { key: 'preBalance', header: 'Pre Trans Balance', right: true, render: r => fmtNum(r.preBalance) },
+        { key: 'postBalance', header: 'Post Trans Balance', right: true, render: r => fmtNum(r.postBalance) },
+        { key: 'amount', header: 'Trans Amount', right: true, amtClass: true, render: r => `${r.amount >= 0 ? '+' : ''}${fmtNum(r.amount)}` },
         { key: 'remark', header: 'Remark' },
       ],
-      loadRecords: function() {
+      loadRecords: function(setRecords) {
         const mid = (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId) ? window.ProductCatalog.getCurrentMemberId() : null;
-        if (!mid) { document.getElementById('bonusHistoryModal-body').innerHTML = '<tr><td colspan="6" class="modal-empty">Please log in first.</td></tr>'; return; }
+        if (!mid) { document.getElementById('bonusHistoryModal-body').innerHTML = '<tr><td colspan="6"><div class="ek-empty"><p class="ek-empty__title">Please log in first.</p></div></td></tr>'; return; }
         let records = (window.ProductCatalog && window.ProductCatalog.getMemberBVRecords)
           ? window.ProductCatalog.getMemberBVRecords(mid.trim()) : [];
         if (!records.length) records = seedBonusDemoRecords(mid.trim());
-        allRecords = records;
-        renderTable(filterRecords(allRecords));
+        setRecords(records);
       }
     });
 
@@ -2361,67 +2385,64 @@
       title: 'Member Ecoin Trading Record',
       columns: [
         { key: 'date', header: 'Trans Date', right: true },
-        { key: 'preBalance', header: 'Pre Trans Balance', right: true, render: r => fmt(r.preBalance) },
-        { key: 'postBalance', header: 'Post Trans Balance', right: true, render: r => fmt(r.postBalance) },
-        { key: 'amount', header: 'Trans Amount', right: true, amtClass: true, render: r => `${r.amount >= 0 ? '+' : ''}${fmt(r.amount)}` },
+        { key: 'preBalance', header: 'Pre Trans Balance', right: true, render: r => fmtNum(r.preBalance) },
+        { key: 'postBalance', header: 'Post Trans Balance', right: true, render: r => fmtNum(r.postBalance) },
+        { key: 'amount', header: 'Trans Amount', right: true, amtClass: true, render: r => `${r.amount >= 0 ? '+' : ''}${fmtNum(r.amount)}` },
         { key: 'remark', header: 'Remark' },
       ],
-      loadRecords: function() {
+      loadRecords: function(setRecords) {
         const mid = (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId) ? window.ProductCatalog.getCurrentMemberId() : null;
-        if (!mid) { document.getElementById('ecoinHistoryModal-body').innerHTML = '<tr><td colspan="5" class="modal-empty">Please log in first.</td></tr>'; return; }
+        if (!mid) { document.getElementById('ecoinHistoryModal-body').innerHTML = '<tr><td colspan="5"><div class="ek-empty"><p class="ek-empty__title">Please log in first.</p></div></td></tr>'; return; }
         let records = (window.ProductCatalog && window.ProductCatalog.getMemberEcoinRecords)
           ? window.ProductCatalog.getMemberEcoinRecords(mid.trim()) : [];
         if (!records.length) records = seedEcoinDemoRecords(mid.trim());
-        allRecords = records;
-        renderTable(filterRecords(allRecords));
+        setRecords(records);
       }
     });
 
     /* ---------- Previous Bonus: Period List Modal ---------- */
     function createBonusPeriodModal() {
-      const modal = document.createElement('div');
-      modal.className = 'modal-overlay';
+      const modal = document.createElement('dialog');
+      modal.className = 'ek-modal ek-modal--wide';
       modal.id = 'bonusPeriodModal';
       modal.innerHTML = `
-        <div class="modal-panel">
-          <div class="modal-head">
-            <h3>Previous Bonus — Historical Periods</h3>
-            <button type="button" class="modal-close" data-close>&times;</button>
+          <div class="ek-modal__head">
+            <h3 class="ek-modal__title">Previous Bonus — Historical Periods</h3>
           </div>
-          <div class="modal-body">
-            <div class="modal-table-wrap">
-              <table class="bonus-period-table">
+          <div class="ek-modal__body">
+            <div class="ek-table-wrap">
+              <table class="ek-table ek-table--stack">
                 <thead>
                   <tr>
                     <th>Pay Cycle</th>
-                    <th class="right">Elite Bonus</th>
-                    <th class="right">Pro Elite Bonus</th>
-                    <th class="right">Super Elite Bonus</th>
-                    <th class="right">Stockist Bonus</th>
-                    <th class="right">LeaderShip Bonus</th>
-                    <th class="right">Welcome Bonus</th>
-                    <th class="right">Car Bonus</th>
-                    <th class="right">Performance Bonus</th>
-                    <th class="right">Builder Bonus</th>
+                    <th class="ek-table__num">Elite Bonus</th>
+                    <th class="ek-table__num">Pro Elite Bonus</th>
+                    <th class="ek-table__num">Super Elite Bonus</th>
+                    <th class="ek-table__num">Stockist Bonus</th>
+                    <th class="ek-table__num">LeaderShip Bonus</th>
+                    <th class="ek-table__num">Welcome Bonus</th>
+                    <th class="ek-table__num">Car Bonus</th>
+                    <th class="ek-table__num">Performance Bonus</th>
+                    <th class="ek-table__num">Builder Bonus</th>
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody id="bonusPeriodBody"><tr><td colspan="11" class="modal-empty">Loading…</td></tr></tbody>
+                <tbody id="bonusPeriodBody"><tr><td colspan="11"><div class="ek-empty"><p class="ek-empty__title">Loading…</p></div></td></tr></tbody>
               </table>
             </div>
           </div>
-        </div>
+          <div class="ek-modal__foot">
+            <button type="button" class="ek-btn ek-btn--secondary" data-close>Close</button>
+          </div>
       `;
       document.body.appendChild(modal);
 
       function closeModal() {
-        modal.classList.remove('open');
-        document.body.style.overflow = '';
+        modal.close();
       }
 
       modal.querySelector('[data-close]').addEventListener('click', closeModal);
       modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
 
       window.__closeBonusPeriodModal = closeModal;
     }
@@ -2438,49 +2459,46 @@
       const records = seedPeriodBonusDemoRecords(mid.trim());
       body.innerHTML = records.map(r => `
         <tr>
-          <td class="period-num">${r.cycle}</td>
-          <td class="right">${fmtNum(r.elite)}</td>
-          <td class="right">${fmtNum(r.proElite)}</td>
-          <td class="right">${fmtNum(r.superElite)}</td>
-          <td class="right">${fmtNum(r.stockist)}</td>
-          <td class="right">${fmtNum(r.leadership)}</td>
-          <td class="right">${fmtNum(r.welcome)}</td>
-          <td class="right">${fmtNum(r.car)}</td>
-          <td class="right">${fmtNum(r.performance)}</td>
-          <td class="right">${fmtNum(r.builder)}</td>
-          <td><button type="button" class="ek-btn ek-btn--sm ek-btn--primary" onclick="openPeriodBonusDetail(${r.cycle})">View</button></td>
+          <td class="period-num" data-label="Pay Cycle">${r.cycle}</td>
+          <td class="ek-table__num" data-label="Elite Bonus">${fmtNum(r.elite)}</td>
+          <td class="ek-table__num" data-label="Pro Elite Bonus">${fmtNum(r.proElite)}</td>
+          <td class="ek-table__num" data-label="Super Elite Bonus">${fmtNum(r.superElite)}</td>
+          <td class="ek-table__num" data-label="Stockist Bonus">${fmtNum(r.stockist)}</td>
+          <td class="ek-table__num" data-label="LeaderShip Bonus">${fmtNum(r.leadership)}</td>
+          <td class="ek-table__num" data-label="Welcome Bonus">${fmtNum(r.welcome)}</td>
+          <td class="ek-table__num" data-label="Car Bonus">${fmtNum(r.car)}</td>
+          <td class="ek-table__num" data-label="Performance Bonus">${fmtNum(r.performance)}</td>
+          <td class="ek-table__num" data-label="Builder Bonus">${fmtNum(r.builder)}</td>
+          <td class="ek-table__actions" data-label="Action"><button type="button" class="ek-btn ek-btn--sm ek-btn--primary" onclick="openPeriodBonusDetail(${r.cycle})">View</button></td>
         </tr>
       `).join('');
-      document.getElementById('bonusPeriodModal').classList.add('open');
-      document.body.style.overflow = 'hidden';
+      document.getElementById('bonusPeriodModal').showModal();
     }
 
     /* ---------- Period Bonus Detail Modal ---------- */
     function createBonusDetailModal() {
-      const modal = document.createElement('div');
-      modal.className = 'modal-overlay';
+      const modal = document.createElement('dialog');
+      modal.className = 'ek-modal';
       modal.id = 'bonusDetailModal';
       modal.innerHTML = `
-        <div class="modal-panel">
-          <div class="modal-head">
-            <h3 id="bonusDetailTitle">Period Bonus Detail</h3>
-            <button type="button" class="modal-close" data-close>&times;</button>
+          <div class="ek-modal__head">
+            <h3 class="ek-modal__title" id="bonusDetailTitle">Period Bonus Detail</h3>
           </div>
-          <div class="modal-body">
-            <div class="bonus-detail-grid" id="bonusDetailBody"></div>
+          <div class="ek-modal__body">
+            <dl class="ek-kv" id="bonusDetailBody"></dl>
           </div>
-        </div>
+          <div class="ek-modal__foot">
+            <button type="button" class="ek-btn ek-btn--secondary" data-close>Close</button>
+          </div>
       `;
       document.body.appendChild(modal);
 
       function closeModal() {
-        modal.classList.remove('open');
-        document.body.style.overflow = '';
+        modal.close();
       }
 
       modal.querySelector('[data-close]').addEventListener('click', closeModal);
       modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
 
       window.__closeBonusDetailModal = closeModal;
     }
@@ -2511,14 +2529,11 @@
         { label: 'Total Bonus', value: rec.total, highlight: true },
       ];
       document.getElementById('bonusDetailBody').innerHTML = fields.map(f => `
-        <div class="bonus-detail-row">
-          <span class="bonus-detail-label">${f.label}</span>
-          <span class="bonus-detail-value${f.highlight ? ' highlight' : ''}">${f.value}</span>
-        </div>
+        <dt>${f.label}</dt>
+        <dd${f.highlight ? ' class="bonus-detail-value--highlight"' : ''}>${f.value}</dd>
       `).join('');
 
-      document.getElementById('bonusDetailModal').classList.add('open');
-      document.body.style.overflow = 'hidden';
+      document.getElementById('bonusDetailModal').showModal();
     }
 
     /* ---------- Demo seed data for period bonus records ---------- */
@@ -2564,30 +2579,28 @@
 
     /* ---------- Historical Cumulative Bonus Modal ---------- */
     function createHistoricalCumulativeBonusModal() {
-      const modal = document.createElement('div');
-      modal.className = 'modal-overlay';
+      const modal = document.createElement('dialog');
+      modal.className = 'ek-modal ek-modal--wide';
       modal.id = 'historicalCumulativeBonusModal';
       modal.innerHTML = `
-        <div class="modal-panel">
-          <div class="modal-head">
-            <h3>Historical Cumulative Bonus</h3>
-            <button type="button" class="modal-close" data-close>&times;</button>
+          <div class="ek-modal__head">
+            <h3 class="ek-modal__title">Historical Cumulative Bonus</h3>
           </div>
-          <div class="modal-body">
-            <div class="hc-bonus-grid" id="hcBonusGrid"></div>
+          <div class="ek-modal__body">
+            <div class="ek-grid" id="hcBonusGrid" style="--min: 180px"></div>
           </div>
-        </div>
+          <div class="ek-modal__foot">
+            <button type="button" class="ek-btn ek-btn--secondary" data-close>Close</button>
+          </div>
       `;
       document.body.appendChild(modal);
 
       function closeModal() {
-        modal.classList.remove('open');
-        document.body.style.overflow = '';
+        modal.close();
       }
 
       modal.querySelector('[data-close]').addEventListener('click', closeModal);
       modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
     }
 
     function openHistoricalCumulativeBonus() {
@@ -2631,18 +2644,16 @@
         { key: 'builder', label: 'Builder Bonus' },
       ];
 
-      const moneyIcon = `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="12" width="36" height="24" rx="3"/><circle cx="24" cy="24" r="6"/><path d="M12 18h0M36 30h0"/></svg>`;
-
       document.getElementById('hcBonusGrid').innerHTML = items.map(item => `
-        <div class="hc-bonus-card">
-          <div class="hc-bonus-icon">${moneyIcon}</div>
-          <div class="hc-bonus-name">${item.label}</div>
-          <div class="hc-bonus-value">${Number(totals[item.key] || 0).toLocaleString('en-US')}</div>
+        <div class="ek-card">
+          <div class="ek-stat">
+            <span class="ek-stat__label">${item.label}</span>
+            <span class="ek-stat__value">${Number(totals[item.key] || 0).toLocaleString('en-US')}</span>
+          </div>
         </div>
       `).join('');
 
-      document.getElementById('historicalCumulativeBonusModal').classList.add('open');
-      document.body.style.overflow = 'hidden';
+      document.getElementById('historicalCumulativeBonusModal').showModal();
     }
 
     function fmtNum(v) {
@@ -2716,30 +2727,28 @@
 
     function createRechargeTransferModal() {
       if (document.getElementById('rechargeTransferModal')) return;
-      const modal = document.createElement('div');
-      modal.className = 'modal-overlay';
+      const modal = document.createElement('dialog');
+      modal.className = 'ek-modal ek-modal--wide';
       modal.id = 'rechargeTransferModal';
       modal.innerHTML = `
-        <div class="modal-panel">
-          <div class="modal-head">
-            <h3>Recharge and Transfer</h3>
-            <button type="button" class="modal-close" data-close>&times;</button>
+          <div class="ek-modal__head">
+            <h3 class="ek-modal__title">Recharge and Transfer</h3>
           </div>
-          <div class="modal-body">
-            <div class="rt-tabs">
-              <button type="button" class="rt-tab active" data-rt-tab="recharge">Recharge</button>
-              <button type="button" class="rt-tab" data-rt-tab="transfer">Transfer</button>
+          <div class="ek-modal__body">
+            <div class="rt-tabs ek-tabs" role="tablist">
+              <button type="button" class="rt-tab ek-tab active" role="tab" aria-selected="true" data-rt-tab="recharge">Recharge</button>
+              <button type="button" class="rt-tab ek-tab" role="tab" aria-selected="false" data-rt-tab="transfer">Transfer</button>
             </div>
-            <div class="rt-panel active" data-rt-panel="recharge">
+            <div class="rt-panel ek-tabpanel active" role="tabpanel" data-rt-panel="recharge">
               <div class="rt-toolbar">
                 <button type="button" class="ek-btn ek-btn--sm ek-btn--primary" id="rtRechargeBtn">Recharge</button>
               </div>
-              <div class="rt-table-wrap">
-                <table class="rt-table">
+              <div class="ek-table-wrap">
+                <table class="ek-table ek-table--stack">
                   <thead>
                     <tr>
                       <th>Created Time</th>
-                      <th class="num">Recharge Amount</th>
+                      <th class="ek-table__num">Recharge Amount</th>
                       <th>Recharge Status</th>
                       <th>Type</th>
                       <th>Bank Name</th>
@@ -2747,43 +2756,63 @@
                       <th>Recharge Voucher</th>
                     </tr>
                   </thead>
-                  <tbody id="rtRechargeBody"><tr><td colspan="7" class="rt-empty">No Data</td></tr></tbody>
+                  <tbody id="rtRechargeBody"><tr><td colspan="7"><div class="ek-empty"><p class="ek-empty__title">No Data</p></div></td></tr></tbody>
                 </table>
               </div>
             </div>
-            <div class="rt-panel" data-rt-panel="transfer">
-              <div class="rt-filter-bar">
-                <input type="date" id="rtTransferStart" title="Start date">
-                <input type="date" id="rtTransferEnd" title="End date">
-                <select id="rtTransferOut">
-                  <option value="">Select transfer out of account</option>
-                  <option value="Bonus">Bonus</option>
-                  <option value="Ecoin">Ecoin</option>
-                </select>
-                <select id="rtTransferIn">
-                  <option value="">Select transfer in account</option>
-                  <option value="Ecoin">Ecoin</option>
-                  <option value="Bonus">Bonus</option>
-                </select>
-                <input type="text" id="rtTransferRecvCode" placeholder="Enter your receiving member code">
-                <input type="text" id="rtTransferRecvName" placeholder="Enter the name of receiving member">
-                <button type="button" class="ek-btn ek-btn--sm" id="rtTransferReset">Reset</button>
-                <button type="button" class="ek-btn ek-btn--sm ek-btn--secondary" id="rtTransferSearch">Select</button>
+            <div class="rt-panel ek-tabpanel" role="tabpanel" data-rt-panel="transfer">
+              <div class="modal-filter-bar modal-filter-bar--grid">
+                <div class="mf-field">
+                  <label for="rtTransferStart">Start date</label>
+                  <input class="ek-input" type="date" id="rtTransferStart">
+                </div>
+                <div class="mf-field">
+                  <label for="rtTransferEnd">End date</label>
+                  <input class="ek-input" type="date" id="rtTransferEnd">
+                </div>
+                <div class="mf-field">
+                  <label for="rtTransferOut">Transfer out of</label>
+                  <select class="ek-select" id="rtTransferOut">
+                    <option value="">Select account</option>
+                    <option value="Bonus">Bonus</option>
+                    <option value="Ecoin">Ecoin</option>
+                  </select>
+                </div>
+                <div class="mf-field">
+                  <label for="rtTransferIn">Transfer into</label>
+                  <select class="ek-select" id="rtTransferIn">
+                    <option value="">Select account</option>
+                    <option value="Ecoin">Ecoin</option>
+                    <option value="Bonus">Bonus</option>
+                  </select>
+                </div>
+                <div class="mf-field">
+                  <label for="rtTransferRecvCode">Receiving member code</label>
+                  <input class="ek-input" type="text" id="rtTransferRecvCode" placeholder="Enter member code">
+                </div>
+                <div class="mf-field">
+                  <label for="rtTransferRecvName">Receiving member name</label>
+                  <input class="ek-input" type="text" id="rtTransferRecvName" placeholder="Enter member name">
+                </div>
+                <div class="mf-actions">
+                  <button type="button" class="ek-btn ek-btn--sm" id="rtTransferReset">Reset</button>
+                  <button type="button" class="ek-btn ek-btn--sm ek-btn--secondary" id="rtTransferSearch">Select</button>
+                </div>
               </div>
-              <div class="rt-table-wrap">
-                <table class="rt-table">
+              <div class="ek-table-wrap">
+                <table class="ek-table ek-table--stack">
                   <thead>
                     <tr>
                       <th>Transfer Accounts</th>
                       <th>Receiving Member Code</th>
                       <th>Receiving Member Name</th>
                       <th>Transfer Into Account</th>
-                      <th class="num">Amount</th>
+                      <th class="ek-table__num">Amount</th>
                       <th>Transfer Time</th>
                       <th>Remark</th>
                     </tr>
                   </thead>
-                  <tbody id="rtTransferBody"><tr><td colspan="7" class="rt-empty">No Data</td></tr></tbody>
+                  <tbody id="rtTransferBody"><tr><td colspan="7"><div class="ek-empty"><p class="ek-empty__title">No Data</p></div></td></tr></tbody>
                 </table>
               </div>
               <div class="rt-toolbar">
@@ -2791,16 +2820,19 @@
               </div>
             </div>
           </div>
-        </div>
+          <div class="ek-modal__foot">
+            <button type="button" class="ek-btn ek-btn--secondary" data-close>Close</button>
+          </div>
       `;
       document.body.appendChild(modal);
 
       // Tab switching
       modal.querySelectorAll('[data-rt-tab]').forEach(btn => {
         btn.addEventListener('click', () => {
-          modal.querySelectorAll('[data-rt-tab]').forEach(b => b.classList.remove('active'));
+          modal.querySelectorAll('[data-rt-tab]').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
           modal.querySelectorAll('[data-rt-panel]').forEach(p => p.classList.remove('active'));
           btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
           const key = btn.dataset.rtTab;
           const panel = modal.querySelector('[data-rt-panel="' + key + '"]');
           if (panel) panel.classList.add('active');
@@ -2835,8 +2867,7 @@
     function closeRechargeTransferModal() {
       const modal = document.getElementById('rechargeTransferModal');
       if (!modal) return;
-      modal.classList.remove('open');
-      document.body.style.overflow = '';
+      modal.close();
     }
 
     function currentMemberId() {
@@ -2851,18 +2882,19 @@
       let list = getRechargeRecords().filter(r => r.memberId === mid);
       if (!list.length) list = seedRechargeRecords(mid);
       if (!list.length) {
-        tbody.innerHTML = '<tr><td colspan="7" class="rt-empty">No Data</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7"><div class="ek-empty"><p class="ek-empty__title">No Data</p></div></td></tr>';
         return;
       }
+      const rtChipClass = s => s === 'approved' ? 'ek-chip--success' : s === 'rejected' ? 'ek-chip--error' : 'ek-chip--warning';
       tbody.innerHTML = list.slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).map(r => `
         <tr>
-          <td>${fmtDateTime(r.createdAt)}</td>
-          <td class="num">${Number(r.amount || 0).toLocaleString()}</td>
-          <td><span class="rt-status-badge ${r.status || 'pending'}">${(r.status || 'pending').toUpperCase()}</span></td>
-          <td>${esc(r.type || 'Cash')}</td>
-          <td>${esc(r.bankName || '')}</td>
-          <td>${esc(r.paymentRef || '')}</td>
-          <td>${esc(r.voucher || '')}</td>
+          <td data-label="Created Time">${fmtDateTime(r.createdAt)}</td>
+          <td class="ek-table__num" data-label="Recharge Amount">${Number(r.amount || 0).toLocaleString()}</td>
+          <td data-label="Recharge Status"><span class="ek-chip ${rtChipClass(r.status || 'pending')}">${(r.status || 'pending').toUpperCase()}</span></td>
+          <td data-label="Type">${esc(r.type || 'Cash')}</td>
+          <td data-label="Bank Name">${esc(r.bankName || '')}</td>
+          <td data-label="Payment Reference">${esc(r.paymentRef || '')}</td>
+          <td data-label="Recharge Voucher">${esc(r.voucher || '')}</td>
         </tr>
       `).join('');
     }
@@ -2893,19 +2925,19 @@
       });
 
       if (!list.length) {
-        tbody.innerHTML = '<tr><td colspan="7" class="rt-empty">No Data</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7"><div class="ek-empty"><p class="ek-empty__title">No Data</p></div></td></tr>';
         return;
       }
 
       tbody.innerHTML = list.slice().sort((a, b) => (b.transferTime || 0) - (a.transferTime || 0)).map(r => `
         <tr>
-          <td>${esc(r.fromAccount || 'Bonus')}${r.toAccount ? ' → ' + esc(r.toAccount) : ''}</td>
-          <td>${esc(r.receivingMemberCode || '')}</td>
-          <td>${esc(r.receivingMemberName || '')}</td>
-          <td>${esc(r.toAccount || 'Ecoin')}</td>
-          <td class="num">${Number(r.amount || 0).toLocaleString()}</td>
-          <td>${fmtDateTime(r.transferTime)}</td>
-          <td>${esc(r.remark || '')}</td>
+          <td data-label="Transfer Accounts">${esc(r.fromAccount || 'Bonus')}${r.toAccount ? ' → ' + esc(r.toAccount) : ''}</td>
+          <td data-label="Receiving Member Code">${esc(r.receivingMemberCode || '')}</td>
+          <td data-label="Receiving Member Name">${esc(r.receivingMemberName || '')}</td>
+          <td data-label="Transfer Into Account">${esc(r.toAccount || 'Ecoin')}</td>
+          <td class="ek-table__num" data-label="Amount">${Number(r.amount || 0).toLocaleString()}</td>
+          <td data-label="Transfer Time">${fmtDateTime(r.transferTime)}</td>
+          <td data-label="Remark">${esc(r.remark || '')}</td>
         </tr>
       `).join('');
     }
@@ -2914,8 +2946,13 @@
       createRechargeTransferModal();
       const modal = document.getElementById('rechargeTransferModal');
       if (modal) {
-        modal.classList.add('open');
-        document.body.style.overflow = 'hidden';
+        modal.showModal();
+        // showModal() picks its own initial focus target when nothing inside
+        // is marked autofocus — here it lands on the .rt-tabs wrapper div
+        // itself, leaving a stray focus ring around the whole tab strip.
+        // Move focus to the active tab instead, the sensible target for a
+        // tablist.
+        modal.querySelector('[data-rt-tab].active')?.focus();
         renderRechargeTable();
       }
     }
@@ -2930,46 +2967,43 @@
 
     function openRechargeForm() {
       if (document.getElementById('rechargeFormModal')) return;
-      const modal = document.createElement('div');
-      modal.className = 'modal-overlay';
+      const modal = document.createElement('dialog');
+      modal.className = 'ek-modal';
       modal.id = 'rechargeFormModal';
       modal.innerHTML = `
-        <div class="modal-panel">
-          <div class="modal-head">
-            <h3>Recharge</h3>
-            <button type="button" class="modal-close" data-close>&times;</button>
+          <div class="ek-modal__head">
+            <h3 class="ek-modal__title">Recharge</h3>
           </div>
-          <div class="modal-body">
-            <form id="rechargeForm">
-              <div class="rt-form-row">
-                <label>Recharge Amount <span class="req">*</span></label>
+          <div class="ek-modal__body">
+            <form id="rechargeForm" class="ek-form" style="--form-cols: 2">
+              <div class="ek-field">
+                <label for="rechargeAmount">Recharge Amount <span class="req">*</span></label>
                 <div class="rt-amount-field">
-                  <button type="button" data-step="-1">−</button>
-                  <input type="number" name="amount" value="1" min="1" step="1" required>
-                  <button type="button" data-step="1">+</button>
+                  <button type="button" data-step="-1" aria-label="Decrease amount">−</button>
+                  <input class="ek-input" type="number" id="rechargeAmount" name="amount" value="1" min="1" step="1" required>
+                  <button type="button" data-step="1" aria-label="Increase amount">+</button>
                 </div>
               </div>
-              <div class="rt-form-row">
-                <label>Type <span class="req">*</span></label>
-                <select name="type" required>
+              <div class="ek-field">
+                <label for="rechargeType">Type <span class="req">*</span></label>
+                <select class="ek-select" id="rechargeType" name="type" required>
                   <option value="Cash" selected>Cash</option>
                 </select>
               </div>
-              <div class="rt-form-row">
-                <label>Payment Date <span class="req">*</span></label>
-                <input type="date" name="paymentDate" required>
+              <div class="ek-field" style="grid-column: 1 / -1">
+                <label for="rechargePaymentDate">Payment Date <span class="req">*</span></label>
+                <input class="ek-input" type="date" id="rechargePaymentDate" name="paymentDate" required>
               </div>
-              <div class="rt-form-row">
-                <label>Remark <span class="req">*</span></label>
-                <textarea name="remark" placeholder="Please enter remarks" required></textarea>
+              <div class="ek-field" style="grid-column: 1 / -1">
+                <label for="rechargeRemark">Remark <span class="req">*</span></label>
+                <textarea class="ek-textarea" id="rechargeRemark" name="remark" placeholder="Please enter remarks" required></textarea>
               </div>
-              <div class="rt-form-actions">
+              <div class="ek-form__actions">
                 <button type="button" class="ek-btn ek-btn--secondary" data-close>Cancel</button>
                 <button type="submit" class="ek-btn">Confirm</button>
               </div>
             </form>
           </div>
-        </div>
       `;
       document.body.appendChild(modal);
 
@@ -2986,15 +3020,10 @@
       form.querySelector('input[name="paymentDate"]').value = fmtDate(new Date());
 
       modal.querySelectorAll('[data-close]').forEach(el => {
-        el.addEventListener('click', () => {
-          modal.classList.remove('open');
-          setTimeout(() => modal.remove(), 250);
-        });
+        el.addEventListener('click', () => modal.close());
       });
-      modal.addEventListener('click', e => { if (e.target === modal) {
-        modal.classList.remove('open');
-        setTimeout(() => modal.remove(), 250);
-      }});
+      modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+      modal.addEventListener('close', () => modal.remove());
 
       form.addEventListener('submit', e => {
         e.preventDefault();
@@ -3029,16 +3058,13 @@
           });
         }
         window.toast('Recharge submitted and pending approval.', 'success');
-        modal.classList.remove('open');
-        setTimeout(() => {
-          modal.remove();
-          renderRechargeTable();
-          updateMemberOverview();
-          window.dispatchEvent(new CustomEvent('al:orderschange'));
-        }, 250);
+        modal.close();
+        renderRechargeTable();
+        updateMemberOverview();
+        window.dispatchEvent(new CustomEvent('al:orderschange'));
       });
 
-      modal.classList.add('open');
+      modal.showModal();
     }
 
     function openTransferForm() {
@@ -3050,65 +3076,57 @@
       const availableBonus = bvRecords.length ? Math.max(0, bvRecords[bvRecords.length - 1].postBalance || 0) : 0;
       const availableEcoin = pc.getEcoinTotal ? pc.getEcoinTotal(mid) : 0;
 
-      const modal = document.createElement('div');
-      modal.className = 'modal-overlay';
+      const modal = document.createElement('dialog');
+      modal.className = 'ek-modal';
       modal.id = 'transferFormModal';
       modal.innerHTML = `
-        <div class="modal-panel">
-          <div class="modal-head">
-            <h3>Apply For Transfer</h3>
-            <button type="button" class="modal-close" data-close>&times;</button>
+          <div class="ek-modal__head">
+            <h3 class="ek-modal__title">Apply For Transfer</h3>
           </div>
-          <div class="modal-body">
-            <form id="transferForm">
-              <div class="rt-form-row">
-                <label>Transfer Type <span class="req">*</span></label>
-                <select name="transferType" required>
+          <div class="ek-modal__body">
+            <form id="transferForm" class="ek-form" style="--form-cols: 1">
+              <div class="ek-field">
+                <label for="transferType">Transfer Type <span class="req">*</span></label>
+                <select class="ek-select" id="transferType" name="transferType" required>
                   <option value="Bonus To Ecoin" selected>Bonus To Ecoin</option>
                   <option value="Ecoin To Ecoin">Ecoin To Ecoin</option>
                 </select>
               </div>
-              <div class="rt-form-row">
-                <label>Available Bonus</label>
-                <input type="text" value="${Number(availableBonus).toLocaleString()}" disabled>
+              <div class="ek-field">
+                <label for="transferAvailableBonus">Available Bonus</label>
+                <input class="ek-input" type="text" id="transferAvailableBonus" value="${Number(availableBonus).toLocaleString()}" disabled>
               </div>
-              <div class="rt-form-row">
-                <label>Available Ecoin</label>
-                <input type="text" value="${Number(availableEcoin).toLocaleString()}" disabled>
+              <div class="ek-field">
+                <label for="transferAvailableEcoin">Available Ecoin</label>
+                <input class="ek-input" type="text" id="transferAvailableEcoin" value="${Number(availableEcoin).toLocaleString()}" disabled>
               </div>
-              <div class="rt-form-row">
-                <label>Member Code <span class="req">*</span></label>
-                <input type="text" name="receivingMemberCode" placeholder="" required>
+              <div class="ek-field">
+                <label for="transferRecvCode">Member Code <span class="req">*</span></label>
+                <input class="ek-input" type="text" id="transferRecvCode" name="receivingMemberCode" placeholder="" required>
               </div>
-              <div class="rt-form-row">
-                <label>Amount <span class="req">*</span></label>
-                <input type="number" name="amount" value="0" min="1" step="1" required>
+              <div class="ek-field">
+                <label for="transferAmount">Amount <span class="req">*</span></label>
+                <input class="ek-input" type="number" id="transferAmount" name="amount" value="0" min="1" step="1" required>
               </div>
-              <div class="rt-form-row">
-                <label>Remark</label>
-                <input type="text" name="remark" placeholder="">
+              <div class="ek-field">
+                <label for="transferRemark">Remark</label>
+                <input class="ek-input" type="text" id="transferRemark" name="remark" placeholder="">
               </div>
-              <div class="rt-form-actions">
+              <div class="ek-form__actions">
                 <button type="button" class="ek-btn ek-btn--secondary" data-close>Cancel</button>
                 <button type="submit" class="ek-btn">Confirm</button>
               </div>
             </form>
           </div>
-        </div>
       `;
       document.body.appendChild(modal);
 
       const form = document.getElementById('transferForm');
       modal.querySelectorAll('[data-close]').forEach(el => {
-        el.addEventListener('click', () => {
-          modal.classList.remove('open');
-          setTimeout(() => modal.remove(), 250);
-        });
+        el.addEventListener('click', () => modal.close());
       });
-      modal.addEventListener('click', e => { if (e.target === modal) {
-        modal.classList.remove('open');
-        setTimeout(() => modal.remove(), 250);
-      }});
+      modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+      modal.addEventListener('close', () => modal.remove());
 
       form.addEventListener('submit', e => {
         e.preventDefault();
@@ -3188,16 +3206,13 @@
           }
         }
         window.toast('Transfer applied successfully.', 'success');
-        modal.classList.remove('open');
-        setTimeout(() => {
-          modal.remove();
-          renderTransferTable();
-          updateMemberOverview();
-          window.dispatchEvent(new CustomEvent('al:orderschange'));
-        }, 250);
+        modal.close();
+        renderTransferTable();
+        updateMemberOverview();
+        window.dispatchEvent(new CustomEvent('al:orderschange'));
       });
 
-      modal.classList.add('open');
+      modal.showModal();
     }
 
     function esc(s) {
@@ -3369,44 +3384,51 @@
       renderSponsorSummary(data);
       const filtered = filterSponsorTree(data, query, depth);
       if (!filtered.length) {
-        host.innerHTML = '<div class="sn-empty">No matching sponsor network records found.</div>';
+        host.innerHTML = '<div class="ek-empty"><p class="ek-empty__body">No matching sponsor network records found.</p></div>';
         return;
       }
-      host.innerHTML = filtered.map(n => renderTreeNode(n, depth, 1)).join('');
+      host.innerHTML = `<ul class="ek-tree">${filtered.map(n => renderTreeNode(n, depth, 1)).join('')}</ul>`;
       host.querySelectorAll('.sn-toggle').forEach(btn => {
         btn.addEventListener('click', () => {
-          const children = btn.closest('.sn-node-wrap').querySelector('.sn-children');
+          const children = btn.closest('li').querySelector(':scope > ul');
           if (!children) return;
           const hidden = children.hidden;
           children.hidden = !hidden;
           btn.textContent = hidden ? '−' : '+';
+          btn.setAttribute('aria-expanded', String(hidden));
         });
       });
     }
 
+    // One background per sponsor-network depth, so the eye can tell a level
+    // apart at a glance without reading the meta line. All four are brand
+    // tokens (elken-tokens.css) — the kit's own demo already uses --ek-aqua
+    // as an alternate .ek-avatar background the same way. Depth 5+ repeats
+    // the cycle rather than introducing a 5th ad-hoc color.
+    const TREE_LEVEL_COLORS = ['var(--ek-blue)', 'var(--ek-aqua)', 'var(--ek-mauve)', 'var(--ek-steel)'];
+    function treeLevelColor(depth) {
+      return TREE_LEVEL_COLORS[(depth - 1) % TREE_LEVEL_COLORS.length];
+    }
     function renderTreeNode(node, maxDepth, currentDepth) {
       const hasChildren = node.children && node.children.length && currentDepth < maxDepth;
       // 默认展示前两层、更深层折叠，使展开/收起交互直观可见
       const childrenHidden = currentDepth >= 2;
       const childrenHtml = hasChildren
-        ? `<div class="sn-children" ${childrenHidden ? 'hidden' : ''}>${node.children.map(c => renderTreeNode(c, maxDepth, currentDepth + 1)).join('')}</div>`
+        ? `<ul ${childrenHidden ? 'hidden' : ''}>${node.children.map(c => renderTreeNode(c, maxDepth, currentDepth + 1)).join('')}</ul>`
         : '';
-      const avatarSvg = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="#6B7280"/><path d="M4 20c0-4.418 3.582-8 8-8s8 3.582 8 8" fill="#6B7280"/></svg>';
+      const initials = (node.name || '?').trim().split(/\s+/).map(s => s[0]).slice(0, 2).join('').toUpperCase() || '?';
       return `
-        <div class="sn-node-wrap">
-          <div class="sn-node">
-            ${hasChildren ? `<button type="button" class="sn-toggle">${childrenHidden ? '+' : '−'}</button>` : '<span></span>'}
-            <div class="sn-node-avatar">${avatarSvg}</div>
-            <div class="sn-node-main">
-              <span class="sn-code">${esc(node.code)}</span>
-              <span class="sn-name">${esc(node.name)}</span>
-              <span class="sn-level">${esc(node.level)}</span>
-              <span class="sn-highest">Highest: ${esc(node.highest)}</span>
-              <span class="sn-pcv">${Number(node.pcv || 0).toLocaleString()}</span>
-            </div>
+        <li>
+          <div class="ek-tree__node">
+            <span class="ek-avatar" style="background: ${treeLevelColor(currentDepth)}" aria-hidden="true">${initials}</span>
+            <span class="ek-tree__body">
+              <span class="ek-tree__name">${esc(node.name)}</span>
+              <span class="ek-tree__meta">${esc(node.code)} · ${esc(node.level)} · Highest: ${esc(node.highest)} · ${Number(node.pcv || 0).toLocaleString()} PCV</span>
+            </span>
+            ${hasChildren ? `<button type="button" class="sn-toggle" aria-expanded="${!childrenHidden}" aria-label="${childrenHidden ? 'Expand' : 'Collapse'} ${esc(node.name)}’s team">${childrenHidden ? '+' : '−'}</button>` : ''}
           </div>
           ${childrenHtml}
-        </div>`;
+        </li>`;
     }
   </script>
 </body>

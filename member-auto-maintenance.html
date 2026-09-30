@@ -12,183 +12,181 @@
 
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
-  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
-  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260909f">
+  <link rel="stylesheet" href="assets/css/signup.css?v=20260923a">
+  <link rel="stylesheet" href="assets/css/member-flows.css?v=20260923a">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
-<body data-page="member-repurchase">
+<body data-page="member-auto-maintenance">
   <div id="offline-banner" class="offline-banner">Connection status</div>
-  <div id="app-header" class="ek-site-header"></div>
 
-  <main class="page mrp-shell">
-    <div class="container">
-      <div class="crumbs">
-        <a href="index.html">Home</a> <span>›</span> <a href="account.html">My Account</a> <span>›</span> <span>Member Auto-Maintenance</span>
+  <main id="main">
+
+    <!-- Page banner (matches the marketing site's section banners) -->
+    <section class="sec-banner sec-banner--gradient sec-banner--short">
+      <div class="sec-banner__glow" aria-hidden="true"></div>
+      <div class="sec-banner__inner">
+        <div class="sec-banner__crumb">
+          <nav class="ek-breadcrumb" aria-label="Breadcrumb">
+            <a href="account.html">My Account</a><span aria-hidden="true">/</span><span aria-current="page">Member Auto-Maintenance</span>
+          </nav>
+        </div>
+        <div class="sec-banner__copy">
+          <h1 class="ek-h1">Member <span class="t-accent">Auto-Maintenance.</span></h1>
+          <p class="sec-banner__sub">Place an auto-maintenance order for a member in your network. Search the member ID, pick products, and complete payment through the unified checkout process. The selected products must total at least 90 BV.</p>
+        </div>
       </div>
-      <h1>Member Auto-Maintenance</h1>
-      <p>Place an auto-maintenance order for a member in your network. Search the member ID, pick products, and complete payment through the unified checkout process. The selected products must total at least 90 BV.</p>
+    </section>
 
-      <form id="mrpForm" autocomplete="off" novalidate>
-        <!-- Section 1: Member info -->
-        <div class="mrp-card">
-          <h2>Member information</h2>
-          <p class="hint">Enter the auto-maintenance member's ID (NG + 8 digits) to look up their profile.</p>
+    <section class="sec-pad member-section">
+      <div class="ek-container member-container">
 
-          <div class="member-search">
-            <input class="ek-input" type="text" id="memberIdInput" placeholder="NG00000000" maxlength="10" autocomplete="off" />
-            <button type="button" class="ek-btn--secondary" id="memberSearchBtn">Search</button>
+        <form id="mrpForm" autocomplete="off" novalidate>
+          <!-- Section 1: Member info -->
+          <div class="ek-card sec-block">
+            <div class="sec-title">Member information</div>
+            <p class="sec-hint">Enter the auto-maintenance member's ID (NG + 8 digits) to look up their profile.</p>
+
+            <div class="member-search">
+              <input class="ek-input" type="text" id="memberIdInput" placeholder="NG00000000" maxlength="10" autocomplete="off" />
+              <button type="button" class="ek-btn ek-btn--secondary" id="memberSearchBtn">Search</button>
+            </div>
+
+            <div class="member-result ek-mt-16" id="memberResult" hidden></div>
           </div>
 
-          <div class="member-result" id="memberResult" hidden>
-            <div class="ek-avatar" id="memberAvatar">M</div>
-            <div>
-              <div class="name" id="memberName">[—]</div>
-              <div class="id" id="memberIdDisplay">NG00000000</div>
+          <!-- Section 2: Reporting center -->
+          <div class="ek-card sec-block">
+            <div class="sec-title">Reporting center</div>
+            <p class="sec-hint">Auto-filled from your account. Used to credit commissions on this order.</p>
+            <div class="reporting-grid">
+              <div class="field-row ek-field">
+                <label>Reporting center ID <span class="req-star">*</span></label>
+                <input class="ek-input" type="text" id="reportingCenterId" readonly />
+              </div>
+              <div class="field-row ek-field">
+                <label>Reporting center name</label>
+                <input class="ek-input" type="text" id="reportingCenterName" readonly />
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Section 2: Reporting center -->
-        <div class="mrp-card">
-          <h2>Reporting center</h2>
-          <p class="hint">Auto-filled from your account. Used to credit commissions on this order.</p>
-          <div class="reporting-row">
-            <div class="field">
-              <label>Reporting center ID <span class="req">*</span></label>
-              <input class="ek-input" type="text" id="reportingCenterId" readonly />
-            </div>
-            <div class="field">
-              <label>Reporting center name</label>
-              <input class="ek-input" type="text" id="reportingCenterName" readonly />
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 3: Products -->
-        <div class="mrp-card">
-          <h2>Choose products</h2>
-          <p class="hint">Tick the products to add, then adjust quantity. Prices shown are DP (distributor price) with BV, and the retail reference RP. <strong>Auto-Maintenance requires the selected products' total BV to be at least 90 BV.</strong></p>
-          <div class="product-list-wrap">
-            <div class="product-list-head">
-              <span></span>
-              <span></span>
-              <span>Product</span>
-              <span>SKU</span>
-              <span>DP (BV)</span>
-              <span>RP</span>
-              <span>Stock</span>
-              <span>Qty</span>
-            </div>
-            <div class="product-list-body" id="productPick"></div>
-          </div>
-        </div>
-
-        <!-- Section 4: Shipping address -->
-        <div class="mrp-card ship-form">
-          <h2>Shipping information</h2>
-          <p class="hint">Where should the order be delivered? The auto-maintenance member is the recipient.</p>
-
-          <div class="field">
-            <label>Recipient name <span class="req">*</span></label>
-            <input class="ek-input" type="text" id="shipRecipient" required />
-          </div>
-          <div class="row2">
-            <div class="field">
-              <label>Phone <span class="req">*</span></label>
-              <input class="ek-input" type="tel" id="shipPhone" required />
-            </div>
-            <div class="field">
-              <label>Saved address</label>
-              <select class="ek-select" id="savedAddrSelect">
-                <option value="">— Use a new address —</option>
-              </select>
-            </div>
-          </div>
-          <div class="row3">
-            <div class="field">
-              <label>State <span class="req">*</span></label>
-              <select class="ek-select" id="shipState" required>
-                <option value="">— Select state —</option>
-                <option>Lagos</option><option>FCT Abuja</option><option>Rivers</option>
-                <option>Oyo</option><option>Kano</option><option>Kaduna</option>
-                <option>Ogun</option><option>Anambra</option><option>Other</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>City <span class="req">*</span></label>
-              <input class="ek-input" type="text" id="shipCity" required />
-            </div>
-            <div class="field">
-              <label>District / LGA</label>
-              <input class="ek-input" type="text" id="shipDistrict" />
-            </div>
-          </div>
-          <div class="field">
-            <label>Street address <span class="req">*</span></label>
-            <input class="ek-input" type="text" id="shipAddress" required placeholder="House no., street name, area" />
-          </div>
-        </div>
-
-        <!-- Section 5: Payment -->
-        <div class="mrp-card">
-          <h2>Payment method</h2>
-          <p class="hint">Payment is processed through the unified Elken payment gateway.</p>
-          <div class="pay-method-grid" id="mrpPayGrid"></div>
-        </div>
-
-        <!-- Method panels are built on demand by the shared payment layer
-             (assets/js/payment-methods.js) so every flow behaves the same. -->
-        <div id="mrpPayPanels"></div>
-
-        <!-- Section 6: Summary + actions -->
-        <div class="mrp-card" id="summaryCard">
-          <h2>Order summary</h2>
-          <div id="summaryList">
-            <p>No products selected yet.</p>
-          </div>
-          <div class="row">
-            <span>Subtotal</span>
-            <span id="summarySubtotal">NGN 0</span>
-          </div>
-          <div class="row">
-            <span>BV rewards</span>
-            <span>+<span id="summaryBV">0</span> BV</span>
-          </div>
-          <div class="row">
-            <span>BV requirement</span>
-            <span id="bvReqText">need ≥ 90 BV</span>
-          </div>
-          <div class="row">
-            <span>Total</span>
-            <span id="summaryTotal">NGN 0</span>
+          <!-- Section 3: Products -->
+          <div class="ek-card sec-block">
+            <div class="sec-title">Choose products</div>
+            <p class="sec-hint">Tap a product to add it, then set the quantity. Prices shown are DP (distributor price) with BV, and the retail reference RP. <strong>Auto-Maintenance requires the selected products' total BV to be at least 90 BV.</strong></p>
+            <div class="prod-grid" id="productPick" aria-live="polite"></div>
           </div>
 
-          <div class="mrp-actions">
-            <button type="button" class="ek-btn--secondary" id="backBtn">返回 Back</button>
-            <button type="submit" class="ek-btn--primary" id="payBtn" disabled>支付 Pay</button>
+          <!-- Section 4: Shipping address -->
+          <div class="ek-card sec-block ship-form">
+            <div class="sec-title">Shipping information</div>
+            <p class="sec-hint">Where should the order be delivered? The auto-maintenance member is the recipient.</p>
+
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label>Recipient name <span class="req-star">*</span></label>
+                <input class="ek-input" type="text" id="shipRecipient" required />
+              </div>
+              <div class="field-row ek-field">
+                <label>Saved address</label>
+                <select class="ek-select" id="savedAddrSelect">
+                  <option value="">— Use a new address —</option>
+                </select>
+              </div>
+              <div class="field-row ek-field">
+                <label>Phone <span class="req-star">*</span></label>
+                <input class="ek-input" type="tel" id="shipPhone" required />
+              </div>
+              <div class="field-row ek-field">
+                <label>State <span class="req-star">*</span></label>
+                <select class="ek-select" id="shipState" required>
+                  <option value="">— Select state —</option>
+                  <option>Lagos</option><option>FCT Abuja</option><option>Rivers</option>
+                  <option>Oyo</option><option>Kano</option><option>Kaduna</option>
+                  <option>Ogun</option><option>Anambra</option><option>Other</option>
+                </select>
+              </div>
+              <div class="field-row ek-field">
+                <label>City <span class="req-star">*</span></label>
+                <input class="ek-input" type="text" id="shipCity" required />
+              </div>
+              <div class="field-row ek-field">
+                <label>District / LGA</label>
+                <input class="ek-input" type="text" id="shipDistrict" />
+              </div>
+              <div class="field-row ek-field field-row--full">
+                <label>Street address <span class="req-star">*</span></label>
+                <input class="ek-input" type="text" id="shipAddress" required placeholder="House no., street name, area" />
+              </div>
+            </div>
           </div>
-        </div>
-      </form>
-    </div>
+
+          <!-- Section 5: Payment -->
+          <div class="ek-card sec-block">
+            <div class="sec-title">Payment method</div>
+            <p class="sec-hint">Payment is processed through the unified Elken payment gateway.</p>
+            <div class="pay-method-grid" id="mrpPayGrid"></div>
+          </div>
+
+          <!-- Method panels are built on demand by the shared payment layer
+               (assets/js/payment-methods.js) so every flow behaves the same. -->
+          <div id="mrpPayPanels"></div>
+
+          <!-- Section 6: Summary + actions -->
+          <div class="ek-card sec-block" id="summaryCard">
+            <div class="sec-title">Order summary</div>
+            <div class="summary-list" id="summaryList">
+              <p class="sm-empty">No products selected yet.</p>
+            </div>
+            <div class="mrp-summary-rows">
+              <div class="row">
+                <span>Subtotal</span>
+                <span id="summarySubtotal">NGN 0</span>
+              </div>
+              <div class="row">
+                <span>BV rewards</span>
+                <span>+<span id="summaryBV">0</span> BV</span>
+              </div>
+              <div class="row">
+                <span>BV requirement</span>
+                <span id="bvReqText">need ≥ 90 BV</span>
+              </div>
+              <div class="row total">
+                <span>Total</span>
+                <span id="summaryTotal">NGN 0</span>
+              </div>
+            </div>
+
+            <div class="mrp-actions">
+              <button type="button" class="ek-btn ek-btn--secondary" id="backBtn">Back</button>
+              <button type="submit" class="ek-btn ek-btn--primary" id="payBtn" disabled>支付 Pay</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
   </main>
 
+  <!-- Site footer (rendered by app.js, same as the marketing site) -->
   <div id="app-footer" class="ek-site-footer"></div>
 
   <script src="assets/i18n/strings.js?v=20260909c"></script>
-<script src="assets/js/app.js?v=20260909e"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
   <script src="assets/js/website.js?v=20260909c"></script>
   <script src="assets/js/qr.js?v=20260915a"></script>
   <script src="assets/js/payment-methods.js?v=20260915a"></script>
   <script>
     /* ============================================================
-       Member Repeat Purchase page
+       Member Auto-Maintenance page
        - search for a member
-       - pick products
+       - pick products (official card grid)
        - submit through the unified order / payment flow
+       - requires the selected products' total BV to be >= 90
        ============================================================ */
     (function() {
       'use strict';
@@ -253,6 +251,11 @@
       function getProducts() {
         return (window.ProductCatalog && window.ProductCatalog.allProducts) || [];
       }
+      function _productImagePath(img, category) {
+        if (!img) return '';
+        if (/^(assets\/|https?:)/i.test(img)) return img;
+        return category ? `assets/img/products/${category}/${img}` : img;
+      }
 
       /* ---------- Init ---------- */
       function init() {
@@ -269,8 +272,6 @@
       /* ---------- Reporting center (auto-filled from current user) ---------- */
       function bindReportingCenter() {
         const md = getMemberData();
-        // reportingCenterId is who pays / gets credit. Fall back to the demo
-        // reporting center so the field is never empty in standalone testing.
         const id = md.reportingCenterId || md.memberId || 'NG66051653';
         const name = md.memberName || (DEMO_DIRECTORY[id] && DEMO_DIRECTORY[id].name) || 'Reporting Center';
         state.reportingCenter = { id, name };
@@ -278,84 +279,91 @@
         document.getElementById('reportingCenterName').value = name;
       }
 
-      /* ---------- Product picker (table-style rows: ☐ img name sku dp(bv) rp stock qty) ---------- */
+      /* ---------- Product picker (official card grid) ---------- */
       function renderProducts() {
         const products = getProducts();
         const root = document.getElementById('productPick');
         root.innerHTML = products.map(p => {
-          const img = p.img ? `assets/img/products/${p.category}/${p.img}` : '';
+          const img = _productImagePath(p.img, p.category);
           const stock = Number(p.stock) || 0;
-          const stockCls = stock <= 0 ? ' out' : (stock < 5 ? ' low' : '');
+          const stockCls = stock <= 0 ? ' is-out' : (stock < 5 ? ' is-low' : ' is-ok');
+          const qty = state.items[p.id] || 0;
+          const checked = !!state.items[p.id];
+          const bvVal = Number(p.bv) || 0;
+          const rpVal = Number(p.rp || 0).toFixed(2);
+          const badge = checked ? `<span class="prod-card__badge">✓ Added</span>` : '';
+          const media = img
+            ? `<div class="prod-card__media">${badge}<img src="${img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'" /></div>`
+            : `<div class="prod-card__media prod-card__media--empty">${badge}</div>`;
+          const foot = checked
+            ? `<div class="prod-card__foot prod-card__foot--added">
+                 <div class="qty-stepper" data-id="${p.id}">
+                   <button type="button" class="qty-minus" data-id="${p.id}" aria-label="Decrease quantity">−</button>
+                   <input type="number" class="qty-val" data-id="${p.id}" value="${qty}" min="1" max="${stock || 99}" aria-label="Quantity" />
+                   <button type="button" class="qty-plus" data-id="${p.id}" aria-label="Increase quantity">+</button>
+                 </div>
+                 <button type="button" class="prod-card__remove" data-id="${p.id}">Remove</button>
+               </div>`
+            : `<div class="prod-card__foot">
+                 <button type="button" class="prod-card__add" data-id="${p.id}">＋ Add</button>
+               </div>`;
           return `
-            <div class="product-list-row" data-pid="${p.id}" data-stock="${stock}">
-              <label class="row-check"><input type="checkbox" data-pick aria-label="Pick ${(p.name || '').replace(/"/g, '&quot;')}" /></label>
-              <div class="row-img">${img ? `<img src="${img}" alt="${p.name}" loading="lazy" />` : ''}</div>
-              <div class="row-name" title="${(p.name || '').replace(/"/g, '&quot;')}">${p.name}</div>
-              <div class="row-sku">${p.sku || ''}</div>
-              <div class="row-dp"><span class="dp-label">DP:</span><span class="dp-price">${money(p.price)}</span><span class="dp-bv">(${Number(p.bv) || 0}BV)</span></div>
-              <div class="row-rp"><span class="rp-label">RP:</span><span class="rp-price">NGN ${Number(p.rp || 0).toFixed(2)}</span></div>
-              <div class="row-stock${stockCls}"><span class="stock-label">Stock:</span><span class="stock-num">${stock}</span></div>
-              <div class="row-qty">
-                <button type="button" data-qty="-1" aria-label="Decrease">−</button>
-                <span class="qty">1</span>
-                <button type="button" data-qty="1" aria-label="Increase">+</button>
+            <article class="prod-card${checked ? ' is-added' : ''}" data-id="${p.id}" data-stock="${stock}">
+              ${media}
+              <div class="prod-card__body">
+                <h3 class="prod-card__name">${p.name}</h3>
+                <span class="prod-card__sku">${p.sku || p.id.toUpperCase()}</span>
+                <div class="prod-card__meta">
+                  <span class="prod-card__price">DP NGN ${(p.price || 0).toLocaleString()}</span>
+                  <span class="prod-card__bv">BV ${bvVal}</span>
+                </div>
+                <span class="prod-card__rp">RP: NGN ${rpVal}</span>
+                <span class="prod-card__stock${stockCls}">Stock: ${stock}</span>
               </div>
-            </div>`;
+              ${foot}
+            </article>`;
         }).join('');
 
-        root.querySelectorAll('.product-list-row').forEach(el => {
-          const pid = el.dataset.pid;
-          const stock = Number(el.dataset.stock) || 0;
-          const cb = el.querySelector('[data-pick]');
-
-          // Checkbox: select/deselect without triggering row click
-          cb.addEventListener('click', e => e.stopPropagation());
-          cb.addEventListener('change', () => toggleProduct(el));
-
-          // Row click toggles pick (anywhere except checkbox/qty buttons)
-          el.addEventListener('click', e => {
-            if (e.target.closest('.row-check') || e.target.closest('.row-qty')) return;
-            cb.checked = !cb.checked;
-            toggleProduct(el);
-          });
-
-          // Qty controls (+ / −), capped by stock
-          el.querySelectorAll('.row-qty button').forEach(btn => {
-            btn.addEventListener('click', e => {
-              e.stopPropagation();
-              if (!state.items[pid]) { toggleProduct(el); return; }
-              const delta = parseInt(btn.dataset.qty, 10);
-              const next = Math.max(1, Math.min(stock || 99, (state.items[pid] || 1) + delta));
-              state.items[pid] = next;
-              el.querySelector('.row-qty .qty').textContent = next;
-              renderSummary();
-              updatePayBtn();
-            });
-          });
-        });
+        renderSummary();
       }
 
-      function toggleProduct(el) {
-        const pid = el.dataset.pid;
-        const cb = el.querySelector('[data-pick]');
-        if (state.items[pid]) {
-          delete state.items[pid];
-          el.classList.remove('picked');
-          el.querySelector('.row-qty .qty').textContent = '1';
-          if (cb) cb.checked = false;
-        } else {
-          state.items[pid] = 1;
-          el.classList.add('picked');
-          if (cb) cb.checked = true;
-        }
-        renderSummary();
+      function setQty(pid, qty) {
+        const el = document.querySelector(`#productPick .prod-card[data-id="${pid}"]`);
+        const stock = el ? (Number(el.dataset.stock) || 0) : 99;
+        qty = Math.max(0, Math.min(stock || 99, parseInt(qty, 10) || 0));
+        if (qty <= 0) delete state.items[pid];
+        else state.items[pid] = qty;
+        renderProducts();
         updatePayBtn();
       }
 
+      const productPick = document.getElementById('productPick');
+      productPick.addEventListener('click', e => {
+        const addBtn = e.target.closest('.prod-card__add');
+        if (addBtn) { setQty(addBtn.dataset.id, 1); return; }
+        const remBtn = e.target.closest('.prod-card__remove');
+        if (remBtn) { setQty(remBtn.dataset.id, 0); return; }
+        const step = e.target.closest('.qty-minus, .qty-plus');
+        if (step) {
+          const pid = step.dataset.id;
+          const input = productPick.querySelector(`.qty-val[data-id="${pid}"]`);
+          let v = input ? (parseInt(input.value, 10) || 1) : 1;
+          v = step.classList.contains('qty-minus') ? v - 1 : v + 1;
+          setQty(pid, v);
+          return;
+        }
+        const card = e.target.closest('.prod-card');
+        if (card && !card.classList.contains('is-added')) {
+          setQty(card.dataset.id, 1);
+        }
+      });
+      productPick.addEventListener('change', e => {
+        if (e.target.classList.contains('qty-val')) {
+          setQty(e.target.dataset.id, parseInt(e.target.value, 10) || 0);
+        }
+      });
+
       /* ---------- Member search ---------- */
-      // Sensible defaults so no field is ever left empty when a member is
-      // looked up from a sparse source (signed-in data, prior order, or an
-      // unknown but valid id). Demo directory entries already override these.
       const MEMBER_DEFAULTS = {
         phone: '08000000000',
         level: 'Silver',
@@ -373,12 +381,9 @@
         return m;
       }
 
-      // Build a member record from wherever we can find it: the demo
-      // directory, the signed-in member data, or any prior order.
       function lookupMember(raw) {
         raw = (raw || '').trim().toUpperCase();
         let m = null;
-        // 1) demo directory (full profile)
         if (DEMO_DIRECTORY[raw]) {
           const d = DEMO_DIRECTORY[raw];
           m = {
@@ -395,7 +400,6 @@
             source: 'directory',
           };
         }
-        // 2) signed-in member data
         if (!m) {
           try {
             const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
@@ -416,7 +420,6 @@
             }
           } catch {}
         }
-        // 3) any prior order placed by this member
         if (!m) {
           try {
             const orders = JSON.parse(localStorage.getItem('al.orders') || '[]');
@@ -439,7 +442,6 @@
             }
           } catch {}
         }
-        // 4) unknown but valid-format id → minimal stub (filled with defaults)
         if (!m) {
           m = {
             id: raw,
@@ -468,11 +470,9 @@
         };
         btn.addEventListener('click', doSearch);
         input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
-        // auto-uppercase
         input.addEventListener('input', () => { input.value = input.value.toUpperCase(); });
       }
 
-      // Associate the member's profile with the shipping form.
       function prefillFromMember(m) {
         if (!m) return;
         document.getElementById('shipRecipient').value = m.name || '';
@@ -490,32 +490,32 @@
       function showMemberResult(member, error) {
         const box = document.getElementById('memberResult');
         if (error) {
-          box.className = 'member-result error';
-          box.innerHTML = '<div><div class="name">' + error + '</div></div>';
+          box.className = 'member-result ek-mt-16';
+          box.innerHTML = `<div class="ek-alert ek-alert--error" role="alert"><p class="ek-alert__body">${error}</p></div>`;
           box.hidden = false;
           return;
         }
         if (member) {
           const rcName = (member.reportingCenterId && DEMO_DIRECTORY[member.reportingCenterId])
             ? DEMO_DIRECTORY[member.reportingCenterId].name : (member.reportingCenterId || '-');
-          box.className = 'member-result found';
+          box.className = 'member-result ek-mt-16';
           box.innerHTML = `
-            <div class="head">
-              <div class="ek-avatar">${(member.name[0] || 'M').toUpperCase()}</div>
-              <div>
-                <div class="name">${member.name}</div>
-                <div class="id">${member.id} · ${member.level}</div>
-              </div>
+            <div class="ek-identity">
+              <span class="ek-avatar" aria-hidden="true">${(member.name[0] || 'M').toUpperCase()}</span>
+              <span class="ek-small">
+                <span class="ek-identity__name">${member.name}</span><br>
+                <span class="ek-identity__meta">${member.id} · ${member.level}</span>
+              </span>
             </div>
-            <div class="meta">
-              <div class="meta-item"><span class="k">Reporting center</span><span class="v mono">${rcName}</span></div>
-              <div class="meta-item"><span class="k">Phone</span><span class="v mono">${member.phone || '-'}</span></div>
-              <div class="meta-item"><span class="k">State</span><span class="v">${member.state || '-'}</span></div>
-              <div class="meta-item"><span class="k">City</span><span class="v">${member.city || '-'}</span></div>
-              <div class="meta-item"><span class="k">District / LGA</span><span class="v">${member.district || '-'}</span></div>
-              <div class="meta-item"><span class="k">Address</span><span class="v">${member.address || '-'}</span></div>
-              ${member.joinDate ? `<div class="meta-item"><span class="k">Joined</span><span class="v mono">${member.joinDate}</span></div>` : ''}
-            </div>`;
+            <dl class="ek-kv ek-mt-16">
+              <dt>Reporting center</dt><dd class="mono">${rcName}</dd>
+              <dt>Phone</dt><dd class="mono">${member.phone || '-'}</dd>
+              <dt>State</dt><dd>${member.state || '-'}</dd>
+              <dt>City</dt><dd>${member.city || '-'}</dd>
+              <dt>District / LGA</dt><dd>${member.district || '-'}</dd>
+              <dt>Address</dt><dd>${member.address || '-'}</dd>
+              ${member.joinDate ? `<dt>Joined</dt><dd class="mono">${member.joinDate}</dd>` : ''}
+            </dl>`;
           box.hidden = false;
         } else {
           box.hidden = true;
@@ -545,9 +545,7 @@
         });
       }
 
-      /* ---------- Shared payment layer (assets/js/payment-methods.js) ----------
-         The chooser and every method panel come from PayMethods, so this flow
-         behaves exactly like checkout. */
+      /* ---------- Shared payment layer (assets/js/payment-methods.js) ---------- */
       let payMethods = null;
 
       function orderSubtotal() {
@@ -562,7 +560,7 @@
         payMethods = window.PayMethods.wire('#mrpPayGrid', {
           name: 'mrpPay',
           panelHost: '#mrpPayPanels',
-          panelClass: 'method-info-card',
+          panelClass: 'ek-card ek-card--quiet method-info-card',
           prefix: 'mam',
           amount: orderSubtotal,
           selected: 'card',
@@ -571,9 +569,6 @@
         return payMethods;
       }
 
-      /* Fired by the shared layer on every selection / field change.
-         Must NOT call payMethods.refresh() — the card panel's refresh()
-         re-runs onChange, which would recurse. */
       function onPayMethodChange(value) {
         state.payMethod = value || (payMethods && payMethods.value()) || null;
         updatePayBtn();
@@ -591,36 +586,30 @@
         const lines = Object.keys(state.items).map(pid => {
           const p = products.find(x => x.id === pid);
           if (!p) return null;
-          const qty = state.items[pid];
-          return { ...p, qty };
+          return { ...p, qty: state.items[pid] };
         }).filter(Boolean);
         const list = document.getElementById('summaryList');
         if (lines.length === 0) {
-          list.innerHTML = '<p>No products selected yet.</p>';
+          list.innerHTML = '<p class="sm-empty">No products selected yet.</p>';
         } else {
           list.innerHTML = lines.map(it => `
-            <div>
+            <div class="sm-row">
+              <div>${it.img ? `<img src="${_productImagePath(it.img, it.category)}" alt="${it.name}" />` : ''}</div>
               <div>
-                ${it.img ? `<img src="assets/img/products/${it.category}/${it.img}" alt="${it.name}" />` : ''}
+                <div class="sm-name">${it.name}</div>
+                <div class="sm-sub">${it.qty} × ${money(it.price)}</div>
               </div>
-              <div>
-                <div>${it.name}</div>
-                <div>${it.qty} × ${money(it.price)}</div>
-              </div>
-              <div>${money(it.price * it.qty)}</div>
+              <div class="sm-amt">${money(it.price * it.qty)}</div>
             </div>`).join('');
         }
         const subtotal = lines.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
-        // BV now comes from the product's `bv` field (per-unit), not a price approximation
         const bv = lines.reduce((s, it) => s + (Number(it.bv) || 0) * (it.qty || 1), 0);
         document.getElementById('summarySubtotal').textContent = money(subtotal);
         document.getElementById('summaryBV').textContent = Number.isInteger(bv) ? bv : bv.toFixed(1);
         document.getElementById('summaryTotal').textContent = money(subtotal);
-        // Keep the open payment panel's amount in sync with the selection
-        if (payMethods) payMethods.refresh();
-        // for payBtn enable check
         state.subtotal = subtotal;
         state.bv = bv;
+        if (payMethods) payMethods.refresh();
       }
 
       function bindSummary() {
@@ -663,10 +652,10 @@
             reqText.style.color = 'var(--ek-muted)';
           } else if (bvOk) {
             reqText.textContent = bv + ' / ' + MIN_BV + ' BV ✓';
-            reqText.style.color = 'var(--ek-blue)';
+            reqText.style.color = 'var(--ek-success)';
           } else {
             reqText.textContent = bv + ' / ' + MIN_BV + ' BV — not enough';
-            reqText.style.color = 'var(--status-danger)';
+            reqText.style.color = 'var(--ek-error)';
           }
         }
       }
@@ -681,7 +670,7 @@
         if (payBtn.disabled) return;
         payBtn.disabled = true;
         const origText = payBtn.textContent;
-        payBtn.textContent = '处理中 Processing…';
+        payBtn.textContent = 'Processing…';
 
         const products = getProducts();
         const lines = Object.keys(state.items).map(pid => {
@@ -689,10 +678,8 @@
           return p ? { ...p, qty: state.items[pid] } : null;
         }).filter(Boolean);
         const total = lines.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
-        // BV per-unit from product data, summed with qty
         const bv = lines.reduce((s, it) => s + (Number(it.bv) || 0) * (it.qty || 1), 0);
 
-        // build the customer / shipping snapshot
         const customer = {
           name: document.getElementById('shipRecipient').value.trim(),
           phone: document.getElementById('shipPhone').value.trim(),
@@ -703,21 +690,20 @@
           address: document.getElementById('shipAddress').value.trim(),
         };
 
-        // ----- Unified order + payment flow (reuses ProductCatalog) -----
         const pc = window.ProductCatalog || {};
         const orderItems = lines.map(it => ({
           id: it.id,
           sku: it.sku || '',
           name: it.name,
           qty: it.qty,
-          price: it.price || 0,    // DP (distributor price)
-          rp: it.rp || 0,          // RP (retail reference)
-          bv: Number(it.bv) || 0,  // per-unit BV
+          price: it.price || 0,
+          rp: it.rp || 0,
+          bv: Number(it.bv) || 0,
           bvTotal: (Number(it.bv) || 0) * (it.qty || 1),
           stock: Number(it.stock) || 0,
           img: it.img,
           category: it.category,
-          image: it.img && it.category ? `assets/img/products/${it.category}/${it.img}` : (it.img || ''),
+          image: _productImagePath(it.img, it.category),
         }));
         const order = {
           id: (pc.genOrderId ? pc.genOrderId() : genOrderId()),
@@ -749,32 +735,29 @@
           localStorage.setItem('al.orders', JSON.stringify(orders));
         }
 
-        // Same unified flow as the regular checkout:
-        // - cod → order confirmed, paid on delivery (status stays pending)
-        // - card / ussd / bank → route to the secure payment step (order.html)
-        // Every channel now settles through the secure payment step — the old
-        // cash-on-delivery branch went away with the Nigeria payment rework.
         showSuccess(order, { next: 'gateway' });
       }
 
       function showSuccess(order, opts) {
         opts = opts || {};
-        const wrap = document.querySelector('.mrp-shell .container');
+        const wrap = document.querySelector('.member-section .ek-container');
         wrap.innerHTML = `
-          <div class="mrp-card">
-            <div>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>
+          <div class="ek-card sec-block">
+            <div class="sec-title">Order placed</div>
+            <div class="ek-identity">
+              <span class="ek-avatar" aria-hidden="true">✓</span>
+              <span class="ek-small">
+                <span class="ek-identity__name">${order.id}</span><br>
+                <span class="ek-identity__meta">${money(order.total)} · ${order.status === 'paid' ? 'Completed' : 'Pending'}</span>
+              </span>
             </div>
-            <h2>Order placed</h2>
-            <p>Order ID: <strong>${order.id}</strong></p>
-            <p>Repeat-purchase member: <strong>${order.memberId}</strong> · ${order.memberName || ''}</p>
-            <p>Reporting center: <strong>${order.reportingCenterId}</strong>${order.reportingCenterName ? ' · ' + order.reportingCenterName : ''}</p>
-            <p>Payment: <strong>${order.paymentLabel}</strong> · ${order.status === 'paid' ? 'Completed' : 'Pending'}</p>
-            <p>${money(order.total)}</p>
-            ${opts.next === 'gateway' ? '<p>Redirecting to secure payment…</p>' : ''}
-            <div>
-              <a class="ek-btn--primary" href="order.html?id=${order.id}">View order</a>
-              <a class="ek-btn--secondary" href="account.html">Back to account</a>
+            <p class="sec-hint">Auto-maintenance member: <strong>${order.memberId}</strong> · ${order.memberName || ''}</p>
+            <p class="sec-hint">Reporting center: <strong>${order.reportingCenterId}</strong>${order.reportingCenterName ? ' · ' + order.reportingCenterName : ''}</p>
+            <p class="sec-hint">Payment: <strong>${order.paymentLabel}</strong></p>
+            ${opts.next === 'gateway' ? '<p class="sec-hint">Redirecting to secure payment…</p>' : ''}
+            <div class="mrp-actions">
+              <a class="ek-btn ek-btn--primary" href="order.html?id=${order.id}">View order</a>
+              <a class="ek-btn ek-btn--secondary" href="account.html">Back to account</a>
             </div>
           </div>`;
         if (opts.next === 'gateway') {

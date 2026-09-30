@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Repeat Purchase · Elken</title>
+  <meta name="description" content="Quickly reorder your favourite Elken products." />
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
+  <link rel="stylesheet" href="assets/css/repeat-purchase.css?v=20260922a">
+  <script src="assets/js/elken-ui.js?v=20260909c" defer></script>
+</head>
+<body data-page="repeat-purchase">
+  <div id="app-header" class="ek-site-header"></div>
+
+  <main id="main">
+    <section class="sec-banner sec-banner--gradient sec-banner--short">
+      <div class="sec-banner__glow" aria-hidden="true"></div>
+      <div class="sec-banner__inner">
+        <div class="sec-banner__crumb"><nav class="ek-breadcrumb" aria-label="Breadcrumb"><a href="account.html">My Account</a><span aria-hidden="true">/</span><span aria-current="page">Repeat Purchase</span></nav></div>
+        <div class="sec-banner__copy">
+          <h1 class="ek-h1">Repeat <span class="t-accent">purchase.</span></h1>
+          <p class="sec-banner__sub">Quickly reorder the products you already know and love.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec-pad rp-section">
+      <div class="ek-container">
+        <div class="rp-sechead">
+          <h2 class="rp-sechead__title">Also in this range</h2>
+          <p class="rp-sechead__sub">Member pricing and BV rewards are shown at checkout.</p>
+        </div>
+        <div class="rp-product-grid" id="rpProductGrid" aria-live="polite">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="app-footer" class="ek-site-footer"></div>
+
+  <!-- Register interest modal -->
+  <dialog class="ek-modal" id="interestModal" aria-labelledby="interestTitle">
+    <div class="ek-modal__head">
+      <h3 class="ek-modal__title" id="interestTitle">Register interest</h3>
+      <button type="button" class="modal-close" id="interestModalClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="ek-modal__body">
+      <p class="ek-text" id="interestProductName"></p>
+      <form class="ek-form" id="interestForm" novalidate>
+        <label class="ek-field">
+          <span class="ek-field__label">Full name</span>
+          <input class="ek-input" type="text" id="interestName" required placeholder="Your name">
+        </label>
+        <label class="ek-field">
+          <span class="ek-field__label">Email</span>
+          <input class="ek-input" type="email" id="interestEmail" required placeholder="you@example.com">
+        </label>
+        <label class="ek-field">
+          <span class="ek-field__label">Phone number</span>
+          <input class="ek-input" type="tel" id="interestPhone" placeholder="+234 000 000 0000">
+        </label>
+      </form>
+    </div>
+    <div class="ek-modal__foot">
+      <button type="button" class="ek-btn ek-btn--ghost" id="interestCancel">Cancel</button>
+      <button type="submit" class="ek-btn ek-btn--primary" form="interestForm">Submit interest</button>
+    </div>
+  </dialog>
+
+  <script src="assets/i18n/strings.js?v=20260909c"></script>
+  <script src="assets/js/app.js?v=20260923b"></script>
+  <script src="assets/js/website.js?v=20260909c"></script>
+  <script>
+    (function () {
+      document.addEventListener('DOMContentLoaded', function () {
+        const grid = document.getElementById('rpProductGrid');
+        if (window.ProductCatalog && window.ProductCatalog.renderRepeatCards) {
+          window.ProductCatalog.renderRepeatCards(grid, window.ProductCatalog.allProducts);
+        }
+
+        // Wire register-interest modal
+        const modal = document.getElementById('interestModal');
+        const closeBtn = document.getElementById('interestModalClose');
+        const cancelBtn = document.getElementById('interestCancel');
+        const form = document.getElementById('interestForm');
+        const productNameEl = document.getElementById('interestProductName');
+        let currentProduct = null;
+
+        function openModal(product) {
+          currentProduct = product;
+          productNameEl.textContent = `Let me know when ${product.name} is available.`;
+          form.reset();
+          modal.showModal();
+        }
+
+        function closeModal() {
+          modal.close();
+          currentProduct = null;
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeModal();
+        });
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (!currentProduct) return;
+          const payload = {
+            productId: currentProduct.id,
+            productName: currentProduct.name,
+            name: document.getElementById('interestName').value.trim(),
+            email: document.getElementById('interestEmail').value.trim(),
+            phone: document.getElementById('interestPhone').value.trim(),
+            date: Date.now(),
+          };
+          const key = 'al.interests';
+          const list = JSON.parse(localStorage.getItem(key) || '[]');
+          list.unshift(payload);
+          localStorage.setItem(key, JSON.stringify(list));
+          if (window.toast) window.toast(`Interest registered for ${currentProduct.name}.`, 'success');
+          closeModal();
+        });
+
+        // Delegate register-interest clicks (cards rendered after DOMContentLoaded)
+        grid.addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-interest]');
+          if (!btn) return;
+          const id = btn.dataset.interest;
+          const product = (window.ProductCatalog.allProducts || []).find(p => p.id === id);
+          if (product) openModal(product);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

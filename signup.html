@@ -12,87 +12,44 @@
 
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
-  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
-  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
+  <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
   <link rel="stylesheet" href="assets/css/login.css?v=20260909c">
-  <link rel="stylesheet" href="assets/css/signup.css?v=20260909a">
+  <link rel="stylesheet" href="assets/css/signup.css?v=20260923a">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 
 <body data-page="signup">
 
-  <!-- ============ Standalone signup: brand panel + registration form card ============ -->
-  <main class="auth-page auth-page--signup">
+  <main id="main">
 
-    <!-- Left: brand value panel (shared shell from login.css) -->
-    <aside class="auth-brand">
-      <div class="brand-grain" aria-hidden="true"></div>
-
-      <div class="auth-brand__top">
-        <a class="brand-logo" href="index.html" aria-label="Elken, home">
-          <img class="brand-logo-img" src="assets/img/brand/elken-logo-white-v4.svg" alt="Elken">
-        </a>
+    <!-- Page banner (matches the marketing site's section banners) -->
+    <section class="sec-banner sec-banner--gradient sec-banner--short">
+      <div class="sec-banner__glow" aria-hidden="true"></div>
+      <div class="sec-banner__inner">
+        <div class="sec-banner__crumb">
+          <nav class="ek-breadcrumb" aria-label="Breadcrumb">
+            <a href="login.html">Sign in</a><span aria-hidden="true">/</span><span aria-current="page">Create account</span>
+          </nav>
+        </div>
+        <div class="sec-banner__copy">
+          <h1 class="ek-h1">Create your <span class="t-accent">account.</span></h1>
+          <p class="sec-banner__sub">Join Elken, choose your starter products, and start enjoying filtered water with zero hassle.</p>
+        </div>
       </div>
+    </section>
 
-      <div class="auth-brand__center">
-        <span class="auth-brand__eyebrow" data-i18n="signup.join_eyebrow">Join Elken</span>
-        <h2 class="auth-brand__title">
-          <em>Clean water,</em>
-          <span>membership included.</span>
-        </h2>
-        <p class="auth-brand__lede">Create your member account, choose your starter products, and start enjoying filtered water with zero hassle.</p>
-        <ul class="auth-brand__bullets">
-          <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            Free installation &amp; filter changes
-          </li>
-          <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            Smart reminders — stay on top of payments
-          </li>
-          <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            Exclusive rewards on every purchase
-          </li>
-        </ul>
-      </div>
-
-      <div class="auth-brand__foot">
-        <div class="stat"><b>12,400+</b><span>happy customers</span></div>
-        <div class="stat"><b>36</b><span>cities</span></div>
-        <div class="stat"><b>98.6%</b><span>on-time</span></div>
-      </div>
-    </aside>
-
-    <!-- Right: registration form card -->
-    <section class="auth-main">
-      <div class="auth-card auth-card--wide">
-
-        <!-- Brand mark — only visible on mobile where the panel collapses -->
-        <a class="auth-card__brand brand-logo" href="index.html" aria-label="Elken, home">
-          <img class="brand-logo-img brand-logo-img--dark" src="assets/img/brand/elken-logo-colour.svg" alt="Elken">
-        </a>
-
-        <header class="auth-head">
-          <h1 data-i18n="signup.title">Create Account</h1>
-          <p data-i18n="signup.subtitle">Fill in your details to register as a member</p>
-        </header>
+    <section class="sec-pad signup-section">
+      <div class="ek-container signup-container">
 
         <form id="regForm" novalidate class="ek-form auth-form">
 
           <!-- ====== Section 1: Basic Info ====== -->
-          <div class="sec-block">
+          <div class="ek-card sec-block">
             <div class="sec-title" data-i18n="signup.sec_basic">Basic Information</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
@@ -134,9 +91,10 @@
           </div>
 
           <!-- ====== Section 2: Product Selection ====== -->
-          <div class="sec-block">
+          <div class="ek-card sec-block">
             <div class="sec-title" data-i18n="signup.sec_products">Products</div>
-            <div class="prod-list" id="prodList"></div>
+            <p class="sec-hint" data-i18n="signup.products_hint">Tap a product to add it to your starter order, then set the quantity you need.</p>
+            <div class="prod-grid" id="prodList" aria-live="polite"></div>
             <div class="prod-summary-bar" id="prodSummary">
               <span data-i18n="signup.summary_price">Subtotal:</span> <b id="summaryPrice">NGN 0</b>
               <span>BV:</span> <b id="summaryBV">0</b>
@@ -145,7 +103,7 @@
           </div>
 
           <!-- ====== Section 3: Network Information ====== -->
-          <div class="sec-block">
+          <div class="ek-card sec-block">
             <div class="sec-title" data-i18n="signup.sec_network">Network Information</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
@@ -162,7 +120,7 @@
           </div>
 
           <!-- ====== Section 4: Personal Information ====== -->
-          <div class="sec-block">
+          <div class="ek-card sec-block">
             <div class="sec-title" data-i18n="signup.sec_personal">Personal Information</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
@@ -204,7 +162,7 @@
           </div>
 
           <!-- ====== Section 5: Delivery Method ====== -->
-          <div class="sec-block">
+          <div class="ek-card sec-block">
             <div class="sec-title" data-i18n="signup.sec_delivery">Delivery Method</div>
             <div class="field-row ek-field field-row--full">
               <label data-i18n="signup.delivery_method">Delivery Method</label>
@@ -222,7 +180,7 @@
           </div>
 
           <!-- ====== Section 6: Address Details ====== -->
-          <div class="sec-block" id="addressSection">
+          <div class="ek-card sec-block" id="addressSection">
             <div class="sec-title" data-i18n="signup.sec_address">Address Details</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
@@ -261,7 +219,7 @@
           </div>
 
           <!-- ====== Section 7: Payment Method ====== -->
-          <div class="sec-block">
+          <div class="ek-card sec-block">
             <div class="sec-title" data-i18n="signup.sec_payment">Payment Method</div>
 
             <div class="pay-method-grid" id="signupPayGrid"></div>
@@ -271,7 +229,7 @@
             <div id="signupPayPanels"></div>
 
             <!-- Remittance details — shown for Bank Transfer / Pay with Bank only -->
-            <div class="method-info-card" id="signupRemitFields">
+            <div class="ek-card ek-card--quiet method-info-card" id="signupRemitFields">
               <div data-i18n="signup.remit_title">Remittance details</div>
               <p>Tell us which bank the transfer will come from so we can match it faster.</p>
               <div class="reg-grid">
@@ -322,6 +280,9 @@
       </div>
     </section>
   </main>
+
+  <!-- Site footer (rendered by app.js, same as the marketing site) -->
+  <div id="app-footer" class="ek-site-footer"></div>
 
   <!-- Cookie consent (NDPR) — kept on the standalone page -->
   <div id="cookieBanner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie consent">
@@ -376,7 +337,7 @@
   </div>
 
   <script src="assets/i18n/strings.js?v=20260909c"></script>
-<script src="assets/js/app.js?v=20260909e"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
   <script src="assets/js/website.js?v=20260909c"></script>
   <script src="assets/js/qr.js?v=20260915a"></script>
   <script src="assets/js/payment-methods.js?v=20260915a"></script>
@@ -455,7 +416,7 @@
         payMethods = window.PayMethods.wire('#signupPayGrid', {
           name: 'paymentMethod',
           panelHost: '#signupPayPanels',
-          panelClass: 'method-info-card',
+          panelClass: 'ek-card ek-card--quiet method-info-card',
           prefix: 'su',
           amount: selectedTotal,
           selected: 'card',
@@ -473,7 +434,7 @@
       }
       function paymentReference() { return payMethods ? payMethods.reference : null; }
 
-      /* ---------- Render product list (all products, no category tabs) ---------- */
+      /* ---------- Render product grid (official card style) ---------- */
       const prodList = document.getElementById('prodList');
       const products = (window.ProductCatalog && window.ProductCatalog.allProducts)
         ? window.ProductCatalog.allProducts : [];
@@ -483,49 +444,50 @@
 
       function renderProducts() {
         if (!prodList) return;
-        const filtered = products;
 
-        if (!filtered.length) {
-          prodList.innerHTML = '<div>No products available.</div>';
+        if (!products.length) {
+          prodList.innerHTML = '<div class="prod-empty">No products available.</div>';
           updateSummary();
           return;
         }
 
-        prodList.innerHTML = filtered.map(p => {
+        prodList.innerHTML = products.map(p => {
           const sel = selectedProds[p.id];
-          const qty = sel ? sel.qty : 1;
+          const qty = sel ? sel.qty : 0;
           const checked = !!sel;
           const imgSrc = p.img
             ? ('assets/img/products/' + (p.category || '') + '/' + p.img)
             : '';
           const bvVal = typeof p.bv === 'number' ? p.bv : Math.round((p.price || 0) * 0.001 * 100) / 100;
+          const badge = checked ? `<span class="prod-card__badge">✓ Added</span>` : '';
+          const media = imgSrc
+            ? `<div class="prod-card__media">${badge}<img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'" /></div>`
+            : `<div class="prod-card__media prod-card__media--empty">${badge}</div>`;
+          const foot = checked
+            ? `<div class="prod-card__foot prod-card__foot--added">
+                 <div class="qty-stepper" data-id="${p.id}">
+                   <button type="button" class="qty-minus" data-id="${p.id}" aria-label="Decrease quantity">−</button>
+                   <input type="number" class="qty-val" data-id="${p.id}" value="${qty}" min="1" max="99" aria-label="Quantity" />
+                   <button type="button" class="qty-plus" data-id="${p.id}" aria-label="Increase quantity">+</button>
+                 </div>
+                 <button type="button" class="prod-card__remove" data-id="${p.id}">Remove</button>
+               </div>`
+            : `<div class="prod-card__foot">
+                 <button type="button" class="prod-card__add" data-id="${p.id}">＋ Add to registration</button>
+               </div>`;
           return `
-            <div class="prod-item" data-id="${p.id}">
-              <div class="prod-check-wrap">
-                <input type="checkbox" class="prod-cb" data-id="${p.id}" ${checked ? 'checked' : ''} />
-              </div>
-              <div class="prod-info">
-                ${imgSrc ? `<img src="${imgSrc}" alt="${p.name}" class="prod-img-thumb" loading="lazy" onerror="this.style.display='none'" />` : ''}
-                <div class="prod-text">
-                  <div class="prod-name-row">
-                    <span class="prod-name">${p.name} NGR</span>
-                    <span class="prod-sku">${p.id.toUpperCase()}</span>
-                  </div>
-                  <div class="prod-meta">
-                    <span class="prod-dp">DP: NGN ${(p.price || 0).toLocaleString()}</span>
-                    <span class="prod-bv">BV: ${bvVal}</span>
-                    <span class="prod-rp">RP: NGN ${(p.price || 0).toLocaleString()}</span>
-                  </div>
+            <article class="prod-card${checked ? ' is-added' : ''}" data-id="${p.id}">
+              ${media}
+              <div class="prod-card__body">
+                <h3 class="prod-card__name">${p.name}</h3>
+                <span class="prod-card__sku">${p.id.toUpperCase()}</span>
+                <div class="prod-card__meta">
+                  <span class="prod-card__price">NGN ${(p.price || 0).toLocaleString()}</span>
+                  <span class="prod-card__bv">BV ${bvVal}</span>
                 </div>
               </div>
-              <div class="prod-qty-col">
-                <div class="qty-stepper" data-id="${p.id}">
-                  <button type="button" class="qty-minus" data-id="${p.id}">−</button>
-                  <input type="number" class="qty-val" data-id="${p.id}" value="${qty}" min="1" max="99" ${!checked ? 'disabled' : ''} />
-                  <button type="button" class="qty-plus" data-id="${p.id}">+</button>
-                </div>
-              </div>
-            </div>`;
+              ${foot}
+            </article>`;
         }).join('');
 
         updateSummary();
@@ -553,41 +515,32 @@
       }
 
       // Set/reset a product's quantity. qty<=0 deselects the product (removes it
-      // from the order); qty>=1 selects it and records the quantity. Keeps the
-      // checkbox and number input in sync so the row is always consistent.
+      // from the order); qty>=1 selects it and records the quantity. Re-renders
+      // the grid so the card reflects its selected/added state.
       function setQty(pid, qty) {
         qty = Math.max(0, Math.min(99, parseInt(qty, 10) || 0));
-        const qi = prodList.querySelector(`.qty-val[data-id="${pid}"]`);
-        const cb = prodList.querySelector(`.prod-cb[data-id="${pid}"]`);
-        if (qty <= 0) {
-          delete selectedProds[pid];
-          if (qi) { qi.value = 1; qi.disabled = true; }
-          if (cb) cb.checked = false;
-        } else {
+        if (qty <= 0) delete selectedProds[pid];
+        else {
           if (!selectedProds[pid]) selectedProds[pid] = { qty: 1 };
           selectedProds[pid].qty = qty;
-          if (qi) { qi.value = qty; qi.disabled = false; }
-          if (cb) cb.checked = true;
         }
-        updateSummary();
+        renderProducts();
       }
 
-      // Checkbox toggle (independent selection control)
-      prodList.addEventListener('change', e => {
-        if (e.target.classList.contains('prod-cb')) {
-          setQty(e.target.dataset.id, e.target.checked ? 1 : 0);
-        }
-      });
-
-      // Qty steppers — always usable; adjust quantity and auto-select/deselect
+      // Card interactions — delegated so re-renders don't lose listeners.
       prodList.addEventListener('click', e => {
-        const btn = e.target.closest('.qty-minus, .qty-plus');
-        if (!btn) return;
-        const pid = btn.dataset.id;
-        const input = prodList.querySelector(`.qty-val[data-id="${pid}"]`);
-        let v = input ? (parseInt(input.value, 10) || 1) : 1;
-        v = btn.classList.contains('qty-minus') ? v - 1 : v + 1;
-        setQty(pid, v);
+        const addBtn = e.target.closest('.prod-card__add');
+        if (addBtn) { setQty(addBtn.dataset.id, 1); return; }
+        const remBtn = e.target.closest('.prod-card__remove');
+        if (remBtn) { setQty(remBtn.dataset.id, 0); return; }
+        const step = e.target.closest('.qty-minus, .qty-plus');
+        if (step) {
+          const pid = step.dataset.id;
+          const input = prodList.querySelector(`.qty-val[data-id="${pid}"]`);
+          let v = input ? (parseInt(input.value, 10) || 1) : 1;
+          v = step.classList.contains('qty-minus') ? v - 1 : v + 1;
+          setQty(pid, v);
+        }
       });
 
       // Direct number input — typing a value selects; clearing/0 deselects

@@ -11,14 +11,14 @@
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
-  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
-  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260915b">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260919d">
+  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260919i">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
-<body data-page="order">
+<body data-page="order" data-guest-no-nav="true">
   <div id="offline-banner" class="offline-banner">Connection status</div>
   <div id="app-header" class="ek-site-header"></div>
 
@@ -37,7 +37,7 @@
   <div id="app-footer" class="ek-site-footer"></div>
 
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-<script src="assets/js/app.js?v=20260909e"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
   <script src="assets/js/website.js?v=20260909c-2"></script>
   <script src="assets/js/order-receipt.js?v=20260915a"></script>
   <script>
@@ -104,7 +104,16 @@
     }
     function _resolveOrderItemImage(it) {
       if (!it) return null;
-      if (it.image) return it.image;
+      // Orders placed before the double-prefix bug (below) was fixed have
+      // that mangled path baked into their stored it.image forever — fixing
+      // the builder doesn't repair data already written. Detect and discard
+      // it here too (two "assets/" segments is the telltale sign) so old
+      // orders self-heal instead of showing the placeholder icon forever.
+      if (it.image && !/assets\/.*assets\//i.test(it.image)) return it.image;
+      // it.img may already be a full path (some marketing pages' "Add to
+      // cart" buttons set it that way) — prepending the category folder to
+      // that mangles it into a nonexistent nested path.
+      if (it.img && /^(assets\/|https?:)/i.test(it.img)) return it.img;
       if (it.category && it.img) return 'assets/img/products/' + it.category + '/' + it.img;
       const pc = window.ProductCatalog;
       // ProductCatalog.allProducts is exposed as an ARRAY (not a function) in
@@ -171,7 +180,7 @@
       const order = getOrder();
       if (!order) {
         host.innerHTML = `
-          <div class="checkout-card">
+          <div class="ek-card checkout-card">
             <h2>Order not found</h2>
             <p>
               We couldn't find this order on this device. Orders are stored locally in your browser,
@@ -263,21 +272,24 @@
         </div>`;
 
       // ---- Status badge tone (paid / pending / failed / neutral) ----
+      // Order matters: "unpaid" contains the substring "paid", so the
+      // paid/success check must run after the pending/unpaid check or every
+      // unpaid order gets misclassified (and colored) as paid.
       const badgeClass = (v) => {
         const s = String(v || '').toLowerCase();
-        if (/paid|complete|success|deliver/.test(s)) return 'is-paid';
-        if (/pending|unpaid|process|await/.test(s)) return 'is-pending';
-        if (/fail|cancel|refund|reject/.test(s)) return 'is-fail';
-        return 'is-neutral';
+        if (/pending|unpaid|process|await/.test(s)) return 'ek-chip--warning';
+        if (/fail|cancel|refund|reject/.test(s)) return 'ek-chip--error';
+        if (/paid|complete|success|deliver/.test(s)) return 'ek-chip--success';
+        return '';
       };
       const noteText = (order.customer && order.customer.note) ? order.customer.note : '';
 
       host.innerHTML = `
         <div class="odet">
           <!-- ---------- Hero: reference + state + amount ---------- -->
-          <header class="odet-hero">
+          <header class="ek-card odet-hero">
             <div class="odet-hero-main">
-              <span class="odet-badge ${badgeClass(order.status)}">${esc(statusLabel)}</span>
+              <span class="ek-chip odet-badge ${badgeClass(order.status)}">${esc(statusLabel)}</span>
               <h2 class="odet-ref">Order ${esc(order.id)}</h2>
               <p class="odet-hero-sub">
                 Placed ${esc(placedStr)} · ${totalQty} item${totalQty === 1 ? '' : 's'} · ${esc(orderTypeLabel)}
@@ -286,14 +298,14 @@
             <div class="odet-hero-total">
               <span class="odet-k">Order total</span>
               <b class="odet-amount">${sym}${fmtNum(grand)}</b>
-              <span class="odet-badge ${badgeClass(payStatusLabel)}">${esc(payStatusLabel)}</span>
+              <span class="ek-chip odet-badge ${badgeClass(payStatusLabel)}">${esc(payStatusLabel)}</span>
             </div>
           </header>
 
           <div class="odet-grid">
             <div class="odet-main">
               <!-- ---------- Items + money ---------- -->
-              <section class="odet-card">
+              <section class="ek-card odet-card">
                 <div class="odet-card-head">
                   <h3 class="odet-card-title">Items</h3>
                   <span class="odet-pill">${items.length}</span>
@@ -308,7 +320,7 @@
                    the keep-a-copy actions. -->
               <div class="odet-info">
                 <!-- ---------- Delivery ---------- -->
-                <section class="odet-card">
+                <section class="ek-card odet-card">
                   <h3 class="odet-card-title">${isPickup ? 'Pickup' : 'Delivery'}</h3>
                   <p class="odet-person">${esc(recipient)}</p>
                   <p class="odet-lines">${esc(phone)}<br>${esc(addressStr)}<br>${esc(country)}</p>
@@ -316,11 +328,11 @@
                 </section>
 
                 <!-- ---------- Payment ---------- -->
-                <section class="odet-card">
+                <section class="ek-card odet-card">
                   <h3 class="odet-card-title">Payment</h3>
                   <div class="odet-pay-row">
                     <b class="odet-pay-name">${esc(payMethod)}</b>
-                    <span class="odet-badge ${badgeClass(payStatusLabel)}">${esc(payStatusLabel)}</span>
+                    <span class="ek-chip odet-badge ${badgeClass(payStatusLabel)}">${esc(payStatusLabel)}</span>
                   </div>
                   ${order.paymentReference
                     ? `<p class="odet-ref-line">Reference <b class="odet-mono">${esc(order.paymentReference)}</b></p>`
@@ -328,7 +340,7 @@
                 </section>
 
                 <!-- ---------- Member ---------- -->
-                <section class="odet-card">
+                <section class="ek-card odet-card">
                   <h3 class="odet-card-title">Member</h3>
                   <dl class="odet-rows">
                     <div class="odet-row"><dt>Member ID</dt><dd>${esc(memberId)}</dd></div>
@@ -343,7 +355,7 @@
 
             <aside class="odet-side">
               <!-- ---------- Receipt (works signed in AND as a guest) ---------- -->
-              <section class="odet-card">
+              <section class="ek-card odet-card">
                 <h3 class="odet-card-title">Receipt</h3>
                 <p class="odet-lines">Download a copy of this order receipt to keep for warranty or bonus enquiries.</p>
                 <button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="downloadReceipt">
@@ -355,7 +367,7 @@
               </section>
 
               <!-- ---------- Shareable link ---------- -->
-              <section class="odet-card">
+              <section class="ek-card odet-card">
                 <h3 class="odet-card-title">Order details link</h3>
                 <div class="order-link-box">
                   <div class="order-link-row">

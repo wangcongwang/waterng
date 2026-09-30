@@ -18,7 +18,7 @@
     { id: 'hw1', name: 'C-Joie Flex', category: 'health-wellness', tag: 'Joint Support', price: 45000, rp: 54000, bv: 42, stock: 35, sku: 'CJF01', img: 'c-joie-flex.webp', desc: 'Flexible joint support for active lifestyles.' },
 
     // Beauty & Skincare (2)
-    { id: 'bs1', name: 'Advanced Age Recovery', category: 'beauty-skincare', tag: 'Anti-Aging', price: 68000, rp: 81600, bv: 62, stock: 15, sku: 'AAR01', img: 'advanced-age-recovery.webp', desc: 'Advanced anti-aging formula for youthful skin.' },
+    { id: 'bs1', name: 'Advanced Age Recovery', category: 'beauty-skincare', tag: 'Anti-Aging', price: 68000, rp: 81600, bv: 62, stock: 0, sku: 'AAR01', img: 'advanced-age-recovery.webp', desc: 'Advanced anti-aging formula for youthful skin.', comingSoon: true, comingSoonDesc: 'Register your interest and we will contact you if and when it becomes available in Nigeria.' },
     { id: 'bs5', name: 'Naru Hydra', category: 'beauty-skincare', tag: 'Deep Hydration', price: 48000, rp: 57600, bv: 44, stock: 22, sku: 'NARU05', img: 'naru-hydra.webp', desc: 'Intense hydration for dry, thirsty skin.' },
 
     // Home Appliances (3)
@@ -431,6 +431,8 @@
     localStorage.setItem('al.orders', JSON.stringify(orders));
     window.dispatchEvent(new CustomEvent('al:orderschange'));
   }
+  // House account that owns guest (signed-out) orders.
+  const GUEST_MEMBER_ID = 'NG00000001';
   function addOrder(order) {
     const orders = getOrders();
     const me = getCurrentMemberId();
@@ -438,8 +440,9 @@
     // operatorId = the ACCOUNT that actually placed the order (may differ from memberId
     //              when a member uses the Member Repeat Purchase / Auto-Maintenance flow
     //              to place an order on behalf of another member).
-    order.memberId = order.memberId || me || null;
-    order.operatorId = order.operatorId || me || null;
+    // Signed-out (guest) orders are attributed to the house account GUEST_MEMBER_ID.
+    order.memberId = order.memberId || me || GUEST_MEMBER_ID;
+    order.operatorId = order.operatorId || me || GUEST_MEMBER_ID;
     order.country = order.country || 'Nigeria';
     order.currency = order.currency || 'NGN';
     orders.unshift(order);
@@ -447,8 +450,9 @@
     window.dispatchEvent(new CustomEvent('al:orderschange'));
     return order;
   }
-  // Read a single order by id from the full list (works for guest orders too,
-  // which have no memberId and are excluded by getMyOrders()).
+  // Read a single order by id from the full list (works for guest orders too —
+  // these are attributed to the house account GUEST_MEMBER_ID, so other members
+  // won't see them via getMyOrders()).
   function getOrderById(id) {
     if (!id) return null;
     return getOrders().find(o => o.id === id) || null;
@@ -511,7 +515,9 @@
             ${loggedIn ? `<span class="bv-chip" title="Rewards you earn with this purchase">${getBV(p)} BV</span>` : ''}
           </div>
           <div class="card-actions">
-            <button type="button" class="ek-btn ek-btn--primary ek-btn--sm ek-card-addcart-btn" data-product="${p.id}">Add to Cart</button>
+            ${loggedIn
+              ? `<button type="button" class="ek-btn ek-btn--primary ek-btn--sm ek-card-addcart-btn" data-product="${p.id}">Add to Cart</button>`
+              : `<button type="button" class="ek-btn ek-btn--primary ek-btn--sm ek-buy-now-gate" data-buy-now>Buy Now</button>`}
             <a href="${detailUrl}" class="btn btn-outline btn-sm card-detail-btn">Details</a>
           </div>
         </div>
@@ -532,12 +538,89 @@
       });
     });
 
+    // Wire "Buy Now" (unlogged visitors) → open login in a new tab
+    container.querySelectorAll('[data-buy-now]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.openLoginNewTab) window.openLoginNewTab();
+      });
+    });
+
     // Make the whole product card (image/title area) navigate to detail, except the action buttons
     container.querySelectorAll('.demo-product-card').forEach(card => {
       card.addEventListener('click', (e) => {
         if (e.target.closest('button, a')) return;
         const url = card.dataset.detail;
         if (url) location.href = url;
+      });
+    });
+  }
+
+  /* ---------- Repeat-purchase cards (standalone repeat-purchase.html /
+     guest-repeat-purchase.html)
+     Visual style: the product image sits inside a framed card, above a white
+     body with price (+BV for members) and a full-width bottom action.
+  */
+  function renderRepeatPurchaseCards(container, products) {
+    if (!container) return;
+    // Optional category filter from the URL (used by member/guest footer links).
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get('category');
+    let list = products || [];
+    if (cat) {
+      const filtered = list.filter(p => p.category === cat);
+      if (filtered.length) {
+        list = filtered;
+        const meta = categories[cat];
+        if (meta) {
+          document.title = `${meta.label} · Elken`;
+          const secTitle = document.querySelector('.rp-sechead__title');
+          if (secTitle) secTitle.textContent = meta.label;
+          const secSub = document.querySelector('.rp-sechead__sub');
+          if (secSub) secSub.textContent = meta.eyebrow || '';
+        }
+      }
+    }
+    // BV is a member benefit — only surface it when signed in.
+    const loggedIn = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
+    container.innerHTML = list.map(p => {
+      const detailUrl = `product-detail.html?name=${encodeURIComponent(p.name)}&category=${p.category}`;
+      const isSoon = p.comingSoon;
+      const desc = isSoon && p.comingSoonDesc ? p.comingSoonDesc : p.desc;
+      const bv = getBV(p);
+      return `
+      <article class="rp-product-card${isSoon ? ' rp-product-card--soon' : ''}">
+        <div class="rp-product-card__media">
+          <img src="assets/img/products/${p.category}/${p.img}" alt="${p.name}" loading="lazy" />
+        </div>
+        <div class="rp-product-card__body">
+          <h3>${p.name}</h3>
+          <p class="rp-product-card__desc">${desc}</p>
+          ${isSoon ? '' : `<div class="rp-product-card__price-row">
+            <span class="rp-product-card__price">N${p.price.toLocaleString()}</span>
+            ${loggedIn && bv > 0 ? `<span class="rp-product-card__bv" title="Bonus volume earned with this purchase">${bv} BV</span>` : ''}
+          </div>
+          <a href="${detailUrl}" class="rp-product-card__view">View product</a>`}
+        </div>
+        <div class="rp-product-card__foot">
+          ${isSoon
+            ? `<span class="rp-product-card__soon-label">Coming soon</span><a href="#" class="rp-product-card__interest" data-interest="${p.id}">Register interest</a>`
+            : `<button type="button" class="rp-product-card__add" data-rp-add="${p.id}">Add to cart</button>`}
+        </div>
+      </article>
+    `;
+    }).join('');
+
+    // Wire "Add to Cart" buttons
+    container.querySelectorAll('[data-rp-add]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.rpAdd;
+        const product = allProducts.find(x => x.id === id);
+        if (product && window.ProductCatalog) {
+          const n = window.ProductCatalog.addToCart(product, 1);
+          if (window.toast) window.toast(`${product.name} added to cart · ${n} item${n === 1 ? '' : 's'}`, 'success');
+        }
       });
     });
   }
@@ -586,6 +669,7 @@
     categories,
     render: renderProducts,
     renderCards: renderProductCards,
+    renderRepeatCards: renderRepeatPurchaseCards,
     renderPopularTiles,
     getOrders,
     getMyOrders,

@@ -1,0 +1,127 @@
+/* ============================================================================
+   Member flows — Welcome Pack / Repeat Purchase / Auto-Maintenance
+   ----------------------------------------------------------------------------
+   Reuses signup.css visual language (.prod-card, .sec-block, .reg-grid,
+   .prod-summary-bar). This file adds only the few flow-specific pieces
+   signup.css doesn't cover: a slightly wider container, the member-search
+   row, the reporting-center grid, distributor product-card extras (RP /
+   Stock), and the order-summary layout. Tokens only — no hex, no px
+   font-sizes, no !important.
+   ============================================================================ */
+
+/* ---------- Page shell ---------- */
+.member-section { padding-top: var(--ek-48); padding-bottom: var(--ek-64); }
+.member-container {
+  width: min(1040px, 100% - (var(--ek-page-pad) * 2));
+  margin-inline: auto;
+}
+.member-container .reg-submit-wrap { margin-top: var(--ek-24); }
+
+/* ---------- Member search (search id → look up profile) ---------- */
+.member-search {
+  display: flex;
+  gap: var(--ek-12);
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.member-search .ek-input { flex: 1 1 260px; }
+.member-search .ek-btn { flex: 0 0 auto; }
+
+.reporting-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ek-16);
+}
+
+/* ---------- Distributor product-card extras ---------- */
+.prod-card__rp {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--ek-small);
+  color: var(--ek-muted);
+}
+.prod-card__stock {
+  display: inline-block;
+  margin-top: var(--ek-8);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-muted);
+}
+.prod-card__stock.is-out { color: var(--ek-error); }
+.prod-card__stock.is-low { color: var(--ek-warning); }
+.prod-card__stock.is-ok  { color: var(--ek-success); }
+
+/* ---------- Order summary ---------- */
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ek-12);
+  margin-bottom: var(--ek-16);
+}
+.summary-list .sm-row {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: var(--ek-12);
+}
+.summary-list .sm-row img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: var(--ek-radius-sm);
+  background: var(--ek-surface-sunken);
+}
+.summary-list .sm-name { font-weight: var(--ek-w-bold); color: var(--ek-charcoal); }
+.summary-list .sm-sub  { font-size: var(--ek-small); color: var(--ek-muted); }
+.summary-list .sm-amt  {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-blue);
+}
+.summary-list .sm-empty { color: var(--ek-muted); font-size: var(--ek-small); }
+
+.mrp-summary-rows {
+  border-top: 1px solid var(--ek-border);
+  margin-top: var(--ek-16);
+  padding-top: var(--ek-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ek-8);
+}
+.mrp-summary-rows .row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--ek-text);
+}
+.mrp-summary-rows .row span:last-child {
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-blue);
+  font-variant-numeric: tabular-nums;
+}
+.mrp-summary-rows .row.total { font-size: var(--ek-h4); }
+
+.mrp-actions {
+  display: flex;
+  gap: var(--ek-12);
+  justify-content: flex-end;
+  margin-top: var(--ek-16);
+  flex-wrap: wrap;
+}
+
+/* ---------- Member result (search lookup) ---------- */
+.member-result .ek-identity { display: flex; align-items: center; gap: var(--ek-12); }
+.member-result .ek-kv {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--ek-8) var(--ek-16);
+  margin: 0;
+}
+.member-result .ek-kv dt { color: var(--ek-muted); font-size: var(--ek-small); }
+.member-result .ek-kv dd { margin: 0; font-weight: var(--ek-w-bold); color: var(--ek-charcoal); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 767px) {
+  .reporting-grid { grid-template-columns: 1fr; }
+  .mrp-actions { justify-content: stretch; }
+  .mrp-actions .ek-btn { flex: 1 1 auto; text-align: center; }
+}

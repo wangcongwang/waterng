@@ -11,15 +11,15 @@
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
-  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
-  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
-  <link rel="stylesheet" href="assets/css/checkout.css?v=20260909h">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260919d">
+  <link rel="stylesheet" href="assets/css/checkout.css?v=20260918a">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
-<body data-page="checkout">
+<body data-page="checkout" data-guest-no-nav="true">
   <div id="offline-banner" class="offline-banner">Connection status</div>
   <div id="app-header" class="ek-site-header"></div>
 
@@ -41,7 +41,7 @@
       <div class="checkout-grid">
         <div>
           <!-- Step 1: Delivery address -->
-          <div class="checkout-card">
+          <div class="ek-card checkout-card">
             <h2 data-i18n="checkout.addr">Delivery address</h2>
 
             <div class="deliv-method-grid" id="delivMethodGrid">
@@ -119,8 +119,9 @@
               </div>
             </div>
 
-            <!-- Pickup panel -->
-            <div id="pickupPanel">
+            <!-- Pickup panel: starts hidden since "Door delivery" is the default
+                 checked radio above; bindDelivMethod() toggles it on change. -->
+            <div id="pickupPanel" style="display: none;">
               <div class="pickup-list" id="pickupList">
                 <label class="pickup-item">
                   <input type="radio" name="pickupLoc" value="lagos" checked />
@@ -164,7 +165,7 @@
           </div>
 
           <!-- Contact person -->
-          <div class="checkout-card">
+          <div class="ek-card checkout-card">
             <h2 data-i18n="checkout.contact">Contact person</h2>
             <div class="row">
               <div class="field">
@@ -201,7 +202,7 @@
           </div>
 
           <!-- Step 2: Payment method -->
-          <div class="checkout-card">
+          <div class="ek-card checkout-card">
             <h2 data-i18n="checkout.pay_method">Payment method</h2>
             <div class="pay-method-grid" id="payMethodGrid"></div>
           </div>
@@ -209,7 +210,7 @@
           <!-- Step 3 panels: built on demand by PayMethods.mount().           -->
           <!-- Account Balance is page-rendered because it needs the Ecoin wallet. -->
           <div id="payPanels">
-            <div class="checkout-card method-info-card" id="balancePanel">
+            <div class="ek-card checkout-card method-info-card" id="balancePanel">
               <h2>Account Balance</h2>
               <p>Pay instantly using your Member Ecoin balance.</p>
               <div class="bank-rows">
@@ -222,7 +223,7 @@
           </div>
         </div>
 
-        <aside class="summary" id="summary"></aside>
+        <aside class="ek-card summary" id="summary"></aside>
       </div>
     </div>
   </main>
@@ -230,7 +231,7 @@
   <div id="app-footer" class="ek-site-footer"></div>
 
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-<script src="assets/js/app.js?v=20260909e"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
   <script src="assets/js/website.js?v=20260909c-2"></script>
   <script src="assets/js/qr.js?v=20260915a"></script>
   <script src="assets/js/payment-methods.js?v=20260915a"></script>
@@ -239,6 +240,15 @@
        Elken checkout — direct purchase
        Reads ?id= (product id from catalog) and ?qty= from URL.
        ============================================================ */
+    // Some marketing pages' "Add to cart" buttons set img to a full path
+    // (assets/img/prod-x.png) rather than a bare filename — prepending the
+    // category folder to that mangles it into a nonexistent nested path.
+    // Only prepend when img is actually bare.
+    function _productImagePath(img, category) {
+      if (!img) return '';
+      if (/^(assets\/|https?:)/i.test(img)) return img;
+      return category ? `assets/img/products/${category}/${img}` : img;
+    }
     function getProductFromUrl() {
       const params = new URLSearchParams(location.search);
       const id = params.get('id');
@@ -269,7 +279,13 @@
     // ARRAY in website.js, so we must handle both function and array shapes.
     function resolveItemImage(it) {
       if (!it) return '';
-      if (it.image) return it.image;
+      // Orders/cart items saved before the double-prefix bug was fixed carry
+      // that mangled path forever in stored it.image — discard it here too.
+      if (it.image && !/assets\/.*assets\//i.test(it.image)) return it.image;
+      // it.img may already be a full path (some marketing pages' "Add to
+      // cart" buttons set it that way) — prepending the category folder to
+      // that mangles it into a nonexistent nested path.
+      if (it.img && /^(assets\/|https?:)/i.test(it.img)) return it.img;
       if (it.category && it.img) return 'assets/img/products/' + it.category + '/' + it.img;
       const pc = window.ProductCatalog;
       let list = [];
@@ -500,7 +516,7 @@
       payMethods = window.PayMethods.wire('#payMethodGrid', {
         name: 'payMethod',
         panelHost: '#payPanels',
-        panelClass: 'checkout-card method-info-card',
+        panelClass: 'ek-card checkout-card method-info-card',
         prefix: 'co',
         amount: () => state.total || 0,
         includeBalance: loggedIn,
@@ -657,7 +673,7 @@
           img: it.img,
           category: it.category,
           bv: Math.round((it.price || 0) / 1000) * (it.qty || 1),
-          image: it.image || (it.img && it.category ? `assets/img/products/${it.category}/${it.img}` : (it.img || '')),
+          image: it.image || _productImagePath(it.img, it.category),
         }));
         const order = {
           id: (pc.genOrderId ? pc.genOrderId() : 'AQ-' + Math.random().toString(36).slice(2, 8).toUpperCase()),
@@ -783,7 +799,7 @@
           img: c.img || '',
           category: c.category || '',
           bv: Math.round((c.price || 0) / 1000) * (c.qty || 1),
-          image: c.img ? (c.category ? `assets/img/products/${c.category}/${c.img}` : c.img) : '',
+          image: _productImagePath(c.img, c.category),
         }));
         state.items = items;
         state.total = items.reduce((s, i) => s + i.price * i.qty, 0);
@@ -810,7 +826,7 @@
         img: product.img,
         category: product.category,
         bv: Math.round((product.price || 0) / 1000) * state.qty,
-        image: product.image || `assets/img/products/${product.category}/${product.img}`,
+        image: product.image || _productImagePath(product.img, product.category),
       };
       state.items = [single];
       state.total = product.price * state.qty;

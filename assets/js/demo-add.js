@@ -7,7 +7,8 @@
   'use strict';
 
   function init() {
-    /* ---- Add to cart buttons on designer product/range pages ---- */
+    /* ---- Add to cart buttons on designer product/range pages
+           (signed-out visitors add to the guest cart; checkout handles guest flow) ---- */
     document.addEventListener('click', function(e) {
       var btn = e.target.closest('[data-demo-add]');
       if (!btn) return;

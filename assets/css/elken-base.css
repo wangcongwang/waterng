@@ -130,3 +130,19 @@ hr, .ek-rule { border: 0; border-top: 1px solid var(--ek-border); margin: var(--
   border-radius: var(--ek-radius); transition: top var(--ek-fast) var(--ek-ease);
 }
 .ek-skip:focus { top: var(--ek-16); text-decoration: none; }
+
+/* ---------- Page ownership banner (env marker) -----------------------------
+   贴在页面最顶部的细标识条，用于区分页面归属：
+   未登录 → 归属 WordPress 页面；已登录 → 归属外部 AE 页面。
+   由 assets/js/app.js 的 renderEnvBanner() 注入，登录态变化时自动刷新。 */
+:root { --ek-env-banner-h: 26px; }
+.env-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: var(--ek-z-toast);
+  display: flex; align-items: center; justify-content: center;
+  height: var(--ek-env-banner-h); padding: 0 var(--ek-12);
+  font-size: var(--ek-caption); font-weight: var(--ek-w-medium); letter-spacing: .02em;
+  color: var(--ek-white); background: var(--ek-blue);
+  text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.env-banner--member { background: var(--ek-charcoal-deep); }
+body.has-env-banner { padding-top: var(--ek-env-banner-h); }

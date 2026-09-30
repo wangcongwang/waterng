@@ -4,7 +4,6 @@
 .dash-shell,
 .wv-account-shell { background: var(--ek-surface-page); }
 
-.toast-success,
 .ek-toast--success,
 .ek-alert--success,
 .wa-fab {
@@ -241,11 +240,13 @@
 .sponsor-network-card,
 .referral-card,
 .address-card,
+/* .method-info-card is .ek-card.ek-card--quiet (elken-ui.css §2) — it used to
+   be grouped in here too, which silently overrode --quiet's shadow:none
+   because this file loads after elken-ui.css. */
 .cart-item,
 .cart-summary,
 .checkout-panel,
-.price-card,
-.method-info-card {
+.price-card {
   padding: var(--ek-20);
   background: var(--ek-surface);
   border: 1px solid var(--ek-border);
@@ -315,6 +316,18 @@
 .drawer-auth {
   display: grid;
   gap: var(--ek-12);
+  /* Grid items default to min-width:auto, so a wide child (e.g. an order
+     card with a 9-column table) refuses to shrink and pushes overflow out
+     to the page instead of scrolling inside its own .ek-table-wrap. */
+  min-width: 0;
+}
+.action-stack > *,
+.referral-list > *,
+.orders-table-wrap > *,
+.bank-rows > *,
+.summary-list > *,
+.drawer-auth > * {
+  min-width: 0;
 }
 
 .hub-grid { margin-block: var(--ek-24); }
@@ -663,14 +676,9 @@
 }
 
 
-.modal-panel,
-.ek-modal__dialog {
-  width: min(960px, calc(100% - var(--ek-page-pad) * 2));
-  margin: var(--ek-48) auto;
-  padding: var(--ek-24);
-  background: var(--ek-surface);
-  border-radius: var(--ek-radius);
-}
+/* Wide variant of the kit's .ek-modal, for the account.html data-table /
+   trading-record dialogs that don't fit the kit's default 560px width. */
+.ek-modal--wide { width: min(960px, calc(100vw - var(--ek-32))); }
 
 @media (max-width: 840px) {
   .overview-grid,
@@ -699,59 +707,10 @@
 }
 
 /* ================= Trading-record / data modals (account.html) =================
-   account.html builds these modals at runtime:
-   .modal-overlay.open > .modal-panel > (.modal-head > h3 + .modal-close)
-                                      > .modal-body > (.modal-filter-bar, .modal-table-wrap > .modal-table)
-                                      > .modal-foot */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: var(--ek-z-modal);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(9, 18, 38, .58);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-  overflow-y: auto;
-}
-.modal-overlay.open { display: flex; }
-
-.modal-overlay > .modal-panel {
-  width: min(960px, 100%);
-  max-height: min(720px, calc(100dvh - 40px));
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  border-radius: var(--ek-radius-lg);
-  box-shadow: var(--ek-shadow-lg);
-  overflow: hidden;
-  animation: ek-modal-in .22s var(--ek-ease);
-}
-@keyframes ek-modal-in {
-  from { opacity: 0; transform: translateY(14px) scale(.985); }
-  to   { opacity: 1; transform: none; }
-}
-
-.modal-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--ek-border);
-  background: var(--ek-surface-sunken);
-  flex: none;
-}
-.modal-head h3 {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: var(--ek-w-bold);
-  color: var(--ek-body-ink);
-  letter-spacing: .01em;
-}
+   account.html builds these at runtime as native <dialog class="ek-modal">
+   (see elken-ui.css §14) with .ek-modal__head > h3.ek-modal__title + .modal-close,
+   .ek-modal__body holding .modal-filter-bar and an .ek-table, and .ek-modal__foot.
+   Only the page-specific bits that have no kit equivalent stay here. */
 .modal-close {
   display: inline-flex;
   align-items: center;
@@ -772,12 +731,6 @@
   background: var(--ek-error-tint);
   border-color: transparent;
   color: var(--ek-error);
-}
-
-.modal-body {
-  padding: 18px 20px 6px;
-  overflow-y: auto;
-  min-height: 0;
 }
 
 /* filter row */
@@ -813,65 +766,70 @@
   box-shadow: 0 0 0 3px var(--ek-info-tint);
 }
 
-/* table */
-.modal-table-wrap {
-  overflow-x: auto;
-  border: 1px solid var(--ek-border);
-  border-radius: var(--ek-radius);
+/* Grid variant: each control gets a label above it instead of relying on the
+   select's own first option / a title tooltip, and the action buttons sit on
+   their own row instead of wrapping unpredictably among the fields. */
+.modal-filter-bar--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--ek-16);
+  align-items: end;
 }
-.modal-table {
-  width: 100%;
-  min-width: 620px;
-  border-collapse: collapse;
-  font-size: var(--ek-small);
-  background: var(--ek-surface);
-}
-.modal-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  text-align: left;
-  padding: 10px 14px;
-  background: var(--ek-surface-sunken);
-  color: var(--ek-muted);
-  font-weight: var(--ek-w-medium);
-  font-size: .78rem;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  border-bottom: 1px solid var(--ek-border);
-}
-.modal-table tbody td {
-  padding: 11px 14px;
-  border-bottom: 1px solid var(--ek-border);
-  color: var(--ek-body-ink);
-  white-space: nowrap;
-}
-.modal-table tbody tr:last-child td { border-bottom: none; }
-.modal-table tbody tr:hover td { background: var(--ek-info-tint); }
-.modal-table .mono { font-family: var(--ek-num), ui-monospace, SFMono-Regular, Menlo, monospace; }
-.modal-table .right { text-align: right; }
-.modal-table td.amt-pos { color: var(--ek-success); font-weight: var(--ek-w-medium); }
-.modal-table td.amt-neg { color: var(--ek-error); font-weight: var(--ek-w-medium); }
-
-.modal-empty {
-  text-align: center;
-  color: var(--ek-muted);
-  padding: 34px 16px !important;
-  font-size: var(--ek-small);
-}
-
-.modal-foot {
+.modal-filter-bar--grid .mf-field {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 14px 20px 18px;
-  border-top: 1px solid var(--ek-border);
-  background: var(--ek-surface);
+  flex-direction: column;
+  gap: var(--ek-4);
+  min-width: 0;
+}
+.modal-filter-bar--grid .mf-field label {
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-medium);
+  color: var(--ek-muted);
+}
+.modal-filter-bar--grid .mf-field .ek-input,
+.modal-filter-bar--grid .mf-field .ek-select {
+  width: 100%;
+  /* .modal-filter-bar input[type="text"] sets flex: 1 1 160px for the old
+     flex-row layout, where 160px was a width basis. .mf-field is a column
+     flex container, so that same basis gets reinterpreted as a HEIGHT basis
+     here, blowing the input up to 160px tall. Reset it. */
   flex: none;
 }
+.modal-filter-bar--grid .mf-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ek-8);
+}
+@media (max-width: 639px) {
+  .modal-filter-bar--grid { grid-template-columns: 1fr 1fr; }
+  .modal-filter-bar--grid .mf-actions { justify-content: stretch; }
+  .modal-filter-bar--grid .mf-actions .ek-btn { flex: 1; }
+}
+
+/* Value-formatting modifiers on .ek-table cells — typographic choices the
+   kit doesn't make for you (kit only sets tabular-nums, not a mono face). */
+.mono { font-family: var(--ek-num), ui-monospace, SFMono-Regular, Menlo, monospace; }
+.amt-pos { color: var(--ek-success); font-weight: var(--ek-w-medium); }
+.amt-neg { color: var(--ek-error); font-weight: var(--ek-w-medium); }
+
+/* Recharge/Transfer's nested .ek-tabs: JS toggles .active, so the inactive
+   panel needs an explicit hide (the main dashboard tabs use [hidden] instead,
+   set directly by JS, so they don't need this). */
+.rt-panel:not(.active) { display: none; }
+/* .rt-toolbar borrows its flex layout from a shared selector list (this
+   file, above) with no spacing of its own, and .rt-tabs had none either —
+   the Recharge button sat flush against the tab strip above it and the
+   table below it with zero gap. */
+.rt-tabs { margin-bottom: var(--ek-16); }
+/* .rt-panel is also .ek-tabpanel, which adds its own padding-top: 24px —
+   stacked on top of .rt-tabs's margin-bottom above, that doubled up into a
+   40px gap before the Recharge button. Zero it out here since .rt-tabs
+   already provides the spacing. */
+.rt-panel.ek-tabpanel { padding-top: 0; }
+.rt-toolbar { margin-bottom: var(--ek-16); }
+.rt-panel .ek-table-wrap + .rt-toolbar { margin-top: var(--ek-16); margin-bottom: 0; }
+
 @media (max-width: 560px) {
-  .modal-overlay { padding: 10px; align-items: flex-end; }
-  .modal-overlay > .modal-panel { max-height: calc(100dvh - 20px); border-radius: var(--ek-radius); }
   .modal-filter-bar input[type="date"] { width: 100%; }
 }

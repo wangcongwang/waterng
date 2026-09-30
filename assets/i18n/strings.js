@@ -105,6 +105,7 @@ window.I18N = {
       join_eyebrow: 'Join Elken',
       sec_basic: 'Basic Information',
       sec_products: 'Products',
+      products_hint: 'Tap a product to add it to your starter order, then set the quantity you need.',
       sec_network: 'Network Information',
       sec_personal: 'Personal Information',
       sec_delivery: 'Delivery Method',

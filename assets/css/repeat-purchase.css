@@ -1,0 +1,310 @@
+/* ==========================================================================
+   Repeat Purchase product list
+   Standalone page styling for the member "Repeat Purchase" flow.
+   Cards follow the reference screenshot: product image above a white card
+   body with price, View product link, and a full-width bottom action.
+   ========================================================================== */
+
+.rp-section {
+  background: var(--ek-surface-page);
+  padding-top: var(--ek-48);
+  padding-bottom: var(--ek-64);
+}
+
+.rp-sechead {
+  display: grid;
+  gap: var(--ek-8);
+  margin-bottom: var(--ek-32);
+}
+
+.rp-sechead__title {
+  margin: 0;
+  font-size: var(--ek-h2);
+  font-weight: var(--ek-w-bold);
+  line-height: var(--ek-h2-lh);
+  color: var(--ek-charcoal-deep);
+}
+
+.rp-sechead__sub {
+  margin: 0;
+  font-size: var(--ek-text);
+  color: var(--ek-muted);
+}
+
+.rp-product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ek-24);
+}
+
+/* Card: a single framed container — image sits inside the frame on a
+   sunken panel, white body below, full-width action at the bottom. */
+.rp-product-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-sm);
+  transition: transform var(--ek-fast) var(--ek-ease),
+              box-shadow var(--ek-fast) var(--ek-ease),
+              border-color var(--ek-fast) var(--ek-ease);
+}
+
+.rp-product-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--ek-blue);
+  box-shadow: var(--ek-shadow);
+}
+
+.rp-product-card__media {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+  padding: var(--ek-24);
+  background: var(--ek-surface-sunken);
+  border-bottom: 1px solid var(--ek-border);
+}
+
+.rp-product-card__media img {
+  display: block;
+  max-width: 100%;
+  max-height: 160px;
+  object-fit: contain;
+  transition: transform var(--ek-fast) var(--ek-ease);
+}
+
+.rp-product-card:hover .rp-product-card__media img {
+  transform: translateY(-4px);
+}
+
+.rp-product-card__body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ek-12);
+  padding: var(--ek-24);
+  background: var(--ek-surface);
+}
+
+.rp-product-card__body h3 {
+  margin: 0;
+  font-size: var(--ek-h4);
+  font-weight: var(--ek-w-bold);
+  line-height: var(--ek-h4-lh);
+  color: var(--ek-charcoal-deep);
+}
+
+.rp-product-card__desc {
+  margin: 0;
+  font-size: var(--ek-small);
+  line-height: var(--ek-small-lh);
+  color: var(--ek-muted);
+}
+
+.rp-product-card__price-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-8);
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.rp-product-card__price {
+  font-size: var(--ek-h3);
+  font-weight: var(--ek-w-bold);
+  line-height: 1.2;
+  color: var(--ek-charcoal-deep);
+}
+
+/* BV chip — members only (rendered only when signed in) */
+.rp-product-card__bv {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--ek-8);
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-info-tint);
+  color: var(--ek-blue);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+}
+
+.rp-product-card__view {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--ek-small);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal);
+  text-decoration: none;
+}
+
+.rp-product-card__view::after {
+  content: "→";
+  margin-left: var(--ek-8);
+  transition: transform var(--ek-fast) var(--ek-ease);
+}
+
+.rp-product-card__view:hover {
+  color: var(--ek-blue);
+}
+
+.rp-product-card__view:hover::after {
+  transform: translateX(3px);
+}
+
+/* Bottom action: Add to cart button or Register interest link.
+   Radius is handled by the card's overflow: hidden. */
+.rp-product-card__foot {
+  flex-shrink: 0;
+  padding: var(--ek-16) var(--ek-24);
+  background: var(--ek-blue);
+}
+
+.rp-product-card__add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--ek-12) var(--ek-16);
+  border: 0;
+  border-radius: var(--ek-radius);
+  background: transparent;
+  color: var(--ek-white);
+  font: inherit;
+  font-size: var(--ek-small);
+  font-weight: var(--ek-w-bold);
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--ek-fast) var(--ek-ease);
+}
+
+.rp-product-card__add:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.rp-product-card__add:focus-visible {
+  outline: 2px solid var(--ek-white);
+  outline-offset: 2px;
+}
+
+/* Coming-soon variant: no price / View product, so the action block sits
+   flush at the bottom of the card with a stacked label + link. */
+.rp-product-card--soon .rp-product-card__foot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ek-8);
+  padding: 0 var(--ek-24) var(--ek-24);
+  background: var(--ek-surface);
+}
+
+.rp-product-card__soon-label {
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ek-muted);
+}
+
+.rp-product-card__interest {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--ek-small);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.rp-product-card__interest::after {
+  content: "→";
+  margin-left: var(--ek-8);
+  transition: transform var(--ek-fast) var(--ek-ease);
+}
+
+.rp-product-card__interest:hover {
+  color: var(--ek-blue);
+}
+
+.rp-product-card__interest:hover::after {
+  transform: translateX(3px);
+}
+
+/* Guest variant: sign-up nudge below the grid */
+.rp-guest-note {
+  margin: var(--ek-32) 0 0;
+  text-align: center;
+  font-size: var(--ek-small);
+  color: var(--ek-muted);
+}
+
+.rp-guest-note a {
+  color: var(--ek-blue);
+  font-weight: var(--ek-w-bold);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rp-guest-note a:hover { color: var(--ek-blue-hover); }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .rp-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .rp-product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rp-product-card__media {
+    min-height: 170px;
+    padding: var(--ek-20);
+  }
+
+  .rp-product-card__media img {
+    max-height: 140px;
+  }
+
+  .rp-product-card__body,
+  .rp-product-card__foot {
+    padding: var(--ek-20);
+  }
+
+  .rp-product-card--soon .rp-product-card__foot {
+    padding: 0 var(--ek-20) var(--ek-20);
+  }
+}
+
+/* Floating cart — guest flow has no top header, so the cart lives here as a FAB
+   just below the env banner (top: env-banner height + gap) on the right. The
+   count badge reuses .ek-util__badge and is updated by updateCartBadge(). */
+.rp-cart-fab {
+  position: fixed;
+  top: calc(var(--ek-env-banner-h) + var(--ek-8));
+  right: var(--ek-12);
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: var(--ek-white);
+  color: var(--ek-blue);
+  box-shadow: 0 6px 18px rgba(20, 40, 80, .18);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.rp-cart-fab:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(20, 40, 80, .22);
+}
+.rp-cart-fab:active { transform: translateY(0); }
+.rp-cart-fab svg { display: block; }
+.rp-cart-fab .ek-util__badge { background: var(--ek-aqua); color: var(--ek-white); }

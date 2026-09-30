@@ -13,9 +13,9 @@
 
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
-  <link rel="stylesheet" href="assets/css/elken-ui.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
-  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260908g">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
   <link rel="stylesheet" href="assets/css/login.css?v=20260909c">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
@@ -30,7 +30,7 @@
       <div class="brand-grain" aria-hidden="true"></div>
 
       <div class="auth-brand__top">
-        <a class="brand-logo" href="index.html" aria-label="Elken, home">
+        <a class="brand-logo" href="index.html" aria-label="Elken, home" target="_blank" rel="noopener noreferrer">
           <img class="brand-logo-img" src="assets/img/brand/elken-logo-white-v4.svg" alt="Elken">
         </a>
       </div>
@@ -79,7 +79,7 @@
       <div class="auth-card">
 
         <!-- Brand mark — only visible on mobile where the panel collapses -->
-        <a class="auth-card__brand brand-logo" href="index.html" aria-label="Elken, home">
+        <a class="auth-card__brand brand-logo" href="index.html" aria-label="Elken, home" target="_blank" rel="noopener noreferrer">
           <img class="brand-logo-img brand-logo-img--dark" src="assets/img/brand/elken-logo-colour.svg" alt="Elken">
         </a>
 
@@ -126,6 +126,11 @@
           <span data-i18n="login.no_account">No account yet?</span>
           <a href="signup.html" data-i18n="login.create">Create one</a>
         </p>
+
+        <div class="auth-guest">
+          <p class="auth-guest__note">You can browse and buy without signing in.</p>
+          <a href="guest-repeat-purchase.html?guest=1" class="auth-guest__link">Shop now</a>
+        </div>
       </div>
     </section>
   </main>
@@ -183,7 +188,7 @@
   </div>
 
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-  <script src="assets/js/app.js?v=20260909e"></script>
+  <script src="assets/js/app.js?v=20260923b"></script>
   <script src="assets/js/website.js?v=20260909c-2"></script>
   <script>
     /* ---------- i18n apply ---------- */
@@ -222,7 +227,7 @@
     }
 
     function redirectAfterAuth() {
-      const next = new URLSearchParams(location.search).get('next') || 'index.html';
+      const next = new URLSearchParams(location.search).get('next') || 'account.html';
       location.href = next;
     }
 

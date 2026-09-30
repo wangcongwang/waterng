@@ -116,6 +116,7 @@
 }
 .auth-card {
   --fail: rgba(199, 56, 56, 1);            /* local error colour (no --ek-red token) */
+  position: relative;
   width: 100%; max-width: 420px;
   background: var(--ek-surface);
   border-radius: var(--ek-radius-lg);
@@ -169,18 +170,27 @@
 .auth-switch a { color: var(--ek-blue); font-weight: var(--ek-w-medium); margin-left: var(--ek-4); }
 .auth-switch a:hover { text-decoration: underline; }
 
-/* ---------- Toast (ported, token-only) ------------------------------------- */
-.toast-host {
-  position: fixed; bottom: var(--ek-40); right: var(--ek-40); z-index: 200;
-  display: flex; flex-direction: column; gap: var(--ek-8); pointer-events: none;
+/* Guest checkout entry — sits at the bottom of the card, kept very faint */
+.auth-guest {
+  margin: var(--ek-16) 0 0;
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--ek-4);
+  text-align: center;
 }
-.toast {
-  pointer-events: auto; background: var(--ek-charcoal-deep); color: var(--ek-white);
-  padding: var(--ek-12) var(--ek-16); border-radius: var(--ek-radius);
-  box-shadow: var(--ek-shadow-lg); display: flex; gap: var(--ek-8); align-items: center;
-  min-width: 240px; font-size: var(--ek-small);
+.auth-guest__note {
+  font-size: var(--ek-caption); color: var(--ek-muted); margin: 0;
+  line-height: 1.5;
 }
-.toast-success { background: var(--ek-blue); }
+.auth-guest__link {
+  font-size: var(--ek-caption); color: var(--ek-muted);
+  text-decoration: none;
+}
+.auth-guest__link:hover {
+  color: var(--ek-charcoal);
+  text-decoration: underline;
+  text-decoration-color: var(--ek-border-strong);
+  text-underline-offset: 2px;
+}
 
 /* ---------- Cookie banner (ported, token-only, NDPR) ----------------------- */
 .cookie-banner {
@@ -226,7 +236,6 @@
 }
 @media (max-width: 600px) {
   .auth-card { padding: var(--ek-24) var(--ek-16); }
-  .toast-host { left: var(--ek-16); right: var(--ek-16); bottom: var(--ek-16); }
   /* On small screens the cookie banner flows with the page so it does not obscure the form. */
   .cookie-banner {
     position: relative; left: auto; right: auto; bottom: auto;

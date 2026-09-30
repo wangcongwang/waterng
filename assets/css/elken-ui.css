@@ -233,7 +233,14 @@
    Wrap in .ek-table-wrap so it scrolls instead of breaking the layout.
    外层套 .ek-table-wrap，窄屏时横向滚动而不是撑破布局。
    ========================================================================== */
-.ek-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* min-width: 0 is required, not decorative — a flex or grid ancestor (the
+   .ek-card this usually sits in included) gives its children min-width:auto
+   by default, which lets them refuse to shrink below the table's content
+   width and pushes the overflow out to the page instead of scrolling here.
+   min-width:0 是必需的：父级只要是 flex/grid（包括常见的 .ek-card），子元素
+   默认 min-width:auto，会拒绝缩小到比表格内容更窄，横向溢出就会顶开页面，
+   而不是在这里滚动。 */
+.ek-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; min-width: 0; }
 
 .ek-table {
   width: 100%;
@@ -344,6 +351,16 @@
 }
 .ek-tab:hover { color: var(--ek-blue); }
 .ek-tab[aria-selected="true"] { color: var(--ek-blue); font-weight: var(--ek-w-bold); border-bottom-color: var(--ek-blue); }
+/* The sitewide :focus-visible ring (elken-base.css) extends outward via
+   box-shadow, but .ek-tabs only has a 4px gap between tabs — an adjacent
+   tab's opaque background paints over most of the ring (it's later in DOM
+   order), leaving just a stray sliver visible at the shared edge. Draw the
+   ring inset instead so it stays inside the tab's own box. */
+.ek-tab:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--ek-aqua);
+  border-radius: var(--ek-radius-sm);
+}
 .ek-tabpanel { padding-top: var(--ek-24); }
 .ek-tabpanel[hidden] { display: none; }
 
@@ -441,13 +458,6 @@
 @media (max-width: 479px) { .ek-form__actions > .ek-btn { flex: 1 1 auto; } }
 
 @media (max-width: 767px) { .ek-form { --form-cols: 1; } }
-
-/* A grid with an explicit --cols must still collapse on a phone, or two
-   300px tracks overflow a 390px screen. Set the count, not the layout.
-   显式设置 --cols 的网格在手机端必须回到单列，否则会溢出。 */
-@media (max-width: 639px) {
-  .ek-grid { grid-template-columns: 1fr; }
-}
 
 /* Checkbox / radio / switch — 复选框 / 单选 / 开关 */
 .ek-check { display: flex; align-items: flex-start; gap: var(--ek-8); font-size: var(--ek-small); cursor: pointer; }
@@ -795,6 +805,23 @@
    20. UTILITIES / 工具类  — keep this list short on purpose
    刻意保持很短：工具类一多就变成第二套设计系统。
    ========================================================================== */
+/* Auto grid. --min sets the smallest a track can get before wrapping;
+   --cols pins an explicit count instead of auto-fit.
+   自适应网格。--min 设最小轨道宽度，--cols 可指定固定列数（默认 auto-fit）。
+       <div class="ek-grid" style="--min: 220px">…</div>
+       <div class="ek-grid" style="--cols: 2; --min: 300px">…</div>         */
+.ek-grid {
+  display: grid;
+  gap: var(--ek-24);
+  grid-template-columns: repeat(var(--cols, auto-fit), minmax(var(--min, 240px), 1fr));
+}
+/* An explicit --cols must still collapse on a phone, or two 300px tracks
+   overflow a 390px screen. Set the count, not the layout.
+   显式设置 --cols 的网格在手机端必须回到单列，否则会溢出。 */
+@media (max-width: 639px) {
+  .ek-grid { grid-template-columns: 1fr; }
+}
+
 .ek-mt-0  { margin-top: 0 !important; }
 .ek-mt-8  { margin-top: var(--ek-8); }
 .ek-mt-16 { margin-top: var(--ek-16); }

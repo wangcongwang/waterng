@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-accent="cyan">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AquaLife · 业务流程图集（WordPress + 外部系统）</title>
+<style>
+:root{
+  --ink:#05070A; --panel:#0B0F14; --panel2:#0F151B; --ground:#060809;
+  --fg:#E6F0F5; --muted:#8A9BA8; --line:#1B2731; --line2:#243642;
+  --n1:#00E5FF; --n2:#FF2E88; --n3:#C6FF00;
+  --n1g:rgba(0,229,255,.50); --n2g:rgba(255,46,136,.50); --n3g:rgba(198,255,0,.45);
+  --ntox:#39FF88; --ntoxg:rgba(57,255,136,.45);
+  --nact:#A855F7; --nactg:rgba(168,85,247,.48);
+  --ncfg:#5B9DF9; --ncfgg:rgba(91,157,249,.50);
+  --warn:#FF6B00; --warng:rgba(255,107,0,.45);
+  --crit:#FF1744; --critg:rgba(255,23,68,.52);
+  --f-display:"Arial Black",Impact,"Haettenschweiler","PingFang SC","Microsoft YaHei",sans-serif;
+  --f-mono:ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono","Courier New",monospace;
+  --f-body:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  --hard:8px 8px 0 rgba(0,229,255,.10);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+:root[data-accent="acid"]{
+  --n1:#C6FF00; --n2:#FF3D00; --n3:#00E5FF;
+  --n1g:rgba(198,255,0,.45); --n2g:rgba(255,61,0,.50); --n3g:rgba(0,229,255,.50);
+  --hard:8px 8px 0 rgba(198,255,0,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--fg);font-family:var(--f-body);line-height:1.65;
+  background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);
+  background-size:34px 34px,34px 34px}
+a{color:var(--n1)}
+::selection{background:var(--n1);color:#04070A}
+/* hero */
+header.top{position:relative;overflow:hidden;background:#04060A;border-bottom:2px solid var(--n1);
+  padding:44px 38px 52px;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 2px,transparent 2px 7px)}
+header.top .inner{max-width:1400px;margin:0 auto;position:relative;z-index:3}
+.hazard{position:absolute;top:0;left:0;right:0;height:8px;z-index:4;
+  background:repeating-linear-gradient(45deg,var(--n3) 0 10px,#0A0A0A 10px 20px);opacity:.85}
+header.top .kicker{display:inline-flex;align-items:center;gap:9px;font:700 11.5px/1 var(--f-mono);
+  letter-spacing:.22em;text-transform:uppercase;color:var(--n1);border:1.5px solid var(--n1);
+  padding:7px 12px;margin-bottom:16px;background:rgba(0,229,255,.05)}
+header.top h1{font-family:var(--f-display);font-weight:900;margin:0 0 14px;
+  font-size:clamp(32px,6vw,62px);line-height:.98;letter-spacing:-1.5px}
+.glitch{position:relative;display:inline-block;color:#F2FEFF;text-shadow:0 0 22px var(--n1g)}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;left:0;top:0;pointer-events:none}
+.glitch::before{color:var(--n2);transform:translate(-2px,-1px);clip-path:inset(0 0 62% 0);animation:gl1 4.2s steps(2) infinite}
+.glitch::after{color:var(--n1);transform:translate(2px,1px);clip-path:inset(58% 0 0 0);animation:gl2 3.6s steps(2) infinite}
+@keyframes gl1{0%,92%,100%{opacity:0}93%,96%{opacity:.85}97%{opacity:0}}
+@keyframes gl2{0%,88%,100%{opacity:0}89%,93%{opacity:.7}94%{opacity:0}}
+header.top p.lede{margin:0 0 18px;max-width:900px;font:400 14.5px/1.75 var(--f-body);color:#AEBEC9}
+header.top p.lede b{color:#EAFDFF}
+header.top .hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}
+header.top .hero-meta span{font:700 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;
+  border:1.5px solid var(--line2);padding:7px 11px;color:#B9CBD6}
+header.top .hero-meta span b{color:var(--n1)}
+header.top .hero-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn-neon{display:inline-flex;align-items:center;gap:9px;font:700 12px/1 var(--f-mono);letter-spacing:.14em;
+  text-transform:uppercase;padding:11px 16px;border:2px solid var(--n1);background:rgba(0,229,255,.07);
+  color:#EAFDFF;cursor:pointer;text-decoration:none;transition:background .16s,box-shadow .16s}
+.btn-neon:hover{background:var(--n1);color:#04070A;box-shadow:0 0 0 3px rgba(0,229,255,.22)}
+.btn-neon.alt{border-color:var(--ncfg);background:rgba(91,157,249,.09);color:#DCEAFF}
+.btn-neon.alt:hover{background:var(--ncfg);color:#04070A;box-shadow:0 0 0 3px rgba(91,157,249,.22)}
+.btn-neon.alt2{border-color:var(--n1);background:transparent;color:#B9E9F5}
+/* layout */
+.wrap{display:flex;gap:24px;max-width:1400px;margin:24px auto 0;padding:0 20px 70px;align-items:flex-start}
+nav.toc{position:sticky;top:16px;flex:0 0 236px;background:var(--panel);border:2px solid var(--line2);
+  padding:14px 10px;box-shadow:var(--hard);max-height:calc(100vh - 32px);overflow:auto}
+nav.toc h2{font:700 10.5px/1 var(--f-mono);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  margin:14px 8px 9px;padding-bottom:8px;border-bottom:1px dashed var(--line2)}
+nav.toc h2:first-child{margin-top:4px}
+nav.toc a{display:flex;align-items:center;gap:9px;padding:8px 10px;color:#C6D4DD;text-decoration:none;
+  font:600 12.5px/1.25 var(--f-mono);border-left:3px solid transparent;margin-bottom:2px;transition:.15s}
+nav.toc a:hover{background:rgba(0,229,255,.07);color:#fff}
+nav.toc a.active{background:rgba(0,229,255,.11);border-left-color:var(--n1);color:#fff;text-shadow:0 0 10px var(--n1g)}
+nav.toc a .dot{width:6px;height:6px;background:var(--n1);flex:none}
+nav.toc a.toc-b .dot{background:var(--ncfg)}
+nav.toc a.toc-b.active{border-left-color:var(--ncfg);background:rgba(91,157,249,.12);text-shadow:0 0 10px var(--ncfgg)}
+nav.toc a.toc-apx .dot{background:var(--n3)}
+nav.toc a.toc-apx.active{border-left-color:var(--n3);background:rgba(198,255,0,.10);text-shadow:0 0 10px var(--n3g)}
+main{flex:1 1 auto;min-width:0}
+/* section */
+section.flow{position:relative;background:var(--panel);border:2px solid var(--line2);padding:22px 24px 26px;
+  margin-bottom:26px;box-shadow:var(--hard);opacity:0;transform:translateY(14px);
+  transition:opacity .5s var(--ease),transform .5s var(--ease);scroll-margin-top:16px}
+section.flow.reveal-in{opacity:1;transform:none}
+section.flow::before{content:"";position:absolute;left:0;top:0;width:70px;height:5px;background:var(--n1)}
+section.flow.mapsec::before{background:var(--n3);width:120px}
+section.flow.backlogsec::before{background:var(--ncfg);width:150px}
+.flow-head{border-bottom:1px dashed var(--line2);padding-bottom:14px;margin-bottom:16px}
+.flow-eyebrow{display:inline-block;font:700 10.5px/1 var(--f-mono);letter-spacing:.2em;color:var(--n3);
+  border:1.5px solid var(--n3);padding:5px 9px;margin-bottom:11px;background:rgba(198,255,0,.06)}
+.mapsec .flow-eyebrow{color:var(--n3)}
+.backlogsec .flow-eyebrow{color:var(--ncfg);border-color:var(--ncfg);background:rgba(91,157,249,.08)}
+.flow-head h2{font-family:var(--f-display);font-weight:900;margin:0 0 7px;font-size:clamp(21px,3.1vw,31px);
+  line-height:1.06;letter-spacing:-.6px}
+.flow-head .sub{color:var(--muted);font:400 13px/1.7 var(--f-body);margin:0;max-width:940px}
+.stage{position:relative;overflow:auto;border:1.5px solid var(--line2);background:var(--ground);padding:12px;max-height:78vh;
+  background-image:linear-gradient(rgba(0,229,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.055) 1px,transparent 1px);
+  background-size:26px 26px,26px 26px}
+.stage svg{display:block;height:auto;max-width:100%;margin:0 auto;overflow:visible}
+/* nodes */
+.node{cursor:pointer;transition:opacity .18s var(--ease)}
+.node .hit{fill:#0A0F14;stroke-width:2;transition:filter .18s var(--ease)}
+.n-page .hit{stroke:var(--n2)} .n-page .node-label,.n-page .node-glyph{fill:var(--n2)}
+.n-action .hit{stroke:var(--n1)} .n-action .node-label,.n-action .node-glyph{fill:var(--n1)}
+.n-decision .hit{stroke:var(--n3)} .n-decision .node-label,.n-decision .node-glyph{fill:var(--n3)}
+.n-store .hit{stroke:var(--ntox)} .n-store .node-label,.n-store .node-glyph{fill:var(--ntox)}
+.n-actor .hit{stroke:var(--nact)} .n-actor .node-label,.n-actor .node-glyph{fill:var(--nact)}
+.n-note .hit{stroke:var(--warn);stroke-dasharray:7 5} .n-note .node-label,.n-note .node-glyph{fill:var(--warn)}
+.n-cfg .hit{stroke:var(--ncfg);stroke-dasharray:3 3} .n-cfg .node-label,.n-cfg .node-glyph{fill:var(--ncfg)}
+.n-risk .hit{stroke:var(--crit)} .n-risk .node-label,.n-risk .node-glyph{fill:#FF8A9C}
+.n-page .hit{filter:drop-shadow(0 0 6px var(--n2g))}
+.n-action .hit{filter:drop-shadow(0 0 6px var(--n1g))}
+.n-decision .hit{filter:drop-shadow(0 0 6px var(--n3g))}
+.n-store .hit{filter:drop-shadow(0 0 6px var(--ntoxg))}
+.n-actor .hit{filter:drop-shadow(0 0 6px var(--nactg))}
+.n-note .hit{filter:drop-shadow(0 0 5px var(--warng))}
+.n-cfg .hit{filter:drop-shadow(0 0 7px var(--ncfgg))}
+.n-risk .hit{filter:drop-shadow(0 0 8px var(--critg))}
+.n-page .node-bracket{stroke:var(--n2)} .n-action .node-bracket{stroke:var(--n1)}
+.n-decision .node-bracket{stroke:var(--n3)} .n-store .node-bracket{stroke:var(--ntox)}
+.n-actor .node-bracket{stroke:var(--nact)} .n-note .node-bracket{stroke:var(--warn)}
+.n-cfg .node-bracket{stroke:var(--ncfg)} .n-risk .node-bracket{stroke:var(--crit)}
+.node-label{font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.01em;
+  text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+.node-sub{font-family:var(--f-mono);font-size:10.5px;fill:var(--muted);text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+.node-glyph{font-family:var(--f-mono);font-size:9.5px;opacity:.65;pointer-events:none}
+.node-bracket{stroke-width:1.5;fill:none;opacity:.35;pointer-events:none}
+.node:hover .hit{filter:drop-shadow(0 0 14px var(--n1g))}
+.node:focus{outline:none}
+.node:focus .hit{stroke-width:3.5}
+.node-badge-c{fill:var(--n1)}
+.i-badge{fill:#04070A;font-family:var(--f-mono);font-size:11px;font-weight:900}
+.n-cfg .node-badge-c{fill:var(--ncfg)}
+.n-risk .node-badge-c{fill:var(--crit)} .n-risk .i-badge{fill:#fff}
+/* edges */
+.ew{transition:opacity .2s var(--ease)}
+.e-glow{fill:none;stroke:var(--n1);stroke-width:8;opacity:.10}
+.e-base{fill:none;stroke:var(--n1);stroke-width:1.5;opacity:.42}
+.e-flow{fill:none;stroke:var(--n1);stroke-width:2.4;stroke-dasharray:10 12;animation:eflow 1.3s linear infinite}
+@keyframes eflow{to{stroke-dashoffset:-22}}
+.e-glow.warn{stroke:var(--crit)}
+.e-base.warn{stroke:var(--crit);opacity:.55}
+.e-flow.warn{stroke:var(--crit);stroke-dasharray:6 8}
+.mk-neon path{fill:var(--n1)} .mk-warn path{fill:var(--crit)}
+.edge-label-bg{fill:#060A0E;stroke:var(--line2);stroke-width:1}
+.edge-label{font-family:var(--f-mono);font-size:11px;font-weight:700;fill:var(--fg);
+  text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+.flow.has-hot .ew{opacity:.14}
+.flow.has-hot .ew.lit{opacity:1}
+.flow.has-hot .ew.lit .e-glow{opacity:.3}
+.flow.has-hot .node:not(.hot){opacity:.42}
+.flow.has-hot .node.hot .hit{filter:drop-shadow(0 0 14px var(--n1g))}
+/* legend */
+.legend{list-style:none;display:flex;flex-wrap:wrap;gap:10px 16px;margin:14px 0 0;padding:0;
+  font:600 11.5px/1.4 var(--f-mono);color:var(--muted)}
+.legend li{display:inline-flex;align-items:center;gap:7px}
+.legend i.lg{width:13px;height:13px;border:2px solid;display:inline-block;flex:none}
+.legend i.page{border-color:var(--n2)} .legend i.action{border-color:var(--n1)}
+.legend i.decision{border-color:var(--n3);transform:rotate(45deg)}
+.legend i.store{border-color:var(--ntox)} .legend i.actor{border-color:var(--nact)}
+.legend i.note{border-color:var(--warn);border-style:dashed}
+.legend i.cfg{border-color:var(--ncfg);border-style:dotted}
+.legend i.risk{border-color:var(--crit);background:rgba(255,23,68,.18)}
+.legend i.arrow{width:32px;height:9px;border:0;
+  background:repeating-linear-gradient(90deg,var(--n1) 0 5px,transparent 5px 10px);animation:lgdash 1s linear infinite}
+@keyframes lgdash{to{background-position:10px 0}}
+.detail{margin-top:14px;border:1.5px solid var(--line2);border-left:5px solid var(--n1);
+  padding:13px 16px;background:var(--panel2);font:400 13px/1.7 var(--f-body);color:#C9D7E0;min-height:52px}
+.detail .hint{color:var(--muted);font-family:var(--f-mono);font-size:12px}
+.detail .dt-tag{display:inline-block;font:700 10px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:#04070A;background:var(--n1);padding:4px 8px;margin-right:8px}
+/* config map table */
+.tablewrap{overflow-x:auto;border:1.5px solid var(--line2);background:var(--ground)}
+table.cmap{width:100%;border-collapse:collapse;min-width:720px;font:400 12.5px/1.6 var(--f-body)}
+table.cmap th{font:700 10.5px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--n3);
+  text-align:left;padding:12px 14px;border-bottom:2px solid var(--line2);background:#080C11;white-space:nowrap}
+table.cmap td{padding:11px 14px;border-bottom:1px solid var(--line);color:#C9D7E0;vertical-align:top}
+table.cmap tbody tr:hover{background:rgba(91,157,249,.06)}
+table.cmap td:first-child{font-family:var(--f-mono);font-weight:700;color:#EAFDFF;font-size:12px}
+table.cmap .cm-owner{font-family:var(--f-mono);color:var(--ncfg)}
+table.cmap .cm-exec{font-family:var(--f-mono);color:var(--ntox)}
+/* backlog */
+.sev-roll{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:10px;margin-bottom:14px}
+.sev-stat{border:2px solid var(--line2);padding:12px 14px;background:var(--ground)}
+.sev-stat b{display:block;font-family:var(--f-display);font-size:30px;line-height:1}
+.sev-stat span{font:700 10px/1 var(--f-mono);letter-spacing:.18em;color:var(--muted)}
+.sev-stat.s-p0{border-color:var(--crit)} .sev-stat.s-p0 b{color:var(--crit);text-shadow:0 0 16px var(--critg)}
+.sev-stat.s-p1{border-color:#FF6B00} .sev-stat.s-p1 b{color:#FF6B00}
+.sev-stat.s-p2{border-color:var(--muted)} .sev-stat.s-p2 b{color:var(--muted)}
+.sev-stat.s-total{border-color:var(--ncfg)} .sev-stat.s-total b{color:var(--ncfg);text-shadow:0 0 16px var(--ncfgg)}
+.sev-filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.fbtn{font:700 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;padding:9px 12px;
+  background:transparent;color:#C6D4DD;border:1.5px solid var(--line2);cursor:pointer;transition:.15s}
+.fbtn:hover{border-color:var(--n1);color:#fff}
+.fbtn.is-on{background:var(--n1);color:#04070A;border-color:var(--n1)}
+.bl-list{display:grid;gap:12px}
+.bl{position:relative;border:1.5px solid var(--line2);border-left:5px solid var(--muted);
+  background:var(--panel2);padding:13px 16px 14px}
+.bl[data-owner="服务端"]{border-left-color:var(--ntox)}
+.bl[data-owner="管理后台"]{border-left-color:var(--ncfg)}
+.bl[data-owner="前端"]{border-left-color:var(--n2)}
+.bl-top{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:6px}
+.bl-top h3{margin:0;font:800 15px/1.35 var(--f-display);letter-spacing:-.2px;flex:1 1 240px}
+.pri{font:900 10px/1 var(--f-mono);letter-spacing:.14em;padding:5px 8px;border:1.5px solid}
+.pri-p0{color:var(--crit);border-color:var(--crit);background:rgba(255,23,68,.12)}
+.pri-p1{color:#FF6B00;border-color:#FF6B00;background:rgba(255,107,0,.12)}
+.pri-p2{color:var(--muted);border-color:var(--muted);background:rgba(138,155,168,.10)}
+.bl-owner{font:700 11px/1 var(--f-mono);letter-spacing:.1em;color:#B9CBD6;border:1.5px solid var(--line2);padding:5px 8px}
+.bl-note{margin:0;font:400 13px/1.65 var(--f-body);color:#C9D7E0}
+.callout{margin:0 0 16px;padding:13px 16px;border:1.5px solid var(--line2);border-left:5px solid var(--ncfg);
+  background:rgba(91,157,249,.07);font:400 13px/1.7 var(--f-body);color:#D3DFEA}
+.callout b{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ncfg);margin-bottom:6px}
+.callout u{text-decoration-color:var(--n1);text-underline-offset:3px}
+.audit-note{margin:14px 0 0;padding:12px 14px;border-left:4px solid var(--n3);background:rgba(198,255,0,.05);
+  font:400 12.5px/1.7 var(--f-body);color:#C9D0AE}
+.fixbox{margin-top:20px;border:2px dashed var(--n2);padding:16px 18px;background:rgba(255,46,136,.05)}
+.fixbox h3{margin:0 0 12px;font:800 15px/1 var(--f-display);letter-spacing:.02em;color:#FFB4D2}
+.fixbox ul{margin:0;padding-left:18px}
+.fixbox li{margin-bottom:11px;font:400 13px/1.6 var(--f-body);color:#D8C6D2}
+.fixbox li b{color:#fff;margin-right:8px}
+.fixbox li code{display:block;font:600 11px/1.5 var(--f-mono);color:var(--n1);margin:4px 0}
+.fixbox li span{display:block;color:#B8A7B4}
+.fix-note{margin:12px 0 0;font:400 12.5px/1.6 var(--f-body);color:#A896A4}
+footer.foot{max-width:1400px;margin:0 auto;padding:6px 20px 46px;color:var(--muted);
+  font:600 11.5px/1.6 var(--f-mono);letter-spacing:.06em}
+footer.foot b{color:var(--ncfg)}
+/* 检查结论：偏差卡片 */
+.dev-list{display:grid;gap:12px;margin-bottom:24px}
+.dev{position:relative;border:1.5px solid var(--line2);border-left:5px solid var(--muted);background:var(--panel2);padding:13px 16px 14px}
+.dev[data-lvl="高"]{border-left-color:var(--crit)}
+.dev[data-lvl="中"]{border-left-color:#FF6B00}
+.dev[data-lvl="低"]{border-left-color:var(--muted)}
+.dev .dev-scope{font:700 10.5px/1.5 var(--f-mono);color:var(--muted);word-break:break-all}
+.dev-fix{margin:7px 0 0;font:400 13px/1.65 var(--f-body);color:#C9D7E0}
+.dev-fix b{display:inline-block;font:700 10px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;
+  color:#CFF9FF;border:1.5px solid rgba(0,229,255,.6);padding:4px 7px;margin-right:8px}
+/* 查看态：工具栏收成一个按钮，避免遮挡内容 */
+body:not(.editing) .editbar .eb-sep,
+body:not(.editing) .editbar .eb-btn:not(.eb-main),
+body:not(.editing) .editbar .eb-sel{display:none}
+body:not(.editing) .editbar{padding:8px 10px}
+/* ---------- 附录表标题 ---------- */
+.tbl-cap{font:800 14.5px/1.3 var(--f-display);letter-spacing:.02em;color:#EAFDFF;margin:22px 0 10px;padding-left:12px;border-left:4px solid var(--n3)}
+.tbl-cap:first-of-type{margin-top:4px}
+/* ---------- 编辑器 ---------- */
+body.editing{padding-bottom:100px}
+body.editing section.flow{border-color:rgba(0,229,255,.5)}
+body.editing .stage{cursor:crosshair}
+body.editing g.node{cursor:move}
+body.editing .ew path{pointer-events:stroke;cursor:pointer}
+g.node.is-sel .hit{stroke:var(--n3);stroke-width:3.5;filter:drop-shadow(0 0 14px var(--n3g))}
+g.node.link-src .hit{stroke:var(--crit);stroke-width:3.5;stroke-dasharray:none;filter:drop-shadow(0 0 14px var(--critg))}
+.ew.is-sel .e-flow,.ew.is-sel .e-base{stroke:var(--n3)}
+.ew.is-sel .e-base{opacity:.95}
+.editbar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:60;display:flex;flex-wrap:wrap;
+  gap:6px;align-items:center;justify-content:center;max-width:calc(100vw - 20px);padding:9px 11px;
+  background:rgba(6,9,13,.97);border:2px solid var(--line2);backdrop-filter:blur(8px);
+  box-shadow:0 0 0 2px rgba(0,229,255,.10),7px 7px 0 rgba(0,229,255,.07)}
+.eb-btn{font:700 10.5px/1 var(--f-mono);letter-spacing:.04em;padding:7px 9px;background:transparent;color:#C6D4DD;
+  border:1.5px solid var(--line2);cursor:pointer;transition:.15s;white-space:nowrap}
+.eb-btn:hover{border-color:var(--n1);color:#fff}
+.eb-btn.is-on{background:var(--n1);color:#04070A;border-color:var(--n1)}
+.eb-btn.eb-main{border-color:var(--n1);color:#EAFDFF}
+.eb-btn.eb-danger{border-color:var(--crit);color:#FFD9DF}
+.eb-btn.eb-danger:hover{background:var(--crit);color:#fff}
+.eb-btn[disabled]{opacity:.4;cursor:not-allowed}
+.eb-sep{width:1px;height:20px;background:var(--line2)}
+.eb-sel{font:700 10.5px/1 var(--f-mono);padding:7px 6px;max-width:132px;background:#0A1017;color:#EAFDFF;border:1.5px solid var(--line2)}
+.badge-dirty{margin-left:10px;font:700 9.5px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;
+  color:#04070A;background:var(--n3);padding:5px 7px;vertical-align:middle}
+.insp{position:fixed;right:14px;bottom:14px;width:304px;z-index:61;display:none;padding:13px 14px 15px;
+  background:rgba(6,9,13,.975);border:2px solid var(--n1);backdrop-filter:blur(8px);
+  box-shadow:7px 7px 0 rgba(0,229,255,.10);max-height:72vh;overflow:auto}
+.insp.show{display:block}
+.insp h4{margin:0 0 6px;font:800 13px/1.3 var(--f-display);letter-spacing:.02em;color:#EAFDFF}
+.insp-id{font:700 11px/1 var(--f-mono);color:var(--n1);letter-spacing:.06em}
+.insp label{display:block;font:700 9.5px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin:10px 0 4px}
+.insp label.chk{display:flex;align-items:center;gap:7px;text-transform:none;letter-spacing:0;font-size:11.5px;color:#C6D4DD;margin-top:12px}
+.insp input:not([type=checkbox]),.insp select,.insp textarea{width:100%;background:#0A1017;border:1.5px solid var(--line2);
+  color:#EAFDFF;font:600 12px/1.5 var(--f-mono);padding:7px 8px}
+.insp input:focus,.insp select:focus,.insp textarea:focus{outline:none;border-color:var(--n1);box-shadow:0 0 0 2px rgba(0,229,255,.18)}
+.insp textarea{min-height:66px;resize:vertical}
+.insp .row{display:flex;gap:7px;margin-top:12px}
+.insp .row .eb-btn{flex:1;text-align:center}
+.insp-hint{margin:11px 0 0;font:400 11.5px/1.6 var(--f-body);color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);z-index:70;padding:10px 15px;
+  background:var(--n1);color:#04070A;font:800 12px/1 var(--f-mono);opacity:0;transition:opacity .2s;
+  pointer-events:none;max-width:80vw;text-align:center}
+.toast.show{opacity:1}
+@media (max-width:880px){
+  .wrap{flex-direction:column;align-items:stretch;margin-top:18px;padding:0 14px}
+  main{min-width:0;max-width:100%}
+  section.flow{min-width:0;padding:18px 16px 20px}
+  .def,.bl,.sev-roll,.stage,.detail,.callout,.fixbox{min-width:0;max-width:100%}
+  .bl-note{overflow-wrap:anywhere}
+  nav.toc{position:static;flex:none;width:100%;max-height:none}
+  header.top{padding:36px 20px 42px}
+  body.editing{padding-bottom:150px}
+  .editbar{left:12px;right:12px;transform:none;max-width:none;justify-content:flex-start}
+  .insp{left:12px;right:12px;width:auto;top:10px;bottom:auto;max-height:46vh}
+  .toast{top:auto;bottom:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important;animation:none!important}
+  section.flow{opacity:1;transform:none}
+  .e-flow{stroke-dasharray:none;opacity:.85}
+  .glitch::before,.glitch::after{display:none}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hazard" aria-hidden="true"></div>
+  <div class="inner">
+    <span class="kicker">AQUALIFE // BUSINESS BLUEPRINT // v6</span>
+    <h1><span class="glitch" data-text="业务流程图集">业务流程图集</span></h1>
+    <p class="lede">本版按新架构重做：<b>WordPress 承载前端页面展示</b>（首页、品牌、商品展示、FAQ、法务，含商品图文与展示价自维护）；<b>所有下单流程与我的账户流程跳转到外部网页</b>，由外部系统独立开发。两侧各有独立后台与数据，靠「跳转衔接」打通。并覆盖复购双页（会员 / 游客）、游客免注册下单、会员四流程（欢迎包 / 复购 / 自动维护 ≥90BV / 等级升级 BV 补差）与六种支付渠道。点击节点看业务说明，悬停节点高亮链路，箭头虚线流向即业务流转方向。</p>
+    <div class="hero-meta">
+      <span><b>18</b> 张业务流程图</span>
+      <span><b>2</b> 套后台（WP / 外部）</span>
+      <span><b>23</b> 条规则配置归属</span>
+      <span><b>12</b> 项已知偏差</span>
+      <span><b>29</b> 项待建能力</span>
+    </div>
+    <div class="hero-actions">
+      <button class="btn-neon" id="accentToggle" aria-label="切换霓虹配色"><span class="ac-label">CYAN</span> 配色</button>
+      <a class="btn-neon alt" href="#f-map">归属地图（规则 + 现有页面）</a>
+      <a class="btn-neon alt2" href="#f-backlog">目标形态待建清单</a>
+    </div>
+  </div>
+</header>
+<div class="wrap">
+  <nav class="toc" id="toc">
+    <h2>全景</h2>
+    <a href="#f-overview"><span class="dot"></span>0 · 系统全景</a>
+    <h2>WordPress 侧 · 展示</h2>
+    <a href="#f-wp_site"><span class="dot"></span>1 · 前台浏览与跳转下单</a>
+    <a href="#f-wp_admin"><span class="dot"></span>2 · 后台内容与展示维护</a>
+    <h2>衔接</h2>
+    <a href="#f-bridge" class="toc-b"><span class="dot"></span>3 · 跳转与身份衔接</a>
+    <h2>外部系统 · 会员侧</h2>
+    <a href="#f-auth"><span class="dot"></span>4 · 登录 / 注册</a>
+    <a href="#f-catalog"><span class="dot"></span>5 · 商品与购物车</a>
+    <a href="#f-guest"><span class="dot"></span>6 · 游客下单链路</a>
+    <a href="#f-checkout"><span class="dot"></span>7 · 结算与支付</a>
+    <a href="#f-orders"><span class="dot"></span>8 · 订单与履约</a>
+    <a href="#f-account"><span class="dot"></span>9 · 我的账户</a>
+    <a href="#f-lifecycle"><span class="dot"></span>10 · 会员生命周期</a>
+    <a href="#f-upgrade"><span class="dot"></span>11 · 等级升级（BV 补差）</a>
+    <a href="#f-referral"><span class="dot"></span>12 · 推荐 / 分销 / 团队</a>
+    <h2>外部系统 · 管理后台</h2>
+    <a href="#f-admin_product" class="toc-b"><span class="dot"></span>13 · 产品与价格配置</a>
+    <a href="#f-admin_member" class="toc-b"><span class="dot"></span>14 · 会员管理与等级权限</a>
+    <a href="#f-admin_order" class="toc-b"><span class="dot"></span>15 · 订单 / 物流 / 订单类型</a>
+    <a href="#f-admin_rbac" class="toc-b"><span class="dot"></span>16 · 角色与权限 + 审计</a>
+    <a href="#f-admin_report" class="toc-b"><span class="dot"></span>17 · 报表与结算</a>
+    <h2>附录</h2>
+    <a href="#f-map" class="toc-apx"><span class="dot"></span>18 · 归属地图（规则 / 页面）</a>
+    <a href="#f-backlog" class="toc-apx"><span class="dot"></span>19 · 检查结论 + 待建清单</a>
+  </nav>  <main id="main"></main>
+</div>
+<footer class="foot">AQUALIFE BUSINESS BLUEPRINT · WordPress 展示 + 外部系统交易与账户 · 展示价不参与结算，登录与账户数据只在外部系统 · <b>当前 demo 为纯前端单站原型，新架构下鉴权/支付/库存/权限由外部系统承接</b></footer>
+<script>/* ============================================================
+   AquaLife 业务流程图 — 流程数据源（v7）
+   ------------------------------------------------------------
+   架构：WordPress 承载前端页面展示（内容与商品图文自维护）
+         所有下单流程 + 我的账户流程 → 跳转外部网页（独立开发）
+   本版依据当前 demo 实况对齐：复购双页、游客下单链路、会员四流程
+   （欢迎包 / 复购 / 自动维护 ≥90BV / 等级升级 BV 补差）、余额支付。
+   节点类型: page | action | decision | store | actor | note | cfg
+   ============================================================ */
+const FLOWS = {
+
+overview:{ fit:true,
+ title:"0 · 系统全景（WordPress ↔ 外部系统）",
+ sub:"系统一分为二：WordPress 承载前端页面展示（首页、品牌、商品展示、FAQ、法务），内容与商品图文由 WordPress 后台自维护；所有下单流程与我的账户流程跳转到外部网页，由外部系统独立开发。两套后台、两套数据，靠「跳转衔接」打通。",
+ nodes:[
+  {id:"ac",x:20,y:14,w:180,h:48,label:"访客 / 会员",sub:"统一入口",type:"actor",detail:"用户从 WordPress 站进入；下单与账户操作在外部系统完成。内部还有一类「游客」：免注册直接下单，订单归入 house 账户。"},
+
+  {id:"wp1",x:20,y:86,w:220,h:66,label:"WordPress 前台",sub:"首页·品牌·商品展示·FAQ·法务",type:"page",detail:"纯展示层。首页已改为「纯展示页」，不读也不写任何登录态。"},
+  {id:"wp2",x:20,y:186,w:220,h:66,label:"WordPress 后台",sub:"内容·商品图文·菜单·多语言·SEO",type:"cfg",detail:"维护页面内容、商品展示图文与展示价、导航菜单、CTA 跳转链接、媒体库、多语言与 SEO。"},
+  {id:"wp3",x:20,y:286,w:220,h:60,label:"WordPress 数据与媒体",sub:"内容库 / 缓存 / CDN",type:"store",detail:"文章、页面、菜单、媒体文件；与外部系统的交易数据彼此独立。"},
+
+  {id:"j1",x:300,y:86,w:200,h:66,label:"跳转衔接层",sub:"入口·参数·回跳",type:"page",detail:"WordPress 页面上的跳转入口：加入购物车 / 立即购买 / 登录 / 我的账户 / 成为分销商。"},
+  {id:"j2",x:300,y:186,w:200,h:66,label:"跳转参数与回跳",sub:"product · qty · ref · return",type:"store",detail:"白名单参数：商品、数量、推荐码、来源页、回跳地址。外部系统据此还原上下文。"},
+  {id:"j3",x:300,y:286,w:200,h:60,label:"身份衔接策略",sub:"外部登录 / 可选 SSO",type:"decision",detail:"当前：登录全部在外部系统完成。预留：WordPress 侧登录后带 token 免登（SSO）。"},
+
+  {id:"ex1",x:560,y:60,w:230,h:80,label:"外部系统 · 会员侧",sub:"登录·复购·结算·支付·订单·我的账户",type:"page",detail:"独立开发的外部网页：登录注册、商品与复购、游客下单、结算支付、订单履约、我的账户、会员生命周期（欢迎包/复购/自动维护/升级）、推荐分销与团队。"},
+  {id:"ex2",x:560,y:186,w:230,h:66,label:"外部系统 · 管理后台",sub:"产品·会员·订单·权限·报表",type:"cfg",detail:"外部系统的运营后台：产品与价格配置、会员与等级权限、订单与订单类型、角色权限与审计、报表结算。"},
+
+  {id:"sv1",x:860,y:60,w:250,h:80,label:"外部服务端",sub:"订单·支付·库存·BV佣金·权限",type:"store",detail:"业务规则的唯一执行与校验方；前端与 WordPress 都不作为规则来源。"},
+  {id:"sv2",x:860,y:166,w:250,h:60,label:"外部数据库",sub:"会员·订单·账本·权限",type:"store",detail:"交易与账户主数据；会员号与订单号由服务端生成并加唯一约束。"},
+
+  {id:"cf",x:20,y:382,w:1090,h:78,label:"关键边界：① WordPress 只展示、不交易 —— 展示价仅供展示，结算价与 BV 一律以外部系统为准；② 登录与账户数据只在外部系统，WordPress 不持有交易登录态；③ 游客可免注册下单，订单归入 house 账户（NG00000001）且不计 BV；④ 两侧后台各自维护各自数据。",type:"note",
+   detail:"这条边界决定了后续所有模块的归属：凡涉及金额、库存、会员权益、订单状态，都必须在外部系统实现；WordPress 侧只负责内容、展示与跳转入口。"}
+ ],
+ edges:[
+  {from:"ac",to:"wp1"},
+  {from:"wp2",to:"wp1",label:"内容发布"},
+  {from:"wp2",to:"wp3",label:"读写"},
+  {from:"wp1",to:"j1",label:"CTA 跳转"},
+  {from:"j1",to:"j2",label:"参数"},
+  {from:"j3",to:"j1",label:"身份策略"},
+  {from:"j1",to:"ex1",label:"跳转外部"},
+  {from:"ex1",to:"j1",label:"回跳",dash:true},
+  {from:"ex2",to:"sv1",label:"配置下发"},
+  {from:"ex1",to:"sv1",label:"接口"},
+  {from:"sv1",to:"sv2",label:"读写"}
+ ]
+},
+
+wp_site:{
+ title:"1 · WordPress 前台浏览与跳转下单",
+ sub:"WordPress 前台只做展示：浏览内容与商品展示页，选择规格数量仅作展示。所有交易与账户动作都以「跳转外部」结束 —— 不在 WordPress 内下单。",
+ nodes:[
+  {id:"a",x:310,y:10,w:230,h:56,label:"进入 WordPress 站点",sub:"首页为纯展示页",type:"page",detail:"首页已标记为 display-only：不读不写登录态、不播种演示账号，恒定按未登录营销版渲染。"},
+  {id:"b",x:300,y:96,w:250,h:66,label:"浏览分类 / 商品展示页",sub:"图文与展示价由 WP 后台自维护",type:"page",detail:"商品展示内容（图片、卖点、规格说明、展示价）由 WordPress 后台维护；不参与结算计算。"},
+  {id:"c",x:300,y:188,w:250,h:60,label:"选择规格 / 数量",sub:"仅用于跳转参数",type:"action",detail:"WordPress 侧不做库存与价格校验，选择结果只作为跳转参数（product / qty / sku）传给外部系统。"},
+  {id:"d",x:340,y:284,w:214,h:118,label:"点击入口",sub:"按入口类型分流",type:"decision",detail:"加入购物车 / 立即购买（→ 外部）、登录 / 我的账户（→ 外部账户）、成为分销商（→ 外部申请）、免注册下单（→ 游客链路）。"},
+  {id:"e1",x:620,y:284,w:250,h:66,label:"跳转外部：购物车 / 结算",sub:"带 product · qty · sku",type:"page",detail:"外部系统按参数预填商品与数量。"},
+  {id:"e2",x:620,y:376,w:250,h:66,label:"跳转外部：登录 / 我的账户",sub:"带 return 回跳地址",type:"page",detail:"账户入口建议新标签页打开，保留 WordPress 页面。"},
+  {id:"e3",x:620,y:468,w:250,h:60,label:"跳转外部：游客下单",sub:"免注册直接购买",type:"page",detail:"登录页「Shop now」进入游客链路，无需注册即可加购结算。"},
+  {id:"e4",x:620,y:558,w:250,h:60,label:"站内继续浏览",sub:"关于 / FAQ / 联系 / 法务",type:"page",detail:"纯内容浏览，不发生跳转。"},
+  {id:"f",x:30,y:284,w:240,h:96,label:"WordPress 侧不做的事",sub:"不下单 · 不校验库存 · 不算价",type:"note",detail:"WordPress 不承载购物车、订单、支付与账户；展示价与结算价可能不一致时，以外部系统为准。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},{from:"b",to:"c"},{from:"c",to:"d"},
+  {from:"d",to:"e1",label:"购物车/立即购买"},
+  {from:"d",to:"e2",label:"登录/我的账户"},
+  {from:"d",to:"e3",label:"游客下单",dash:true},
+  {from:"d",to:"e4",label:"继续浏览",dash:true},
+  {from:"b",to:"f",label:"边界"}
+ ]
+},
+
+wp_admin:{
+ title:"2 · WordPress 后台：内容与商品展示维护",
+ sub:"WordPress 后台负责内容侧的一切：页面与文章、商品展示图文与展示价、菜单与 CTA 跳转、媒体库、多语言与 SEO。发布后前台即时生效。",
+ nodes:[
+  {id:"a",x:340,y:10,w:214,h:118,label:"后台登录 + 角色校验",sub:"编辑 / 作者 / 管理员",type:"decision",detail:"WordPress 自身角色体系，与外部系统的会员/角色完全独立。"},
+  {id:"b",x:30,y:180,w:210,h:56,label:"无权限 → 拒绝",type:"page",detail:"WordPress 原生能力；敏感操作可加审核流程。"},
+  {id:"c",x:310,y:180,w:240,h:66,label:"页面 / 文章管理",sub:"首页·关于·FAQ·法务",type:"action",detail:"页面结构与文案；支持草稿、定时发布、修订版本。"},
+  {id:"d",x:310,y:274,w:250,h:74,label:"商品展示内容维护",sub:"图文·卖点·规格·展示价",type:"action",detail:"只维护展示层内容。展示价不参与结算；若与外部系统价格不一致，以外部为准。"},
+  {id:"e",x:310,y:376,w:250,h:74,label:"菜单 / 导航 / CTA 跳转配置",sub:"按钮文案 + 目标地址 + 参数",type:"action",detail:"配置「立即购买 / 我的账户 / 免注册下单」等入口指向外部系统的 URL 与参数。"},
+  {id:"f",x:310,y:478,w:250,h:60,label:"媒体库 / 图片优化",type:"action",detail:"图片上传、压缩、CDN 分发。"},
+  {id:"g",x:310,y:566,w:250,h:66,label:"多语言 / SEO 配置",sub:"URL 结构·元信息·站点地图",type:"action",detail:"页面副本、meta、站点地图、结构化数据。当前 demo 仅有英文词条，切换语言为 Phase 2。"},
+  {id:"h",x:310,y:660,w:250,h:60,label:"预览 → 发布生效",type:"store",detail:"发布后前台与 CDN 缓存刷新。"},
+  {id:"i",x:640,y:274,w:250,h:74,label:"插件与主题管理",type:"action",detail:"主题模板、表单插件、多语言插件、缓存插件；纳入版本与安全维护。"},
+  {id:"j",x:640,y:396,w:250,h:66,label:"操作日志与备份",type:"store",detail:"内容变更留痕、数据库与媒体定期备份。"}
+ ],
+ edges:[
+  {from:"a",to:"b",label:"无权限",dash:true},
+  {from:"a",to:"c",label:"有权限"},
+  {from:"c",to:"d"},{from:"d",to:"e"},{from:"e",to:"f"},{from:"f",to:"g"},{from:"g",to:"h"},
+  {from:"c",to:"i",label:"模板"},{from:"h",to:"j",label:"留痕"}
+ ]
+},
+
+bridge:{
+ title:"3 · 跳转与身份衔接（WordPress → 外部系统）",
+ sub:"本流程是两套系统的接缝：入口分类 → 参数拼装 → 外部鉴定身份（当前为外部登录，预留 SSO 免登）→ 完成操作 → 回跳。参数与回跳地址必须固化约定。",
+ nodes:[
+  {id:"a",x:310,y:10,w:240,h:56,label:"WordPress 站页面",type:"page",detail:"跳转的起点页面。"},
+  {id:"b",x:340,y:96,w:214,h:118,label:"入口类型判定",sub:"下单 / 账户 / 游客 / 营销",type:"decision",detail:"不同入口携带不同参数与目标页：下单类必须带商品与数量；游客类不带身份。"},
+  {id:"c1",x:10,y:250,w:190,h:66,label:"下单类入口",sub:"加入购物车 / 立即购买",type:"action",detail:"带 product / sku / qty，可选 ref（推荐码），目标为外部购物车或结算页。"},
+  {id:"c2",x:215,y:250,w:190,h:66,label:"账户类入口",sub:"登录 / 我的账户",type:"action",detail:"带 return（回跳地址），默认新标签打开以保留 WordPress 页面。"},
+  {id:"c3",x:420,y:250,w:190,h:66,label:"游客类入口",sub:"免注册下单",type:"action",detail:"不带身份，进入游客链路；结算时订单归入 house 账户。"},
+  {id:"c4",x:625,y:250,w:200,h:66,label:"营销类入口",sub:"成为分销商 / 咨询",type:"action",detail:"带来源标记，进入外部系统的申请或表单流程。"},
+  {id:"d",x:310,y:360,w:250,h:74,label:"组装跳转参数",sub:"白名单校验 + 签名（可选）",type:"action",detail:"只允许白名单参数；必要时对参数签名，防止被篡改（如改价、改推荐关系）。"},
+  {id:"e",x:340,y:456,w:214,h:118,label:"外部系统鉴定身份",sub:"已登录？",type:"decision",detail:"当前策略：登录全部在外部系统完成。预留 SSO：WordPress 侧登录后带 token 免登。"},
+  {id:"f1",x:640,y:456,w:230,h:66,label:"已登录 → 直达目标页",sub:"购物车 / 结算 / 我的账户",type:"page",detail:"按入口类型落地，参数自动预填。"},
+  {id:"f2",x:20,y:456,w:230,h:66,label:"未登录 → 外部登录页",sub:"带 return 与原始参数",type:"page",detail:"登录或注册完成后，按 return 回到原目标，而不是一律回首页。"},
+  {id:"f3",x:330,y:622,w:220,h:60,label:"游客 → 直接放行",sub:"不要求登录",type:"page",detail:"游客链路不进入登录页，直接浏览加购；结算后订单归 house 账户。"},
+  {id:"g",x:330,y:712,w:240,h:60,label:"在外部完成操作",type:"page",detail:"下单、支付、查看订单、修改资料等均在外部系统内闭环。"},
+  {id:"h",x:330,y:802,w:240,h:60,label:"回跳 / 返回 WordPress",type:"page",detail:"外部页面提供返回 WordPress 的入口；账户类入口可保留原标签页。"},
+  {id:"cfg",x:640,y:560,w:320,h:96,label:"配置点：参数白名单与签名密钥、SSO 开关、回跳地址白名单、新标签 / 同标签策略、游客下单开关",type:"cfg",detail:"参数与回跳地址必须双向白名单校验，避免开放重定向与参数注入。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},
+  {from:"b",to:"c1"},{from:"b",to:"c2"},{from:"b",to:"c3"},{from:"b",to:"c4"},
+  {from:"c1",to:"d"},{from:"c2",to:"d"},{from:"c3",to:"d"},{from:"c4",to:"d"},
+  {from:"d",to:"e"},
+  {from:"e",to:"f1",label:"已登录"},
+  {from:"e",to:"f2",label:"未登录",dash:true},
+  {from:"e",to:"f3",label:"游客",dash:true},
+  {from:"f2",to:"g",label:"登录 / 注册后"},{from:"f1",to:"g"},{from:"f3",to:"g"},
+  {from:"g",to:"h"},{from:"d",to:"cfg",label:"约定"}
+ ]
+},
+
+auth:{
+ title:"4 · 登录 / 注册（外部系统）",
+ sub:"登录与注册全部在外部系统完成，WordPress 不持有交易登录态。注册由服务端建档、生成会员号并绑定推荐关系；登录颁发令牌。登录页同时提供「免注册下单」入口。",
+ nodes:[
+  {id:"a",x:310,y:10,w:250,h:60,label:"外部系统登录 / 注册页",sub:"由跳转带入 return",type:"page",detail:"入口来自 WordPress 跳转，或直接访问外部域名。页面提供两条路径：登录 / 注册，以及底部「免注册下单」。",
+   },
+  {id:"s0",x:640,y:10,w:250,h:66,label:"免注册下单入口",sub:"Shop now → 游客链路",type:"action",detail:"不建立账号，直接进入游客商品页；写 sessionStorage al.guestMode=1（按标签页持久）。详见「游客下单链路」。"},
+  {id:"b",x:340,y:110,w:214,h:118,label:"已有账号？",type:"decision",detail:"分流为登录或注册；注册需推荐人（可选）与 Order Level。"},
+  {id:"c1",x:20,y:264,w:210,h:66,label:"登录",sub:"账号 + 密码",type:"action",detail:"支持会员号 / 手机 / 邮箱登录；连续失败锁定与验证码。"},
+  {id:"c2",x:250,y:264,w:230,h:74,label:"注册（开户）",sub:"资料 + 推荐人 + Order Level",type:"action",detail:"国家/币种、Order Level 档位、上报中心列表均由后台配置；推荐人须校验存在且有效。"},
+  {id:"d",x:310,y:380,w:250,h:66,label:"服务端校验 + 风控",sub:"唯一性·密码策略·推荐关系",type:"store",detail:"手机/邮箱唯一、密码慢哈希校验、推荐关系合法性校验；风控拦截异常来源。"},
+  {id:"e",x:310,y:476,w:250,h:66,label:"生成会员号 / 建立档案",sub:"NG+8 位 · 唯一约束",type:"store",detail:"注册时建档并生成会员号，绑定归属推荐关系与上报中心（reportingCenter）。"},
+  {id:"f",x:310,y:574,w:250,h:60,label:"颁发访问 / 刷新令牌",type:"store",detail:"会话有效期由后台配置；登录时清除游客标记（登录即退出游客流程）。"},
+  {id:"g",x:310,y:664,w:250,h:60,label:"按 return 落到目标页",sub:"购物车 / 结算 / 我的账户",type:"page",detail:"登录后回到跳转前意图，而不是一律回首页。"},
+  {id:"h",x:640,y:380,w:250,h:66,label:"忘记密码 / 重置",type:"action",detail:"短信或邮箱验证码校验后重置；重置后旧令牌全部失效。"},
+  {id:"cfg",x:640,y:476,w:320,h:96,label:"配置点：密码策略与失败锁定、会话时长、是否强制二次验证、Order Level 档位与权益",type:"cfg",detail:"由外部系统后台配置，服务端执行。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},{from:"a",to:"s0",label:"免注册"},
+  {from:"b",to:"c1",label:"已有账号"},
+  {from:"b",to:"c2",label:"新会员"},
+  {from:"c1",to:"d"},{from:"c2",to:"e"},{from:"e",to:"f"},{from:"d",to:"f"},
+  {from:"f",to:"g"},
+  {from:"c1",to:"h",label:"忘记密码",dash:true},{from:"h",to:"c1",label:"重置后重登",dash:true},
+  {from:"d",to:"cfg",label:"策略"}
+ ]
+},
+
+catalog:{
+ title:"5 · 商品与购物车（外部系统）",
+ sub:"外部系统的选品与购物车：常规商品目录 + 复购页（会员 / 游客双版本）。价格、BV、库存由外部系统提供；缺货商品可登记到货意向。加购写入共享购物车，最终在结算页统一成单。",
+ nodes:[
+  {id:"a",x:300,y:10,w:250,h:66,label:"商品入口",sub:"WordPress 跳转 / 复购页 / 游客页",type:"page",detail:"三类入口：从 WordPress 跳转带入商品、会员复购页、游客商品页。"},
+  {id:"b",x:300,y:104,w:250,h:66,label:"商品列表 / 详情",sub:"读外部产品目录",type:"page",detail:"当前目录含 12 个商品、6 个分类；价格、BV、库存与上下架状态由服务端返回。"},
+  {id:"c",x:300,y:196,w:250,h:66,label:"复购页（Repeat Purchase）",sub:"会员 repeat-purchase / 游客 guest-repeat-purchase",type:"page",detail:"会员版与游客版同一套渲染，差异在导航与引导注册文案。支持 ?category= 过滤，命中为空时回退展示全部。"},
+  {id:"d",x:310,y:290,w:240,h:60,label:"加入购物车",type:"action",detail:"写入共享购物车（服务端为多端一致；demo 用 al.cart）。复购页与商品页共用同一购物车。"},
+  {id:"e",x:310,y:382,w:240,h:66,label:"购物车",sub:"服务端存储",type:"store",detail:"含商品快照与数量；金额与 BV 由服务端计算。数量上限 99。"},
+  {id:"f",x:310,y:474,w:250,h:74,label:"修改数量 / 删除",sub:"服务端校验库存与价格有效期",type:"action",detail:"受库存与单笔限购约束；价格变动时提示确认。"},
+  {id:"g",x:310,y:568,w:240,h:60,label:"进入结算",type:"page",detail:"跳转结算流程（见 7）。"},
+  {id:"h",x:640,y:196,w:250,h:74,label:"到货意向登记",sub:"缺货 / 即将上市商品",type:"action",detail:"对 comingSoon 或缺货商品登记「到货通知」：姓名 + 邮箱（+ 电话），写入意向表；当前无必填校验。"},
+  {id:"i",x:640,y:300,w:250,h:74,label:"会员 vs 游客差异",type:"note",detail:"会员版显示 BV 与积分信息；游客版隐藏全部 BV，并在页内引导「Create an account」升级为会员（注册后回跳复购页）。"},
+  {id:"cfg",x:640,y:404,w:310,h:80,label:"配置点：商品/SKU/分类、价格、BV、库存、单笔限购、上下架、到货意向接收方",type:"cfg",detail:"由外部系统后台「产品与价格配置」维护；WordPress 的展示价不参与计算。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},{from:"b",to:"c"},{from:"c",to:"d"},{from:"d",to:"e"},{from:"e",to:"f"},{from:"f",to:"g"},
+  {from:"b",to:"h",label:"缺货"},{from:"c",to:"i",label:"差异"},
+  {from:"cfg",to:"b",label:"配置"}
+ ]
+},
+
+guest:{
+ title:"6 · 游客下单链路（免注册）",
+ sub:"游客免注册即可加购与结算：不建立账号、不显示 BV，订单归入 house 账户。既是转化入口，也是「先买后注册」的必经路径。",
+ nodes:[
+  {id:"a",x:310,y:10,w:250,h:60,label:"入口：登录页「免注册下单」",sub:"或 WordPress 游客入口",type:"page",detail:"登录页的 Shop now 直接进入游客商品页；WordPress 侧也可放置免注册下单入口。"},
+  {id:"b",x:310,y:100,w:250,h:66,label:"写游客标记",sub:"sessionStorage al.guestMode = 1",type:"action",detail:"按标签页持久：同一标签内后续页面都处于游客态；登录或登出会清除该标记（登录即退出游客流程）。"},
+  {id:"c",x:310,y:192,w:250,h:66,label:"游客商品页",sub:"guest-repeat-purchase.html",type:"page",detail:"文案面向游客（Shop Elken / No account needed），页内引导注册为会员。"},
+  {id:"d",x:200,y:290,w:220,h:60,label:"游客态隐藏顶部导航",sub:"4 页标记 data-guest-no-nav",type:"action",detail:"游客商品页、购物车、结算、订单详情四页在游客态清空顶部 chrome，聚焦下单动线。"},
+  {id:"e",x:440,y:290,w:220,h:60,label:"加购（共享购物车）",type:"action",detail:"与会员共用同一购物车结构，便于登录后合并。"},
+  {id:"f",x:310,y:382,w:240,h:60,label:"购物车 cart.html",type:"page",detail:"游客态下不显示 BV 汇总。"},
+  {id:"g",x:310,y:474,w:250,h:66,label:"结算 checkout.html?cart=1",type:"page",detail:"空车 → 回购物车；缺少 ?cart=1 → 走单品模式，取不到商品则回商品页。"},
+  {id:"h",x:310,y:566,w:250,h:74,label:"创建游客订单",sub:"memberId = operatorId = house 账户",type:"store",detail:"游客单归入 house 账户（NG00000001），因此会员的「我的订单」看不到它；订单详情按单号仍可打开。"},
+  {id:"i",x:310,y:660,w:250,h:60,label:"订单确认 → 订单详情",sub:"shipping.html → order.html",type:"page",detail:"结算后进入订单确认页，再进订单详情；可下载小票（游客不显示 BV 行）。"},
+  {id:"j",x:640,y:474,w:250,h:74,label:"引导注册为会员",sub:"Create an account",type:"page",detail:"游客页与订单页引导注册；注册后回跳复购页，可享会员价与 BV。"},
+  {id:"n1",x:640,y:192,w:250,h:80,label:"游客不计 BV",type:"note",detail:"游客订单不产生本人 BV；若此前带 ?ref= 进站，该单 BV 归属推荐人，游客自己不留。"},
+  {id:"n2",x:640,y:300,w:250,h:74,label:"同价原则",type:"note",detail:"游客与会员使用同一目录价（无游客加价/折扣），差异只在 BV 与会员权益。"},
+  {id:"cfg",x:640,y:566,w:310,h:80,label:"配置点：游客下单开关、游客可购商品范围、是否允许游客使用某些支付渠道",type:"cfg",detail:"由外部系统后台配置。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},{from:"b",to:"c"},{from:"c",to:"d"},{from:"c",to:"e"},
+  {from:"d",to:"f"},{from:"e",to:"f"},{from:"f",to:"g"},{from:"g",to:"h"},{from:"h",to:"i"},
+  {from:"f",to:"j",label:"引导注册",dash:true},{from:"i",to:"j",label:"引导注册",dash:true},
+  {from:"c",to:"n1"},{from:"c",to:"n2"},{from:"g",to:"cfg",label:"规则"}
+ ]
+},
+
+checkout:{
+ title:"7 · 结算与支付（外部系统）",
+ sub:"三步式结算：确认订单 → 支付方式 → 提交。服务端创建订单（订单类型、金额、库存预占、BV 快照），支付以网关回调验签为准，余额支付服务端原子扣减。",
+ nodes:[
+  {id:"a",x:380,y:10,w:220,h:60,label:"进入结算页",sub:"购物车 / 跳转直达",type:"page",detail:"地址、配送方式、支付渠道均由外部服务端返回。"},
+  {id:"b",x:380,y:104,w:220,h:60,label:"步骤1 确认订单",sub:"地址 / 配送 / 发票",type:"action",detail:"配送方式与自提点由后台站点配置。"},
+  {id:"c",x:380,y:196,w:220,h:60,label:"步骤2 选择支付方式",type:"action",detail:"渠道由后台启停；未启用渠道不返回。不同流程开放的渠道可能不同。"},
+  {id:"m1",x:5,y:292,w:150,h:54,label:"Debit Card",type:"action",detail:"卡号/持卡人/有效期/CVV 校验；跳转卡支付网关。"},
+  {id:"m2",x:158,y:292,w:150,h:54,label:"USSD",type:"action",detail:"选择银行后按渠道模板生成 USSD 码与金额。"},
+  {id:"m3",x:311,y:292,w:150,h:54,label:"Bank Transfer",type:"action",detail:"收款账号来自后台配置；30 分钟转账窗口，超时不可提交。"},
+  {id:"m4",x:464,y:292,w:150,h:54,label:"Pay with Bank",type:"action",detail:"跳转银行授权，回调验签。"},
+  {id:"m5",x:617,y:292,w:150,h:54,label:"Visa QR",type:"action",detail:"二维码含签名与 10 分钟有效期，可重新生成。"},
+  {id:"m6",x:770,y:292,w:150,h:54,label:"账户余额",sub:"Ecoin 钱包",type:"action",detail:"服务端校验余额（余额 > 0 且 ≥ 订单总额）后原子扣减，成功后直接置已支付。"},
+  {id:"d",x:380,y:382,w:220,h:60,label:"步骤3 提交订单",sub:"服务端创建",type:"action",detail:"校验金额、价格快照、订单类型、库存预占、BV 快照与风控。"},
+  {id:"e",x:380,y:478,w:240,h:66,label:"订单落库 · 待支付",sub:"幂等键防重复提交",type:"store",detail:"同一幂等键只生成一张订单；超时未支付自动关闭并释放库存。"},
+  {id:"f",x:380,y:574,w:240,h:60,label:"跳转网关 / USSD / 二维码",type:"action",detail:"按渠道引导支付。"},
+  {id:"g",x:340,y:670,w:214,h:118,label:"网关回调验签",sub:"验签通过且金额一致",type:"decision",detail:"以服务端验签结果为准，前端回调不作为付款依据。"},
+  {id:"h",x:380,y:818,w:240,h:60,label:"更新为已支付 → 履约",type:"page",detail:"触发库存实扣、BV/佣金计提与通知。"},
+  {id:"i",x:690,y:670,w:250,h:74,label:"失败 / 超时",sub:"保持待支付或自动关闭",type:"action",detail:"关闭时释放预占库存并通知会员。"},
+  {id:"cfg",x:690,y:196,w:320,h:96,label:"配置点：支付渠道启停与参数、订单类型、运费规则、自提点、支付超时、各流程开放哪些渠道",type:"cfg",detail:"由外部系统后台配置；渠道密钥由服务端保管。"},
+  {id:"n",x:690,y:478,w:300,h:96,label:"渠道开放现状（demo）：结算页、欢迎包、复购、等级升级开放「账户余额」；注册页与自动维护页不开放余额。",type:"note",detail:"渠道开放差异应作为配置项统一管理，避免各流程硬编码。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},{from:"b",to:"c"},
+  {from:"c",to:"m1"},{from:"c",to:"m2"},{from:"c",to:"m3"},{from:"c",to:"m4"},{from:"c",to:"m5"},{from:"c",to:"m6"},
+  {from:"m1",to:"d"},{from:"m2",to:"d"},{from:"m3",to:"d"},{from:"m4",to:"d"},{from:"m5",to:"d"},{from:"m6",to:"d"},
+  {from:"d",to:"e"},{from:"e",to:"f"},{from:"f",to:"g"},
+  {from:"g",to:"h",label:"通过"},
+  {from:"g",to:"i",label:"不通过",dash:true},
+  {from:"cfg",to:"c",label:"渠道"},{from:"cfg",to:"d",label:"规则"},{from:"c",to:"n"}
+ ]
+},
+
+orders:{
+ title:"8 · 订单与履约（外部系统）",
+ sub:"订单类型与来源由后台字典配置，服务端状态机推进履约；后台可改单、取消、审核退款、发货核销。会员侧可查询、筛选、查看详情与下载小票。",
+ nodes:[
+  {id:"t",x:30,y:26,w:230,h:66,label:"订单类型 / 来源字典",sub:"首购·复购·自动维护·升级·补货",type:"cfg",detail:"来源（source）标识订单由哪条流程产生；决定是否需支付、是否计 BV、可否代下单、审批要求。"},
+  {id:"s1",x:330,y:26,w:220,h:56,label:"订单创建",sub:"状态：待支付",type:"action",detail:"来源：结算页、游客链路、欢迎包、复购、自动维护、等级升级、后台代下单。"},
+  {id:"s2",x:330,y:112,w:220,h:56,label:"已支付",sub:"网关回调 / 余额扣减",type:"action",detail:"支付确认后触发库存实扣与 BV 计提。"},
+  {id:"s3",x:330,y:198,w:220,h:56,label:"备货 / 拣货",type:"action",detail:"仓库作业；可打印拣货单。"},
+  {id:"s4",x:330,y:284,w:220,h:56,label:"发货 / 自提",type:"action",detail:"录物流单号或自提核销；触发通知。"},
+  {id:"s5",x:330,y:370,w:220,h:56,label:"已完成",type:"action",detail:"自动或人工确认完成。"},
+  {id:"s6",x:330,y:456,w:220,h:56,label:"已取消 / 已关闭",sub:"超时或人工取消",type:"action",detail:"释放库存；已支付则转退款流程。"},
+  {id:"s7",x:330,y:542,w:220,h:56,label:"退款 / 退货",sub:"后台审核",type:"action",detail:"审核金额与原因；退款执行后回写状态并冲减 BV。"},
+  {id:"s8",x:330,y:628,w:220,h:56,label:"售后完成",type:"action",detail:"留痕并进入报表。"},
+  {id:"ad",x:30,y:180,w:230,h:74,label:"后台：订单查询与操作",sub:"改单/取消/退款审核/发货",type:"page",detail:"按类型、状态、时间、会员筛选；敏感操作留审计日志。"},
+  {id:"me",x:640,y:456,w:250,h:74,label:"会员侧：订单列表 / 详情",sub:"我的订单 / 我代下的单",type:"page",detail:"订单分为「我的」与「我替别人下的」（操作者维度）；游客单不在其中。"},
+  {id:"rc",x:640,y:574,w:250,h:66,label:"小票下载 / 分享",sub:"Word 兼容 .doc",type:"action",detail:"按登录态决定是否显示 BV 行；游客单显示 BV 归属推荐人。可复制只读分享链接。"},
+  {id:"cf",x:640,y:112,w:320,h:120,label:"配置点：订单类型与来源字典、是否需支付、是否计 BV、状态流转与通知模板、超时关闭时长、可否代下单",type:"cfg",detail:"新增一种订单类型不需要前端发版。"},
+  {id:"n",x:640,y:660,w:300,h:80,label:"已知偏差：会员流程成功跳转使用 order.html?id=，而订单页只识别 ?order=，会落到「订单不存在」。",type:"note",detail:"正确写法见账户页与订单确认页；应统一为同一跳转函数。"}
+ ],
+ edges:[
+  {from:"t",to:"s1",label:"类型 / 来源"},
+  {from:"s1",to:"s2"},{from:"s2",to:"s3"},{from:"s3",to:"s4"},{from:"s4",to:"s5"},
+  {from:"s1",to:"s6",label:"超时",dash:true},{from:"s2",to:"s7"},{from:"s7",to:"s8"},
+  {from:"ad",to:"s1",label:"代下单"},{from:"ad",to:"s6",label:"人工取消"},{from:"ad",to:"s7",label:"退款审核"},
+  {from:"s5",to:"me"},{from:"s7",to:"me"},{from:"me",to:"rc"},
+  {from:"cf",to:"t",label:"配置"},{from:"me",to:"n"}
+ ]
+},
+
+account:{
+ title:"9 · 我的账户（外部系统）",
+ sub:"以令牌校验进入；概览（KPI/推荐链接/团队树）、资料（可编辑字段范围由后台策略决定）、地址簿、密码管理、订单入口。WordPress 侧不持有账户数据。",
+ nodes:[
+  {id:"a",x:340,y:10,w:214,h:118,label:"令牌校验",sub:"未登录 → 外部登录页 + return",type:"decision",detail:"由跳转带入 return；未登录先登录再回落到原意图。"},
+  {id:"b",x:30,y:180,w:220,h:60,label:"外部登录页",sub:"带 return 与原始参数",type:"page",detail:"登录后回到跳转前目标页。"},
+  {id:"c",x:330,y:180,w:230,h:60,label:"概览",sub:"KPI / 推荐链接 / 团队树",type:"page",detail:"KPI 含 BV、钱包余额、团队规模；服务端聚合。团队树（Sponsor Network）作为概览的一等模块。"},
+  {id:"d",x:330,y:266,w:240,h:66,label:"资料管理",sub:"可编辑字段 / 锁定字段",type:"action",detail:"会员号、国家等锁定字段由后台策略决定，前端与提交双向拦截。"},
+  {id:"e",x:330,y:362,w:240,h:56,label:"地址簿（增删改查）",type:"action",detail:"服务端存储，支持默认地址与自提点。"},
+  {id:"f",x:330,y:448,w:240,h:66,label:"密码 / 支付密码修改",sub:"校验原密码",type:"action",detail:"服务端校验原密码与强度；支付密码用于余额支付与敏感操作。"},
+  {id:"g",x:640,y:266,w:250,h:66,label:"订单列表与详情",sub:"我的 / 我代下的",type:"page",detail:"仅本人或已授权订单；游客单不在其中。"},
+  {id:"h",x:640,y:362,w:250,h:66,label:"会员流程入口",sub:"欢迎包·复购·自动维护·升级",type:"page",detail:"账户概览提供四条会员流程入口，另在空订单态提供复购引导。"},
+  {id:"i",x:640,y:458,w:250,h:66,label:"返回 WordPress",sub:"新标签打开时可关闭返回",type:"page",detail:"账户入口为新标签打开时，关闭标签即回到 WordPress 页面。"},
+  {id:"cf1",x:640,y:554,w:310,h:74,label:"配置点：资料可编辑字段范围、锁定字段、是否需审核后生效",type:"cfg",detail:"由外部后台会员模块配置，用于保护币种、BV 与运费规则。"},
+  {id:"cf2",x:640,y:646,w:310,h:74,label:"配置点：密码策略、支付密码用途、敏感操作二次确认",type:"cfg",detail:"由外部后台安全策略配置，服务端执行。"}
+ ],
+ edges:[
+  {from:"a",to:"b",label:"未登录",dash:true},
+  {from:"a",to:"c",label:"已登录"},
+  {from:"c",to:"d"},{from:"d",to:"e"},{from:"e",to:"f"},
+  {from:"c",to:"g"},{from:"c",to:"h"},{from:"c",to:"i"},
+  {from:"d",to:"cf1",label:"策略"},{from:"f",to:"cf2",label:"策略"}
+ ]
+},
+
+lifecycle:{
+ title:"10 · 会员生命周期 · 代下单与自动维护",
+ sub:"三条会员流程：欢迎包（新会员首购）、复购（代会员下单）、自动维护（周期复购，≥90 BV）。均可由具备权限的角色代会员下单，订单同时记录操作者与被下单会员。",
+ nodes:[
+  {id:"a",x:320,y:10,w:230,h:60,label:"账户页会员流程入口",type:"page",detail:"四条入口：Member Welcome Pack / Member Repeat Purchase / Auto top-up（≥90 BV）/ Member Upgrade。"},
+  {id:"w",x:10,y:120,w:200,h:74,label:"欢迎包",sub:"新会员首购",type:"action",detail:"新会员注册 + 首单同页完成：会员号自动生成，资料与推荐人预填，Order Level 必选，至少 1 个商品。"},
+  {id:"r",x:230,y:120,w:215,h:74,label:"复购",sub:"检索会员 → 代下单",type:"action",detail:"先按会员号检索（lookupMember）：命中目录或已存会员则带出资料；格式合法但未知的 ID 会生成占位会员，便于先下单后补档。"},
+  {id:"au",x:465,y:120,w:215,h:74,label:"自动维护",sub:"周期复购 · ≥90 BV",type:"action",detail:"用于维持会员资格的周期复购。硬门槛：所选商品总 BV ≥ 90，否则不能提交。"},
+  {id:"g",x:700,y:120,w:215,h:74,label:"等级升级",sub:"见下一流程",type:"action",detail:"目标等级需高于当前等级，且商品 BV 需覆盖升级差额（详见「会员等级升级」）。"},
+  {id:"ow",x:10,y:250,w:200,h:74,label:"订单（来源=欢迎包）",sub:"新会员首单",type:"store",detail:"同时建立登录会话并跳转我的账户。"},
+  {id:"or",x:230,y:250,w:215,h:90,label:"订单（来源=复购 / 自动维护）",sub:"member=被下单会员 · operator=操作者",type:"store",detail:"订单记录两方身份：被下单会员与当前操作者，便于权限审计与佣金归属。"},
+  {id:"og",x:700,y:250,w:215,h:74,label:"订单（来源=等级升级）",sub:"含升级差额快照",type:"store",detail:"订单内嵌升级信息：升级方式、原等级、目标等级、升级差额 BV、商品 BV。"},
+  {id:"cfg1",x:230,y:372,w:330,h:96,label:"配置点：代下单权限与归属校验、自动维护周期与最低 BV、欢迎包商品与价格、各流程开放的支付渠道",type:"cfg",detail:"由外部后台配置；服务端在创建订单时强制执行。"},
+  {id:"n",x:230,y:490,w:330,h:80,label:"已知偏差：欢迎包订单状态写成「已完成」但同时「未支付」，与其它流程的「待支付」口径不一致。",type:"note",detail:"建议统一为同一状态机：创建 → 已支付 → 履约。"}
+ ],
+ edges:[
+  {from:"a",to:"w"},{from:"a",to:"r"},{from:"a",to:"au"},{from:"a",to:"g"},
+  {from:"w",to:"ow"},{from:"r",to:"or"},{from:"au",to:"or"},{from:"g",to:"og"},
+  {from:"cfg1",to:"r",label:"权限"},{from:"cfg1",to:"au",label:"门槛"},
+  {from:"or",to:"n"}
+ ]
+},
+
+upgrade:{
+ title:"11 · 会员等级升级（BV 补差）",
+ sub:"等级升级按「等级 BV 门槛差额」计算所需业绩：目标等级阈值 − 当前等级阈值。所选商品总 BV 必须覆盖差额才能提交；保存时记录等级并落单。",
+ nodes:[
+  {id:"a",x:310,y:10,w:250,h:60,label:"入口：账户页 Member Upgrade",sub:"支持 ?id= 预载会员",type:"page",detail:"可由账户入口进入，也可带会员号预载。"},
+  {id:"b",x:310,y:100,w:250,h:66,label:"检索会员",sub:"按会员号带出档案",type:"action",detail:"带出当前等级、姓名、加入日期；已有等级覆盖时以覆盖值为准。"},
+  {id:"c",x:340,y:196,w:214,h:118,label:"会员号是否有效",sub:"格式 + 是否存在",type:"decision",detail:"格式不合法直接报错并收起表单；格式合法但未知则生成占位会员，允许继续。"},
+  {id:"d",x:310,y:340,w:250,h:74,label:"选择目标等级",sub:"只能升到 Silver / Gold",type:"action",detail:"下拉仅列出白名单目标等级；当前等级自身显示为 (current) 且不可选。保存时再次强校验目标是否在白名单内。"},
+  {id:"e",x:310,y:434,w:250,h:80,label:"计算升级差额 BV",sub:"目标阈值 − 当前阈值（下限 0）",type:"store",detail:"等级门槛阶梯：Member 0 / Silver 300 / Gold 900 / Platinum 2,700 / Diamond 8,100 / Corporate 24,300。升级方式固定为「补差价」。",
+   },
+  {id:"f",x:340,y:534,w:214,h:118,label:"商品 BV 是否覆盖差额",sub:"商品总 BV ≥ 升级差额",type:"decision",detail:"不满足时保存按钮保持禁用，并在汇总区显示进度（需要 X BV / 已有 Y BV ✓）。差额为 0 时无需门槛。"},
+  {id:"g",x:310,y:678,w:250,h:74,label:"收货 / 上报中心 / 支付 校验",sub:"5 项收货必填 + 渠道完整",type:"action",detail:"与其它会员流程一致：收货信息、上报中心、支付方式完整性缺一不可。"},
+  {id:"h",x:310,y:772,w:250,h:80,label:"保存升级",sub:"写等级 + 落单 + 派发事件",type:"store",detail:"写入会员等级覆盖、派发等级变更事件、生成来源为「等级升级」的订单（含升级差额与商品 BV 快照），选余额支付时同步扣减钱包。"},
+  {id:"i",x:310,y:870,w:250,h:60,label:"跳转订单详情",type:"page",detail:"升级完成后进入订单详情页查看明细。"},
+  {id:"cfg",x:640,y:340,w:320,h:96,label:"配置点：等级阶梯与 BV 门槛、可升级目标白名单、升级方式与差额规则、是否需要后台审批",type:"cfg",detail:"由外部后台「会员与等级权限」配置；服务端在保存与审批时强制执行。"},
+  {id:"n1",x:640,y:460,w:300,h:80,label:"已知偏差：升级写入的等级没有被账户页消费，升级后账户页仍显示旧等级。",type:"note",detail:"需要统一等级数据源，或让账户页读取同一份等级覆盖。"},
+  {id:"n2",x:640,y:560,w:300,h:80,label:"已知偏差：升级成功跳转使用 order.html?id=，订单页只识别 ?order=，会落到「订单不存在」。",type:"note",detail:"与复购、自动维护两页同一问题，建议统一跳转函数。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},{from:"b",to:"c"},
+  {from:"c",to:"d",label:"有效"},
+  {from:"c",to:"b",label:"无效·重填",dash:true},
+  {from:"d",to:"e"},{from:"e",to:"f"},
+  {from:"f",to:"g",label:"满足"},
+  {from:"f",to:"e",label:"不满足·继续选品",dash:true},
+  {from:"g",to:"h"},{from:"h",to:"i"},
+  {from:"cfg",to:"d",label:"白名单"},{from:"cfg",to:"e",label:"门槛"},
+  {from:"h",to:"n1"},{from:"i",to:"n2"}
+ ]
+},
+
+referral:{
+ title:"12 · 推荐 / 分销 / 团队（外部系统）",
+ sub:"归因来源有两处：WordPress 分享链接的 ?ref= 与外部页面自身的分享。归因策略、BV 计算规则、佣金比例、结算周期均由后台配置，服务端幂等计算。",
+ nodes:[
+  {id:"a",x:30,y:20,w:230,h:60,label:"分享链接 ?ref=",sub:"WordPress 页 / 外部页",type:"page",detail:"会员分享专属链接；WordPress 侧分享时 ref 随跳转参数带入外部系统。当前为首次触达归因。"},
+  {id:"b",x:30,y:112,w:250,h:74,label:"服务端归因",sub:"首触 / 末触策略可配",type:"store",detail:"归因记录服务端保存并设有效期；登录或注册后按当前身份重判归属。"},
+  {id:"c",x:30,y:206,w:250,h:60,label:"下级绑定时成立",sub:"推荐关系 + 上报中心",type:"action",detail:"注册或首次下单时绑定到推荐人。"},
+  {id:"d",x:30,y:298,w:250,h:74,label:"下单 → BV / 佣金计提",sub:"按 orderId 幂等",type:"action",detail:"以支付成功为准计提，同一订单只计一次；退款冲减。"},
+  {id:"e",x:30,y:394,w:250,h:66,label:"账本 + 结算周期",type:"store",detail:"BV 明细、佣金明细、结算单；支持对账导出。"},
+  {id:"f",x:330,y:112,w:240,h:60,label:"分销落地页",sub:"WordPress 站",type:"page",detail:"介绍、培训与申请入口（展示页留在 WordPress）。"},
+  {id:"g",x:330,y:206,w:240,h:66,label:"外部：审批分销资格 + 定级",type:"cfg",detail:"按条件审批并设定等级/区域，影响佣金比例。"},
+  {id:"h",x:640,y:112,w:250,h:66,label:"团队树查询",sub:"服务端组织关系",type:"page",detail:"按层级展示下级、业绩与状态；数据范围受权限约束。"},
+  {id:"i",x:640,y:206,w:250,h:66,label:"Ecoin 钱包",sub:"余额与流水",type:"store",detail:"余额可用于支付；流水与账本对账一致。"},
+  {id:"j",x:640,y:298,w:250,h:74,label:"奖金期次与划转",sub:"历史累计奖金 · 充值划转",type:"action",detail:"按期次查看奖金、处理充值/划转；demo 内为演示模块。"},
+  {id:"cf",x:640,y:396,w:320,h:96,label:"配置点：归因窗口与策略、BV 计算规则、佣金比例与层级、结算周期与最低提现门槛",type:"cfg",detail:"按版本快照计算，历史订单不受新规则影响。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},{from:"b",to:"c"},{from:"c",to:"d"},{from:"d",to:"e"},
+  {from:"f",to:"g"},{from:"g",to:"h"},
+  {from:"e",to:"i",label:"结算入账"},{from:"e",to:"h",label:"业绩"},{from:"e",to:"j",label:"期次"},
+  {from:"cf",to:"b",label:"策略"},{from:"cf",to:"d",label:"计算规则"}
+ ]
+},
+
+/* ---------------- 外部系统 · 管理后台 ---------------- */
+admin_product:{
+ title:"13 · 产品与价格配置（外部后台）",
+ sub:"维护产品、SKU、分类、价格与 BV、库存、图文与上下架；发布后外部前台即时生效。WordPress 的展示内容另行维护，两者价格口径可能不同，以本侧为准。",
+ nodes:[
+  {id:"a",x:340,y:10,w:214,h:118,label:"后台登录 + 权限校验",sub:"无权限则菜单不可见",type:"decision",detail:"按角色返回可操作模块与数据范围。"},
+  {id:"b",x:30,y:180,w:210,h:56,label:"无权限 → 拒绝",type:"page",detail:"越权请求由服务端返回 403。"},
+  {id:"c",x:330,y:180,w:230,h:56,label:"产品列表",sub:"检索 / 筛选 / 批量",type:"page",detail:"按分类、状态、SKU 检索。"},
+  {id:"d",x:330,y:266,w:250,h:74,label:"新建 / 编辑产品",sub:"名称·SKU·分类·价格·BV·库存",type:"action",detail:"DP 分销价与零售参考价、BV、库存分别维护。当前目录 12 个商品、6 个分类。"},
+  {id:"e",x:330,y:360,w:250,h:66,label:"价格与 BV 生效策略",sub:"版本 / 生效时间",type:"action",detail:"定时生效与历史版本，避免改价影响在途订单。"},
+  {id:"f",x:330,y:446,w:250,h:56,label:"上下架 / 库存维护",type:"action",detail:"下架后前台不可见，历史订单仍可查看。全站库存不校验是当前已知问题。"},
+  {id:"g",x:330,y:532,w:250,h:66,label:"发布 → 外部前台生效",type:"store",detail:"配置下发服务端，外部前台读取即生效，无需发版。"},
+  {id:"h",x:640,y:180,w:250,h:74,label:"分类 / 标签 / 排序维护",type:"action",detail:"分类影响外部导航、筛选与页脚链接。"},
+  {id:"i",x:640,y:300,w:250,h:90,label:"与 WordPress 展示对齐",type:"note",detail:"WordPress 的商品展示图文与展示价单独维护。当前 demo 里展示页与目录存在两套价格与两套商品 ID，需建立同步或校验机制。"},
+  {id:"j",x:640,y:418,w:250,h:60,label:"操作审计日志",type:"store",detail:"价格与 BV 变更留痕可追溯。"}
+ ],
+ edges:[
+  {from:"a",to:"b",label:"无权限",dash:true},
+  {from:"a",to:"c",label:"有权限"},
+  {from:"c",to:"d"},{from:"d",to:"e"},{from:"e",to:"f"},{from:"f",to:"g"},
+  {from:"c",to:"h"},{from:"g",to:"i",label:"口径"},{from:"d",to:"j"}
+ ]
+},
+
+admin_member:{
+ title:"14 · 会员管理与等级权限（外部后台）",
+ sub:"会员检索与档案、等级调整（受「可调档位」与权限约束，无权限则走审批）、等级规则配置、冻结解冻、推荐关系调整，全部留审计日志。",
+ nodes:[
+  {id:"a",x:330,y:10,w:230,h:56,label:"会员检索",sub:"会员号/手机/姓名/等级",type:"page",detail:"按条件检索，受数据范围约束。"},
+  {id:"b",x:330,y:100,w:250,h:66,label:"会员详情",sub:"档案 / 订单 / 团队 / BV 明细",type:"page",detail:"一屏汇总会员交易与组织信息。"},
+  {id:"c",x:340,y:196,w:214,h:118,label:"等级调整判定",sub:"是否有权限·可调档位",type:"decision",detail:"权限来自角色配置：部分角色只能升档、部分可跨档、部分只读；无权限必须走审批。"},
+  {id:"d",x:30,y:330,w:210,h:74,label:"提交审批",sub:"由上级/管理员审批",type:"action",detail:"审批流与审批人由后台配置。"},
+  {id:"e",x:330,y:330,w:250,h:74,label:"直接调整等级",sub:"+ 必填变更原因",type:"action",detail:"变更原因与操作人一并留痕。等级门槛阶梯与前台账升级流程共用同一份配置。"},
+  {id:"f",x:640,y:196,w:250,h:74,label:"等级规则配置",sub:"晋升 / 保级 / 权益 / BV 门槛",type:"cfg",detail:"晋升条件、保级规则、等级权益与各等级 BV 门槛在此配置。"},
+  {id:"g",x:330,y:440,w:250,h:56,label:"冻结 / 解冻 · 状态变更",type:"action",detail:"状态影响登录、下单与奖励资格。"},
+  {id:"h",x:640,y:330,w:250,h:74,label:"推荐关系调整",sub:"需审批 + 留痕",type:"action",detail:"调整归属会影响佣金，必须审批并留痕。"},
+  {id:"i",x:330,y:532,w:250,h:60,label:"档案与等级生效",type:"store",detail:"即时影响下单价格、BV 比例与可见商品。"},
+  {id:"cf",x:640,y:440,w:310,h:96,label:"配置点：各角色可调档位与权限范围、审批流与审批人、等级权益与价格策略",type:"cfg",detail:"由「角色与权限」模块统一配置，是等级权限的最终来源。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},{from:"b",to:"c"},
+  {from:"c",to:"e",label:"有权限"},
+  {from:"c",to:"d",label:"无权限",dash:true},
+  {from:"d",to:"e",label:"审批通过",dash:true},
+  {from:"e",to:"i"},{from:"g",to:"i"},
+  {from:"f",to:"c",label:"规则"},{from:"h",to:"i"},
+  {from:"cf",to:"c",label:"权限来源"}
+ ]
+},
+
+admin_order:{
+ title:"15 · 订单 / 物流 / 订单类型配置（外部后台）",
+ sub:"订单查询与操作（改单/取消/退款审核/发货核销）+ 订单类型与来源字典、状态机、配送区域、运费与自提点配置。新增订单类型无需前端发版。",
+ nodes:[
+  {id:"a",x:330,y:10,w:250,h:60,label:"订单查询 / 筛选",sub:"类型·来源·状态·时间·会员",type:"page",detail:"支持导出与批量操作。"},
+  {id:"b",x:330,y:104,w:250,h:66,label:"订单详情",sub:"商品·支付·物流·操作记录",type:"page",detail:"展示支付流水号、操作日志、被下单会员与操作者。"},
+  {id:"c",x:340,y:200,w:214,h:118,label:"选择操作",sub:"改单/取消/退款/发货",type:"decision",detail:"不同操作对应不同权限与二次确认要求。"},
+  {id:"d",x:20,y:344,w:200,h:56,label:"改单 / 取消",type:"action",detail:"改单需留原因；取消释放库存并处理已支付金额。"},
+  {id:"e",x:236,y:344,w:200,h:56,label:"退款审核",sub:"金额 + 原因",type:"action",detail:"审核后触发退款并冲减 BV/佣金。"},
+  {id:"f",x:452,y:344,w:200,h:56,label:"发货 / 自提核销",type:"action",detail:"录物流单号或自提核销码。"},
+  {id:"g",x:330,y:456,w:250,h:66,label:"状态回写 + 通知会员",type:"store",detail:"状态机由服务端推进，通知走模板。"},
+  {id:"h",x:640,y:200,w:250,h:74,label:"订单类型 / 来源字典",sub:"首购·复购·自动维护·升级·补货·游客",type:"cfg",detail:"配置：是否需支付、是否计 BV、可否代下单、是否需审批。"},
+  {id:"i",x:640,y:314,w:250,h:74,label:"状态流转与通知模板",type:"cfg",detail:"定义合法状态迁移与各状态通知内容；统一各流程的状态口径。"},
+  {id:"j",x:640,y:428,w:250,h:74,label:"配送区域 / 运费 / 自提点",type:"cfg",detail:"影响结算金额与可选配送方式。"},
+  {id:"k",x:640,y:532,w:250,h:60,label:"操作审计日志",type:"store",detail:"改单/退款/取消全部留痕。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},{from:"b",to:"c"},
+  {from:"c",to:"d"},{from:"c",to:"e"},{from:"c",to:"f"},
+  {from:"d",to:"g"},{from:"e",to:"g"},{from:"f",to:"g"},
+  {from:"h",to:"b",label:"类型"},{from:"i",to:"g",label:"状态机"},{from:"j",to:"g",label:"运费"},
+  {from:"e",to:"k"},{from:"d",to:"k"}
+ ]
+},
+
+admin_rbac:{
+ title:"16 · 角色与权限 RBAC + 操作审计（外部后台）",
+ sub:"权限体系是其它后台模块的前提：角色 → 菜单/功能权限 → 数据范围 → 敏感操作审批 → 全程审计。等级调整、退款、价格变更都依赖此模块的配置。",
+ nodes:[
+  {id:"a",x:330,y:10,w:240,h:56,label:"账号与角色管理",type:"page",detail:"内部账号生命周期：开通、停用、角色绑定。"},
+  {id:"b",x:330,y:100,w:240,h:66,label:"角色维护",sub:"新增 / 编辑角色",type:"action",detail:"如：产品运营、会员运营、客服、财务、区域经理。"},
+  {id:"c",x:330,y:196,w:240,h:66,label:"菜单 / 功能权限勾选",sub:"可读·可写·可审批",type:"action",detail:"决定模块可见性与操作能力（含可调会员档位）。"},
+  {id:"d",x:330,y:292,w:240,h:66,label:"数据范围",sub:"全部 / 本团队 / 仅本人",type:"action",detail:"约束可见的会员、订单与团队数据。"},
+  {id:"e",x:330,y:388,w:250,h:66,label:"敏感操作二次确认 / 审批流",type:"action",detail:"退款、改等级、改价、改归属需二次确认或审批。"},
+  {id:"f",x:330,y:484,w:240,h:66,label:"账号绑定角色 → 权限生效",type:"store",detail:"网关按角色与数据范围鉴权。"},
+  {id:"g",x:640,y:100,w:250,h:66,label:"操作审计日志",sub:"谁/何时/改了什么",type:"store",detail:"全模块统一审计。"},
+  {id:"h",x:640,y:292,w:250,h:74,label:"权限定期复核",sub:"权限评审 / 离职回收",type:"action",detail:"定期复核角色分配，避免权限沉淀。"},
+  {id:"i",x:640,y:400,w:250,h:90,label:"下游依赖",sub:"等级权限·退款审核·价格变更·代下单",type:"note",detail:"本模块的角色与权限配置，是 13/14/15 号流程以及会员流程「代下单」判定中所有「权限判定」的来源。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},{from:"b",to:"c"},{from:"c",to:"d"},{from:"d",to:"e"},{from:"e",to:"f"},
+  {from:"e",to:"g"},{from:"f",to:"g"},{from:"h",to:"b",label:"复核"},{from:"f",to:"i",label:"授权"}
+ ]
+},
+
+admin_report:{
+ title:"17 · 报表与结算（外部后台）",
+ sub:"销售、BV/佣金、会员增长与团队报表，以及结算周期与对账、导出推送。结算口径与佣金比例由后台配置、服务端计算。",
+ nodes:[
+  {id:"a",x:330,y:10,w:240,h:56,label:"报表中心",type:"page",detail:"按权限与数据范围展示。"},
+  {id:"b",x:330,y:100,w:240,h:56,label:"销售 / 订单报表",type:"action",detail:"按类型、来源、渠道、区域、时间维度统计。"},
+  {id:"c",x:330,y:186,w:250,h:66,label:"BV / 佣金报表",sub:"按会员/团队/订单",type:"action",detail:"与账本逐笔对账。"},
+  {id:"d",x:330,y:280,w:250,h:66,label:"会员增长与团队报表",type:"action",detail:"新增、活跃、等级分布、团队结构。"},
+  {id:"e",x:330,y:374,w:250,h:74,label:"结算周期与对账",sub:"生成结算单 / 差异处理",type:"action",detail:"按周期生成结算单，差异可追溯明细。"},
+  {id:"f",x:330,y:478,w:240,h:56,label:"导出 / 定时推送",type:"action",detail:"导出 Excel 或定时邮件推送。"},
+  {id:"g",x:640,y:280,w:250,h:96,label:"配置点：结算周期与结算日、佣金比例与层级、对账口径、报表可见范围",type:"cfg",detail:"由后台配置，服务端按版本快照计算。"},
+  {id:"h",x:640,y:100,w:250,h:66,label:"数据来源：账本 + 订单 + 会员",type:"store",detail:"报表只读聚合，不直接改数据。"}
+ ],
+ edges:[
+  {from:"a",to:"b"},{from:"b",to:"c"},{from:"c",to:"d"},{from:"d",to:"e"},{from:"e",to:"f"},
+  {from:"g",to:"e",label:"口径"},{from:"h",to:"b",label:"取数"},{from:"h",to:"c",label:"取数"}
+ ]
+}
+
+};
+
+/* ============ 渲染引擎（PUNK / NEON） ============ */
+const NDEF = {
+  page:{w:200,h:58}, action:{w:210,h:58}, decision:{w:214,h:118},
+  store:{w:200,h:60}, actor:{w:180,h:54}, note:{w:254,h:64}, risk:{w:272,h:72}, cfg:{w:254,h:72}
+};
+const LH = {main:16, sub:13.5};
+const GLYPH = {page:"▚", action:"▶", decision:"◆", store:"▤", actor:"◉", note:"!", risk:"⚠", cfg:"⚙"};
+function nodeBox(n){
+  const d=NDEF[n.type]||NDEF.action;
+  const need=n._hNeed||0;
+  if(n.type==="decision") return {x:n.x,y:n.y,w:d.w,h:Math.max(n.h||0,d.h,need)};
+  return {x:n.x,y:n.y,w:n.w||d.w,h:Math.max(n.h||d.h,need)};
+}
+function center(n){const b=nodeBox(n);return {x:b.x+b.w/2,y:b.y+b.h/2};}
+function charW(ch,fs){const c=ch.codePointAt(0);return (c>0x2E80?fs:fs*0.56);}
+function tokenize(s){return s.match(/[A-Za-z0-9@._\-\?=&:%\+]+|\s+|[^\sA-Za-z0-9]/g)||[];}
+function wrapText(text,maxW,fs){
+  const out=[];
+  String(text).split("\n").forEach(seg=>{
+    if(seg===""){out.push("");return;}
+    const toks=tokenize(seg);
+    let line="",w=0;
+    for(const t of toks){
+      if(/^\s+$/.test(t)){ if(line===""||w+charW(" ",fs)>maxW) continue; line+=" "; w+=charW(" ",fs); continue; }
+      let tw=0; for(const c of t) tw+=charW(c,fs);
+      if(tw>maxW){
+        for(const c of t){const cw=charW(c,fs); if(w+cw>maxW&&line){out.push(line);line="";w=0;} line+=c; w+=cw;}
+        continue;
+      }
+      if(w+tw>maxW && line){out.push(line);line=t;w=tw;}
+      else {line+=t;w+=tw;}
+    }
+    if(line) out.push(line);
+  });
+  return out.length?out:[""];
+}
+function prepareNode(n){
+  const b=nodeBox(n);
+  const innerW = n.type==="decision" ? b.w*0.52 : ((n.type==="note"||n.type==="risk") ? b.w-30 : b.w-24);
+  n._label = wrapText(n.label, innerW, 13);
+  n._sub = n.sub ? wrapText(n.sub, innerW, 11) : [];
+  const rows = n._label.length*LH.main + n._sub.length*LH.sub;
+  const minH = n.type==="decision" ? rows+58 : rows+22;
+  n._hNeed = Math.ceil(minH);
+}
+function borderPoint(n,tox,toy){
+  const b=nodeBox(n),cx=b.x+b.w/2,cy=b.y+b.h/2,dx=tox-cx,dy=toy-cy;
+  if(dx===0&&dy===0)return {x:cx,y:cy};
+  const tx=dx!==0?((dx>0?b.w/2:-b.w/2)/dx):Infinity;
+  const ty=dy!==0?((dy>0?b.h/2:-b.h/2)/dy):Infinity;
+  const t=Math.min(tx,ty);
+  return {x:cx+dx*t,y:cy+dy*t};
+}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+function renderNode(n){
+  const b=nodeBox(n),cx=b.x+b.w/2,cy=b.y+b.h/2;
+  let shape="";
+  if(n.type==="decision"){
+    const pts=`${cx},${b.y} ${b.x+b.w},${cy} ${cx},${b.y+b.h} ${b.x},${cy}`;
+    shape=`<polygon class="hit" points="${pts}"></polygon>`;
+  } else if(n.type==="store"){
+    const eh=8;
+    shape=`<rect class="hit" x="${b.x}" y="${b.y+eh}" width="${b.w}" height="${b.h-2*eh}"></rect>`
+        +`<ellipse class="hit" cx="${cx}" cy="${b.y+eh}" rx="${b.w/2}" ry="${eh}"></ellipse>`
+        +`<path class="hit" d="M ${b.x} ${b.y+b.h-eh} A ${b.w/2} ${eh} 0 0 0 ${b.x+b.w} ${b.y+b.h-eh}"></path>`;
+  } else if(n.type==="actor"){
+    shape=`<rect class="hit" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="${b.h/2}"></rect>`;
+  } else {
+    shape=`<rect class="hit" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="1"></rect>`;
+  }
+  const lines=n._label||[n.label], subs=n._sub||[];
+  const totalH=lines.length*LH.main+subs.length*LH.sub;
+  let y=cy-totalH/2+LH.main/2;
+  let labels="";
+  lines.forEach(ln=>{ labels+=`<text class="node-label" x="${cx}" y="${y}">${esc(ln)}</text>`; y+=LH.main; });
+  y = cy-totalH/2+lines.length*LH.main+LH.sub/2;
+  subs.forEach(ln=>{ labels+=`<text class="node-sub" x="${cx}" y="${y}">${esc(ln)}</text>`; y+=LH.sub; });
+  // stencil glyph tag (top-left)
+  const glyph=`<text class="node-glyph" x="${b.x+11}" y="${b.y+13}">${esc(GLYPH[n.type]||"■")}</text>`;
+  // corner bracket (bottom-right) — punk framing
+  const br=`<path class="node-bracket" d="M ${b.x+b.w-12} ${b.y+b.h} L ${b.x+b.w} ${b.y+b.h} L ${b.x+b.w} ${b.y+b.h-12}"></path>`;
+  const badge = n.detail
+    ? `<circle class="node-badge-c" cx="${b.x+b.w-14}" cy="${b.y+14}" r="8"></circle><text x="${b.x+b.w-14}" y="${b.y+14}" class="i-badge" text-anchor="middle" dominant-baseline="central">${n.type==="risk"?"!":"i"}</text>`
+    : "";
+  return `<g class="node n-${n.type}" data-id="${esc(n.id)}" tabindex="0" role="button" data-detail="${esc(n.detail||"")}">`
+       + shape + glyph + br + labels + badge
+       +`<rect x="${b.x-5}" y="${b.y-5}" width="${b.w+10}" height="${b.h+10}" fill="transparent"></rect>`
+       +`</g>`;
+}
+function renderEdge(e,nodes,uid,idx){
+  const A=nodes[e.from],B=nodes[e.to];
+  const ca=center(A),cb=center(B);
+  const fw = (e.way&&e.way.length)?e.way[0]:cb;
+  const lw = (e.way&&e.way.length)?e.way[e.way.length-1]:ca;
+  const p1=borderPoint(A,fw.x,fw.y);
+  const p2=borderPoint(B,lw.x,lw.y);
+  const pts=[p1].concat(e.way||[]).concat([p2]);
+  let d=`M ${pts[0].x} ${pts[0].y}`;
+  for(let i=1;i<pts.length;i++) d+=` L ${pts[i].x} ${pts[i].y}`;
+  let label="";
+  if(e.label){
+    let best=-1,bi=0;
+    for(let i=0;i<pts.length-1;i++){
+      const L=Math.hypot(pts[i+1].x-pts[i].x,pts[i+1].y-pts[i].y);
+      if(L>best){best=L;bi=i;}
+    }
+    const mx=(pts[bi].x+pts[bi+1].x)/2, my=(pts[bi].y+pts[bi+1].y)/2;
+    const w=e.label.length*8+14;
+    label=`<rect class="edge-label-bg" x="${mx-w/2}" y="${my-10}" width="${w}" height="20" rx="1"></rect>`
+         +`<text class="edge-label" x="${mx}" y="${my}">${esc(e.label)}</text>`;
+  }
+  const cls = e.dash ? " warn" : "";
+  const mk = e.dash ? `arw-w-${uid}` : `arw-${uid}`;
+  const delay = (-((idx*0.13)%1.3)).toFixed(2);
+  return `<g class="ew" data-i="${idx}" data-from="${esc(e.from)}" data-to="${esc(e.to)}">`
+    +`<path class="e-glow${cls}" d="${d}"></path>`
+    +`<path class="e-base${cls}" d="${d}" marker-end="url(#${mk})"></path>`
+    +`<path class="e-flow${cls}" d="${d}" style="animation-delay:${delay}s"></path>`
+    + label + `</g>`;
+}
+function buildSVG(flow,uid,lock){
+  flow.nodes.forEach(prepareNode);
+  const nodes={};flow.nodes.forEach(n=>nodes[n.id]=n);
+  let minX=1e9,minY=1e9,maxX=-1e9,maxY=-1e9;
+  flow.nodes.forEach(n=>{const b=nodeBox(n);minX=Math.min(minX,b.x);minY=Math.min(minY,b.y);maxX=Math.max(maxX,b.x+b.w);maxY=Math.max(maxY,b.y+b.h);});
+  flow.edges.forEach(e=>{(e.way||[]).forEach(w=>{minX=Math.min(minX,w.x);minY=Math.min(minY,w.y);maxX=Math.max(maxX,w.x);maxY=Math.max(maxY,w.y);});});
+  minX-=44;minY-=38;maxX+=44;maxY+=44;
+  const vw=maxX-minX, vh=maxY-minY;
+  const vb = lock || `${minX} ${minY} ${vw} ${vh}`;
+  flow._vb = vb;
+  const boxW = Number(String(vb).split(/\s+/)[2]) || vw;
+  const sizeStyle = flow.fit ? "width:100%" : `width:${Math.round(boxW)}px`;
+  let edges="";flow.edges.forEach((e,i)=>{edges+=renderEdge(e,nodes,uid,i);});
+  let ns="";flow.nodes.forEach(n=>{ns+=renderNode(n);});
+  return `<svg viewBox="${vb}" style="${sizeStyle}" role="img" aria-label="${esc(flow.title)}">`
+    +`<defs>`
+    +`<marker class="mk-neon" id="arw-${uid}" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"></path></marker>`
+    +`<marker class="mk-warn" id="arw-w-${uid}" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"></path></marker>`
+    +`</defs>`
+    +edges+ns+`</svg>`;
+}
+
+/* ============================================================
+   装配：流程图 + 归属地图 + 检查结论（已知偏差 + 待建清单）
+   ============================================================ */
+const EYEBROW = {
+  overview:"系统全景",
+  wp_site:"WordPress 侧 · 展示", wp_admin:"WordPress 侧 · 后台",
+  bridge:"衔接 · 跳转",
+  auth:"外部系统 · 账户", catalog:"外部系统 · 商品", guest:"外部系统 · 游客",
+  checkout:"外部系统 · 交易", orders:"外部系统 · 履约", account:"外部系统 · 账户",
+  lifecycle:"外部系统 · 会员流程", upgrade:"外部系统 · 等级升级", referral:"外部系统 · 分销",
+  admin_product:"外部后台 · 商品", admin_member:"外部后台 · 会员",
+  admin_order:"外部后台 · 订单", admin_rbac:"外部后台 · 权限", admin_report:"外部后台 · 报表"
+};
+
+/* ---- 附录 A-1：业务规则 → 配置归属 ---- */
+const CONFIG_MAP = [
+ ["页面与文章内容","WordPress 后台 · 页面 / 文章","WordPress","展示层文案与结构，支持草稿与修订"],
+ ["商品展示图文 / 卖点 / 规格","WordPress 后台 · 商品展示","WordPress","仅展示用途，不参与任何计算"],
+ ["展示价（仅供展示）","WordPress 后台 · 商品展示","WordPress 展示 / 外部系统结算","两侧不一致时以外部系统为准；需加校验或同步"],
+ ["导航菜单与 CTA 跳转入口","WordPress 后台 · 菜单","WordPress","决定跳转入口文案、目标地址与显示条件"],
+ ["跳转参数白名单与回跳地址","双方约定（WP + 外部后台）","双端校验","防开放重定向与参数注入；需双向白名单"],
+ ["多语言词条与 SEO","WordPress 后台 · 多语言 / SEO","WordPress","页面副本、meta、站点地图、结构化数据"],
+ ["媒体库 / 图片优化","WordPress 后台 · 媒体","WordPress + CDN","上传、压缩与分发"],
+ ["WordPress 角色与插件","WordPress 后台","WordPress","与外部系统的会员 / 角色体系完全独立"],
+ ["商品 / SKU / 分类 / 价格 / BV / 库存","外部后台 · 产品与价格配置","外部服务端","结算与记账的唯一来源"],
+ ["到货意向接收方与通知","外部后台 · 产品配置","外部服务端","缺货 / 即将上市商品的意向登记去向"],
+ ["单笔限购与库存上限","外部后台 · 产品与价格配置","外部服务端","决定购物车可加数量上限"],
+ ["游客下单开关与范围","外部后台 · 站点配置","外部服务端","是否允许免注册下单、可购商品范围与可用渠道"],
+ ["会员等级阶梯与 BV 门槛","外部后台 · 会员与等级权限","外部服务端","升级差额计算与会员流程最低 BV 的门槛来源"],
+ ["谁能修改会员等级 / 可调档位","外部后台 · 角色与权限","外部服务端（网关）","无权限则强制走审批流"],
+ ["资料可编辑字段 / 锁定字段","外部后台 · 会员管理","外部服务端","保护会员号、国家、币种"],
+ ["订单类型 / 来源字典","外部后台 · 订单管理","外部服务端","决定是否需支付、是否计 BV、可否代下单"],
+ ["订单状态机与通知模板","外部后台 · 订单管理","外部服务端","状态迁移合法性由服务端判定；统一各流程口径"],
+ ["退款审核权限与流程","外部后台 · 角色与权限 + 订单","外部服务端","退款同时冲减 BV / 佣金"],
+ ["支付渠道启停与参数","外部后台（密钥由服务端保管）","外部服务端 + 支付网关","含各流程开放哪些渠道（余额是否可用）"],
+ ["配送区域 / 运费 / 自提点","外部后台 · 订单 / 物流","外部服务端","直接影响结算金额"],
+ ["推荐归因策略与窗口","外部后台 · 分销配置","外部服务端","决定 BV 归属于哪个推荐人"],
+ ["佣金比例 / 结算周期 / 提现门槛","外部后台 · 报表与结算","外部服务端","按版本快照计算，历史结算不回溯"],
+ ["密码策略 / 会话 / 二次验证 / SSO","外部后台 · 安全策略","外部服务端","登录与敏感操作共用"]
+];
+
+/* ---- 附录 A-2：现有页面归属与迁移映射 ---- */
+const PAGE_MAP = [
+ ["index.html","WordPress · 首页","已改为纯展示页：不读不写登录态、不播种演示账号"],
+ ["about.html / about-global-strength / about-leadership / about-journey / about-community","WordPress · 品牌内容","5 个品牌页迁为 WordPress 页面"],
+ ["products.html + products-health / -wellness / -water-filters / -beauty","WordPress · 商品分类展示","分类与列表保留在展示层"],
+ ["product-calmag / -spirulina / -hydromi / -bio-pure-ultra / -bio-pure-poe-mini / -bio-pure-poe-ultra / -el-marino-yang / -genqi / -livxtra-yang","WordPress · 商品展示页","保留展示；「立即购买」改为跳转外部并带 product / qty。注意其价格与 ID 目前与目录脱节"],
+ ["product-detail.html","外部系统 · 商品详情与加购","含加购与立即购买，整体移交外部系统"],
+ ["become-a-distributor.html","WordPress · 分销落地页","展示保留；申请入口跳转外部。当前申请表无处理器，需补"],
+ ["case-studies.html / faq.html / contact.html / service.html","WordPress · 内容与支持","迁为 WordPress 页面"],
+ ["privacy.html / terms.html / cookie.html / refund.html","WordPress · 法务","法务文案迁入 WordPress，便于随时修订"],
+ ["login.html / signup.html","外部系统 · 登录与开户","登录页额外承载「免注册下单」入口"],
+ ["repeat-purchase.html","外部系统 · 复购（会员）","会员复购目录页：加购 + 到货意向登记，结算走购物车 → 结算页"],
+ ["guest-repeat-purchase.html","外部系统 · 复购（游客）","游客免注册商品页，带 data-guest-no-nav"],
+ ["cart.html / checkout.html / shipping.html","外部系统 · 购物车 / 结算 / 订单确认","迁外部；购物车与结算页带 data-guest-no-nav"],
+ ["order.html","外部系统 · 订单详情","迁外部；带 data-guest-no-nav，按身份与授权返回订单"],
+ ["account.html","外部系统 · 我的账户","迁外部；由 WordPress 账户图标跳转（建议新标签）"],
+ ["member-welcome / -repurchase / -auto-maintenance / -upgrade","外部系统 · 会员流程 + 等级升级","四页迁外部，其中自动维护含 ≥90 BV 门槛、升级含 BV 补差"],
+ ["team-inquiry.html","外部系统 · 团队查询","迁外部，数据范围受权限约束"]
+];
+
+/* ---- 检查结论：已知偏差（demo 内部需修正，与目标架构无关） ---- */
+const DEVIATIONS = [
+ ["高","订单详情跳转参数不一致","member-repurchase / member-auto-maintenance / member-upgrade","成功跳转与「View order」使用 order.html?id=，而订单页只识别 ?order= → 三处必然落到「订单不存在」。","统一封装一个订单详情跳转函数，全部改用 ?order=。"],
+ ["高","展示页与目录两套价格、两套商品 ID","product-*.html 的 data-price 对比 assets/js/website.js 的 allProducts","展示页走页面价与自己的 ID（如 calmag 30000），目录是另一套（hw2 38000）；Spirulina、Hydromi 价差更大，另有 6 个展示商品不在目录中。→ 从展示页加购的订单用页面价，从复购页加购用目录价。","统一为单一商品数据源：展示页读取目录数据，或至少加一致性校验。"],
+ ["高","订单状态口径矛盾","member-welcome.html / signup.html","订单写成「已完成」同时「未支付」；其它流程是「待支付」。报表与对账口径不一致。","统一状态机：创建 → 已支付 → 履约；订单来源用 source 字段区分。"],
+ ["中","升级后的等级没有被消费","member-upgrade.html 写 al.memberLevels","全站只有升级页读写该覆盖值，账户页仍显示旧等级 → 用户升级后看不到变化。","统一等级数据源，账户页读取同一份等级数据。"],
+ ["中","余额支付开放范围不一致","checkout / member-welcome / member-repurchase / member-upgrade 开放；signup / member-auto-maintenance 未开放","同为会员流程，有的能用余额有的不能，规则散落在各页硬编码。","把「各流程开放哪些渠道」提为后台配置项，各页统一读取。"],
+ ["中","库存不校验、不扣减","assets/js/website.js addToCart / checkout.html","结算与购物车不做库存校验；stock 仅在会员流程里作为数量上限。存在超卖风险。","下单时服务端校验并原子扣减库存。"],
+ ["中","游客链路 header 不一致","shipping.html 缺少 data-guest-no-nav","游客在购物车 / 结算 / 订单页看不到顶部导航，但订单确认页会看到精简导航，动线不连续。","订单确认页补上同一标记，或统一游客态导航策略。"],
+ ["中","分销申请表无处理器","become-a-distributor.html 的 form[data-form=distributor]","该表单没有任何 JS 绑定，提交不会产生任何结果（页面只绑定了 contact 表单）。","接入外部申请流程或补前端处理器。"],
+ ["低","到货意向表单无必填校验","repeat-purchase.html / guest-repeat-purchase.html 的意向弹窗","表单标记为不校验，空姓名 / 空邮箱也会被记录，数据质量差。","补必填与格式校验。"],
+ ["低","无退款 / 退货前端入口","order.html / account.html","全站没有「申请退款」交互，仅订单状态枚举与静态政策页；售后只能走站外邮件，无工单留痕。","增加申请入口 + 审核状态流转。"],
+ ["低","仅英文词条，语言切换为占位","assets/i18n/strings.js / app.js","只有英文一个语言包，语言按钮只提示「Phase 2」；WordPress 侧的多语言需要另行配置。","确定语言清单并补齐词条，或先移除未实现的入口。"],
+ ["低","订单号 / 支付参考号无唯一性校验","assets/js/website.js genOrderId","随机生成、无重复检测；随规模增长存在碰撞概率。","服务端生成并加唯一约束。"]
+];
+
+/* ---- 附录 B：目标形态待建清单 ---- */
+const BACKLOG = [
+ {pri:"P0",owner:"WordPress",title:"站点环境与主题模板",note:"WordPress 搭建、主题与模板、响应式、性能基线；对照现有静态页还原视觉。"},
+ {pri:"P0",owner:"WordPress",title:"内容建模与迁移",note:"现有页面内容、菜单、媒体迁入 WordPress；建立页面 / 文章 / 分类结构。"},
+ {pri:"P0",owner:"WordPress",title:"商品展示内容与展示价维护",note:"图文、卖点、规格、展示价；明确「仅供展示」口径并建立与外部价格的校验机制。"},
+ {pri:"P0",owner:"WordPress",title:"菜单与 CTA 跳转配置",note:"「立即购买 / 登录 / 我的账户 / 免注册下单」等入口的目标地址、参数与打开方式。"},
+ {pri:"P1",owner:"WordPress",title:"多语言与 SEO",note:"词条与页面副本、meta、站点地图、结构化数据；URL 结构规划。"},
+ {pri:"P1",owner:"WordPress",title:"表单与咨询",note:"联系表单、分销申请（站内处理或转交外部）—— 当前申请表无处理器需一并解决。"},
+ {pri:"P1",owner:"WordPress",title:"缓存 / CDN / 安全与备份",note:"缓存与图片优化、插件版本治理、数据库与媒体定期备份。"},
+ {pri:"P2",owner:"WordPress",title:"统计与埋点",note:"跳转点击统计、站内搜索、来源分析。"},
+
+ {pri:"P0",owner:"外部系统",title:"账号与鉴权服务",note:"注册、登录、令牌与会话、密码策略、失败锁定、找回密码；账号体系唯一来源。"},
+ {pri:"P0",owner:"外部系统",title:"跳转参数接收与上下文还原",note:"接收白名单参数 + 校验回跳地址；登录后按 return 还原原意图。"},
+ {pri:"P0",owner:"外部系统",title:"会员与产品数据模型",note:"会员、推荐关系、产品与价格 / BV / 库存、等级门槛；会员号与订单号唯一约束。"},
+ {pri:"P0",owner:"外部系统",title:"订单服务（状态机与订单类型）",note:"统一状态机（创建→已支付→履约→售后）、来源字典、幂等键、超时关闭。"},
+ {pri:"P0",owner:"外部系统",title:"支付网关对接与回调验签",note:"卡 / USSD / 转账 / 二维码 / 余额；以服务端验签回调为唯一付款依据。"},
+ {pri:"P0",owner:"外部系统",title:"库存服务",note:"可售校验、下单预占、支付实扣、取消与退款释放；当前完全缺失。"},
+ {pri:"P0",owner:"外部系统",title:"BV / 佣金引擎",note:"按 orderId 幂等计提、退款冲减、规则版本化；游客单不计本人 BV。"},
+ {pri:"P0",owner:"外部系统",title:"权限模型 RBAC",note:"角色、菜单权限、数据范围、敏感操作审批、全量审计日志。"},
+ {pri:"P0",owner:"外部系统",title:"游客下单链路",note:"免注册加购与结算、游客单归 house 账户、登录后合并购物车与订单归属。"},
+ {pri:"P1",owner:"外部系统",title:"会员四流程（欢迎包 / 复购 / 自动维护 / 升级）",note:"含代下单权限校验、自动维护最低 BV 门槛、升级差额计算与等级落库。"},
+ {pri:"P1",owner:"外部系统",title:"到货意向与通知",note:"缺货 / 即将上市商品的意向登记、必填校验与到货通知。"},
+ {pri:"P1",owner:"外部系统",title:"推荐归因服务",note:"策略可配、窗口与有效期、来源含 WordPress 分享链接带入的 ref。"},
+ {pri:"P1",owner:"外部系统",title:"售后 / 退款工单",note:"会员提交申请 → 后台审核 → 退款执行 → 状态回写与冲减 BV。"},
+ {pri:"P1",owner:"外部系统",title:"通知服务与配送配置",note:"短信 / 邮件 / 站内消息与模板；配送区域、运费、自提点。"},
+ {pri:"P1",owner:"外部系统",title:"报表与结算中心",note:"销售、BV / 佣金、会员增长；结算单生成与差异追溯、导出。"},
+ {pri:"P2",owner:"外部系统",title:"SSO 免登（预留）",note:"如后续改为 WordPress 侧登录，带 token 免登进入外部系统。"},
+ {pri:"P2",owner:"外部系统",title:"风控 / 促销 / 会员权益",note:"异常下单风控、优惠券与活动、权益发放核销。"},
+
+ {pri:"P0",owner:"双方约定",title:"跳转参数与回跳白名单",note:"product / sku / qty / ref / return 的取值、编码与校验规则，双端固化并写进接口文档。"},
+ {pri:"P1",owner:"双方约定",title:"展示价与结算价校验机制",note:"定期比对两侧价格，差异告警，避免用户看到的价格与结算价不一致。"},
+ {pri:"P1",owner:"双方约定",title:"SEO 与 canonical 策略",note:"展示页与交易页的收录边界，避免重复内容。"},
+ {pri:"P2",owner:"双方约定",title:"埋点与跳转漏斗",note:"统计从展示页到外部下单的转化漏斗。"}
+];
+
+/* ---------------- 渲染流程图 ---------------- */
+const main=document.getElementById("main");
+Object.keys(FLOWS).forEach(key=>{
+  const f=FLOWS[key];
+  const sec=document.createElement("section");
+  sec.className="flow"; sec.id="f-"+key;
+  sec.innerHTML =
+    '<div class="flow-head"><span class="flow-eyebrow">'+esc(EYEBROW[key]||"流程")+'</span>'+
+    '<h2>'+esc(f.title)+'</h2>'+
+    '<p class="sub">'+esc(f.sub)+'</p></div>'+
+    '<div class="stage">'+buildSVG(f,key)+'</div>'+
+    '<ul class="legend">'+
+      '<li><i class="lg page"></i>页面 / 入口</li>'+
+      '<li><i class="lg action"></i>动作 / 步骤</li>'+
+      '<li><i class="lg decision"></i>判断</li>'+
+      '<li><i class="lg store"></i>服务端数据 / 接口</li>'+
+      '<li><i class="lg actor"></i>角色 / 端</li>'+
+      '<li><i class="lg cfg"></i>配置点（后台配置）</li>'+
+      '<li><i class="lg note"></i>说明 / 已知偏差</li>'+
+      '<li><i class="lg arrow"></i>箭头流向 = 业务流转方向（悬停节点可高亮其链路）</li>'+
+    '</ul>'+
+    '<div class="detail" id="detail-'+key+'"><span class="hint">点击任意节点查看业务说明（含职责与配置来源）。</span></div>';
+  main.appendChild(sec);
+});
+
+/* ---------------- 附录 A · 归属地图 ---------------- */
+(function(){
+  const sec=document.createElement("section");
+  sec.className="flow mapsec"; sec.id="f-map";
+  const r1=CONFIG_MAP.map(r=>'<tr><td>'+esc(r[0])+'</td><td class="cm-owner">'+esc(r[1])+'</td><td class="cm-exec">'+esc(r[2])+'</td><td>'+esc(r[3])+'</td></tr>').join("");
+  const r2=PAGE_MAP.map(r=>'<tr><td>'+esc(r[0])+'</td><td class="cm-owner">'+esc(r[1])+'</td><td>'+esc(r[2])+'</td></tr>').join("");
+  sec.innerHTML =
+    '<div class="flow-head"><span class="flow-eyebrow">OWNERSHIP MAP</span>'+
+    '<h2>18 · 附录 A · 归属地图（业务规则 + 现有页面）</h2>'+
+    '<p class="sub">两张对照表：① 每条业务规则由哪一侧的后台配置、哪一侧执行；② 现有页面拆分后各归哪一侧、怎么处理。可作为开发分工与接口设计的对照依据。</p></div>'+
+    '<h3 class="tbl-cap">A-1 业务规则 → 配置归属</h3>'+
+    '<div class="tablewrap"><table class="cmap">'+
+    '<thead><tr><th>业务规则</th><th>配置方（后台）</th><th>执行 / 校验方</th><th>说明</th></tr></thead>'+
+    '<tbody>'+r1+'</tbody></table></div>'+
+    '<h3 class="tbl-cap">A-2 现有页面 → 目标归属</h3>'+
+    '<div class="tablewrap"><table class="cmap">'+
+    '<thead><tr><th>现有页面</th><th>目标归属</th><th>处理方式</th></tr></thead>'+
+    '<tbody>'+r2+'</tbody></table></div>';
+  main.appendChild(sec);
+})();
+
+/* ---------------- 附录 B · 检查结论 + 待建清单 ---------------- */
+(function(){
+  const sec=document.createElement("section");
+  sec.className="flow backlogsec"; sec.id="f-backlog";
+  const order={P0:0,P1:1,P2:2};
+  const items=BACKLOG.slice().sort((a,b)=>order[a.pri]-order[b.pri]);
+  const counts={P0:0,P1:0,P2:0};
+  BACKLOG.forEach(b=>counts[b.pri]++);
+  const piv={"高":"p0","中":"p1","低":"p2"};
+  const devs=DEVIATIONS.map(d=>
+    '<article class="dev" data-lvl="'+esc(d[0])+'">'+
+      '<div class="bl-top"><span class="pri pri-'+piv[d[0]]+'">'+esc(d[0])+'</span>'+
+      '<span class="dev-scope">'+esc(d[2])+'</span>'+
+      '<h3>'+esc(d[1])+'</h3></div>'+
+      '<p class="bl-note">'+esc(d[3])+'</p>'+
+      '<p class="dev-fix"><b>建议</b>'+esc(d[4])+'</p>'+
+    '</article>').join("");
+  const cards=items.map(b=>
+    '<article class="bl" data-owner="'+esc(b.owner)+'">'+
+      '<div class="bl-top"><span class="pri pri-'+b.pri.toLowerCase()+'">'+b.pri+'</span>'+
+      '<span class="bl-owner">'+esc(b.owner)+'</span>'+
+      '<h3>'+esc(b.title)+'</h3></div>'+
+      '<p class="bl-note">'+esc(b.note)+'</p>'+
+    '</article>').join("");
+  const owners=["WordPress","外部系统","双方约定"];
+  const hi=DEVIATIONS.filter(d=>d[0]==="高").length, mid=DEVIATIONS.filter(d=>d[0]==="中").length, lo=DEVIATIONS.filter(d=>d[0]==="低").length;
+  sec.innerHTML =
+    '<div class="flow-head"><span class="flow-eyebrow">REVIEW</span>'+
+    '<h2>19 · 附录 B · 检查结论（已知偏差 + 待建清单）</h2>'+
+    '<p class="sub">对当前 demo 做代码级复核：上半部分是<b>demo 内部需要修正的偏差</b>（与目标架构无关，拆分后依然存在）；下半部分是<b>目标形态待建清单</b>，按交付侧分组。</p></div>'+
+    '<div class="callout"><b>关于当前 demo</b>它用一个静态站同时模拟了「展示 + 下单 + 账户」，并靠登录态切换页面归属标识来示意两套系统。新架构下：<u>展示归 WordPress，下单与账户归外部系统</u>，两侧各有后台与数据，靠跳转参数衔接。因此原型里标注「服务端校验」的节点在新架构中由外部系统实现，demo 中缺失属预期。</div>'+
+    '<h3 class="tbl-cap">B-1 已知偏差（建议优先修正）</h3>'+
+    '<div class="sev-roll">'+
+      '<div class="sev-stat s-p0"><b>'+hi+'</b><span>高 · 影响动线</span></div>'+
+      '<div class="sev-stat s-p1"><b>'+mid+'</b><span>中 · 影响一致</span></div>'+
+      '<div class="sev-stat s-p2"><b>'+lo+'</b><span>低 · 完善项</span></div>'+
+      '<div class="sev-stat s-total"><b>'+DEVIATIONS.length+'</b><span>合计</span></div>'+
+    '</div>'+
+    '<div class="dev-list">'+devs+'</div>'+
+    '<h3 class="tbl-cap">B-2 目标形态待建清单</h3>'+
+    '<div class="sev-filter" role="group" aria-label="按交付侧筛选">'+
+      '<button class="fbtn is-on" data-o="all">全部 '+BACKLOG.length+'</button>'+
+      owners.map(o=>'<button class="fbtn" data-o="'+esc(o)+'">'+esc(o)+'</button>').join("")+
+    '</div>'+
+    '<div class="bl-list">'+cards+'</div>';
+  main.appendChild(sec);
+  const list=sec.querySelector(".bl-list");
+  sec.querySelectorAll(".fbtn").forEach(b=>{
+    b.addEventListener("click",()=>{
+      const o=b.dataset.o;
+      sec.querySelectorAll(".fbtn").forEach(x=>x.classList.toggle("is-on",x===b));
+      list.querySelectorAll(".bl").forEach(c=>{ c.hidden = (o!=="all" && c.dataset.owner!==o); });
+    });
+  });
+})();
+
+/* ---------------- 节点详情交互 ---------------- */
+document.addEventListener("click",e=>{
+  if(document.body.classList.contains("editing")) return;
+  const g=e.target.closest("g.node"); if(!g) return;
+  const detail=g.getAttribute("data-detail");
+  const sec=g.closest("section.flow"); if(!sec) return;
+  const box=sec.querySelector(".detail"); if(!box) return;
+  if(detail){ box.innerHTML='<span class="dt-tag">业务说明</span>'+esc(detail); box.classList.add("has"); }
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter"||e.key===" "){
+    const g=e.target.closest&&e.target.closest("g.node");
+    if(g){ e.preventDefault(); g.dispatchEvent(new MouseEvent("click",{bubbles:true})); }
+  }
+});
+
+/* ---------------- 悬停高亮链路（实时查询） ---------------- */
+document.querySelectorAll("section.flow").forEach(sec=>{
+  const stage=sec.querySelector(".stage"); if(!stage) return;
+  stage.addEventListener("mouseover",ev=>{
+    if(document.body.classList.contains("editing")) return;
+    const g=ev.target.closest&&ev.target.closest("g.node"); if(!g) return;
+    const id=g.getAttribute("data-id");
+    const edges=[...sec.querySelectorAll(".ew")];
+    const nodes=[...sec.querySelectorAll("g.node")];
+    if(!edges.length) return;
+    const lit=new Set([id]);
+    edges.forEach(p=>{
+      const a=p.getAttribute("data-from"), b=p.getAttribute("data-to");
+      const on=(a===id||b===id);
+      p.classList.toggle("lit",on);
+      if(on){ lit.add(a); lit.add(b); }
+    });
+    nodes.forEach(n=>n.classList.toggle("hot",lit.has(n.getAttribute("data-id"))));
+    sec.classList.add("has-hot");
+  });
+  stage.addEventListener("mouseleave",()=>{
+    sec.classList.remove("has-hot");
+    sec.querySelectorAll(".ew.lit").forEach(p=>p.classList.remove("lit"));
+    sec.querySelectorAll("g.node.hot").forEach(n=>n.classList.remove("hot"));
+  });
+});
+
+/* ---------------- TOC 高亮 ---------------- */
+const tocLinks=[...document.querySelectorAll("nav.toc a")];
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      const id=en.target.id.replace("f-","");
+      tocLinks.forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#f-"+id));
+    }
+  });
+},{rootMargin:"-15% 0px -70% 0px"});
+document.querySelectorAll("section.flow").forEach(s=>obs.observe(s));
+
+/* ---------------- 滚动揭示 ---------------- */
+const reveal=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add("reveal-in"); });
+},{rootMargin:"0px 0px -8% 0px"});
+document.querySelectorAll("section.flow").forEach(s=>reveal.observe(s));
+
+/* ---------------- 霓虹配色切换 ---------------- */
+const root=document.documentElement;
+const savedA=localStorage.getItem("bf-accent");
+if(savedA) root.setAttribute("data-accent",savedA);
+const accBtn=document.getElementById("accentToggle");
+if(accBtn){
+  const lbl=accBtn.querySelector(".ac-label");
+  const sync=()=>{ const a=(root.getAttribute("data-accent")||"cyan").toUpperCase(); if(lbl) lbl.textContent=a; };
+  sync();
+  accBtn.addEventListener("click",()=>{
+    const cur=root.getAttribute("data-accent")==="acid"?"cyan":"acid";
+    root.setAttribute("data-accent",cur); localStorage.setItem("bf-accent",cur); sync();
+  });
+}
+
+/* ============================================================
+   图上编辑器
+   拖动节点 · 双击改字 · 增删节点 / 连线 · 撤销重做 · 自动保存 · 导出
+   依赖：FLOWS / buildSVG / nodeBox / esc（来自前面的 engine 与 assembly）
+   ============================================================ */
+(function(){
+'use strict';
+
+const KEY='bf.flows.edits';
+const EDITS_VERSION='v7';  // 流程数据一旦重构，旧版本自动保存作废，避免把旧内容套到新流程上
+const S={
+  on:false, sel:null, link:null, linkMode:false, add:null,
+  snap:8, hist:[], hi:-1, dirty:{}, curKey:null, raf:null, dragging:null
+};
+const ORIG=JSON.parse(JSON.stringify(FLOWS));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const secOf=k=>document.getElementById('f-'+k);
+const escAttr=s=>String(s).replace(/\\/g,'\\\\').replace(/"/g,'\\"');
+
+/* ---------------- 持久化 ---------------- */
+function loadEdits(){
+  let raw=null; try{ raw=localStorage.getItem(KEY); }catch(e){}
+  if(!raw) return;
+  try{
+    const d=JSON.parse(raw);
+    if(d.__v!==EDITS_VERSION){ try{ localStorage.removeItem(KEY); }catch(err){} return; }
+    Object.keys(d).forEach(k=>{
+      if(FLOWS[k]&&d[k]&&Array.isArray(d[k].nodes)){
+        FLOWS[k].nodes=d[k].nodes; FLOWS[k].edges=d[k].edges||[]; S.dirty[k]=1;
+      }
+    });
+  }catch(e){ console.warn('[editor] 读取本地修改失败',e); }
+}
+function saveEdits(){
+  const out={};
+  Object.keys(S.dirty).forEach(k=>{ if(FLOWS[k]) out[k]={nodes:FLOWS[k].nodes, edges:FLOWS[k].edges}; });
+  try{ localStorage.setItem(KEY, JSON.stringify(Object.assign({__v:EDITS_VERSION}, out))); }catch(e){ console.warn('[editor] 保存失败',e); }
+}
+function flowSnapshot(){
+  const o={}; Object.keys(FLOWS).forEach(k=>{ o[k]={nodes:FLOWS[k].nodes, edges:FLOWS[k].edges}; });
+  return JSON.stringify(o);
+}
+function pushHistory(){
+  const s=flowSnapshot();
+  if(S.hist[S.hi]===s){ saveEdits(); markBadges(); return; }
+  S.hist=S.hist.slice(0,S.hi+1);
+  S.hist.push(s);
+  if(S.hist.length>80) S.hist.shift();
+  S.hi=S.hist.length-1;
+  saveEdits(); markBadges();
+}
+function restoreSnapshot(s){
+  const o=JSON.parse(s);
+  Object.keys(o).forEach(k=>{ if(FLOWS[k]){ FLOWS[k].nodes=o[k].nodes; FLOWS[k].edges=o[k].edges; } });
+  renderAll(); saveEdits(); markBadges();
+}
+function undo(){ if(S.hi>0){ S.hi--; restoreSnapshot(S.hist[S.hi]); toast('已撤销'); } else toast('没有可撤销的操作'); }
+function redo(){ if(S.hi<S.hist.length-1){ S.hi++; restoreSnapshot(S.hist[S.hi]); toast('已重做'); } }
+
+/* ---------------- 渲染 ---------------- */
+function renderFlow(k){
+  const f=FLOWS[k], sec=secOf(k); if(!f||!sec) return;
+  const stage=sec.querySelector('.stage'); if(!stage) return;
+  const lock = S.on ? (f._lock||null) : null;
+  stage.innerHTML=buildSVG(f,k,lock);
+  if(S.on && !f._lock) f._lock=f._vb;
+  paintSel();
+}
+function renderAll(){ Object.keys(FLOWS).forEach(renderFlow); }
+
+/* 拖动/新增后：若内容超出锁定画布则重新自适应一次 */
+function lockBox(vb){
+  const p=String(vb||'').split(/\s+/).map(Number);
+  if(p.length!==4||p.some(n=>!isFinite(n))) return null;
+  return {x:p[0],y:p[1],w:p[2],h:p[3]};
+}
+function ensureLockFit(k){
+  const f=FLOWS[k]; if(!f||!S.on) return;
+  const b=lockBox(f._lock); if(!b){ f._lock=null; renderFlow(k); return; }
+  let inside=true;
+  f.nodes.forEach(n=>{ const x=nodeBox(n);
+    if(x.x<b.x+2||x.y<b.y+2||x.x+x.w>b.x+b.w-2||x.y+x.h>b.y+b.h-2) inside=false; });
+  if(!inside){ f._lock=null; renderFlow(k); }
+}
+
+/* ---------------- 选中态 ---------------- */
+function nodeEl(k,id){ const s=secOf(k); return s?s.querySelector('g.node[data-id="'+escAttr(id)+'"]'):null; }
+function edgeEl(k,i){ const s=secOf(k); return s?s.querySelector('.ew[data-i="'+i+'"]'):null; }
+function paintSel(){
+  document.querySelectorAll('.is-sel,.link-src').forEach(el=>el.classList.remove('is-sel','link-src'));
+  if(S.link){ const g=nodeEl(S.link.key,S.link.id); if(g) g.classList.add('link-src'); }
+  if(!S.sel) return;
+  if(S.sel.kind==='node'){ const g=nodeEl(S.sel.key,S.sel.id); if(g) g.classList.add('is-sel'); }
+  else{
+    const e=edgeEl(S.sel.key,S.sel.i);
+    if(e){
+      if(e.getAttribute('data-from')===S.sel.from && e.getAttribute('data-to')===S.sel.to) e.classList.add('is-sel');
+      else S.sel=null;
+    }
+  }
+}
+function clearSel(){ S.sel=null; paintSel(); showInspector(); }
+
+/* ---------------- 坐标换算 ---------------- */
+function toSvg(svg,cx,cy){
+  const m=svg.getScreenCTM(); if(!m) return null;
+  try{ const p=new DOMPoint(cx,cy).matrixTransform(m.inverse()); return {x:p.x,y:p.y}; }
+  catch(e){
+    const r=svg.getBoundingClientRect(); const vb=String(svg.getAttribute('viewBox')).split(/\s+/).map(Number);
+    const sx=vb[2]/r.width, sy=vb[3]/r.height;
+    return {x:vb[0]+(cx-r.left)*sx, y:vb[1]+(cy-r.top)*sy};
+  }
+}
+const snapV=v=>{ const s=S.snap||1; return Math.round(v/s)*s; };
+
+/* ---------------- 指针交互 ---------------- */
+function onPointerDown(ev){
+  if(!S.on||ev.button!==0) return;
+  const sec=ev.target.closest&&ev.target.closest('section.flow'); if(!sec) return;
+  const key=sec.id.slice(2); S.curKey=key;
+  if(!FLOWS[key]) return;
+  const g=ev.target.closest('g.node');
+  const ew=ev.target.closest('.ew');
+
+  /* 连线模式 */
+  if(S.linkMode && g){
+    const id=g.getAttribute('data-id');
+    if(!S.link){ S.link={key,id}; paintSel(); toast('已选起点，请点击目标节点'); }
+    else if(S.link.key!==key){ toast('不能跨流程图连线'); }
+    else if(S.link.id===id){ S.link=null; paintSel(); toast('已取消连线'); }
+    else{
+      const f=FLOWS[key];
+      const dup=f.edges.some(e=>e.from===S.link.id&&e.to===id);
+      if(dup) toast('这两个节点已连线');
+      else{
+        f.edges.push({from:S.link.id,to:id});
+        const lid=S.link.id; S.link=null; S.linkMode=false; updateBar();
+        renderFlow(key); paintSel(); pushHistory(); toast('已连线 '+lid+' → '+id);
+      }
+    }
+    ev.preventDefault(); return;
+  }
+  if(S.linkMode && !g){ S.link=null; S.linkMode=false; updateBar(); paintSel(); toast('已退出连线模式'); return; }
+
+  /* 拖拽节点 */
+  if(g){
+    const id=g.getAttribute('data-id');
+    const n=FLOWS[key].nodes.find(x=>x.id===id); if(!n) return;
+    const svg=sec.querySelector('svg'); const p=toSvg(svg,ev.clientX,ev.clientY); if(!p) return;
+    S.dragging={key,id,ox:n.x-p.x,oy:n.y-p.y,moved:false};
+    S.sel={kind:'node',key,id}; paintSel(); showInspector();
+    window.addEventListener('pointermove',onPointerMove);
+    window.addEventListener('pointerup',onPointerUp,{once:true});
+    ev.preventDefault(); return;
+  }
+  /* 选中连线 */
+  if(ew){
+    S.sel={kind:'edge',key,i:Number(ew.getAttribute('data-i')),from:ew.getAttribute('data-from'),to:ew.getAttribute('data-to')};
+    paintSel(); showInspector(); ev.preventDefault(); return;
+  }
+  /* 空白处：新增节点 or 取消选中 */
+  const svg=sec.querySelector('svg');
+  const p=svg?toSvg(svg,ev.clientX,ev.clientY):null;
+  if(S.add && p){
+    const id='x'+(Date.now().toString(36).slice(-5));
+    FLOWS[key].nodes.push({id,x:snapV(p.x-100),y:snapV(p.y-28),label:'新节点',type:S.add,detail:''});
+    S.sel={kind:'node',key,id}; S.add=null; updateBar();
+    renderFlow(key); ensureLockFit(key); showInspector(); pushHistory(); toast('已新增节点');
+    return;
+  }
+  clearSel();
+}
+function onPointerMove(ev){
+  const d=S.dragging; if(!d) return;
+  const sec=secOf(d.key); const svg=sec&&sec.querySelector('svg'); if(!svg) return;
+  const p=toSvg(svg,ev.clientX,ev.clientY); if(!p) return;
+  const n=FLOWS[d.key].nodes.find(x=>x.id===d.id); if(!n) return;
+  n.x=snapV(p.x+d.ox); n.y=snapV(p.y+d.oy); d.moved=true; S.dirty[d.key]=1;
+  if(!S.raf) S.raf=requestAnimationFrame(()=>{ S.raf=null; renderFlow(d.key); paintSel(); });
+}
+function onPointerUp(){
+  window.removeEventListener('pointermove',onPointerMove);
+  const d=S.dragging; S.dragging=null;
+  if(d&&d.moved){ S.dirty[d.key]=1; ensureLockFit(d.key); renderFlow(d.key); paintSel(); pushHistory(); }
+}
+
+/* ---------------- 增删改 ---------------- */
+function deleteSelection(){
+  const s=S.sel; if(!s){ toast('先选中一个节点或连线'); return; }
+  const f=FLOWS[s.key]; if(!f) return;
+  if(s.kind==='node'){
+    const id=s.id;
+    f.nodes=f.nodes.filter(n=>n.id!==id);
+    f.edges=f.edges.filter(e=>e.from!==id&&e.to!==id);
+    S.dirty[s.key]=1; S.sel=null;
+    renderFlow(s.key); ensureLockFit(s.key); showInspector(); pushHistory();
+    toast('已删除节点及其连线');
+  }else{
+    f.edges.splice(s.i,1); S.dirty[s.key]=1; S.sel=null;
+    renderFlow(s.key); showInspector(); pushHistory(); toast('已删除连线');
+  }
+}
+function duplicateNode(k){
+  const s=S.sel; if(!s||s.kind!=='node'){ toast('先选中一个节点'); return; }
+  const f=FLOWS[k]; const src=f.nodes.find(x=>x.id===s.id); if(!src) return;
+  const copy=clone(src);
+  copy.id='x'+(Date.now().toString(36).slice(-5));
+  copy.x=src.x+28; copy.y=src.y+28;
+  f.nodes.push(copy);
+  S.dirty[k]=1; S.sel={kind:'node',key:k,id:copy.id};
+  renderFlow(k); ensureLockFit(k); showInspector(); pushHistory();
+  toast('已复制节点');
+}
+function nudge(dx,dy){
+  const s=S.sel; if(!s||s.kind!=='node') return;
+  const n=FLOWS[s.key].nodes.find(x=>x.id===s.id); if(!n) return;
+  n.x+=dx; n.y+=dy; S.dirty[s.key]=1;
+  renderFlow(s.key); ensureLockFit(s.key); pushHistory();
+}
+function reverseEdge(){
+  const s=S.sel; if(!s||s.kind!=='edge'){ toast('先选中一条连线'); return; }
+  const e=FLOWS[s.key].edges[s.i]; if(!e) return;
+  const t=e.from; e.from=e.to; e.to=t;
+  S.dirty[s.key]=1;
+  renderFlow(s.key); showInspector(); pushHistory(); toast('已反转方向');
+}
+
+/* ---------------- 工具栏 ---------------- */
+const TYPES=[["page","页面 / 入口"],["action","动作 / 步骤"],["decision","判断"],["store","服务端数据 / 接口"],["actor","角色 / 端"],["cfg","后台配置点"],["note","说明"]];
+let bar=null;
+function buildBar(){
+  bar=document.createElement('div');
+  bar.className='editbar'; bar.id='editbar';
+  bar.innerHTML=
+    '<button class="eb-btn eb-main" id="ebToggle" aria-pressed="false">✎ 编辑模式</button>'+
+    '<span class="eb-sep"></span>'+
+    '<select class="eb-sel" id="ebType" aria-label="新增节点类型">'+TYPES.map(t=>'<option value="'+t[0]+'">'+t[1]+'</option>').join('')+'</select>'+
+    '<button class="eb-btn" id="ebAdd">＋ 节点</button>'+
+    '<button class="eb-btn" id="ebLink">⇄ 连线</button>'+
+    '<button class="eb-btn" id="ebDel">✕ 删除</button>'+
+    '<span class="eb-sep"></span>'+
+    '<button class="eb-btn" id="ebUndo" title="Ctrl/Cmd+Z">↺ 撤销</button>'+
+    '<button class="eb-btn" id="ebRedo" title="Ctrl/Cmd+Shift+Z">↻ 重做</button>'+
+    '<button class="eb-btn is-on" id="ebSnap">🧲 吸附 8px</button>'+
+    '<span class="eb-sep"></span>'+
+    '<button class="eb-btn" id="ebResetOne">重置本图</button>'+
+    '<button class="eb-btn" id="ebResetAll">重置全部</button>'+
+    '<button class="eb-btn" id="ebExport">⤓ 导出 JSON</button>'+
+    '<button class="eb-btn" id="ebCopy">⧉ 复制代码</button>';
+  document.body.appendChild(bar);
+
+  const $=id=>bar.querySelector('#'+id);
+  $('ebToggle').addEventListener('click',()=>{ S.on?exitEdit():enterEdit(); });
+  $('ebAdd').addEventListener('click',()=>{
+    if(!S.on) return toast('先打开编辑模式');
+    S.add=bar.querySelector('#ebType').value; S.linkMode=false; S.link=null;
+    updateBar(); toast('点击画布空白处放置「'+typeLabel(S.add)+'」');
+  });
+  $('ebLink').addEventListener('click',()=>{
+    if(!S.on) return toast('先打开编辑模式');
+    S.linkMode=!S.linkMode; S.link=null; S.add=null; updateBar();
+    toast(S.linkMode?'连线模式：先点起点，再点终点':'已退出连线模式');
+  });
+  $('ebDel').addEventListener('click',deleteSelection);
+  $('ebUndo').addEventListener('click',undo);
+  $('ebRedo').addEventListener('click',redo);
+  $('ebSnap').addEventListener('click',()=>{
+    S.snap = S.snap?0:8;
+    $('ebSnap').classList.toggle('is-on',!!S.snap);
+    toast(S.snap?'吸附已开（8px 网格）':'吸附已关，自由拖动');
+  });
+  $('ebResetOne').addEventListener('click',resetCurrent);
+  $('ebResetAll').addEventListener('click',resetAll);
+  $('ebExport').addEventListener('click',exportJson);
+  $('ebCopy').addEventListener('click',copyCurrent);
+}
+function typeLabel(t){ const f=TYPES.find(x=>x[0]===t); return f?f[1]:t; }
+function updateBar(){
+  if(!bar) return;
+  document.body.style.paddingBottom = S.on ? (bar.offsetHeight + 26) + "px" : "";
+  const $=id=>bar.querySelector('#'+id);
+  $('ebToggle').classList.toggle('is-on',S.on);
+  $('ebToggle').setAttribute('aria-pressed',S.on?'true':'false');
+  $('ebToggle').textContent=S.on?'✎ 编辑中 · 退出':'✎ 编辑模式';
+  $('ebAdd').classList.toggle('is-on',!!S.add);
+  $('ebLink').classList.toggle('is-on',S.linkMode);
+}
+function enterEdit(){
+  Object.keys(FLOWS).forEach(k=>{ const f=FLOWS[k]; if(f._vb) f._lock=f._vb; });
+  S.on=true; document.body.classList.add('editing');
+  renderAll(); updateBar();
+  toast('编辑模式：拖动节点、双击改文字、空白处新增');
+}
+function exitEdit(){
+  S.on=false; S.add=null; S.linkMode=false; S.link=null; S.sel=null;
+  document.body.classList.remove('editing');
+  Object.keys(FLOWS).forEach(k=>{ FLOWS[k]._lock=null; });
+  renderAll(); updateBar(); showInspector();
+  toast('已退出编辑模式（改动已自动保存）');
+}
+function resetCurrent(){
+  const k=S.curKey||(S.sel&&S.sel.key);
+  if(!k){ toast('先点一下要重置的那张图'); return; }
+  FLOWS[k]=clone(ORIG[k]); FLOWS[k]._lock=null; delete S.dirty[k];
+  renderFlow(k); ensureLockFit(k); saveEdits(); markBadges(); showInspector();
+  toast('已重置「'+FLOWS[k].title+'」');
+}
+function resetAll(){
+  Object.keys(ORIG).forEach(k=>{ FLOWS[k]=clone(ORIG[k]); });
+  S.dirty={}; S.sel=null; S.link=null;
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  Object.keys(FLOWS).forEach(k=>{ FLOWS[k]._lock=null; });
+  if(S.on){ Object.keys(FLOWS).forEach(k=>{ FLOWS[k]._lock=null; renderFlow(k); FLOWS[k]._lock=FLOWS[k]._vb; }); }
+  else renderAll();
+  showInspector(); markBadges(); pushHistory();
+  toast('已恢复全部初始内容');
+}
+function cleanFlow(k){
+  const f=FLOWS[k];
+  const strip=o=>{ const c={}; Object.keys(o).forEach(key=>{ if(key[0]!=='_') c[key]=o[key]; }); return c; };
+  return {
+    title:f.title, sub:f.sub, fit:!!f.fit,
+    nodes:f.nodes.map(strip),
+    edges:f.edges.map(strip)
+  };
+}
+function exportJson(){
+  const out={};
+  Object.keys(FLOWS).forEach(k=>{ out[k]=cleanFlow(k); });
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='aqualife-business-flows.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+  toast('已导出 JSON');
+}
+function copyCurrent(){
+  const k=S.curKey||(S.sel&&S.sel.key);
+  if(!k){ toast('先点一下要复制的图'); return; }
+  const body=JSON.stringify(cleanFlow(k),null,2);
+  const text=k+': '+body;
+  copy(text).then(()=>toast('已复制「'+FLOWS[k].title+'」的代码')).catch(()=>fallbackCopy(text));
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('已复制到剪贴板'); }catch(e){ toast('复制失败，请手动导出 JSON'); }
+  ta.remove();
+}
+function copy(text){
+  if(navigator.clipboard&&navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+  return Promise.reject();
+}
+
+/* ---------------- 检查器 ---------------- */
+let insp=null;
+function buildInspector(){
+  insp=document.createElement('aside');
+  insp.className='insp'; insp.id='insp';
+  document.body.appendChild(insp);
+}
+function showInspector(){
+  if(!insp) return;
+  if(!S.sel){ insp.classList.remove('show'); insp.innerHTML=''; return; }
+  const s=S.sel, f=FLOWS[s.key];
+  insp.classList.add('show');
+  if(s.kind==='node'){
+    const n=f.nodes.find(x=>x.id===s.id); if(!n){ S.sel=null; return showInspector(); }
+    insp.innerHTML=
+      '<h4>节点 <span class="insp-id">'+esc(n.id)+'</span></h4>'+
+      '<label>类型</label><select id="iType">'+TYPES.map(t=>'<option value="'+t[0]+'"'+(t[0]===n.type?' selected':'')+'>'+t[1]+'</option>').join('')+'</select>'+
+      '<label>主标题</label><input id="iLabel" value="'+esc(n.label||"")+'" />'+
+      '<label>副标题</label><input id="iSub" value="'+esc(n.sub||"")+'" />'+
+      '<label>业务说明</label><textarea id="iDetail">'+esc(n.detail||"")+'</textarea>'+
+      '<div class="row"><button class="eb-btn" id="iDup">复制节点</button>'+
+      '<button class="eb-btn eb-danger" id="iDel">删除节点</button></div>'+
+      '<p class="insp-hint">拖动可移动位置；方向键微移；双击节点直接改字。</p>';
+    const q=id=>insp.querySelector('#'+id);
+    q('iType').addEventListener('change',e=>{ n.type=e.target.value; S.dirty[s.key]=1; renderFlow(s.key); paintSel(); pushHistory(); });
+    const live=(field,el)=>{ q(el).addEventListener('input',e=>{ n[field]=e.target.value; S.dirty[s.key]=1; renderFlow(s.key); paintSel(); });
+      q(el).addEventListener('change',pushHistory); };
+    live('label','iLabel'); live('sub','iSub'); live('detail','iDetail');
+    q('iDup').addEventListener('click',()=>duplicateNode(s.key));
+    q('iDel').addEventListener('click',deleteSelection);
+  }else{
+    const e=f.edges[s.i]; if(!e){ S.sel=null; return showInspector(); }
+    insp.innerHTML=
+      '<h4>连线 <span class="insp-id">'+esc(e.from)+' → '+esc(e.to)+'</span></h4>'+
+      '<label>线上标签（留空则不显示）</label><input id="iElabel" value="'+esc(e.label||"")+'" />'+
+      '<label class="chk"><input type="checkbox" id="iDash"'+(e.dash?' checked':'')+' /> 虚线（回退 / 分支）</label>'+
+      '<div class="row"><button class="eb-btn" id="iRev">反转方向</button>'+
+      '<button class="eb-btn eb-danger" id="iEdel">删除连线</button></div>'+
+      '<p class="insp-hint">标签会显示在最长线段中点。</p>';
+    const q=id=>insp.querySelector('#'+id);
+    q('iElabel').addEventListener('input',ev=>{ e.label=ev.target.value; S.dirty[s.key]=1; renderFlow(s.key); paintSel(); });
+    q('iElabel').addEventListener('change',pushHistory);
+    q('iDash').addEventListener('change',ev=>{ e.dash=ev.target.checked; S.dirty[s.key]=1; renderFlow(s.key); paintSel(); pushHistory(); });
+    q('iRev').addEventListener('click',reverseEdge);
+    q('iEdel').addEventListener('click',deleteSelection);
+  }
+}
+
+/* ---------------- 提示条 ---------------- */
+let toastEl=null, toastTimer=null;
+function toast(msg){
+  if(!toastEl){ toastEl=document.createElement('div'); toastEl.className='toast'; toastEl.id='toast'; document.body.appendChild(toastEl); }
+  toastEl.style.bottom=((bar&&S.on?bar.offsetHeight:0)+24)+"px";
+  toastEl.textContent=msg; toastEl.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>toastEl.classList.remove('show'),1700);
+}
+
+/* ---------------- 已修改徽标 ---------------- */
+function markBadges(){
+  document.querySelectorAll('section.flow').forEach(sec=>{
+    const k=sec.id.slice(2);
+    const head=sec.querySelector('.flow-head'); if(!head) return;
+    let b=head.querySelector('.badge-dirty');
+    if(S.dirty[k]){
+      if(!b){ b=document.createElement('span'); b.className='badge-dirty'; b.textContent='已修改'; head.appendChild(b); }
+    }else if(b) b.remove();
+  });
+}
+
+/* ---------------- 全局键盘 ---------------- */
+function onKey(ev){
+  const t=ev.target, tag=t&&t.tagName;
+  const typing = tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||(t&&t.isContentEditable);
+  if((ev.key==='z'||ev.key==='Z')&&(ev.metaKey||ev.ctrlKey)){
+    if(tag==='INPUT'||tag==='TEXTAREA') return;
+    ev.preventDefault(); ev.shiftKey?redo():undo(); return;
+  }
+  if(!S.on||typing) return;
+  if(ev.key==='Escape'){ S.add=null; S.linkMode=false; S.link=null; updateBar(); paintSel(); return; }
+  if(ev.key==='Delete'||ev.key==='Backspace'){ ev.preventDefault(); deleteSelection(); return; }
+  const step=ev.shiftKey?10:1;
+  if(ev.key==='ArrowLeft'){ ev.preventDefault(); nudge(-step,0); }
+  else if(ev.key==='ArrowRight'){ ev.preventDefault(); nudge(step,0); }
+  else if(ev.key==='ArrowUp'){ ev.preventDefault(); nudge(0,-step); }
+  else if(ev.key==='ArrowDown'){ ev.preventDefault(); nudge(0,step); }
+}
+
+/* ---------------- 接管查看态交互 ---------------- */
+function bind(){
+  document.addEventListener('pointerdown',onPointerDown);
+  document.addEventListener('keydown',onKey);
+  window.addEventListener('resize',()=>updateBar());
+  document.addEventListener('dblclick',ev=>{
+    const g=ev.target.closest&&ev.target.closest('g.node'); if(!g||!S.on) return;
+    const sec=g.closest('section.flow'); if(!sec) return;
+    S.sel={kind:'node',key:sec.id.slice(2),id:g.getAttribute('data-id')};
+    paintSel(); showInspector();
+    const f=insp&&insp.querySelector('#iLabel'); if(f){ f.focus(); f.select(); }
+  });
+  // 编辑态下禁用“点击看详情”的查看态行为
+  document.addEventListener('click',ev=>{
+    if(S.on && ev.target.closest&&ev.target.closest('.stage')) { /* 由 pointerdown 处理 */ }
+  },true);
+}
+
+/* ---------------- 启动 ---------------- */
+loadEdits();
+buildBar();
+buildInspector();
+bind();
+S.hist=[flowSnapshot()]; S.hi=0;
+if(Object.keys(S.dirty).length) Object.keys(S.dirty).forEach(renderFlow);
+markBadges(); updateBar();
+
+// 供自动化验证使用
+window.__EDIT={S,FLOWS,ORIG,renderFlow,renderAll,exportJson,cleanFlow,pushHistory,undo,redo,deleteSelection,duplicateNode,typeLabel};
+})();
+</script>
+</body>
+</html>

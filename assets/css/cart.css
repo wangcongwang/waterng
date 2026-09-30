@@ -9,6 +9,15 @@
    吸顶订单摘要卡、居中空态）。仅用 --ek- token。
    ============================================================================ */
 
+/* ---------- Page header -----------------------------------------------------
+   .section-head (elken-marketing.css) is a flex row built for a "title block
+   + CTA button" split (justify-content: space-between). Cart's header is a
+   plain eyebrow/h1/sub stack with no CTA, so the same three elements were
+   being spread apart as flex siblings instead of stacking — the eyebrow
+   floated to one corner and the h1 to another. Force it back to a block
+   stack here rather than repurpose the shared class for every page. */
+.cart-page .section-head { display: block; }
+
 /* ---------- Two-column shell ----------------------------------------------- */
 .cart-page .cart-layout { gap: var(--ek-24); align-items: start; }
 .cart-list { display: flex; flex-direction: column; gap: var(--ek-12); min-width: 0; }
