@@ -1,65 +1,66 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Awaiting delivery · AquaLease Nigeria</title>
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%2300875A' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
-  <link rel="stylesheet" href="assets/css/design-system.css" />
-  <link rel="stylesheet" href="assets/css/components.css" />
-  <link rel="stylesheet" href="assets/css/pages.css" />
+  <title>Awaiting delivery · Elken Nigeria</title>
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
+  <link rel="stylesheet" href="assets/css/checkout.css?v=20260915a">
+  <link rel="stylesheet" href="assets/css/shipping.css?v=20260909b">
+  <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="shipping">
-  <div id="offline-banner" class="offline-banner">Offline mode · showing cached information</div>
-  <div id="app-header"></div>
+  <div id="offline-banner" class="offline-banner">Connection status</div>
+  <div id="app-header" class="ek-site-header"></div>
 
   <main class="page shipping-shell">
     <div class="container">
-      <div class="crumbs" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-500);margin-bottom:18px">
+      <div class="crumbs">
         <a href="index.html">Home</a> <span>›</span> <a href="account.html" data-i18n="account.title"></a> <span>›</span> <span data-i18n="shipping.title"></span>
       </div>
-      <h1 style="font-family:var(--font-display);font-size:var(--t-h1);font-weight:500;letter-spacing:-.02em;margin-bottom:8px" id="shippingH1" data-i18n="shipping.shipping_title">Awaiting shipping</h1>
-      <p style="color:var(--ink-500);margin-bottom:32px" data-i18n="shipping.shipping_desc">Your equipment is being prepared for delivery…</p>
+      <h1 id="shippingH1" data-i18n="shipping.shipping_title">Awaiting shipping</h1>
+      <p data-i18n="shipping.shipping_desc">Your purchased products are being prepared for delivery…</p>
 
       <div class="stepper">
-        <div class="step done"><span class="n">1</span><span data-i18n="checkout.step1"></span></div>
+        <div class="step done"><span class="n">1</span><span data-i18n="checkout.title">Confirm your order</span></div>
         <div class="sep"></div>
-        <div class="step done"><span class="n">2</span><span data-i18n="checkout.step2"></span></div>
+        <div class="step done"><span class="n">2</span><span data-i18n="checkout.step2">Payment method</span></div>
         <div class="sep"></div>
-        <div class="step done"><span class="n">3</span><span data-i18n="checkout.step3"></span></div>
-        <div class="sep"></div>
-        <div class="step done"><span class="n">4</span><span data-i18n="checkout.step4"></span></div>
-        <div class="sep"></div>
-        <div class="step done"><span class="n">5</span><span data-i18n="checkout.step5"></span></div>
-        <div class="sep"></div>
-        <div class="step active"><span class="n">6</span><span data-i18n="checkout.step6"></span></div>
+        <div class="step active"><span class="n">3</span><span data-i18n="checkout.step6">Shipping / pickup</span></div>
       </div>
 
       <div class="shipping-grid">
         <div>
           <!-- Status alert -->
-          <div class="alert alert-info shipping-alert" role="status">
-            <div class="alert-icon" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-              </svg>
-            </div>
+          <div class="ek-alert shipping-alert" role="status">
+            <svg class="ek-alert__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+            </svg>
             <div>
-              <h3 id="shippingAlertTitle" data-i18n="shipping.shipping_title">Awaiting shipping</h3>
-              <p data-i18n="shipping.shipping_desc" id="shippingAlertDesc">Your equipment is being prepared for delivery.</p>
+              <h3 class="ek-alert__title" id="shippingAlertTitle" data-i18n="shipping.shipping_title">Awaiting shipping</h3>
+              <p class="ek-alert__body" data-i18n="shipping.shipping_desc" id="shippingAlertDesc">Your purchased products are being prepared for delivery.</p>
             </div>
           </div>
 
           <!-- Pickup location card (only for self-pickup) -->
-          <div class="checkout-card" id="pickupCard" style="margin-top:24px;display:none">
+          <div class="ek-card checkout-card" id="pickupCard">
             <h2 data-i18n="shipping.pickup_at">Pickup location</h2>
-            <div class="pickup-list" style="margin-top:8px">
-              <div class="pickup-item is-active" style="cursor:default">
+            <div class="pickup-list">
+              <div class="pickup-item is-active">
                 <div class="pickup-radio" aria-hidden="true"></div>
                 <div class="pickup-body">
                   <div class="pickup-head">
                     <span class="pickup-name" id="pickupName" data-i18n="checkout.pickup_hq_name">Lagos HQ</span>
-                    <span class="pickup-tag" id="pickupTag" style="display:none">HQ</span>
+                    <span class="pickup-tag" id="pickupTag">HQ</span>
                   </div>
                   <div class="pickup-addr" id="pickupAddr" data-i18n="checkout.pickup_hq_addr">12B Admiralty Way, Lekki Phase 1</div>
                   <div class="pickup-hours"><span data-i18n="shipping.pickup_hours_label">Opening hours</span>: <span id="pickupHours" data-i18n="checkout.pickup_hq_hours">Mon–Sat · 8:00 – 18:00</span></div>
@@ -69,32 +70,43 @@
           </div>
 
           <!-- Order summary -->
-          <div class="checkout-card" style="margin-top:24px">
+          <div class="ek-card checkout-card">
             <h2>Order summary</h2>
-            <div class="sign-side" style="padding:0;position:static">
+            <div class="sign-side">
               <div class="terms-meta" id="orderMeta"></div>
             </div>
+            <button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="downloadReceipt">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/>
+              </svg>
+              <span>Download receipt</span>
+            </button>
           </div>
+
+          <!-- Order detail link + email -->
+          <div id="orderEmailWrap" class="ek-card checkout-card"></div>
         </div>
 
         <aside class="shipping-side">
-          <div class="checkout-card">
-            <h2 style="font-size:18px;margin-bottom:12px" data-i18n="shipping.help">Need help?</h2>
-            <p style="color:var(--ink-500);font-size:14px;margin-bottom:16px" id="helpDesc">Our support team is here for you.</p>
-            <button class="btn btn-light btn-block" id="contactBtn" data-i18n="shipping.help_action">Contact support</button>
-            <hr style="border:none;border-top:1px solid var(--ink-200);margin:20px 0" />
-            <button class="btn btn-primary btn-block btn-lg" id="accountBtn" data-i18n="shipping.cta_account">Go to my account</button>
-            <a href="index.html" class="btn btn-link btn-block" style="margin-top:8px;text-align:center;display:block" data-i18n="shipping.cta_home">Back to home</a>
+          <div class="ek-card checkout-card">
+            <h2 data-i18n="shipping.help">Need help?</h2>
+            <p id="helpDesc">Our support team is here for you.</p>
+            <a class="ek-btn ek-btn--secondary ek-btn--block" id="contactBtn" href="https://wa.me/2349131178401" target="_blank" rel="noopener" data-i18n="shipping.help_action">Contact support</a>
+            <hr />
+            <a class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" id="accountBtn" href="account.html" data-i18n="shipping.cta_account">Go to my account</a>
+            <a href="index.html" class="ek-btn btn-link ek-btn--block" data-i18n="shipping.cta_home">Back to home</a>
           </div>
         </aside>
       </div>
     </div>
   </main>
 
-  <div id="app-footer"></div>
+  <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
+  <script src="assets/js/website.js?v=20260909c-2"></script>
+  <script src="assets/js/order-receipt.js?v=20260915a"></script>
   <script>
     const PICKUP_LOCATIONS = {
       lagos: { nameKey: 'checkout.pickup_hq_name', addrKey: 'checkout.pickup_hq_addr', hoursKey: 'checkout.pickup_hq_hours', tag: 'HQ' },
@@ -103,76 +115,175 @@
     };
 
     function getOrder() {
-      // Prefer the latest order with status === 'awaiting_shipping'; else fall back to last order
-      const list = (window.AL && window.AL.loadOrders && window.AL.loadOrders()) || [];
-      const recent = list.find(o => o.status === 'awaiting_shipping') || list[0] || {};
-      return recent;
+      const params = new URLSearchParams(location.search);
+      const id = params.get('order');
+      // Read from the full order list so guest orders (no memberId) are found too.
+      const find = window.ProductCatalog && window.ProductCatalog.getOrderById
+        ? window.ProductCatalog.getOrderById
+        : (i) => (window.ProductCatalog.getOrders().find(o => o.id === i) || null);
+      if (id) return find(id);
+      const all = window.ProductCatalog.getOrders();
+      return all[0] || null;
     }
 
-    function applyPickup(o) {
-      const loc = (o && o.pickupLoc) || 'lagos';
-      const meta = PICKUP_LOCATIONS[loc] || PICKUP_LOCATIONS.lagos;
-      const nameEl = document.getElementById('pickupName');
-      const addrEl = document.getElementById('pickupAddr');
-      const hoursEl = document.getElementById('pickupHours');
-      const tagEl = document.getElementById('pickupTag');
-      if (nameEl)   { nameEl.setAttribute('data-i18n', meta.nameKey);   nameEl.textContent   = window.T.tr(meta.nameKey); }
-      if (addrEl)   { addrEl.setAttribute('data-i18n', meta.addrKey);   addrEl.textContent   = window.T.tr(meta.addrKey); }
-      if (hoursEl)  { hoursEl.setAttribute('data-i18n', meta.hoursKey); hoursEl.textContent  = window.T.tr(meta.hoursKey); }
-      if (tagEl)    { tagEl.style.display = meta.tag ? '' : 'none'; }
+    // Build an absolute, shareable link to the order detail page.
+    function orderDetailLink(orderId) {
+      try {
+        return new URL('order.html?order=' + encodeURIComponent(orderId), location.href).href;
+      } catch (e) {
+        return 'order.html?order=' + encodeURIComponent(orderId);
+      }
     }
 
-    function render(o) {
-      const isPickup = (o && o.delivMethod === 'pickup');
-      // swap i18n keys + text
-      const titleKey  = isPickup ? 'shipping.pickup_title'  : 'shipping.shipping_title';
-      const descKey   = isPickup ? 'shipping.pickup_desc'   : 'shipping.shipping_desc';
-      const etaKey    = isPickup ? 'shipping.eta_pickup'    : 'shipping.eta_shipping';
-      const h1        = document.getElementById('shippingH1');
-      const sub       = document.querySelector('.shipping-shell p');
-      const aTitle    = document.getElementById('shippingAlertTitle');
-      const aDesc     = document.getElementById('shippingAlertDesc');
-      h1.setAttribute('data-i18n', titleKey);       h1.textContent = window.T.tr(titleKey);
-      sub.setAttribute('data-i18n', descKey);       sub.textContent = window.T.tr(descKey);
-      aTitle.setAttribute('data-i18n', titleKey);   aTitle.textContent = window.T.tr(titleKey);
-      aDesc.setAttribute('data-i18n', descKey);     aDesc.textContent = window.T.tr(descKey);
+    // Compose a pre-filled mailto to the customer with the order detail link + summary.
+    function buildOrderMailto(order) {
+      const item = (order.items && order.items[0]) || {};
+      const qty = item.qty || 1;
+      const isPickup = order.delivery && order.delivery.method === 'pickup';
+      const methodLabel = isPickup ? 'Self-pickup' : 'Door delivery';
+      const payLabels = {
+        card: 'Debit Card', ussd: 'USSD', bank: 'Bank Transfer',
+        paybank: 'Pay with Bank', visaqr: 'Pay with Visa QR', balance: 'Account Balance',
+        cod: 'Cash on delivery', transfer: 'Bank Transfer', cash: 'Cash', account: 'Account Balance',
+      };
+      const payLabel = payLabels[order.payment] || order.payment || '—';
+      const link = orderDetailLink(order.id);
+      const subject = 'Elken Order ' + order.id + ' — Your order details';
+      const body =
+        'Hello ' + (order.customer && order.customer.name ? order.customer.name : 'there') + ',\n\n' +
+        'Thank you for your order with Elken.\n\n' +
+        'Order: ' + order.id + '\n' +
+        'Product: ' + (item.name || '—') + ' × ' + qty + '\n' +
+        'Total: N' + (order.total || 0).toLocaleString() + '\n' +
+        'Delivery: ' + methodLabel + '\n' +
+        'Payment: ' + payLabel + '\n\n' +
+        'View your full order details here:\n' + link + '\n\n' +
+        'If you have any questions, reply to this email or contact hello@elkenafrica.com.\n\n' +
+        '— Elken Nigeria';
+      const email = (order.customer && order.customer.email) || '';
+      return 'mailto:' + encodeURIComponent(email) +
+        '?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(body);
+    }
 
-      document.getElementById('pickupCard').style.display = isPickup ? 'block' : 'none';
-      if (isPickup) applyPickup(o);
+    function renderOrder() {
+      const order = getOrder();
+      const metaHost = document.getElementById('orderMeta');
+      const pickupCard = document.getElementById('pickupCard');
+      const emailWrap = document.getElementById('orderEmailWrap');
+      const receiptBtn = document.getElementById('downloadReceipt');
+      // Download receipt — same shared document as order.html / the account list,
+      // and it works for guest orders too (no member data required).
+      if (receiptBtn) {
+        receiptBtn.hidden = !order;
+        receiptBtn.onclick = order ? () => {
+          try {
+            if (!window.OrderReceipt) throw new Error('Receipt module unavailable');
+            window.OrderReceipt.download(order);
+          } catch (err) {
+            console.error(err);
+            if (window.toast) window.toast(String(err.message || err), 'danger');
+          }
+        } : null;
+      }
+      if (!order) {
+        if (metaHost) metaHost.innerHTML = '<p>No order found.</p>';
+        if (emailWrap) emailWrap.style.display = 'none';
+        return;
+      }
 
-      // Order meta
-      const meta = document.getElementById('orderMeta');
-      const term = (o && o.term) || 12;
-      const down = (o && o.price) || 0;
-      const monthly = (o && o.monthly) || 0;
-      const signedAt = o && o.signedAt ? window.fmtDate(o.signedAt) : '—';
-      const product = (o && o.product) || '—';
-      const id = (o && o.id) || '—';
-      meta.innerHTML = `
-        <div class="row"><span class="k">${window.T.tr('shipping.order_id')}</span><span class="v" style="font-family:var(--font-mono)">${id}</span></div>
-        <div class="row"><span class="k">${window.T.tr('shipping.order_product')}</span><span class="v">${product}</span></div>
-        <div class="row"><span class="k">${window.T.tr('shipping.order_term')}</span><span class="v">${term} ${window.T.tr('common.months')}</span></div>
-        <div class="row"><span class="k">${window.T.tr('mall.down')}</span><span class="v">${window.Money.format(down)}</span></div>
-        <div class="row"><span class="k">${window.T.tr('mall.month_pay')}</span><span class="v">${window.Money.format(monthly)}/mo</span></div>
-        <div class="row"><span class="k">${window.T.tr('shipping.eta')}</span><span class="v" style="color:var(--brand-700)">${window.T.tr(etaKey)}</span></div>
-        <div class="row"><span class="k">${window.T.tr('shipping.order_signed')}</span><span class="v">${signedAt}</span></div>
+      const item = (order.items && order.items[0]) || {};
+      const qty = item.qty || 1;
+      const isPickup = order.delivery && order.delivery.method === 'pickup';
+      const methodLabel = isPickup ? window.T.tr('account.orders_method_pickup') : window.T.tr('account.orders_method_delivery');
+      const payLabels = {
+        card: 'Debit Card',
+        ussd: 'USSD',
+        bank: 'Bank Transfer',
+        paybank: 'Pay with Bank',
+        visaqr: 'Pay with Visa QR',
+        balance: 'Account Balance',
+        cod: 'Cash on delivery',
+      };
+      const payLabel = payLabels[order.payment] || order.payment || '—';
+
+      // Show BV only when logged in (visitor orders credit BV to referrer).
+      // NOTE: previously `!!(window.Auth && window.Auth.isLoggedIn)` — that is a
+      // function reference, always truthy, so guests were shown "BV earned".
+      const showBV = !!(window.Auth && typeof window.Auth.isLoggedIn === 'function' && window.Auth.isLoggedIn());
+      const rows = `
+        <div class="row"><span>Order</span><b>${order.id}</b></div>
+        <div class="row"><span>Product</span><b>${item.name || '—'} × ${qty}</b></div>
+        <div class="row"><span>Delivery</span><b>${methodLabel}</b></div>
+        <div class="row"><span>Payment</span><b>${payLabel}</b></div>
+        ${order.bv && showBV ? `<div class="row"><span>BV earned</span><b>+${order.bv} BV</b></div>` : ''}
+        ${order.referrerId && !showBV ? `<div class="row"><span>BV credited to</span><b>${order.referrerId}</b></div>` : ''}
+        <div class="row"><span>Total</span><b>N${(order.total || 0).toLocaleString()}</b></div>
+        ${order.customer ? `<div class="row"><span>Recipient</span><b>${order.customer.name || ''} · ${order.customer.phone || ''}</b></div>` : ''}
       `;
+      if (metaHost) metaHost.innerHTML = rows;
+
+      // Pickup card
+      if (pickupCard && isPickup) {
+        const loc = PICKUP_LOCATIONS[order.delivery.pickupLoc] || PICKUP_LOCATIONS.lagos;
+        pickupCard.style.display = 'block';
+        const nameEl = document.getElementById('pickupName');
+        const addrEl = document.getElementById('pickupAddr');
+        const hoursEl = document.getElementById('pickupHours');
+        const tagEl = document.getElementById('pickupTag');
+        if (nameEl) nameEl.textContent = window.T.tr(loc.nameKey);
+        if (addrEl) addrEl.textContent = window.T.tr(loc.addrKey);
+        if (hoursEl) hoursEl.textContent = window.T.tr(loc.hoursKey);
+        if (tagEl) { tagEl.style.display = loc.tag ? '' : 'none'; tagEl.textContent = loc.tag; }
+      } else if (pickupCard) {
+        pickupCard.style.display = 'none';
+      }
+
+      // Order detail link + email-to-self UI
+      if (emailWrap) {
+        const link = orderDetailLink(order.id);
+        const email = (order.customer && order.customer.email) || '';
+        emailWrap.style.display = 'block';
+        emailWrap.innerHTML = `
+          <div class="order-link-box">
+            <label>Order details link</label>
+            <div class="order-link-row">
+              <input class="ek-input" id="orderLinkInput" readonly value="${link.replace(/"/g, '&quot;')}" />
+              <button type="button" class="ek-btn ek-btn--secondary ek-btn--sm" id="copyOrderLink">Copy</button>
+            </div>
+            ${email
+              ? `<button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="emailOrderLink">
+                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l9 6 9-6M3 7v10h18V7H3z"/></svg>
+                   Email order link to ${email}
+                 </button>
+                 <p>We've opened your email app with the order link pre-filled. If it didn't open, use the button above. (Static demo: no server-side email is sent.)</p>`
+              : `<p>No email was provided at checkout, so we can't send a link automatically.</p>`}
+          </div>
+        `;
+        const copyBtn = document.getElementById('copyOrderLink');
+        if (copyBtn) copyBtn.addEventListener('click', () => {
+          const inp = document.getElementById('orderLinkInput');
+          inp.select();
+          try { navigator.clipboard.writeText(inp.value); } catch (e) { document.execCommand('copy'); }
+          copyBtn.textContent = 'Copied';
+          setTimeout(() => copyBtn.textContent = 'Copy', 1500);
+        });
+        const emailBtn = document.getElementById('emailOrderLink');
+        if (emailBtn) emailBtn.addEventListener('click', () => { location.href = buildOrderMailto(order); });
+
+        // Auto-open the email once (guarded so a refresh doesn't re-trigger it).
+        if (email) {
+          const sentKey = 'al_emailed_' + order.id;
+          if (!sessionStorage.getItem(sentKey)) {
+            sessionStorage.setItem(sentKey, '1');
+            setTimeout(() => { location.href = buildOrderMailto(order); }, 1200);
+          }
+        }
+      }
     }
 
-    function applyI18nShipping() {
-      document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = window.T.tr(el.dataset.i18n));
-      const o = getOrder();
-      render(o);
-
-      document.getElementById('accountBtn').addEventListener('click', () => {
-        location.href = 'account.html';
-      });
-      document.getElementById('contactBtn').addEventListener('click', () => {
-        window.toast('Support will contact you within 1 business day.', 'info');
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', applyI18nShipping);
+    document.addEventListener('DOMContentLoaded', renderOrder);
+    window.addEventListener('al:langchange', renderOrder);
   </script>
 </body>
 </html>

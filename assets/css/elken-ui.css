@@ -1,0 +1,833 @@
+/* ==========================================================================
+   Elken UI — components / 组件库
+   v1.1.1   Load AFTER elken-tokens.css and elken-base.css.
+
+   HOW TO USE / 使用方式
+   Every component is plain HTML + a class. No framework, no build step —
+   works in React, Vue, plain PHP or a static page. Behaviour that needs
+   JavaScript is in elken-ui.js and is driven by data- attributes only.
+   全部是「原生 HTML + class」，不依赖框架、不需要打包。需要交互的部分在
+   elken-ui.js 里，只通过 data- 属性驱动。
+
+   HOW TO CUSTOMISE / 如何定制
+   Each component exposes local custom properties (--ek-xxx) you can override
+   per instance, WITHOUT editing this file:
+   每个组件都暴露局部变量，按需在实例上覆盖即可，不要改这个文件：
+
+       <div class="ek-card" style="--card-pad: var(--ek-32)">…</div>
+
+   NAMING / 命名规范
+   .ek-block__element--modifier   (BEM)
+   Keep the ek- prefix so portal classes never collide with the marketing
+   site or with a third-party stylesheet. 保留 ek- 前缀，避免样式冲突。
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. BUTTON / 按钮
+   ========================================================================== */
+.ek-btn {
+  --btn-bg:     var(--ek-blue);
+  --btn-ink:    var(--ek-white);
+  --btn-border: transparent;
+  --btn-pad-y:  11px;
+  --btn-pad-x:  var(--ek-20);
+
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--ek-8);
+  padding: var(--btn-pad-y) var(--btn-pad-x);
+  min-height: 44px;                    /* touch target / 触摸目标不小于 44px */
+  border: 1px solid var(--btn-border);
+  border-radius: var(--ek-radius);
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  font-size: var(--ek-text);
+  font-weight: var(--ek-w-bold);
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--ek-fast) var(--ek-ease), opacity var(--ek-fast);
+  white-space: nowrap;
+}
+.ek-btn:hover  { background: var(--ek-blue-hover); color: var(--btn-ink); text-decoration: none; }
+.ek-btn:disabled, .ek-btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+
+.ek-btn--secondary { --btn-bg: transparent; --btn-ink: var(--ek-blue); --btn-border: var(--ek-border-strong); }
+.ek-btn--secondary:hover { background: var(--ek-grey-light); color: var(--ek-blue); }
+
+.ek-btn--ghost { --btn-bg: transparent; --btn-ink: var(--ek-blue); }
+.ek-btn--ghost:hover { background: var(--ek-grey-light); color: var(--ek-blue); }
+
+.ek-btn--danger { --btn-bg: var(--ek-error); }
+.ek-btn--danger:hover { background: #8E1E17; }
+
+.ek-btn--sm { --btn-pad-y: 6px; --btn-pad-x: var(--ek-12); min-height: 34px; font-size: var(--ek-small); }
+.ek-btn--lg { --btn-pad-y: 14px; --btn-pad-x: var(--ek-32); min-height: 52px; }
+.ek-btn--block { display: flex; width: 100%; }
+
+/* Icon-only. Always give it an aria-label. / 纯图标按钮必须写 aria-label。 */
+.ek-btn--icon { --btn-pad-x: 0; width: 44px; padding-inline: 0; }
+.ek-btn--icon.ek-btn--sm { width: 34px; }
+
+
+/* ==========================================================================
+   2. CARD / 卡片   — the portal's basic container
+   ========================================================================== */
+.ek-card {
+  --card-pad: var(--ek-24);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-sm);
+  padding: var(--card-pad);
+  /* A column, so .ek-card__foot sits on the bottom edge no matter how much
+     content is above it. In a grid of cards of unequal height this is what
+     makes the footers line up as a row instead of stepping.
+     用纵向弹性布局，卡片底部（__foot）会贴底对齐；
+     否则一排高度不同的卡片，底部链接会参差不齐。 */
+  display: flex; flex-direction: column;
+}
+.ek-card > .ek-card__foot { margin-top: auto; }
+
+/* `margin-top: auto` above pushes the footer to the bottom edge — but auto
+   resolves to ZERO whenever the card is already as tall as its grid row, i.e.
+   on the tallest card in every row. The last line of content then sits hard
+   against the divider with no gap at all, which is exactly what it looks like:
+   a mistake. So the clearance is guaranteed on the element directly above the
+   footer instead, where no auto-margin can eat it.
+   上面的 margin-top: auto 负责把底部区域压到卡片底边，但当卡片已经等于整行高度时
+   （每行最高的那张卡就是这种情况），auto 会算成 0，正文最后一行直接贴着分割线。
+   所以把这段留白放在紧邻底部区域的上一个元素上，auto 就吃不掉它了。
+
+   :has() is Baseline widely available. If a browser did not support it the
+   result is the old zero-gap layout, not a broken card — a safe degradation.
+   :has() 已是主流可用特性；万一不支持，只是回到没有留白的旧效果，不会布局错乱。 */
+.ek-card > *:has(+ .ek-card__foot) { margin-bottom: var(--ek-24); }
+.ek-card--flush { --card-pad: 0; overflow: hidden; }   /* for a table inside */
+.ek-card--quiet { box-shadow: none; }
+
+.ek-card__head {
+  display: flex; align-items: center; gap: var(--ek-12);
+  margin: 0 0 var(--ek-16);
+}
+.ek-card__title { margin: 0; font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue); }
+/* margin-top is 24, not 16: at 16 the last line of card content sat almost on
+   the divider and the card read as cramped. / 上边距用 24 而不是 16，
+   16 时正文最后一行几乎贴着分割线，卡片显得局促。 */
+.ek-card__foot {
+  margin: var(--ek-24) calc(var(--card-pad) * -1) calc(var(--card-pad) * -1);
+  padding: var(--ek-12) var(--card-pad);
+  border-top: 1px solid var(--ek-border);
+  background: var(--ek-surface-sunken);
+  border-radius: 0 0 var(--ek-radius-lg) var(--ek-radius-lg);
+}
+
+
+/* ==========================================================================
+   3. STAT CARD / 数据卡  — BV, Ecoin, totals
+
+   Three levels of information, and the type does the work:
+     label  small, uppercase, tracked, muted  — you read it once
+     value  large, tight, tabular             — this is what the eye lands on
+     delta  a tinted pill, not loose text     — a state, so it looks like one
+   三层信息，全部靠字体区分：标签（小、大写、字距、灰）→ 数值（大、紧、等宽）
+   → 变化（带底色的小胶囊）。变化是一种状态，就该长得像状态。
+
+   There is deliberately no coloured rule down the side. It carried no
+   information — every card had one, in a different colour, meaning nothing —
+   and it read as a stray artefact rather than a decision. If a set of stats
+   really does need colour-coding, use a chip: a chip has a label.
+   刻意去掉了左侧色条：每张卡都有、颜色各不相同、却不表达任何含义，
+   看起来像是画错了而不是设计过。确实需要颜色区分时请用 chip，它带文字说明。
+   ========================================================================== */
+.ek-stat { display: flex; flex-direction: column; align-items: flex-start; }
+
+.ek-stat__label {
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--ek-muted);
+  margin-bottom: var(--ek-8);
+}
+.ek-stat__value {
+  font-size: 34px; line-height: 1.05;
+  font-weight: var(--ek-w-bold);
+  letter-spacing: -0.6px;
+  color: var(--ek-blue);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+/* A currency prefix. It needs its own letter-spacing because the value's
+   negative tracking pulls the symbol into the first digit — ₦18.9 collides.
+   货币前缀。数值用了负字距，会把符号挤到第一个数字上，所以这里单独重置字距。 */
+.ek-stat__pre {
+  font-size: .72em; font-weight: var(--ek-w-medium);
+  letter-spacing: 0; margin-right: 3px;
+}
+
+/* The unit is not part of the number. It sits smaller and lighter so the digits
+   keep their weight. / 单位不属于数字本身，做小做浅，让数字保持分量。 */
+.ek-stat__unit {
+  font-size: var(--ek-small); font-weight: var(--ek-w-medium);
+  color: var(--ek-muted); margin-left: 5px; letter-spacing: 0;
+}
+.ek-stat__note  { font-size: var(--ek-caption); color: var(--ek-muted); margin-top: var(--ek-12); text-wrap: pretty; }
+
+.ek-stat__delta {
+  display: inline-flex; align-items: center; gap: var(--ek-4);
+  margin-top: var(--ek-12);
+  padding: 3px var(--ek-8);
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-neutral-tint); color: var(--ek-neutral);
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
+  line-height: 1.5;
+}
+/* align-items: flex-start above makes every child shrink to its own content —
+   which is right for the label, value and delta, and wrong for anything that has
+   to span the card. Those opt back out here. A progress bar that silently
+   collapsed to zero width is the failure this prevents.
+   上面的 flex-start 会让子元素收缩到自身内容宽度，标签/数值/变化都需要这样，
+   但需要通栏的元素（进度条等）必须在这里恢复整宽，否则会被压成 0 宽。 */
+.ek-stat > .ek-progress,
+.ek-stat > .ek-progress__meta,
+.ek-stat__full { align-self: stretch; width: 100%; }
+.ek-stat > .ek-progress { margin-top: var(--ek-16); }
+
+.ek-stat__delta--up   { background: var(--ek-success-tint); color: var(--ek-success); }
+.ek-stat__delta--down { background: var(--ek-error-tint);   color: var(--ek-error); }
+/* The comparison period is context, not the number. / 对比区间是上下文，不是数值。 */
+.ek-stat__delta span  { font-weight: var(--ek-w-medium); opacity: .85; }
+
+
+/* ==========================================================================
+   4. STATUS CHIP / 状态标签
+   Use for order status, membership tier, payment state.
+   ========================================================================== */
+.ek-chip {
+  --chip-bg:  var(--ek-neutral-tint);
+  --chip-ink: var(--ek-neutral);
+  display: inline-flex; align-items: center; gap: var(--ek-4);
+  padding: 3px var(--ek-12);
+  border-radius: var(--ek-radius-pill);
+  background: var(--chip-bg);
+  color: var(--chip-ink);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.ek-chip--success { --chip-bg: var(--ek-success-tint); --chip-ink: var(--ek-success); }
+.ek-chip--warning { --chip-bg: var(--ek-warning-tint); --chip-ink: var(--ek-warning); }
+.ek-chip--error   { --chip-bg: var(--ek-error-tint);   --chip-ink: var(--ek-error); }
+.ek-chip--info    { --chip-bg: var(--ek-info-tint);    --chip-ink: var(--ek-info); }
+.ek-chip--brand   { --chip-bg: #E8E9F1;                --chip-ink: var(--ek-blue); }
+
+/* A dot before the label, same colour as the text. / 标签前的小圆点。 */
+.ek-chip--dot::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; flex: none;
+}
+
+
+/* ==========================================================================
+   5. TABLE / 表格
+   Wrap in .ek-table-wrap so it scrolls instead of breaking the layout.
+   外层套 .ek-table-wrap，窄屏时横向滚动而不是撑破布局。
+   ========================================================================== */
+/* min-width: 0 is required, not decorative — a flex or grid ancestor (the
+   .ek-card this usually sits in included) gives its children min-width:auto
+   by default, which lets them refuse to shrink below the table's content
+   width and pushes the overflow out to the page instead of scrolling here.
+   min-width:0 是必需的：父级只要是 flex/grid（包括常见的 .ek-card），子元素
+   默认 min-width:auto，会拒绝缩小到比表格内容更窄，横向溢出就会顶开页面，
+   而不是在这里滚动。 */
+.ek-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; min-width: 0; }
+
+.ek-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ek-small);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.ek-table th, .ek-table td {
+  padding: var(--ek-12) var(--ek-16);
+  text-align: left;
+  border-bottom: 1px solid var(--ek-border);
+  vertical-align: middle;
+}
+.ek-table thead th {
+  background: var(--ek-surface-sunken);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-muted);
+  font-size: var(--ek-caption);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ek-table tbody tr:last-child td { border-bottom: 0; }
+.ek-table tbody tr:hover { background: var(--ek-surface-sunken); }
+.ek-table__num { text-align: right; }
+.ek-table__actions { text-align: right; white-space: nowrap; }
+
+/* MOBILE / 手机端
+   Below 640px each row becomes a stacked card and the column name is printed
+   from data-label. Put data-label on EVERY td.
+   小屏下每行变成一张卡片，列名从 data-label 读取，所以每个 td 都要写。
+       <td data-label="订单号">EK-1024</td>                                 */
+@media (max-width: 639px) {
+  .ek-table--stack thead { display: none; }
+  .ek-table--stack, .ek-table--stack tbody, .ek-table--stack tr, .ek-table--stack td { display: block; width: 100%; }
+  .ek-table--stack tr {
+    border: 1px solid var(--ek-border); border-radius: var(--ek-radius);
+    margin-bottom: var(--ek-12); padding: var(--ek-4) 0; background: var(--ek-surface);
+  }
+  .ek-table--stack td {
+    display: flex; justify-content: space-between; gap: var(--ek-16);
+    border-bottom: 1px dashed var(--ek-border); text-align: right;
+  }
+  .ek-table--stack td:last-child { border-bottom: 0; }
+  .ek-table--stack td::before {
+    content: attr(data-label);
+    font-weight: var(--ek-w-bold); color: var(--ek-muted);
+    text-align: left; flex: none;
+  }
+}
+
+
+/* ==========================================================================
+   6. KEY–VALUE LIST / 键值列表  — profile fields, order summary
+   ========================================================================== */
+.ek-kv { margin: 0; display: grid; grid-template-columns: var(--kv-label, 40%) 1fr; }
+.ek-kv dt {
+  padding: var(--ek-12) var(--ek-16) var(--ek-12) 0;
+  color: var(--ek-muted); font-size: var(--ek-small);
+  border-bottom: 1px solid var(--ek-border);
+}
+.ek-kv dd {
+  margin: 0; padding: var(--ek-12) 0;
+  font-weight: var(--ek-w-medium);
+  border-bottom: 1px solid var(--ek-border);
+}
+.ek-kv dt:last-of-type, .ek-kv dd:last-of-type { border-bottom: 0; }
+@media (max-width: 479px) { .ek-kv { grid-template-columns: 1fr; }
+  .ek-kv dt { border-bottom: 0; padding-bottom: 0; }
+  .ek-kv dd { padding-top: var(--ek-4); } }
+
+
+/* ==========================================================================
+   7. PROGRESS / 进度条  — tier progress, filter life, upload
+   ========================================================================== */
+.ek-progress {
+  --pct: 0%;
+  height: 8px; border-radius: var(--ek-radius-pill);
+  background: var(--ek-grey-mid); overflow: hidden;
+}
+.ek-progress__bar {
+  height: 100%; width: var(--pct);
+  background: var(--bar, var(--ek-aqua));
+  border-radius: inherit;
+  transition: width var(--ek-slow) var(--ek-ease);
+}
+.ek-progress__meta { display: flex; justify-content: space-between; font-size: var(--ek-caption); color: var(--ek-muted); margin-top: var(--ek-4); }
+
+
+/* ==========================================================================
+   8. TABS / 选项卡
+   Markup: role="tablist" > button[role=tab][aria-controls] , div[role=tabpanel]
+   Behaviour in elken-ui.js. / 交互见 elken-ui.js。
+   ========================================================================== */
+.ek-tabs {
+  display: flex; gap: var(--ek-4);
+  border-bottom: 1px solid var(--ek-border);
+  overflow-x: auto; scrollbar-width: none;
+}
+.ek-tabs::-webkit-scrollbar { display: none; }
+.ek-tab {
+  padding: var(--ek-12) var(--ek-16);
+  border: 0; background: none; cursor: pointer;
+  font-size: var(--ek-text); font-weight: var(--ek-w-medium); color: var(--ek-muted);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  white-space: nowrap;
+  transition: color var(--ek-fast) var(--ek-ease);
+}
+.ek-tab:hover { color: var(--ek-blue); }
+.ek-tab[aria-selected="true"] { color: var(--ek-blue); font-weight: var(--ek-w-bold); border-bottom-color: var(--ek-blue); }
+/* The sitewide :focus-visible ring (elken-base.css) extends outward via
+   box-shadow, but .ek-tabs only has a 4px gap between tabs — an adjacent
+   tab's opaque background paints over most of the ring (it's later in DOM
+   order), leaving just a stray sliver visible at the shared edge. Draw the
+   ring inset instead so it stays inside the tab's own box. */
+.ek-tab:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--ek-aqua);
+  border-radius: var(--ek-radius-sm);
+}
+.ek-tabpanel { padding-top: var(--ek-24); }
+.ek-tabpanel[hidden] { display: none; }
+
+
+/* ==========================================================================
+   9. ALERT / NOTICE / 提示条  — includes the offline banner
+   ========================================================================== */
+.ek-alert {
+  --alert-bg:  var(--ek-info-tint);
+  --alert-ink: var(--ek-info);
+  display: flex; gap: var(--ek-12); align-items: flex-start;
+  padding: var(--ek-12) var(--ek-16);
+  border-left: 3px solid var(--alert-ink);
+  border-radius: var(--ek-radius);
+  background: var(--alert-bg);
+  color: var(--ek-charcoal);
+  font-size: var(--ek-small);
+}
+.ek-alert__icon  { color: var(--alert-ink); flex: none; margin-top: 1px; }
+.ek-alert__title { font-weight: var(--ek-w-bold); color: var(--alert-ink); }
+.ek-alert__body  { margin: 0; }
+.ek-alert--success { --alert-bg: var(--ek-success-tint); --alert-ink: var(--ek-success); }
+.ek-alert--warning { --alert-bg: var(--ek-warning-tint); --alert-ink: var(--ek-warning); }
+.ek-alert--error   { --alert-bg: var(--ek-error-tint);   --alert-ink: var(--ek-error); }
+.ek-alert--neutral { --alert-bg: var(--ek-neutral-tint); --alert-ink: var(--ek-neutral); }
+
+
+/* ==========================================================================
+   10. EMPTY STATE / 空状态
+   An empty screen must say what is missing AND what to do about it.
+   空状态必须说明「没有什么」和「下一步做什么」，不能只放一句「暂无数据」。
+   ========================================================================== */
+.ek-empty {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: var(--ek-12); padding: var(--ek-56) var(--ek-24);
+  color: var(--ek-muted);
+}
+.ek-empty__icon { color: var(--ek-grey-out); }
+.ek-empty__title { font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue); margin: 0; }
+.ek-empty__body { margin: 0; max-width: 42ch; }
+
+
+/* ==========================================================================
+   11. FORM / 表单
+   ========================================================================== */
+.ek-form { display: grid; gap: var(--ek-20); grid-template-columns: repeat(var(--form-cols, 2), minmax(0, 1fr)); }
+.ek-field { display: flex; flex-direction: column; gap: var(--ek-4); }
+.ek-field--wide { grid-column: 1 / -1; }
+.ek-field > label { font-size: var(--ek-small); font-weight: var(--ek-w-bold); color: var(--ek-charcoal); }
+.ek-field__hint  { font-size: var(--ek-caption); color: var(--ek-muted); }
+
+.ek-input, .ek-select, .ek-textarea {
+  width: 100%;
+  padding: 11px var(--ek-12);
+  min-height: 44px;
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border-strong);
+  border-radius: var(--ek-radius);
+  font-size: var(--ek-text);
+  color: var(--ek-charcoal);
+  transition: border-color var(--ek-fast) var(--ek-ease);
+}
+.ek-textarea { min-height: 120px; resize: vertical; }
+.ek-input:hover, .ek-select:hover, .ek-textarea:hover { border-color: var(--ek-steel); }
+.ek-input:focus, .ek-select:focus, .ek-textarea:focus { border-color: var(--ek-aqua); }
+.ek-input:disabled, .ek-select:disabled, .ek-textarea:disabled { background: var(--ek-grey-light); color: var(--ek-muted); cursor: not-allowed; }
+.ek-input::placeholder, .ek-textarea::placeholder { color: #9AA3A9; }
+
+/* Error state. Set aria-invalid="true" as well — colour alone is not a
+   message for a colour-blind or screen-reader user.
+   出错时同时设置 aria-invalid，不能只靠颜色传达信息。 */
+.ek-field.is-invalid .ek-input,
+.ek-field.is-invalid .ek-select,
+.ek-field.is-invalid .ek-textarea { border-color: var(--ek-error); background: var(--ek-error-tint); }
+.ek-field__error { font-size: var(--ek-caption); color: var(--ek-error); margin: 0; }
+
+/* The action row. This is a named component and not `.ek-field--wide .ek-row`
+   stacked together, because the pattern appears on every form and because
+   composing it by hand is exactly how the buttons ended up stacked vertically:
+   .ek-field carries `flex-direction: column`, and .ek-row on the same tag did
+   not override it. One class, one job, no ambiguity.
+   操作按钮行做成独立组件，而不是把 .ek-field--wide 和 .ek-row 叠在同一个标签上。
+   每个表单都要用，而且手工拼装正是按钮上下堆叠那个 bug 的成因：
+   .ek-field 自带纵向布局，同标签上的 .ek-row 覆盖不了它。 */
+.ek-form__actions {
+  grid-column: 1 / -1;
+  display: flex; flex-direction: row; align-items: center; flex-wrap: wrap;
+  gap: var(--ek-12);
+  margin-top: var(--ek-4);
+  padding-top: var(--ek-24);
+  border-top: 1px solid var(--ek-border);
+}
+/* On a narrow phone the buttons share the row rather than shrinking to nothing.
+   窄屏下按钮平分整行，而不是各自缩到最小。 */
+@media (max-width: 479px) { .ek-form__actions > .ek-btn { flex: 1 1 auto; } }
+
+@media (max-width: 767px) { .ek-form { --form-cols: 1; } }
+
+/* Checkbox / radio / switch — 复选框 / 单选 / 开关 */
+.ek-check { display: flex; align-items: flex-start; gap: var(--ek-8); font-size: var(--ek-small); cursor: pointer; }
+.ek-check input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--ek-blue); flex: none; }
+
+.ek-switch { display: inline-flex; align-items: center; gap: var(--ek-12); cursor: pointer; }
+.ek-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.ek-switch__track {
+  width: 44px; height: 24px; border-radius: var(--ek-radius-pill);
+  background: var(--ek-grey-out); position: relative;
+  transition: background var(--ek-fast) var(--ek-ease); flex: none;
+}
+.ek-switch__track::after {
+  content: ""; position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%; background: var(--ek-white);
+  transition: transform var(--ek-fast) var(--ek-ease);
+}
+.ek-switch input:checked + .ek-switch__track { background: var(--ek-aqua); }
+.ek-switch input:checked + .ek-switch__track::after { transform: translateX(20px); }
+.ek-switch input:focus-visible + .ek-switch__track { box-shadow: var(--ek-focus-ring); }
+
+
+/* ==========================================================================
+   12. COPY FIELD / 复制字段  — referral link, member ID
+   ========================================================================== */
+.ek-copy { display: flex; gap: var(--ek-8); }
+.ek-copy .ek-input { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: var(--ek-small); }
+
+
+/* ==========================================================================
+   13. PAGINATION / 分页
+   ========================================================================== */
+.ek-pager { display: flex; align-items: center; gap: var(--ek-4); flex-wrap: wrap; }
+.ek-pager__btn {
+  min-width: 36px; height: 36px; padding: 0 var(--ek-8);
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--ek-border); border-radius: var(--ek-radius-sm);
+  background: var(--ek-surface); color: var(--ek-charcoal);
+  font-size: var(--ek-small); cursor: pointer; text-decoration: none;
+}
+.ek-pager__btn:hover { background: var(--ek-grey-light); text-decoration: none; }
+.ek-pager__btn[aria-current="page"] { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); font-weight: var(--ek-w-bold); }
+.ek-pager__btn:disabled { opacity: .4; cursor: not-allowed; }
+.ek-pager__info { margin-left: auto; font-size: var(--ek-small); color: var(--ek-muted); }
+
+
+/* ==========================================================================
+   14. MODAL / DIALOG / 弹窗
+   Uses the native <dialog> element — the browser handles the backdrop,
+   Esc to close, and focus trapping for you. Do not rebuild those by hand.
+   用原生 <dialog>，浏览器自带遮罩、Esc 关闭和焦点锁定，不用自己实现。
+   ========================================================================== */
+.ek-modal {
+  width: min(560px, calc(100vw - var(--ek-32)));
+  padding: 0;
+  border: 0;
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-lg);
+  color: var(--ek-body-ink);
+}
+.ek-modal::backdrop { background: rgba(13, 20, 23, .45); }
+.ek-modal__head {
+  display: flex; align-items: flex-start; gap: var(--ek-16);
+  padding: var(--ek-24) var(--ek-24) var(--ek-12);
+}
+.ek-modal__title { margin: 0; font-size: var(--ek-h3); font-weight: var(--ek-w-bold); color: var(--ek-blue); }
+.ek-modal__body { padding: 0 var(--ek-24) var(--ek-24); }
+.ek-modal__foot {
+  display: flex; justify-content: flex-end; gap: var(--ek-8);
+  padding: var(--ek-16) var(--ek-24);
+  border-top: 1px solid var(--ek-border); background: var(--ek-surface-sunken);
+  border-radius: 0 0 var(--ek-radius-lg) var(--ek-radius-lg);
+}
+
+
+/* ==========================================================================
+   15. TOAST / 轻提示
+   Container is created by elken-ui.js. Call ElkenUI.toast("已保存").
+   ========================================================================== */
+.ek-toasts {
+  position: fixed; right: var(--ek-16); bottom: var(--ek-16);
+  z-index: var(--ek-z-toast);
+  display: flex; flex-direction: column; gap: var(--ek-8);
+  pointer-events: none;
+}
+.ek-toast {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: var(--ek-8);
+  padding: var(--ek-12) var(--ek-16);
+  border-radius: var(--ek-radius);
+  background: var(--ek-charcoal); color: var(--ek-white);
+  font-size: var(--ek-small); box-shadow: var(--ek-shadow-lg);
+  animation: ek-toast-in var(--ek-fast) var(--ek-ease);
+  max-width: min(360px, calc(100vw - var(--ek-32)));
+}
+.ek-toast--success { background: var(--ek-success); }
+.ek-toast--error   { background: var(--ek-error); }
+@keyframes ek-toast-in { from { opacity: 0; transform: translateY(8px); } }
+
+
+/* ==========================================================================
+   16. SKELETON / 骨架屏  — while data loads
+   Better than a spinner: the page does not jump when the data arrives.
+   比转圈更好：数据到达时页面不会跳动。
+   ========================================================================== */
+.ek-skeleton {
+  background: linear-gradient(90deg, var(--ek-grey-mid) 25%, #F5F6F7 37%, var(--ek-grey-mid) 63%);
+  background-size: 400% 100%;
+  animation: ek-shimmer 1.4s ease infinite;
+  border-radius: var(--ek-radius-sm);
+  height: var(--h, 14px);
+  width: var(--w, 100%);
+}
+@keyframes ek-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+@media (prefers-reduced-motion: reduce) { .ek-skeleton { animation: none; } }
+
+.ek-spinner {
+  width: var(--size, 20px); height: var(--size, 20px);
+  border: 2px solid var(--ek-grey-out); border-top-color: var(--ek-aqua);
+  border-radius: 50%; animation: ek-spin .7s linear infinite;
+}
+@keyframes ek-spin { to { transform: rotate(360deg); } }
+
+
+/* ==========================================================================
+   17. AVATAR / IDENTITY / 头像与身份
+   ========================================================================== */
+.ek-avatar {
+  --size: 40px;
+  width: var(--size); height: var(--size); border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--ek-blue); color: var(--ek-white);
+  font-size: calc(var(--size) * .38); font-weight: var(--ek-w-bold);
+  overflow: hidden; flex: none; text-transform: uppercase;
+}
+.ek-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.ek-identity { display: flex; align-items: center; gap: var(--ek-12); }
+.ek-identity__name { font-weight: var(--ek-w-bold); color: var(--ek-blue); }
+.ek-identity__meta { font-size: var(--ek-caption); color: var(--ek-muted); }
+
+
+/* ==========================================================================
+   18. APP SHELL / 应用框架  — sidebar + topbar + content
+   The portal is an application, so it gets an app layout, not a marketing
+   page layout. / 会员中心是应用，用应用型框架而不是官网的页面结构。
+   ========================================================================== */
+.ek-app { min-height: 100dvh; display: grid; grid-template-columns: var(--ek-sidebar-w) 1fr; }
+
+.ek-side {
+  background: var(--ek-blue); color: var(--ek-white);
+  display: flex; flex-direction: column; gap: var(--ek-4);
+  padding: var(--ek-20) var(--ek-12);
+  position: sticky; top: 0; height: 100dvh; overflow-y: auto;
+}
+.ek-side__brand { padding: var(--ek-8) var(--ek-12) var(--ek-24); }
+.ek-side__brand img { height: 28px; width: auto; }
+.ek-side__group { margin-top: var(--ek-16); padding: 0 var(--ek-12) var(--ek-4);
+  font-size: var(--ek-caption); letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+.ek-side__link {
+  display: flex; align-items: center; gap: var(--ek-12);
+  padding: var(--ek-12); border-radius: var(--ek-radius);
+  color: rgba(255,255,255,.82); font-size: var(--ek-small); font-weight: var(--ek-w-medium);
+  text-decoration: none;
+}
+.ek-side__link:hover { background: rgba(255,255,255,.09); color: var(--ek-white); text-decoration: none; }
+.ek-side__link[aria-current="page"] { background: rgba(255,255,255,.14); color: var(--ek-white); font-weight: var(--ek-w-bold); }
+.ek-side__link svg { flex: none; opacity: .9; }
+
+.ek-main { min-width: 0; display: flex; flex-direction: column; }
+
+.ek-topbar {
+  position: sticky; top: 0; z-index: var(--ek-z-header);
+  min-height: var(--ek-header-h);
+  display: flex; align-items: center; gap: var(--ek-16);
+  padding: var(--ek-12) var(--ek-page-pad);
+  background: var(--ek-surface); border-bottom: 1px solid var(--ek-border);
+}
+.ek-topbar__title { font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue); margin: 0; }
+
+.ek-content { padding: var(--ek-32) var(--ek-page-pad) var(--ek-64); flex: 1; }
+
+/* Page header inside the content area / 内容区页头 */
+.ek-pagehead { display: flex; align-items: flex-start; gap: var(--ek-16); flex-wrap: wrap; margin-bottom: var(--ek-24); }
+.ek-pagehead__text { flex: 1 1 320px; min-width: 0; }
+.ek-pagehead__sub { margin: var(--ek-4) 0 0; color: var(--ek-muted); }
+
+/* Breadcrumb / 面包屑 */
+.ek-crumb { display: flex; flex-wrap: wrap; gap: var(--ek-8); font-size: var(--ek-caption); color: var(--ek-muted); margin-bottom: var(--ek-8); }
+.ek-crumb a { color: var(--ek-muted); }
+.ek-crumb a:hover { color: var(--ek-aqua); }
+
+.ek-side__toggle { display: none; }
+
+/* MOBILE / 手机端: the sidebar becomes an off-canvas drawer.
+   elken-ui.js toggles [data-side-open] on .ek-app. */
+@media (max-width: 1023px) {
+  .ek-app { grid-template-columns: 1fr; }
+  .ek-side {
+    position: fixed; inset: 0 auto 0 0; width: min(var(--ek-sidebar-w), 82vw);
+    z-index: var(--ek-z-drawer);
+    transform: translateX(-100%);
+    transition: transform var(--ek-slow) var(--ek-ease);
+  }
+  .ek-app[data-side-open] .ek-side { transform: none; }
+  .ek-app[data-side-open]::after {
+    content: ""; position: fixed; inset: 0; background: rgba(13,20,23,.45);
+    z-index: calc(var(--ek-z-drawer) - 1);
+  }
+  .ek-side__toggle { display: inline-flex; }
+}
+
+/* NOTE / 注意: this `display: none` must come BEFORE the media query above,
+   not after it. Same specificity means later source order wins, and putting
+   it last hides the menu button at every width — the drawer then has no way
+   to open on a phone. This exact bug shipped for ten minutes.
+   同样权重下「后写的赢」。这条必须写在上面的媒体查询之前，
+   否则手机端汉堡菜单永远不显示、抽屉打不开。 */
+
+
+/* ==========================================================================
+   19. TREE / 团队树  — sponsor network
+
+   HOW THE CONNECTORS WORK / 连接线的画法
+   Every child <li> draws its own elbow with ONE pseudo-element: a box with a
+   left border, a bottom border and a rounded bottom-left corner. Its height is
+   --tree-anchor — the exact distance from the top of the li to the centre of
+   that member's avatar — so the horizontal arm always meets the avatar dead on.
+   每个子节点用一个伪元素画「┗」形拐角：左边框 + 下边框 + 左下圆角。
+   它的高度等于 --tree-anchor（从 li 顶部到头像中心的距离），
+   所以横线永远正对头像中心。
+
+   A second pseudo-element continues the vertical line downward — but only on
+   items that are NOT the last child. That is what makes the last branch stop
+   cleanly instead of the line running past it into empty space, which is the
+   single thing that makes a tree readable.
+   第二个伪元素把竖线继续向下延伸，但只加在「非最后一个」节点上。
+   最后一支到此为止、竖线不再往下拖，树才读得懂。
+
+   --tree-anchor is arithmetic, not a guess: row gap + node padding + half the
+   avatar. Change the avatar size or the padding and the lines follow.
+   --tree-anchor 是算出来的（行间距 + 节点内边距 + 头像半径），
+   改头像尺寸或内边距，连接线会自动跟上。
+   ========================================================================== */
+.ek-tree {
+  --tree-avatar: 32px;      /* avatar size in the tree / 树内头像尺寸 */
+  --tree-pad-y:  var(--ek-8);
+  --tree-pad-x:  var(--ek-8);
+  --tree-gap:    var(--ek-4);     /* vertical gap between siblings / 同级间距 */
+  --tree-arm:    22px;            /* length of the horizontal elbow / 横线长度 */
+  --tree-line:   var(--ek-grey-out);
+  --tree-anchor: calc(var(--tree-gap) + var(--tree-pad-y) + var(--tree-avatar) / 2);
+
+  list-style: none; margin: 0; padding: 0;
+}
+.ek-tree ul { list-style: none; margin: 0; padding: 0; }
+
+/* Children indent to sit under the PARENT's avatar centre, then clear the arm.
+   子级缩进量 = 父级头像中心位置，再让开横线长度。 */
+.ek-tree ul {
+  margin-left: calc(var(--tree-pad-x) + var(--tree-avatar) / 2);
+  padding-left: var(--tree-arm);
+}
+.ek-tree li { position: relative; padding: var(--tree-gap) 0; }
+
+/* The elbow: ┗  / 拐角 */
+.ek-tree ul > li::before {
+  content: ""; position: absolute; z-index: 2;
+  left: calc(var(--tree-arm) * -1); top: 0;
+  /* The arm runs THROUGH the node's own left padding so it finishes against the
+     avatar, not 8px short of it. Stopping at the node's edge left a gap that
+     read as "not connected" at a 1px line weight.
+     横线穿过节点自身的左内边距，一直画到头像边缘。只画到节点边缘会留下 8px 空隙，
+     1px 细线在这个距离下看起来是断开的。 */
+  width: calc(var(--tree-arm) + var(--tree-pad-x)); height: var(--tree-anchor);
+  border-left: 1px solid var(--tree-line);
+  border-bottom: 1px solid var(--tree-line);
+  border-bottom-left-radius: 10px;
+}
+/* The line continuing down to the next sibling. Not on the last one.
+   通往下一个同级节点的竖线，最后一个不画。 */
+.ek-tree ul > li:not(:last-child)::after {
+  content: ""; position: absolute; z-index: 2;
+  left: calc(var(--tree-arm) * -1); top: var(--tree-anchor); bottom: 0;
+  border-left: 1px solid var(--tree-line);
+}
+
+/* THE NODE / 节点
+   align-items: flex-start keeps the avatar's centre at a fixed distance from
+   the top of the row no matter how much text is beside it — which is what lets
+   --tree-anchor be a constant. Do not change it to center.
+   顶部对齐能让头像中心与行顶的距离恒定，--tree-anchor 才能是常量。
+   不要改成居中对齐。 */
+.ek-tree__node {
+  /* fit-content, so the hover fill and the root's tint hug the member's details
+     instead of stretching a bar across a 1200px card with nothing in it.
+     用 fit-content，让悬停底色和根节点底色只包住内容，
+     而不是在 1200px 宽的卡片上拉出一条几乎全空的色带。 */
+  width: fit-content; max-width: 100%;
+  position: relative; z-index: 1;
+  display: flex; align-items: flex-start; gap: var(--ek-12);
+  padding: var(--tree-pad-y) var(--tree-pad-x) var(--tree-pad-y) var(--tree-pad-x);
+  padding-right: var(--ek-16);
+  border-radius: var(--ek-radius);
+  transition: background var(--ek-fast) var(--ek-ease);
+}
+.ek-tree__node:hover { background: var(--ek-surface-sunken); }
+.ek-tree__node .ek-avatar { --size: var(--tree-avatar); }
+
+.ek-tree__body { min-width: 0; }
+
+/* Name and status on ONE line. A status chip parked at the far right of a wide
+   card is a different reading task from the name it describes — the eye has to
+   travel, and on a wide screen it stops being obvious which row it belongs to.
+   姓名和状态放在同一行。把状态标签推到卡片最右边，眼睛要横跨整行去找，
+   宽屏下甚至看不出它属于哪一行。 */
+.ek-tree__name {
+  display: flex; align-items: center; gap: var(--ek-8); flex-wrap: wrap;
+  font-size: var(--ek-small); font-weight: var(--ek-w-bold); color: var(--ek-blue);
+  line-height: 1.4;
+}
+.ek-tree__meta {
+  display: block; margin-top: 2px;
+  font-size: var(--ek-caption); color: var(--ek-muted);
+}
+
+/* LEVELS / 层级
+   The root is the account holder, so it is heavier and sits on its own tinted
+   row. Depth then reads from indentation plus a small step down in weight —
+   enough to tell the levels apart, not so much that level three looks disabled.
+   根节点是本人，加重并给底色。往下靠缩进 + 轻微的字重递减来区分，
+   区别够用即可，不能让第三层看起来像被禁用。 */
+.ek-tree > li > .ek-tree__node {
+  background: var(--ek-surface-sunken);
+  border: 1px solid var(--ek-border);
+}
+.ek-tree > li > .ek-tree__node .ek-tree__name { font-size: var(--ek-text); }
+.ek-tree ul ul .ek-tree__name { font-weight: var(--ek-w-medium); }
+
+@media (max-width: 479px) {
+  .ek-tree { --tree-arm: 14px; --tree-avatar: 28px; }
+}
+
+
+/* ==========================================================================
+   20. UTILITIES / 工具类  — keep this list short on purpose
+   刻意保持很短：工具类一多就变成第二套设计系统。
+   ========================================================================== */
+/* Auto grid. --min sets the smallest a track can get before wrapping;
+   --cols pins an explicit count instead of auto-fit.
+   自适应网格。--min 设最小轨道宽度，--cols 可指定固定列数（默认 auto-fit）。
+       <div class="ek-grid" style="--min: 220px">…</div>
+       <div class="ek-grid" style="--cols: 2; --min: 300px">…</div>         */
+.ek-grid {
+  display: grid;
+  gap: var(--ek-24);
+  grid-template-columns: repeat(var(--cols, auto-fit), minmax(var(--min, 240px), 1fr));
+}
+/* An explicit --cols must still collapse on a phone, or two 300px tracks
+   overflow a 390px screen. Set the count, not the layout.
+   显式设置 --cols 的网格在手机端必须回到单列，否则会溢出。 */
+@media (max-width: 639px) {
+  .ek-grid { grid-template-columns: 1fr; }
+}
+
+.ek-mt-0  { margin-top: 0 !important; }
+.ek-mt-8  { margin-top: var(--ek-8); }
+.ek-mt-16 { margin-top: var(--ek-16); }
+.ek-mt-24 { margin-top: var(--ek-24); }
+.ek-mt-32 { margin-top: var(--ek-32); }
+.ek-right { text-align: right; }
+.ek-center { text-align: center; }
+.ek-nowrap { white-space: nowrap; }
+[hidden] { display: none !important; }

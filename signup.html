@@ -1,227 +1,781 @@
 <!doctype html>
 <html lang="en">
+
 <head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Create account · AquaLease Nigeria</title>
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%2300875A' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
-  <link rel="stylesheet" href="assets/css/design-system.css" />
-  <link rel="stylesheet" href="assets/css/components.css" />
-  <link rel="stylesheet" href="assets/css/pages.css" />
+  <title>Create account · Elken Nigeria</title>
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
+
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
+  <link rel="stylesheet" href="assets/css/login.css?v=20260909c">
+  <link rel="stylesheet" href="assets/css/signup.css?v=20260923a">
+  <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
+  <script src="assets/js/elken-ui.js" defer></script>
 </head>
+
 <body data-page="signup">
-  <div id="offline-banner" class="offline-banner">Offline mode · showing cached information</div>
-  <div id="app-header"></div>
 
-  <main class="auth-shell" data-mode="signup">
-    <div class="auth-card card" data-mode="signup">
-      <!-- Logo / brand mark (mobile only) -->
-      <a href="index.html" class="auth-mark" aria-label="AquaLease">
-        <span class="mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3 C 8 9 6 12 6 15 a6 6 0 0 0 12 0 c0-3-2-6-6-12z"></path>
-          </svg>
-        </span>
-        <span class="word">AquaLease<small>Water · on terms</small></span>
-      </a>
+  <main id="main">
 
-      <!-- Headline + sub -->
-      <div class="auth-head">
-        <h1 data-i18n="login.signup_title">Create your AquaLease account</h1>
-        <p data-i18n="login.signup_sub" class="muted">Tell us a bit about you so we can recommend the right system and serve you faster.</p>
+    <!-- Page banner (matches the marketing site's section banners) -->
+    <section class="sec-banner sec-banner--gradient sec-banner--short">
+      <div class="sec-banner__glow" aria-hidden="true"></div>
+      <div class="sec-banner__inner">
+        <div class="sec-banner__crumb">
+          <nav class="ek-breadcrumb" aria-label="Breadcrumb">
+            <a href="login.html">Sign in</a><span aria-hidden="true">/</span><span aria-current="page">Create account</span>
+          </nav>
+        </div>
+        <div class="sec-banner__copy">
+          <h1 class="ek-h1">Create your <span class="t-accent">account.</span></h1>
+          <p class="sec-banner__sub">Join Elken, choose your starter products, and start enjoying filtered water with zero hassle.</p>
+        </div>
       </div>
+    </section>
 
-      <!-- ============ SIGN UP form — minimal: name + account + password ============ -->
-      <form id="signupForm" class="auth-form" novalidate>
-        <label class="field">
-          <span data-i18n="login.name_label">Full name</span>
-          <input type="text" name="name" autocomplete="name" required data-i18n-ph="login.name_ph" placeholder="Adaeze Okonkwo" />
-        </label>
-        <label class="field">
-          <span data-i18n="login.email_label">Email or phone</span>
-          <input type="text" name="email" autocomplete="username" required data-i18n-ph="login.email_ph" placeholder="you@example.com" />
-        </label>
-        <div class="grid-2">
-          <label class="field">
-            <span data-i18n="login.password_label">Password</span>
-            <div class="pwd">
-              <input type="password" name="password" autocomplete="new-password" required data-i18n-ph="login.password_ph" placeholder="••••••••" minlength="6" />
-              <button type="button" class="pwd-toggle" data-toggle-pwd aria-label="Show password">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
+    <section class="sec-pad signup-section">
+      <div class="ek-container signup-container">
+
+        <form id="regForm" novalidate class="ek-form auth-form">
+
+          <!-- ====== Section 1: Basic Info ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_basic">Basic Information</div>
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label data-i18n="signup.country">Country</label>
+                <select class="ek-select" name="country" id="regCountry">
+                  <option value="Nigeria" selected>Nigeria</option>
+                </select>
+              </div>
+
+              <div class="field-row ek-field">
+                <label data-i18n="signup.language">Language</label>
+                <select class="ek-select" name="language" id="regLanguage">
+                  <option value="en" selected>English</option>
+                  <option value="zh">中文</option>
+                </select>
+              </div>
+
+              <div class="field-row ek-field">
+                <label data-i18n="signup.member_id">Member ID</label>
+                <input class="ek-input" type="text" id="regMemberId" readonly aria-label="Member ID (auto-generated)" />
+              </div>
+
+              <div class="field-row ek-field">
+                <label data-i18n="signup.order_level">Order Level</label>
+                <select class="ek-select" name="orderLevel" id="regOrderLevel">
+                  <option value="" disabled selected data-i18n="signup.select_level">Select level</option>
+                  <option value="silver" data-i18n="signup.level_silver">Silver Card</option>
+                  <option value="gold" data-i18n="signup.level_gold">Gold Card</option>
+                </select>
+              </div>
+
+              <div class="field-row ek-field field-row--full">
+                <label><span data-i18n="signup.center_id">Reporting Center ID</span><span class="req-star">*</span></label>
+                <input class="ek-input" type="text" name="centerId" id="regCenterId"
+                       value="NG00000001"
+                       data-i18n-ph="signup.center_id_ph" placeholder="Enter reporting center ID" required />
+              </div>
             </div>
-          </label>
-          <label class="field">
-            <span data-i18n="login.confirm_pwd">Confirm password</span>
-            <input type="password" name="confirm" autocomplete="new-password" required data-i18n-ph="login.password_ph" placeholder="••••••••" minlength="6" />
-          </label>
-        </div>
+          </div>
 
-        <!-- Consent -->
-        <label class="check tos">
-          <input type="checkbox" name="tos" required />
-          <span>
-            <span data-i18n="login.agree_tos">I agree to the</span>
-            <a href="#" data-i18n="login.link_tos">Terms of Service</a>
-            ·
-            <a href="#" data-i18n="login.link_privacy">Privacy Policy</a>
-          </span>
-        </label>
-        <button type="submit" class="btn btn-primary btn-block btn-loading" id="signupSubmit" data-i18n="login.submit_signup">Create account</button>
-      </form>
+          <!-- ====== Section 2: Product Selection ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_products">Products</div>
+            <p class="sec-hint" data-i18n="signup.products_hint">Tap a product to add it to your starter order, then set the quantity you need.</p>
+            <div class="prod-grid" id="prodList" aria-live="polite"></div>
+            <div class="prod-summary-bar" id="prodSummary">
+              <span data-i18n="signup.summary_price">Subtotal:</span> <b id="summaryPrice">NGN 0</b>
+              <span>BV:</span> <b id="summaryBV">0</b>
+              <span data-i18n="signup.summary_tax">Tax:</span> <b id="summaryTax">NGN 0</b>
+            </div>
+          </div>
 
-      <!-- Switch link to login page -->
-      <p class="auth-switch">
-        <span data-i18n="login.have_account">Already have an account?</span>
-        <a href="login.html" data-i18n="common.sign_in">Sign in</a>
-      </p>
-    </div>
+          <!-- ====== Section 3: Network Information ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_network">Network Information</div>
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label data-i18n="signup.referrer_id">Referrer ID</label>
+                <input class="ek-input" type="text" name="referrerId" id="regReferrerId"
+                       placeholder="e.g. NG12345678" autocomplete="off" />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
+                <input class="ek-input" type="text" name="actualReferrerId" id="regActualReferrerId"
+                       placeholder="e.g. NG12345678" autocomplete="off" />
+              </div>
+            </div>
+          </div>
 
-    <!-- Left side: brand value panel (signup) — uses orange gradient -->
-    <aside class="auth-aside auth-aside-signup">
-      <div class="aside-grain"></div>
-      <div class="aside-inner">
-        <div class="eyebrow" data-i18n="login.aside_signup_eyebrow">Get started in 30 seconds</div>
-        <h2>
-          <em>Your first</em>
-          <span>drop, on us.</span>
-        </h2>
-        <p>Three quick fields and you're in. We'll match you with the right system once you place your first order.</p>
-        <ul class="aside-bullets">
-          <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-i18n="login.aside_signup_b1">No credit card needed to sign up</span>
-          </li>
-          <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-i18n="login.aside_signup_b2">Get a free water-quality consultation</span>
-          </li>
-          <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-i18n="login.aside_signup_b3">Earn BV on your first payment</span>
-          </li>
-        </ul>
-        <div class="aside-foot">
-          <div class="aside-stat"><b>5 min</b><span>sign-up time</span></div>
-          <div class="aside-stat"><b>30 s</b><span>first drop</span></div>
-          <div class="aside-stat"><b>0 ₦</b><span>setup fee</span></div>
-        </div>
+          <!-- ====== Section 4: Personal Information ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_personal">Personal Information</div>
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label data-i18n="signup.member_name">Member Name</label>
+                <input class="ek-input" type="text" name="memberName" id="regMemberName"
+                       data-i18n-ph="signup.name_ph" placeholder="Full name" required />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.phone">Phone</label>
+                <input class="ek-input" type="tel" name="phone" id="regPhone"
+                       placeholder="+234 ..." required />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.email">Email</label>
+                <input class="ek-input" type="email" name="email" id="regEmail"
+                       placeholder="name@example.com" required />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.login_password">Login Password</label>
+                <input class="ek-input" type="password" name="loginPassword" id="regLoginPwd"
+                       minlength="6" autocomplete="new-password" required />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.payment_password">Payment Password</label>
+                <input class="ek-input" type="password" name="paymentPassword" id="regPayPwd"
+                       minlength="6" autocomplete="new-password" required />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.recipient">Recipient</label>
+                <input class="ek-input" type="text" name="recipient" id="regRecipient"
+                       data-i18n-ph="signup.recipient_ph" placeholder="Recipient full name" />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.recipient_phone">Recipient Phone</label>
+                <input class="ek-input" type="tel" name="recipientPhone" id="regRecipientPhone"
+                       placeholder="+234 ..." />
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Section 5: Delivery Method ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_delivery">Delivery Method</div>
+            <div class="field-row ek-field field-row--full">
+              <label data-i18n="signup.delivery_method">Delivery Method</label>
+              <div class="radio-group">
+                <label class="radio-item">
+                  <input type="radio" name="deliveryMethod" value="door" checked />
+                  <span data-i18n="signup.door_delivery">Door Delivery</span>
+                </label>
+                <label class="radio-item">
+                  <input type="radio" name="deliveryMethod" value="pickup" />
+                  <span data-i18n="signup.pickup">Pickup</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Section 6: Address Details ====== -->
+          <div class="ek-card sec-block" id="addressSection">
+            <div class="sec-title" data-i18n="signup.sec_address">Address Details</div>
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label data-i18n="signup.region">Region / State</label>
+                <select class="ek-select" name="region" id="regRegion">
+                  <option value="" disabled selected data-i18n="signup.select_region">Select region</option>
+                  <option value="Lagos">Lagos</option>
+                  <option value="Abuja FCT">Abuja FCT</option>
+                  <option value="Rivers">Rivers</option>
+                  <option value="Kano">Kano</option>
+                  <option value="Oyo">Oyo</option>
+                  <option value="Edo">Edo</option>
+                  <option value="Delta">Delta</option>
+                  <option value="Enugu">Enugu</option>
+                  <option value="Kaduna">Kaduna</option>
+                  <option value="Ogun">Ogun</option>
+                  <option value="Anambra">Anambra</option>
+                  <option value="Imo">Imo</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.city">City</label>
+                <input class="ek-input" type="text" name="city" id="regCity" placeholder="City" />
+              </div>
+              <div class="field-row ek-field field-row--full">
+                <label data-i18n="signup.detail_address">Detailed Address</label>
+                <textarea class="ek-input" name="detailAddress" id="regDetailAddress" rows="2"
+                          data-i18n-ph="signup.address_ph" placeholder="Street address, building, landmark..."></textarea>
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.area">Area / District</label>
+                <input class="ek-input" type="text" name="area" id="regArea" placeholder="Area or district" />
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Section 7: Payment Method ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_payment">Payment Method</div>
+
+            <div class="pay-method-grid" id="signupPayGrid"></div>
+
+            <!-- Method panels are built on demand by the shared payment layer
+                 (assets/js/payment-methods.js) so every flow behaves the same. -->
+            <div id="signupPayPanels"></div>
+
+            <!-- Remittance details — shown for Bank Transfer / Pay with Bank only -->
+            <div class="ek-card ek-card--quiet method-info-card" id="signupRemitFields">
+              <div data-i18n="signup.remit_title">Remittance details</div>
+              <p>Tell us which bank the transfer will come from so we can match it faster.</p>
+              <div class="reg-grid">
+                <div class="field-row ek-field">
+                  <label data-i18n="signup.bank_name">Remittance Bank</label>
+                  <select class="ek-select" name="bankName" id="regBankName">
+                    <option value="" disabled selected data-i18n="signup.select_bank">Select bank</option>
+                    <option value="Access Bank">Access Bank</option>
+                    <option value="First Bank of Nigeria">First Bank of Nigeria</option>
+                    <option value="Guaranty Trust Bank (GTB)">Guaranty Trust Bank (GTB)</option>
+                    <option value="United Bank for Africa (UBA)">United Bank for Africa (UBA)</option>
+                    <option value="Zenith Bank">Zenith Bank</option>
+                    <option value="Ecobank Nigeria">Ecobank Nigeria</option>
+                    <option value="Fidelity Bank">Fidelity Bank</option>
+                    <option value="Stanbic IBTC">Stanbic IBTC</option>
+                    <option value="Union Bank">Union Bank</option>
+                    <option value="Wema Bank">Wema Bank</option>
+                    <option value="Sterling Bank">Sterling Bank</option>
+                    <option value="Polaris Bank">Polaris Bank</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="field-row ek-field">
+                  <label data-i18n="signup.bank_branch">Bank Branch</label>
+                  <input class="ek-input" type="text" name="bankBranch" id="regBankBranch"
+                         data-i18n-ph="signup.branch_ph" placeholder="Enter branch name" />
+                </div>
+                <div class="field-row ek-field field-row--full">
+                  <label data-i18n="signup.bank_account">Account Number</label>
+                  <input class="ek-input" type="text" name="bankAccount" id="regBankAccount"
+                         placeholder="10-digit account number" maxlength="10" inputmode="numeric" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Submit ====== -->
+          <div class="reg-submit-wrap">
+            <button type="submit" class="ek-btn ek-btn--primary" id="regSubmitBtn" data-i18n="signup.submit_btn">Save</button>
+          </div>
+
+        </form>
+
+        <p class="auth-switch-reg">
+          <span data-i18n="login.have_account">Already have an account?</span>
+          <a href="login.html" data-i18n="common.sign_in">Sign in</a>
+        </p>
       </div>
-    </aside>
+    </section>
   </main>
 
-  <div id="app-footer"></div>
+  <!-- Site footer (rendered by app.js, same as the marketing site) -->
+  <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js"></script>
-  <script src="assets/js/app.js"></script>
+  <!-- Cookie consent (NDPR) — kept on the standalone page -->
+  <div id="cookieBanner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie consent">
+    <span class="cookie-icon" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 1 0 10 10c0-.46-.04-.92-.1-1.36a5.5 5.5 0 0 1-7.78-7.78A9.97 9.97 0 0 0 12 2Z"></path>
+        <circle cx="9" cy="13" r="1" fill="currentColor"></circle>
+        <circle cx="14" cy="9" r="1" fill="currentColor"></circle>
+        <circle cx="16" cy="14" r="1" fill="currentColor"></circle>
+      </svg>
+    </span>
+    <div class="cookie-body">
+      <strong data-i18n="cookie.title">cookie.title</strong>
+      <span>We use essential cookies to run the site and optional analytics cookies to improve it. You can accept all,
+        reject all, or customise your choice. Nigeria Data Protection Regulation (NDPR) requires your explicit consent
+        before non-essential cookies are set. <a href="privacy.html"
+          data-i18n="cookie.learn_more">cookie.learn_more</a></span>
+    </div>
+    <div class="cookie-actions">
+      <button type="button" class="cb-btn" data-cookie="customise" data-i18n="cookie.custom">cookie.custom</button>
+      <button type="button" class="cb-btn" data-cookie="reject" data-i18n="cookie.reject">cookie.reject</button>
+      <button type="button" class="cb-btn cb-primary" data-cookie="accept"
+        data-i18n="cookie.accept">cookie.accept</button>
+    </div>
+    <div class="cookie-prefs" aria-hidden="true">
+      <div class="row">
+        <div class="text">
+          <strong>Essential</strong>
+          <small>Required for sign-in, shopping cart and security. Cannot be turned off.</small>
+        </div>
+        <div class="toggle on locked" data-cookie-pref="essential" aria-label="Essential cookies (always on)"></div>
+      </div>
+      <div class="row">
+        <div class="text">
+          <strong>Analytics</strong>
+          <small>Helps us understand which pages are useful so we can improve the product.</small>
+        </div>
+        <div class="toggle" data-cookie-pref="analytics" role="switch" aria-checked="false" tabindex="0"></div>
+      </div>
+      <div class="row">
+        <div class="text">
+          <strong>Marketing</strong>
+          <small>Used to measure the effectiveness of campaigns. Off by default.</small>
+        </div>
+        <div class="toggle" data-cookie-pref="marketing" role="switch" aria-checked="false" tabindex="0"></div>
+      </div>
+      <div class="cookie-actions cookie-actions--prefs">
+        <button type="button" class="cb-btn cb-primary" data-cookie="save" data-i18n="cookie.save">cookie.save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/i18n/strings.js?v=20260909c"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
+  <script src="assets/js/website.js?v=20260909c"></script>
+  <script src="assets/js/qr.js?v=20260915a"></script>
+  <script src="assets/js/payment-methods.js?v=20260915a"></script>
   <script>
-    /* ---------- i18n apply ---------- */
-    function applyI18n() {
-      document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = window.T.tr(el.dataset.i18n));
-      document.querySelectorAll('[data-i18n-ph]').forEach(el => el.setAttribute('placeholder', window.T.tr(el.dataset.i18nPh)));
-      document.querySelectorAll('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', window.T.tr(el.dataset.i18nAria)));
-    }
+    (function() {
+      'use strict';
 
-    /* ---------- Validation helpers ---------- */
-    function setError(input, msg) {
-      const field = input.closest('.field, .check');
-      let err = field?.querySelector('.field-err');
-      if (!err && field) {
-        err = document.createElement('small');
-        err.className = 'field-err';
-        field.appendChild(err);
-      }
-      if (err) err.textContent = msg || '';
-      if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
-    }
-    function isEmailOrPhone(v) { return /@|\+?\d{7,}/.test(v.trim()); }
-
-    /* ---------- Loading button ---------- */
-    function startLoading(btn, loadingLabel) {
-      btn.setAttribute('aria-busy', 'true');
-      btn.disabled = true;
-      btn.dataset._old = btn.innerHTML;
-      btn.innerHTML = `<span class="spinner"></span> ${loadingLabel || ''}`;
-    }
-    function stopLoading(btn) {
-      btn.removeAttribute('aria-busy');
-      btn.disabled = false;
-      if (btn.dataset._old) btn.innerHTML = btn.dataset._old;
-    }
-
-    function redirectAfterAuth() {
-      const next = new URLSearchParams(location.search).get('next') || 'index.html';
-      location.href = next;
-    }
-
-    /* ---------- SIGN UP: minimal validation (name + email + password) ---------- */
-    function doSignUp(form, btn) {
-      const name = form.name.value.trim();
-      const email = form.email.value.trim();
-      const pwd = form.password.value;
-      const confirm = form.confirm.value;
-      const tos = form.tos.checked;
-      let ok = true;
-      if (!name) { setError(form.name, window.T.tr('login.err_required')); ok = false; } else setError(form.name, '');
-      if (!email) { setError(form.email, window.T.tr('login.err_required')); ok = false; }
-      else if (!isEmailOrPhone(email)) { setError(form.email, window.T.tr('login.err_email')); ok = false; }
-      else setError(form.email, '');
-      if (!pwd) { setError(form.password, window.T.tr('login.err_required')); ok = false; }
-      else if (pwd.length < 6) { setError(form.password, window.T.tr('login.err_pwd')); ok = false; }
-      else setError(form.password, '');
-      if (!confirm) { setError(form.confirm, window.T.tr('login.err_required')); ok = false; }
-      else if (confirm !== pwd) { setError(form.confirm, window.T.tr('login.err_match')); ok = false; }
-      else setError(form.confirm, '');
-      if (!tos) { setError(form.tos, window.T.tr('login.err_required')); ok = false; } else setError(form.tos, '');
-      if (!ok) {
-        const first = form.querySelector('[aria-invalid="true"]');
-        if (first) first.focus();
-        return;
+      /* ---------- i18n apply ---------- */
+      function tr(key) {
+        return (window.T && typeof window.T === 'function') ? window.T.tr(key) : key;
       }
 
-      startLoading(btn, window.T.tr('login.submit_signup_loading'));
-      setTimeout(() => {
-        const firstName = name.split(/\s+/)[0] || 'there';
-        const user = {
-          firstName, name, email,
-          type: 'member',
-          signedInAt: Date.now(),
-        };
-        window.Auth.login(user);
-        window.toast(window.T.tr('login.success_signup'), 'success');
-        redirectAfterAuth();
-      }, 400);
-    }
+      /* ---------- Error helpers ---------- */
+      function setErr(input, msg) {
+        if (!input) return;
+        const row = input.closest('.field-row');
+        let errEl = row ? row.querySelector('.field-err-text') : null;
+        if (!errEl && row) {
+          errEl = document.createElement('small');
+          errEl.className = 'field-err-text';
+          row.appendChild(errEl);
+        }
+        if (errEl) errEl.textContent = msg || '';
+        if (msg) input.setAttribute('aria-invalid', 'true');
+        else input.removeAttribute('aria-invalid');
+      }
+      function clearErr(input) { setErr(input, ''); }
 
-    /* ---------- Password show/hide ---------- */
-    function wirePasswordToggles() {
-      document.querySelectorAll('[data-toggle-pwd]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const input = btn.parentElement.querySelector('input');
-          if (!input) return;
-          input.type = input.type === 'password' ? 'text' : 'password';
-          btn.setAttribute('aria-pressed', input.type === 'text' ? 'true' : 'false');
+      /* ---------- Generate Member ID on load ---------- */
+      const memberIdInput = document.getElementById('regMemberId');
+      if (memberIdInput && window.ProductCatalog && window.ProductCatalog.genMemberId) {
+        memberIdInput.value = window.ProductCatalog.genMemberId();
+      } else if (memberIdInput) {
+        memberIdInput.value = 'NG' + Math.floor(Math.random() * 90000000 + 10000000).toString();
+      }
+
+      /* ---------- Auto-fill referrer from URL ?ref= (fallback NG00000001) ---------- */
+      const referrerInput = document.getElementById('regReferrerId');
+      const actualReferrerInput = document.getElementById('regActualReferrerId');
+      let refId = 'NG00000001';
+      try {
+        const refParam = new URLSearchParams(location.search).get('ref');
+        if (refParam && /^NG\d{8}$/i.test(refParam.trim())) {
+          refId = refParam.trim().toUpperCase();
+        }
+      } catch(e) {}
+      if (referrerInput) referrerInput.value = refId;
+      if (actualReferrerInput) actualReferrerInput.value = refId;
+
+      /* ---------- Delivery Method toggles Address Details ---------- */
+      const addressSection = document.getElementById('addressSection');
+      const deliveryRadios = document.querySelectorAll('input[name="deliveryMethod"]');
+      function syncAddressVisibility() {
+        if (!addressSection) return;
+        const method = document.querySelector('input[name="deliveryMethod"]:checked');
+        addressSection.style.display = (method && method.value === 'pickup') ? 'none' : '';
+      }
+      deliveryRadios.forEach(r => r.addEventListener('change', syncAddressVisibility));
+      syncAddressVisibility();
+
+      /* ---------- Shared payment layer (assets/js/payment-methods.js) ----------
+         The chooser and every method panel come from PayMethods, so this flow
+         behaves exactly like checkout. */
+      let payMethods = null;
+
+      function selectedTotal() {
+        let total = 0;
+        Object.keys(selectedProds || {}).forEach(pid => {
+          const p = products.find(x => x.id === pid);
+          if (p) total += (p.price || 0) * ((selectedProds[pid] || {}).qty || 1);
         });
+        return total;
+      }
+
+      function buildPayMethods() {
+        payMethods = window.PayMethods.wire('#signupPayGrid', {
+          name: 'paymentMethod',
+          panelHost: '#signupPayPanels',
+          panelClass: 'ek-card ek-card--quiet method-info-card',
+          prefix: 'su',
+          amount: selectedTotal,
+          selected: 'card',
+          companions: { bank: '#signupRemitFields', paybank: '#signupRemitFields' },
+          // no onChange: this flow has no live pay button — the form's own
+          // validation runs on submit, so a channel change needs no callback.
+        });
+        return payMethods;
+      }
+
+      function refreshPayPanels() { if (payMethods) payMethods.refresh(); }
+      function selectPayMethod(value) { if (payMethods) payMethods.select(value); }
+      function payMethodComplete() {
+        return !!(payMethods && payMethods.value() && payMethods.isComplete());
+      }
+      function paymentReference() { return payMethods ? payMethods.reference : null; }
+
+      /* ---------- Render product grid (official card style) ---------- */
+      const prodList = document.getElementById('prodList');
+      const products = (window.ProductCatalog && window.ProductCatalog.allProducts)
+        ? window.ProductCatalog.allProducts : [];
+
+      // State: selected products { productId: qty }
+      const selectedProds = {};
+
+      function renderProducts() {
+        if (!prodList) return;
+
+        if (!products.length) {
+          prodList.innerHTML = '<div class="prod-empty">No products available.</div>';
+          updateSummary();
+          return;
+        }
+
+        prodList.innerHTML = products.map(p => {
+          const sel = selectedProds[p.id];
+          const qty = sel ? sel.qty : 0;
+          const checked = !!sel;
+          const imgSrc = p.img
+            ? ('assets/img/products/' + (p.category || '') + '/' + p.img)
+            : '';
+          const bvVal = typeof p.bv === 'number' ? p.bv : Math.round((p.price || 0) * 0.001 * 100) / 100;
+          const badge = checked ? `<span class="prod-card__badge">✓ Added</span>` : '';
+          const media = imgSrc
+            ? `<div class="prod-card__media">${badge}<img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'" /></div>`
+            : `<div class="prod-card__media prod-card__media--empty">${badge}</div>`;
+          const foot = checked
+            ? `<div class="prod-card__foot prod-card__foot--added">
+                 <div class="qty-stepper" data-id="${p.id}">
+                   <button type="button" class="qty-minus" data-id="${p.id}" aria-label="Decrease quantity">−</button>
+                   <input type="number" class="qty-val" data-id="${p.id}" value="${qty}" min="1" max="99" aria-label="Quantity" />
+                   <button type="button" class="qty-plus" data-id="${p.id}" aria-label="Increase quantity">+</button>
+                 </div>
+                 <button type="button" class="prod-card__remove" data-id="${p.id}">Remove</button>
+               </div>`
+            : `<div class="prod-card__foot">
+                 <button type="button" class="prod-card__add" data-id="${p.id}">＋ Add to registration</button>
+               </div>`;
+          return `
+            <article class="prod-card${checked ? ' is-added' : ''}" data-id="${p.id}">
+              ${media}
+              <div class="prod-card__body">
+                <h3 class="prod-card__name">${p.name}</h3>
+                <span class="prod-card__sku">${p.id.toUpperCase()}</span>
+                <div class="prod-card__meta">
+                  <span class="prod-card__price">NGN ${(p.price || 0).toLocaleString()}</span>
+                  <span class="prod-card__bv">BV ${bvVal}</span>
+                </div>
+              </div>
+              ${foot}
+            </article>`;
+        }).join('');
+
+        updateSummary();
+      }
+
+      function updateSummary() {
+        const priceEl = document.getElementById('summaryPrice');
+        const bvEl = document.getElementById('summaryBV');
+        const taxEl = document.getElementById('summaryTax');
+        let total = 0, totalBV = 0;
+        Object.keys(selectedProds).forEach(pid => {
+          const s = selectedProds[pid];
+          const p = products.find(x => x.id === pid);
+          if (p) {
+            total += (p.price || 0) * s.qty;
+            const bv = typeof p.bv === 'number' ? p.bv : Math.round((p.price || 0) * 0.001 * 100) / 100;
+            totalBV += bv * s.qty;
+          }
+        });
+        if (priceEl) priceEl.textContent = 'NGN ' + total.toLocaleString();
+        if (bvEl) bvEl.textContent = totalBV.toFixed(totalBV % 1 === 0 ? 0 : 1);
+        if (taxEl) taxEl.textContent = 'NGN 0';
+        // Keep the open payment panel's amount in sync with the selection
+        refreshPayPanels();
+      }
+
+      // Set/reset a product's quantity. qty<=0 deselects the product (removes it
+      // from the order); qty>=1 selects it and records the quantity. Re-renders
+      // the grid so the card reflects its selected/added state.
+      function setQty(pid, qty) {
+        qty = Math.max(0, Math.min(99, parseInt(qty, 10) || 0));
+        if (qty <= 0) delete selectedProds[pid];
+        else {
+          if (!selectedProds[pid]) selectedProds[pid] = { qty: 1 };
+          selectedProds[pid].qty = qty;
+        }
+        renderProducts();
+      }
+
+      // Card interactions — delegated so re-renders don't lose listeners.
+      prodList.addEventListener('click', e => {
+        const addBtn = e.target.closest('.prod-card__add');
+        if (addBtn) { setQty(addBtn.dataset.id, 1); return; }
+        const remBtn = e.target.closest('.prod-card__remove');
+        if (remBtn) { setQty(remBtn.dataset.id, 0); return; }
+        const step = e.target.closest('.qty-minus, .qty-plus');
+        if (step) {
+          const pid = step.dataset.id;
+          const input = prodList.querySelector(`.qty-val[data-id="${pid}"]`);
+          let v = input ? (parseInt(input.value, 10) || 1) : 1;
+          v = step.classList.contains('qty-minus') ? v - 1 : v + 1;
+          setQty(pid, v);
+        }
       });
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      applyI18n();
-
-      const signupForm = document.getElementById('signupForm');
-      const signupBtn = document.getElementById('signupSubmit');
-
-      signupForm.addEventListener('submit', e => { e.preventDefault(); doSignUp(signupForm, signupBtn); });
-
-      // clear error on input
-      document.querySelectorAll('.auth-form input, .auth-form select').forEach(input => {
-        const clear = () => setError(input, '');
-        input.addEventListener('input', clear);
-        input.addEventListener('change', clear);
+      // Direct number input — typing a value selects; clearing/0 deselects
+      prodList.addEventListener('change', e => {
+        if (e.target.classList.contains('qty-val')) {
+          setQty(e.target.dataset.id, parseInt(e.target.value, 10) || 0);
+        }
       });
 
-      wirePasswordToggles();
-    });
+      // Initial render
+      renderProducts();
+      buildPayMethods();
+
+      /* ---------- Form validation & submit ---------- */
+      const form = document.getElementById('regForm');
+      const submitBtn = document.getElementById('regSubmitBtn');
+
+      // Clear errors on input
+      form.querySelectorAll('.input, .select, textarea').forEach(el => {
+        el.addEventListener('input', () => clearErr(el));
+        el.addEventListener('change', () => clearErr(el));
+      });
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        let ok = true;
+        const firstInvalid = () => form.querySelector('[aria-invalid="true"]');
+
+        // Required fields check
+        const requiredMap = [
+          ['regCenterId', 'signup.err_center_id'],
+          ['regMemberName', 'login.err_required'],
+          ['regPhone', 'login.err_required'],
+          ['regEmail', 'login.err_required'],
+          ['regLoginPwd', 'login.err_required'],
+          ['regPayPwd', 'login.err_required'],
+        ];
+        requiredMap.forEach(([id, errKey]) => {
+          const el = document.getElementById(id);
+          if (el && !el.value.trim()) { setErr(el, tr(errKey)); ok = false; }
+          else if (el) clearErr(el);
+        });
+
+        // Email format
+        const emailEl = document.getElementById('regEmail');
+        if (emailEl && emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
+          setErr(emailEl, tr('checkout.email_invalid')); ok = false;
+        }
+
+        // Password length
+        const pwdEl = document.getElementById('regLoginPwd');
+        if (pwdEl && pwdEl.value.length > 0 && pwdEl.value.length < 6) {
+          setErr(pwdEl, tr('login.err_pwd')); ok = false;
+        }
+        const payPwdEl = document.getElementById('regPayPwd');
+        if (payPwdEl && payPwdEl.value.length > 0 && payPwdEl.value.length < 6) {
+          setErr(payPwdEl, tr('login.err_pwd')); ok = false;
+        }
+
+        // Order Level required
+        const levelEl = document.getElementById('regOrderLevel');
+        if (levelEl && !levelEl.value) { setErr(levelEl, tr('signup.err_level_required')); ok = false; }
+        else if (levelEl) clearErr(levelEl);
+
+        // At least one product checked
+        const hasProduct = Object.keys(selectedProds).length > 0;
+        if (!hasProduct) {
+          window.toast(tr('signup.err_product_required'), 'error');
+          ok = false;
+        }
+
+        // The selected payment channel must carry every detail it needs
+        if (!payMethodComplete()) {
+          window.toast(tr('payment.err_incomplete'), 'error');
+          ok = false;
+        }
+
+        if (!ok) {
+          const first = firstInvalid();
+          if (first) first.focus();
+          return;
+        }
+
+        // --- All valid → process registration ---
+        submitBtn.disabled = true;
+        submitBtn.textContent = tr('signup.saving') || 'Saving...';
+
+        setTimeout(() => {
+          const memberId = memberIdInput ? memberIdInput.value : '';
+
+          // Collect order items from selected products
+          const orderItems = [];
+          let orderTotal = 0, orderBV = 0;
+          Object.keys(selectedProds).forEach(pid => {
+            const s = selectedProds[pid];
+            const p = products.find(x => x.id === pid);
+            if (p) {
+              orderItems.push({
+                id: p.id, name: p.name, price: p.price,
+                img: p.img, category: p.category, qty: s.qty
+              });
+              orderTotal += p.price * s.qty;
+              const bv = typeof p.bv === 'number' ? p.bv : Math.round(p.price * 0.001 * 100) / 100;
+              orderBV += bv * s.qty;
+            }
+          });
+
+          // Collect form data
+          const userData = {
+            firstName: form.memberName.value.split(/\s+/)[0] || '',
+            name: form.memberName.value.trim(),
+            email: form.email.value.trim(),
+            phone: form.phone.value.trim(),
+            memberId: memberId,
+            country: form.country.value,
+            language: form.language.value,
+            orderLevel: form.orderLevel.value,
+            centerId: form.centerId.value.trim(),
+            referrerId: form.referrerId.value.trim().toUpperCase(),
+            actualReferrerId: form.actualReferrerId.value.trim().toUpperCase(),
+            loginPassword: form.loginPassword.value,
+            paymentPassword: form.paymentPassword.value,
+            recipient: form.recipient.value.trim(),
+            recipientPhone: form.recipientPhone.value.trim(),
+            deliveryMethod: form.deliveryMethod.value,
+            region: form.region.value,
+            detailAddress: form.detailAddress.value.trim(),
+            city: form.city.value.trim(),
+            area: form.area.value.trim(),
+            bankName: form.bankName.value,
+            bankBranch: form.bankBranch.value.trim(),
+            bankAccount: form.bankAccount.value.trim(),
+            paymentMethod: (payMethods && payMethods.value()) || form.paymentMethod.value,
+            paymentReference: paymentReference(),
+            type: 'member',
+            signedInAt: Date.now(),
+          };
+
+          // Save member data to localStorage via Auth
+          if (window.Auth && window.Auth.login) {
+            window.Auth.login(userData);
+          } else {
+            localStorage.setItem('al.memberData', JSON.stringify(userData));
+          }
+
+          // Save selected products as cart (for checkout flow)
+          if (window.ProductCatalog && window.ProductCatalog.clearCart) {
+            window.ProductCatalog.clearCart();
+          }
+          orderItems.forEach(item => {
+            if (window.ProductCatalog && window.ProductCatalog.addToCart) {
+              window.ProductCatalog.addToCart(item, item.qty);
+            }
+          });
+
+          // Create order record
+          const orderId = (window.ProductCatalog && window.ProductCatalog.genOrderId)
+            ? window.ProductCatalog.genOrderId() : ('ORD' + Date.now().toString(36));
+          const order = {
+            id: orderId,
+            memberId: memberId,
+            items: orderItems,
+            total: orderTotal,
+            bv: orderBV,
+            status: 'completed',
+            date: new Date().toISOString(),
+            contactEmail: userData.email,
+            contactPhone: userData.phone,
+            recipient: userData.recipient || userData.name,
+            phone: userData.recipientPhone || userData.phone,
+            deliveryMethod: userData.deliveryMethod,
+            region: userData.region,
+            detailAddress: userData.detailAddress,
+            city: userData.city,
+            area: userData.area,
+            paymentMethod: userData.paymentMethod,
+            payment: userData.paymentMethod,
+            paymentLabel: (window.PayMethods && window.PayMethods.label(userData.paymentMethod)) || userData.paymentMethod || null,
+            paymentReference: userData.paymentReference || null,
+            payStatus: 'Unpaid',
+            orderLevel: userData.orderLevel,
+            centerId: userData.centerId,
+          };
+
+          // Handle referral BV credit
+          if (userData.referrerId && userData.referrerId !== memberId) {
+            order.referrerId = userData.referrerId;
+            if (window.ProductCatalog && window.ProductCatalog.creditReferralBV) {
+              window.ProductCatalog.creditReferralBV({
+                id: orderId, referrerId: userData.referrerId,
+                bv: orderBV, customerName: userData.name, date: order.date
+              });
+            }
+          }
+
+          // Save order
+          try {
+            const orders = JSON.parse(localStorage.getItem('al.orders') || '[]');
+            orders.push(order);
+            localStorage.setItem('al.orders', JSON.stringify(orders));
+            window.dispatchEvent(new CustomEvent('al:orderschange'));
+          } catch(err) {}
+
+          // Success feedback
+          if (window.toast) {
+            window.toast(tr('signup.success_msg', { memberId }), 'success');
+          }
+
+          submitBtn.textContent = tr('signup.success_done') || 'Registration Complete!';
+          submitBtn.style.background = 'var(--ek-blue)';
+
+          // Redirect after delay
+          let remaining = 3;
+          const redirectTimer = setInterval(() => {
+            remaining -= 1;
+            if (remaining > 0) {
+              submitBtn.textContent = (tr('login.redirecting_in') || 'Redirecting in {s}s').replace('{s}', remaining);
+            } else {
+              clearInterval(redirectTimer);
+              location.href = 'account.html';
+            }
+          }, 1000);
+        }, 600);
+      });
+
+      /* ---------- Apply i18n to static texts ---------- */
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = tr(el.dataset.i18n);
+      });
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        el.setAttribute('placeholder', tr(el.dataset.i18nPh));
+      });
+
+    })();
   </script>
 </body>
+
 </html>

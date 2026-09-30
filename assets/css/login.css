@@ -1,0 +1,244 @@
+/* ============================================================================
+   Login — standalone auth page, Elken UI Kit tokens only
+   ----------------------------------------------------------------------------
+   This is a SELF-CONTAINED page: it intentionally loads none of the site
+   chrome (ek-site-header / ek-site-footer). The layout is a full-viewport split
+   — a brand value panel on the left and the sign-in form card on the right.
+   Every node is styled with --ek- design tokens; no hex, no px font-sizes,
+   no !important. Toast + cookie banner styles are ported here so the page needs
+   no stylesheet other than the shared kit + this file.
+   登录页为「独立页面」:不挂载全站头部/底部导航,整屏左右分屏(品牌面板 + 表单卡片),
+   全部使用 --ek- token。Toast 与 Cookie 横幅样式一并内联,保证页面自包含。
+   ============================================================================ */
+
+/* ---------- Page shell: full-viewport split -------------------------------- */
+.auth-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  background: var(--ek-surface-sunken);
+}
+
+/* ---------- Brand value panel (left) --------------------------------------- */
+.auth-brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--ek-40);
+  padding: var(--ek-56) clamp(var(--ek-32), 5vw, var(--ek-56)) var(--ek-48);
+  color: var(--ek-white);
+  background: linear-gradient(150deg, var(--ek-stat-2) 0%, var(--ek-blue) 52%, var(--ek-blue-hover) 100%);
+  overflow: hidden;
+}
+.brand-grain {
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.12; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.auth-brand::before {
+  content: ''; position: absolute;
+  width: 360px; height: 360px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, .12) 0%, transparent 70%);
+  top: -120px; right: -100px; pointer-events: none;
+}
+.auth-brand::after {
+  content: ''; position: absolute;
+  width: 280px; height: 280px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, .08) 0%, transparent 70%);
+  bottom: -80px; left: -60px; pointer-events: none;
+}
+.auth-brand__top,
+.auth-brand__center,
+.auth-brand__foot { position: relative; z-index: 1; }
+.auth-brand__center {
+  display: flex; flex-direction: column; gap: var(--ek-20); max-width: 460px;
+}
+.auth-brand__eyebrow {
+  color: var(--ek-panel-cool);
+  text-transform: uppercase; letter-spacing: .18em;
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
+}
+.auth-brand__title {
+  margin: 0; font-size: clamp(34px, 4vw, 52px);
+  font-weight: var(--ek-w-medium); letter-spacing: -.02em; line-height: 1.05;
+}
+.auth-brand__title em { font-style: italic; font-weight: 400; color: var(--ek-panel-cool); }
+.auth-brand__lede {
+  margin: 0; max-width: 380px; font-size: var(--ek-text);
+  color: rgba(255, 255, 255, .85);
+}
+.auth-brand__bullets {
+  list-style: none; margin: var(--ek-8) 0 0; padding: 0;
+  display: flex; flex-direction: column; gap: var(--ek-12);
+}
+.auth-brand__bullets li {
+  display: flex; align-items: center; gap: var(--ek-12);
+  font-size: var(--ek-text); color: var(--ek-panel-cool);
+}
+.auth-brand__bullets svg { color: var(--ek-panel-cool); flex: 0 0 auto; }
+.auth-brand__foot {
+  display: flex; gap: var(--ek-24); padding-top: var(--ek-24);
+  border-top: 1px solid rgba(255, 255, 255, .14);
+}
+.stat { display: flex; flex-direction: column; gap: var(--ek-4); }
+.stat b { font-size: var(--ek-24); font-weight: var(--ek-w-medium); color: var(--ek-white); }
+.stat span {
+  font-size: var(--ek-caption); color: rgba(255, 255, 255, .6);
+  text-transform: uppercase; letter-spacing: .12em;
+}
+
+/* ---------- Shared brand logo (mark + word) -------------------------------- */
+.brand-logo { display: inline-flex; align-items: center; gap: var(--ek-12); text-decoration: none; }
+.brand-logo-img { display: block; height: 34px; width: auto; }
+.auth-card__brand .brand-logo-img { height: 30px; }
+.brand-logo__mark {
+  width: 40px; height: 40px; border-radius: var(--ek-radius);
+  display: grid; place-items: center; flex: 0 0 auto;
+}
+.brand-logo__word {
+  display: flex; flex-direction: column; line-height: 1.05;
+  font-size: calc(var(--ek-text) + 3px); font-weight: var(--ek-w-medium);
+}
+.brand-logo__word small {
+  font-size: var(--ek-caption); font-weight: 400;
+  text-transform: uppercase; letter-spacing: .15em;
+}
+.auth-brand .brand-logo__mark { background: var(--ek-white); color: var(--ek-blue); }
+.auth-brand .brand-logo__word { color: var(--ek-white); }
+.auth-brand .brand-logo__word small { color: var(--ek-panel-cool); }
+
+/* ---------- Form side (right) ---------------------------------------------- */
+.auth-main {
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--ek-40) var(--ek-page-pad);
+}
+.auth-card {
+  --fail: rgba(199, 56, 56, 1);            /* local error colour (no --ek-red token) */
+  position: relative;
+  width: 100%; max-width: 420px;
+  background: var(--ek-surface);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-lg);
+  padding: var(--ek-40);
+  display: flex; flex-direction: column; gap: var(--ek-20);
+}
+.auth-card .auth-card__brand { display: none; }   /* shown on mobile where the panel collapses */
+.auth-card__brand .brand-logo__mark { background: var(--ek-blue); color: var(--ek-white); }
+.auth-card__brand .brand-logo__word { color: var(--ek-charcoal-deep); }
+.auth-card__brand .brand-logo__word small { color: var(--ek-muted); }
+
+.auth-head { display: flex; flex-direction: column; gap: var(--ek-8); }
+.auth-head h1 {
+  margin: 0; font-size: var(--ek-h1); font-weight: var(--ek-w-medium);
+  letter-spacing: -.02em; line-height: 1.1; color: var(--ek-charcoal-deep);
+}
+.auth-head p { margin: 0; font-size: var(--ek-small); color: var(--ek-muted); }
+
+/* Form: single column (override .ek-form's 2-col grid) */
+.auth-form { display: flex; flex-direction: column; gap: var(--ek-16); margin-top: var(--ek-4); }
+.auth-card .ek-field > span {
+  font-size: var(--ek-small); font-weight: var(--ek-w-bold); color: var(--ek-charcoal);
+}
+
+/* Password reveal */
+.auth-form .pwd { position: relative; display: flex; align-items: center; }
+.auth-form .pwd input { width: 100%; padding-right: calc(var(--ek-32) + var(--ek-12)); }
+.pwd-toggle {
+  position: absolute; right: var(--ek-8); top: 50%; transform: translateY(-50%);
+  display: grid; place-items: center;
+  width: var(--ek-32); height: var(--ek-32);
+  border: 0; background: transparent; color: var(--ek-muted);
+  cursor: pointer; border-radius: var(--ek-radius);
+}
+.pwd-toggle:hover { color: var(--ek-charcoal); background: var(--ek-surface-sunken); }
+
+/* Inline field error (set by login.html setError) */
+.auth-card .field-err { color: var(--fail); font-size: var(--ek-caption); margin-top: var(--ek-4); display: block; }
+
+.auth-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--ek-12); font-size: var(--ek-small); margin-top: var(--ek-4);
+}
+.auth-row .link { color: var(--ek-blue); }
+.auth-row .link:hover { text-decoration: underline; }
+
+.auth-switch {
+  text-align: center; font-size: var(--ek-small); color: var(--ek-muted); margin: var(--ek-8) 0 0;
+}
+.auth-switch a { color: var(--ek-blue); font-weight: var(--ek-w-medium); margin-left: var(--ek-4); }
+.auth-switch a:hover { text-decoration: underline; }
+
+/* Guest checkout entry — sits at the bottom of the card, kept very faint */
+.auth-guest {
+  margin: var(--ek-16) 0 0;
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--ek-4);
+  text-align: center;
+}
+.auth-guest__note {
+  font-size: var(--ek-caption); color: var(--ek-muted); margin: 0;
+  line-height: 1.5;
+}
+.auth-guest__link {
+  font-size: var(--ek-caption); color: var(--ek-muted);
+  text-decoration: none;
+}
+.auth-guest__link:hover {
+  color: var(--ek-charcoal);
+  text-decoration: underline;
+  text-decoration-color: var(--ek-border-strong);
+  text-underline-offset: 2px;
+}
+
+/* ---------- Cookie banner (ported, token-only, NDPR) ----------------------- */
+.cookie-banner {
+  position: fixed; left: var(--ek-16); right: var(--ek-16); bottom: var(--ek-16); z-index: 200;
+  display: none; gap: var(--ek-16); align-items: center; justify-content: space-between;
+  padding: var(--ek-16); color: var(--ek-white); background: var(--ek-blue-hover);
+  border-radius: var(--ek-radius); box-shadow: var(--ek-shadow-lg);
+}
+.cookie-banner.show { display: flex; flex-wrap: wrap; }
+.cookie-banner .cookie-icon { flex: 0 0 auto; }
+.cookie-banner .cookie-body { flex: 1 1 420px; color: var(--ek-panel-cool); }
+.cookie-banner .cookie-body a { color: var(--ek-panel-cool); text-decoration: underline; }
+.cookie-banner .cookie-actions {
+  flex: 0 0 auto; display: flex; gap: var(--ek-8); flex-wrap: wrap; justify-content: flex-end;
+}
+.cookie-banner .cookie-actions--prefs { width: 100%; padding-top: var(--ek-8); }
+.cookie-banner .cb-btn {
+  min-height: 36px; padding: var(--ek-8) var(--ek-12); color: var(--ek-blue);
+  background: var(--ek-white); border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius); cursor: pointer; font-size: var(--ek-small);
+}
+.cookie-banner .cb-primary { color: var(--ek-white); background: var(--ek-blue); border-color: var(--ek-blue); }
+.cookie-banner .cookie-prefs {
+  display: none; flex: 1 1 100%;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--ek-12); padding-top: var(--ek-16); border-top: 1px solid var(--ek-stat-3);
+}
+.cookie-banner.show-prefs .cookie-prefs { display: grid; }
+.cookie-prefs .row { display: flex; align-items: center; justify-content: space-between; gap: var(--ek-12); }
+.cookie-prefs small { display: block; color: var(--ek-panel-cool); margin-top: var(--ek-4); font-size: var(--ek-caption); }
+.cookie-prefs .toggle { width: 44px; height: 24px; border-radius: 999px; background: var(--ek-panel-cool); cursor: pointer; }
+.cookie-prefs .toggle.on { background: var(--ek-aqua); }
+
+/* ---------- Responsive: stack to a single column --------------------------- */
+@media (max-width: 900px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-brand { padding: var(--ek-32) var(--ek-page-pad); gap: var(--ek-24); }
+  .auth-brand__bullets,
+  .auth-brand__foot { display: none; }       /* keep the mobile hero compact */
+  .auth-main { padding: var(--ek-32) var(--ek-page-pad) var(--ek-48); }
+  .auth-card .auth-card__brand { display: inline-flex; } /* surface the brand on the card */
+  .auth-card { padding: var(--ek-32) var(--ek-24); }
+}
+@media (max-width: 600px) {
+  .auth-card { padding: var(--ek-24) var(--ek-16); }
+  /* On small screens the cookie banner flows with the page so it does not obscure the form. */
+  .cookie-banner {
+    position: relative; left: auto; right: auto; bottom: auto;
+    border-radius: 0; box-shadow: none; margin: 0;
+  }
+}

@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Member Auto-Maintenance · Elken</title>
+  <meta name="description" content="Place an auto-maintenance order for a member. The selected products' total BV must be 90 BV or more." />
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
+
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/signup.css?v=20260923a">
+  <link rel="stylesheet" href="assets/css/member-flows.css?v=20260923a">
+  <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
+  <script src="assets/js/elken-ui.js" defer></script>
+</head>
+<body data-page="member-auto-maintenance">
+  <div id="offline-banner" class="offline-banner">Connection status</div>
+
+  <main id="main">
+
+    <!-- Page banner (matches the marketing site's section banners) -->
+    <section class="sec-banner sec-banner--gradient sec-banner--short">
+      <div class="sec-banner__glow" aria-hidden="true"></div>
+      <div class="sec-banner__inner">
+        <div class="sec-banner__crumb">
+          <nav class="ek-breadcrumb" aria-label="Breadcrumb">
+            <a href="account.html">My Account</a><span aria-hidden="true">/</span><span aria-current="page">Member Auto-Maintenance</span>
+          </nav>
+        </div>
+        <div class="sec-banner__copy">
+          <h1 class="ek-h1">Member <span class="t-accent">Auto-Maintenance.</span></h1>
+          <p class="sec-banner__sub">Place an auto-maintenance order for a member in your network. Search the member ID, pick products, and complete payment through the unified checkout process. The selected products must total at least 90 BV.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec-pad member-section">
+      <div class="ek-container member-container">
+
+        <form id="mrpForm" autocomplete="off" novalidate>
+          <!-- Section 1: Member info -->
+          <div class="ek-card sec-block">
+            <div class="sec-title">Member information</div>
+            <p class="sec-hint">Enter the auto-maintenance member's ID (NG + 8 digits) to look up their profile.</p>
+
+            <div class="member-search">
+              <input class="ek-input" type="text" id="memberIdInput" placeholder="NG00000000" maxlength="10" autocomplete="off" />
+              <button type="button" class="ek-btn ek-btn--secondary" id="memberSearchBtn">Search</button>
+            </div>
+
+            <div class="member-result ek-mt-16" id="memberResult" hidden></div>
+          </div>
+
+          <!-- Section 2: Reporting center -->
+          <div class="ek-card sec-block">
+            <div class="sec-title">Reporting center</div>
+            <p class="sec-hint">Auto-filled from your account. Used to credit commissions on this order.</p>
+            <div class="reporting-grid">
+              <div class="field-row ek-field">
+                <label>Reporting center ID <span class="req-star">*</span></label>
+                <input class="ek-input" type="text" id="reportingCenterId" readonly />
+              </div>
+              <div class="field-row ek-field">
+                <label>Reporting center name</label>
+                <input class="ek-input" type="text" id="reportingCenterName" readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Products -->
+          <div class="ek-card sec-block">
+            <div class="sec-title">Choose products</div>
+            <p class="sec-hint">Tap a product to add it, then set the quantity. Prices shown are DP (distributor price) with BV, and the retail reference RP. <strong>Auto-Maintenance requires the selected products' total BV to be at least 90 BV.</strong></p>
+            <div class="prod-grid" id="productPick" aria-live="polite"></div>
+          </div>
+
+          <!-- Section 4: Shipping address -->
+          <div class="ek-card sec-block ship-form">
+            <div class="sec-title">Shipping information</div>
+            <p class="sec-hint">Where should the order be delivered? The auto-maintenance member is the recipient.</p>
+
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label>Recipient name <span class="req-star">*</span></label>
+                <input class="ek-input" type="text" id="shipRecipient" required />
+              </div>
+              <div class="field-row ek-field">
+                <label>Saved address</label>
+                <select class="ek-select" id="savedAddrSelect">
+                  <option value="">— Use a new address —</option>
+                </select>
+              </div>
+              <div class="field-row ek-field">
+                <label>Phone <span class="req-star">*</span></label>
+                <input class="ek-input" type="tel" id="shipPhone" required />
+              </div>
+              <div class="field-row ek-field">
+                <label>State <span class="req-star">*</span></label>
+                <select class="ek-select" id="shipState" required>
+                  <option value="">— Select state —</option>
+                  <option>Lagos</option><option>FCT Abuja</option><option>Rivers</option>
+                  <option>Oyo</option><option>Kano</option><option>Kaduna</option>
+                  <option>Ogun</option><option>Anambra</option><option>Other</option>
+                </select>
+              </div>
+              <div class="field-row ek-field">
+                <label>City <span class="req-star">*</span></label>
+                <input class="ek-input" type="text" id="shipCity" required />
+              </div>
+              <div class="field-row ek-field">
+                <label>District / LGA</label>
+                <input class="ek-input" type="text" id="shipDistrict" />
+              </div>
+              <div class="field-row ek-field field-row--full">
+                <label>Street address <span class="req-star">*</span></label>
+                <input class="ek-input" type="text" id="shipAddress" required placeholder="House no., street name, area" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5: Payment -->
+          <div class="ek-card sec-block">
+            <div class="sec-title">Payment method</div>
+            <p class="sec-hint">Payment is processed through the unified Elken payment gateway.</p>
+            <div class="pay-method-grid" id="mrpPayGrid"></div>
+          </div>
+
+          <!-- Method panels are built on demand by the shared payment layer
+               (assets/js/payment-methods.js) so every flow behaves the same. -->
+          <div id="mrpPayPanels"></div>
+
+          <!-- Section 6: Summary + actions -->
+          <div class="ek-card sec-block" id="summaryCard">
+            <div class="sec-title">Order summary</div>
+            <div class="summary-list" id="summaryList">
+              <p class="sm-empty">No products selected yet.</p>
+            </div>
+            <div class="mrp-summary-rows">
+              <div class="row">
+                <span>Subtotal</span>
+                <span id="summarySubtotal">NGN 0</span>
+              </div>
+              <div class="row">
+                <span>BV rewards</span>
+                <span>+<span id="summaryBV">0</span> BV</span>
+              </div>
+              <div class="row">
+                <span>BV requirement</span>
+                <span id="bvReqText">need ≥ 90 BV</span>
+              </div>
+              <div class="row total">
+                <span>Total</span>
+                <span id="summaryTotal">NGN 0</span>
+              </div>
+            </div>
+
+            <div class="mrp-actions">
+              <button type="button" class="ek-btn ek-btn--secondary" id="backBtn">Back</button>
+              <button type="submit" class="ek-btn ek-btn--primary" id="payBtn" disabled>支付 Pay</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Site footer (rendered by app.js, same as the marketing site) -->
+  <div id="app-footer" class="ek-site-footer"></div>
+
+  <script src="assets/i18n/strings.js?v=20260909c"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
+  <script src="assets/js/website.js?v=20260909c"></script>
+  <script src="assets/js/qr.js?v=20260915a"></script>
+  <script src="assets/js/payment-methods.js?v=20260915a"></script>
+  <script>
+    /* ============================================================
+       Member Auto-Maintenance page
+       - search for a member
+       - pick products (official card grid)
+       - submit through the unified order / payment flow
+       - requires the selected products' total BV to be >= 90
+       ============================================================ */
+    (function() {
+      'use strict';
+
+      /* ---------- Reference data ---------- */
+      // Tiny directory of known member IDs (for demo). In a real deployment
+      // this would come from the network / API. Each entry carries the full
+      // profile so an auto-maintenance search can associate the member's info
+      // and pre-fill the shipping form.
+      const DEMO_DIRECTORY = {
+        'NG09246375': {
+          name: 'Amara Okafor', phone: '08031234567', level: 'Silver',
+          state: 'Lagos', city: 'Lekki', district: 'Eti-Osa', address: '14 Admiralty Way, Lekki Phase 1',
+          reportingCenterId: 'NG66051653', joinDate: '2023-06-18',
+        },
+        'NG23374876': {
+          name: 'Fauzia Yunus Shehu', phone: '07028912345', level: 'Gold',
+          state: 'FCT Abuja', city: 'Abuja', district: 'Garki', address: '8 Julius Nyerere Crescent, Garki II',
+          reportingCenterId: 'NG66051653', joinDate: '2022-11-02',
+        },
+        'NG27187710': {
+          name: 'S2 (Referrer)', phone: '08155550199', level: 'Platinum',
+          state: 'Rivers', city: 'Port Harcourt', district: 'Obio-Akpor', address: '21 Trans-Amadi Industrial Layout',
+          reportingCenterId: 'NG66051653', joinDate: '2021-04-15',
+        },
+        'NG66051653': {
+          name: 'Reporting Center', phone: '09080001122', level: 'Diamond',
+          state: 'Oyo', city: 'Ibadan', district: 'Ibadan North', address: '3 Ring Road, Dugbe',
+          reportingCenterId: 'NG66051653', joinDate: '2020-01-10',
+        },
+        'NG48655323': {
+          name: 'Default Order Demo', phone: '08019998877', level: 'Silver',
+          state: 'Kano', city: 'Kano', district: 'Fagge', address: '27 Bello Road',
+          reportingCenterId: 'NG66051653', joinDate: '2023-09-30',
+        },
+        'NG00000001': {
+          name: 'Elken HQ', phone: '07000000001', level: 'Corporate',
+          state: 'Lagos', city: 'Ikeja', district: 'Ikeja', address: '1 Elken Way, Alausa',
+          reportingCenterId: 'NG66051653', joinDate: '2019-08-01',
+        },
+      };
+
+      /* ---------- State ---------- */
+      const state = {
+        member: null,                // { id, name }
+        reportingCenter: null,       // { id, name }
+        items: {},                   // { productId: qty }
+        savedAddresses: [],
+        payMethod: null,
+      };
+
+      /* ---------- Helpers ---------- */
+      function money(n) {
+        return 'NGN ' + (Number(n) || 0).toLocaleString('en-NG');
+      }
+      function genOrderId() {
+        return 'MR-' + Date.now().toString(36).toUpperCase().slice(-6) + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+      }
+      function getMemberData() {
+        try { return JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch { return {}; }
+      }
+      function getProducts() {
+        return (window.ProductCatalog && window.ProductCatalog.allProducts) || [];
+      }
+      function _productImagePath(img, category) {
+        if (!img) return '';
+        if (/^(assets\/|https?:)/i.test(img)) return img;
+        return category ? `assets/img/products/${category}/${img}` : img;
+      }
+
+      /* ---------- Init ---------- */
+      function init() {
+        bindReportingCenter();
+        renderProducts();
+        renderSavedAddresses();
+        bindMemberSearch();
+        buildPayMethods();
+        bindSummary();
+        bindFormSubmit();
+        updatePayBtn();
+      }
+
+      /* ---------- Reporting center (auto-filled from current user) ---------- */
+      function bindReportingCenter() {
+        const md = getMemberData();
+        const id = md.reportingCenterId || md.memberId || 'NG66051653';
+        const name = md.memberName || (DEMO_DIRECTORY[id] && DEMO_DIRECTORY[id].name) || 'Reporting Center';
+        state.reportingCenter = { id, name };
+        document.getElementById('reportingCenterId').value = id;
+        document.getElementById('reportingCenterName').value = name;
+      }
+
+      /* ---------- Product picker (official card grid) ---------- */
+      function renderProducts() {
+        const products = getProducts();
+        const root = document.getElementById('productPick');
+        root.innerHTML = products.map(p => {
+          const img = _productImagePath(p.img, p.category);
+          const stock = Number(p.stock) || 0;
+          const stockCls = stock <= 0 ? ' is-out' : (stock < 5 ? ' is-low' : ' is-ok');
+          const qty = state.items[p.id] || 0;
+          const checked = !!state.items[p.id];
+          const bvVal = Number(p.bv) || 0;
+          const rpVal = Number(p.rp || 0).toFixed(2);
+          const badge = checked ? `<span class="prod-card__badge">✓ Added</span>` : '';
+          const media = img
+            ? `<div class="prod-card__media">${badge}<img src="${img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'" /></div>`
+            : `<div class="prod-card__media prod-card__media--empty">${badge}</div>`;
+          const foot = checked
+            ? `<div class="prod-card__foot prod-card__foot--added">
+                 <div class="qty-stepper" data-id="${p.id}">
+                   <button type="button" class="qty-minus" data-id="${p.id}" aria-label="Decrease quantity">−</button>
+                   <input type="number" class="qty-val" data-id="${p.id}" value="${qty}" min="1" max="${stock || 99}" aria-label="Quantity" />
+                   <button type="button" class="qty-plus" data-id="${p.id}" aria-label="Increase quantity">+</button>
+                 </div>
+                 <button type="button" class="prod-card__remove" data-id="${p.id}">Remove</button>
+               </div>`
+            : `<div class="prod-card__foot">
+                 <button type="button" class="prod-card__add" data-id="${p.id}">＋ Add</button>
+               </div>`;
+          return `
+            <article class="prod-card${checked ? ' is-added' : ''}" data-id="${p.id}" data-stock="${stock}">
+              ${media}
+              <div class="prod-card__body">
+                <h3 class="prod-card__name">${p.name}</h3>
+                <span class="prod-card__sku">${p.sku || p.id.toUpperCase()}</span>
+                <div class="prod-card__meta">
+                  <span class="prod-card__price">DP NGN ${(p.price || 0).toLocaleString()}</span>
+                  <span class="prod-card__bv">BV ${bvVal}</span>
+                </div>
+                <span class="prod-card__rp">RP: NGN ${rpVal}</span>
+                <span class="prod-card__stock${stockCls}">Stock: ${stock}</span>
+              </div>
+              ${foot}
+            </article>`;
+        }).join('');
+
+        renderSummary();
+      }
+
+      function setQty(pid, qty) {
+        const el = document.querySelector(`#productPick .prod-card[data-id="${pid}"]`);
+        const stock = el ? (Number(el.dataset.stock) || 0) : 99;
+        qty = Math.max(0, Math.min(stock || 99, parseInt(qty, 10) || 0));
+        if (qty <= 0) delete state.items[pid];
+        else state.items[pid] = qty;
+        renderProducts();
+        updatePayBtn();
+      }
+
+      const productPick = document.getElementById('productPick');
+      productPick.addEventListener('click', e => {
+        const addBtn = e.target.closest('.prod-card__add');
+        if (addBtn) { setQty(addBtn.dataset.id, 1); return; }
+        const remBtn = e.target.closest('.prod-card__remove');
+        if (remBtn) { setQty(remBtn.dataset.id, 0); return; }
+        const step = e.target.closest('.qty-minus, .qty-plus');
+        if (step) {
+          const pid = step.dataset.id;
+          const input = productPick.querySelector(`.qty-val[data-id="${pid}"]`);
+          let v = input ? (parseInt(input.value, 10) || 1) : 1;
+          v = step.classList.contains('qty-minus') ? v - 1 : v + 1;
+          setQty(pid, v);
+          return;
+        }
+        const card = e.target.closest('.prod-card');
+        if (card && !card.classList.contains('is-added')) {
+          setQty(card.dataset.id, 1);
+        }
+      });
+      productPick.addEventListener('change', e => {
+        if (e.target.classList.contains('qty-val')) {
+          setQty(e.target.dataset.id, parseInt(e.target.value, 10) || 0);
+        }
+      });
+
+      /* ---------- Member search ---------- */
+      const MEMBER_DEFAULTS = {
+        phone: '08000000000',
+        level: 'Silver',
+        state: 'Lagos',
+        city: 'Lagos',
+        district: 'Ikeja',
+        address: '1 Elken Way, Alausa',
+        reportingCenterId: 'NG66051653',
+        joinDate: '2024-01-01',
+      };
+      function fillMemberDefaults(m) {
+        Object.keys(MEMBER_DEFAULTS).forEach(k => {
+          if (!m[k] || m[k] === '-') m[k] = MEMBER_DEFAULTS[k];
+        });
+        return m;
+      }
+
+      function lookupMember(raw) {
+        raw = (raw || '').trim().toUpperCase();
+        let m = null;
+        if (DEMO_DIRECTORY[raw]) {
+          const d = DEMO_DIRECTORY[raw];
+          m = {
+            id: raw,
+            name: d.name,
+            phone: d.phone || '',
+            level: d.level || '-',
+            state: d.state || '',
+            city: d.city || '',
+            district: d.district || '',
+            address: d.address || '',
+            reportingCenterId: d.reportingCenterId || '',
+            joinDate: d.joinDate || '',
+            source: 'directory',
+          };
+        }
+        if (!m) {
+          try {
+            const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+            if (md && md.memberId === raw) {
+              m = {
+                id: raw,
+                name: md.fullName || md.name || 'You',
+                phone: md.phone || '',
+                level: md.level || 'Member',
+                state: md.state || '',
+                city: md.city || '',
+                district: md.district || '',
+                address: md.address || '',
+                reportingCenterId: md.reportingCenterId || '',
+                joinDate: md.joinDate || '',
+                source: 'self',
+              };
+            }
+          } catch {}
+        }
+        if (!m) {
+          try {
+            const orders = JSON.parse(localStorage.getItem('al.orders') || '[]');
+            const o = orders.find(o => o && o.memberId === raw);
+            if (o && o.customer) {
+              const c = o.customer;
+              m = {
+                id: raw,
+                name: c.name || ('Member ' + raw.slice(-4)),
+                phone: c.phone || '',
+                level: c.level || 'Member',
+                state: c.state || '',
+                city: c.city || '',
+                district: c.district || '',
+                address: c.address || '',
+                reportingCenterId: o.reportingCenterId || '',
+                joinDate: '',
+                source: 'order',
+              };
+            }
+          } catch {}
+        }
+        if (!m) {
+          m = {
+            id: raw,
+            name: 'Member ' + raw.slice(-4),
+            phone: '', level: '-',
+            state: '', city: '', district: '', address: '',
+            reportingCenterId: '', joinDate: '', source: 'unknown',
+          };
+        }
+        return fillMemberDefaults(m);
+      }
+
+      function bindMemberSearch() {
+        const input = document.getElementById('memberIdInput');
+        const btn = document.getElementById('memberSearchBtn');
+        const doSearch = () => {
+          const raw = (input.value || '').trim().toUpperCase();
+          if (!/^NG\d{8}$/.test(raw)) {
+            showMemberResult(null, 'Invalid member ID. Format must be NG + 8 digits (e.g. NG23374876).');
+            return;
+          }
+          const m = lookupMember(raw);
+          state.member = m;
+          prefillFromMember(m);
+          showMemberResult(m, null);
+        };
+        btn.addEventListener('click', doSearch);
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+        input.addEventListener('input', () => { input.value = input.value.toUpperCase(); });
+      }
+
+      function prefillFromMember(m) {
+        if (!m) return;
+        document.getElementById('shipRecipient').value = m.name || '';
+        document.getElementById('shipPhone').value = m.phone || '';
+        document.getElementById('shipCity').value = m.city || '';
+        document.getElementById('shipDistrict').value = m.district || '';
+        document.getElementById('shipAddress').value = m.address || '';
+        const st = document.getElementById('shipState');
+        if (m.state && st) {
+          const opt = Array.from(st.options).find(o => o.value === m.state || o.text === m.state);
+          if (opt) st.value = opt.value;
+        }
+      }
+
+      function showMemberResult(member, error) {
+        const box = document.getElementById('memberResult');
+        if (error) {
+          box.className = 'member-result ek-mt-16';
+          box.innerHTML = `<div class="ek-alert ek-alert--error" role="alert"><p class="ek-alert__body">${error}</p></div>`;
+          box.hidden = false;
+          return;
+        }
+        if (member) {
+          const rcName = (member.reportingCenterId && DEMO_DIRECTORY[member.reportingCenterId])
+            ? DEMO_DIRECTORY[member.reportingCenterId].name : (member.reportingCenterId || '-');
+          box.className = 'member-result ek-mt-16';
+          box.innerHTML = `
+            <div class="ek-identity">
+              <span class="ek-avatar" aria-hidden="true">${(member.name[0] || 'M').toUpperCase()}</span>
+              <span class="ek-small">
+                <span class="ek-identity__name">${member.name}</span><br>
+                <span class="ek-identity__meta">${member.id} · ${member.level}</span>
+              </span>
+            </div>
+            <dl class="ek-kv ek-mt-16">
+              <dt>Reporting center</dt><dd class="mono">${rcName}</dd>
+              <dt>Phone</dt><dd class="mono">${member.phone || '-'}</dd>
+              <dt>State</dt><dd>${member.state || '-'}</dd>
+              <dt>City</dt><dd>${member.city || '-'}</dd>
+              <dt>District / LGA</dt><dd>${member.district || '-'}</dd>
+              <dt>Address</dt><dd>${member.address || '-'}</dd>
+              ${member.joinDate ? `<dt>Joined</dt><dd class="mono">${member.joinDate}</dd>` : ''}
+            </dl>`;
+          box.hidden = false;
+        } else {
+          box.hidden = true;
+        }
+        updatePayBtn();
+      }
+
+      /* ---------- Saved addresses ---------- */
+      function renderSavedAddresses() {
+        const select = document.getElementById('savedAddrSelect');
+        if (!select) return;
+        const list = (window.AL && window.AL.getAddresses) ? window.AL.getAddresses() : [];
+        state.savedAddresses = list;
+        select.innerHTML = '<option value="">— Use a new address —</option>' +
+          list.map(a => `<option value="${a.id}">${(a.label || 'Address')} — ${[a.street, a.city].filter(Boolean).join(', ')}</option>`).join('');
+        select.addEventListener('change', () => {
+          const a = list.find(x => x.id === select.value);
+          if (a) {
+            document.getElementById('shipRecipient').value = a.recipient || '';
+            document.getElementById('shipPhone').value = a.phone || '';
+            document.getElementById('shipAddress').value = a.street || '';
+            document.getElementById('shipCity').value = a.city || '';
+            const st = document.getElementById('shipState');
+            const opt = Array.from(st.options).find(o => o.text === a.state);
+            if (opt) st.value = opt.value;
+          }
+        });
+      }
+
+      /* ---------- Shared payment layer (assets/js/payment-methods.js) ---------- */
+      let payMethods = null;
+
+      function orderSubtotal() {
+        const products = getProducts();
+        return Object.keys(state.items || {}).reduce((sum, pid) => {
+          const p = products.find(x => x.id === pid);
+          return p ? sum + (p.price || 0) * (state.items[pid] || 0) : sum;
+        }, 0);
+      }
+
+      function buildPayMethods() {
+        payMethods = window.PayMethods.wire('#mrpPayGrid', {
+          name: 'mrpPay',
+          panelHost: '#mrpPayPanels',
+          panelClass: 'ek-card ek-card--quiet method-info-card',
+          prefix: 'mam',
+          amount: orderSubtotal,
+          selected: 'card',
+          onChange: onPayMethodChange,
+        });
+        return payMethods;
+      }
+
+      function onPayMethodChange(value) {
+        state.payMethod = value || (payMethods && payMethods.value()) || null;
+        updatePayBtn();
+      }
+      function refreshPayPanels() { if (payMethods) payMethods.refresh(); }
+      function selectPayMethod(value) { if (payMethods) payMethods.select(value); }
+      function payMethodComplete() {
+        return !!(payMethods && payMethods.value() && payMethods.isComplete());
+      }
+      function paymentReference() { return payMethods ? payMethods.reference : null; }
+
+      /* ---------- Summary ---------- */
+      function renderSummary() {
+        const products = getProducts();
+        const lines = Object.keys(state.items).map(pid => {
+          const p = products.find(x => x.id === pid);
+          if (!p) return null;
+          return { ...p, qty: state.items[pid] };
+        }).filter(Boolean);
+        const list = document.getElementById('summaryList');
+        if (lines.length === 0) {
+          list.innerHTML = '<p class="sm-empty">No products selected yet.</p>';
+        } else {
+          list.innerHTML = lines.map(it => `
+            <div class="sm-row">
+              <div>${it.img ? `<img src="${_productImagePath(it.img, it.category)}" alt="${it.name}" />` : ''}</div>
+              <div>
+                <div class="sm-name">${it.name}</div>
+                <div class="sm-sub">${it.qty} × ${money(it.price)}</div>
+              </div>
+              <div class="sm-amt">${money(it.price * it.qty)}</div>
+            </div>`).join('');
+        }
+        const subtotal = lines.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
+        const bv = lines.reduce((s, it) => s + (Number(it.bv) || 0) * (it.qty || 1), 0);
+        document.getElementById('summarySubtotal').textContent = money(subtotal);
+        document.getElementById('summaryBV').textContent = Number.isInteger(bv) ? bv : bv.toFixed(1);
+        document.getElementById('summaryTotal').textContent = money(subtotal);
+        state.subtotal = subtotal;
+        state.bv = bv;
+        if (payMethods) payMethods.refresh();
+      }
+
+      function bindSummary() {
+        document.getElementById('backBtn').addEventListener('click', () => {
+          if (history.length > 1) history.back();
+          else location.href = 'account.html';
+        });
+      }
+
+      /* ---------- Form submit (unified payment process) ---------- */
+      function bindFormSubmit() {
+        document.getElementById('mrpForm').addEventListener('submit', e => {
+          e.preventDefault();
+          submitOrder();
+        });
+      }
+
+      function updatePayBtn() {
+        const MIN_BV = 90;
+        const payBtn = document.getElementById('payBtn');
+        const bv = state.bv || 0;
+        const bvOk = bv >= MIN_BV;
+        const ok = !!state.member
+          && Object.keys(state.items).length > 0
+          && document.getElementById('shipRecipient').value.trim()
+          && document.getElementById('shipPhone').value.trim()
+          && document.getElementById('shipState').value
+          && document.getElementById('shipCity').value.trim()
+          && document.getElementById('shipAddress').value.trim()
+          && !!state.reportingCenter && !!state.reportingCenter.id
+          && (state.subtotal || 0) > 0
+          && payMethodComplete()
+          && bvOk;
+        payBtn.disabled = !ok;
+        // Live BV requirement indicator
+        const reqText = document.getElementById('bvReqText');
+        if (reqText) {
+          if (bv <= 0) {
+            reqText.textContent = 'need ≥ ' + MIN_BV + ' BV';
+            reqText.style.color = 'var(--ek-muted)';
+          } else if (bvOk) {
+            reqText.textContent = bv + ' / ' + MIN_BV + ' BV ✓';
+            reqText.style.color = 'var(--ek-success)';
+          } else {
+            reqText.textContent = bv + ' / ' + MIN_BV + ' BV — not enough';
+            reqText.style.color = 'var(--ek-error)';
+          }
+        }
+      }
+
+      ['shipRecipient','shipPhone','shipState','shipCity','shipAddress'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updatePayBtn);
+        document.getElementById(id).addEventListener('change', updatePayBtn);
+      });
+
+      function submitOrder() {
+        const payBtn = document.getElementById('payBtn');
+        if (payBtn.disabled) return;
+        payBtn.disabled = true;
+        const origText = payBtn.textContent;
+        payBtn.textContent = 'Processing…';
+
+        const products = getProducts();
+        const lines = Object.keys(state.items).map(pid => {
+          const p = products.find(x => x.id === pid);
+          return p ? { ...p, qty: state.items[pid] } : null;
+        }).filter(Boolean);
+        const total = lines.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
+        const bv = lines.reduce((s, it) => s + (Number(it.bv) || 0) * (it.qty || 1), 0);
+
+        const customer = {
+          name: document.getElementById('shipRecipient').value.trim(),
+          phone: document.getElementById('shipPhone').value.trim(),
+          email: '',
+          city: document.getElementById('shipCity').value.trim(),
+          state: document.getElementById('shipState').value,
+          district: document.getElementById('shipDistrict').value.trim(),
+          address: document.getElementById('shipAddress').value.trim(),
+        };
+
+        const pc = window.ProductCatalog || {};
+        const orderItems = lines.map(it => ({
+          id: it.id,
+          sku: it.sku || '',
+          name: it.name,
+          qty: it.qty,
+          price: it.price || 0,
+          rp: it.rp || 0,
+          bv: Number(it.bv) || 0,
+          bvTotal: (Number(it.bv) || 0) * (it.qty || 1),
+          stock: Number(it.stock) || 0,
+          img: it.img,
+          category: it.category,
+          image: _productImagePath(it.img, it.category),
+        }));
+        const order = {
+          id: (pc.genOrderId ? pc.genOrderId() : genOrderId()),
+          date: Date.now(),
+          items: orderItems,
+          total: total,
+          bv: bv,
+          memberId: state.member ? state.member.id : null,
+          memberName: (state.member && state.member.name) || customer.name || null,
+          operatorId: (window.Auth && window.Auth.user && window.Auth.user.memberId) || null,
+          country: 'Nigeria',
+          currency: 'NGN',
+          reportingCenterId: state.reportingCenter ? state.reportingCenter.id : null,
+          reportingCenterName: state.reportingCenter ? state.reportingCenter.name : null,
+          customer: customer,
+          delivery: { method: 'delivery' },
+          payment: state.payMethod,
+          paymentLabel: (window.PayMethods && window.PayMethods.label(state.payMethod)) || state.payMethod,
+          paymentReference: paymentReference(),
+          payStatus: 'Unpaid',
+          source: 'member-auto-maintenance',
+          status: 'pending',
+        };
+        if (pc.addOrder) {
+          pc.addOrder(order);
+        } else {
+          const orders = JSON.parse(localStorage.getItem('al.orders') || '[]');
+          orders.unshift(order);
+          localStorage.setItem('al.orders', JSON.stringify(orders));
+        }
+
+        showSuccess(order, { next: 'gateway' });
+      }
+
+      function showSuccess(order, opts) {
+        opts = opts || {};
+        const wrap = document.querySelector('.member-section .ek-container');
+        wrap.innerHTML = `
+          <div class="ek-card sec-block">
+            <div class="sec-title">Order placed</div>
+            <div class="ek-identity">
+              <span class="ek-avatar" aria-hidden="true">✓</span>
+              <span class="ek-small">
+                <span class="ek-identity__name">${order.id}</span><br>
+                <span class="ek-identity__meta">${money(order.total)} · ${order.status === 'paid' ? 'Completed' : 'Pending'}</span>
+              </span>
+            </div>
+            <p class="sec-hint">Auto-maintenance member: <strong>${order.memberId}</strong> · ${order.memberName || ''}</p>
+            <p class="sec-hint">Reporting center: <strong>${order.reportingCenterId}</strong>${order.reportingCenterName ? ' · ' + order.reportingCenterName : ''}</p>
+            <p class="sec-hint">Payment: <strong>${order.paymentLabel}</strong></p>
+            ${opts.next === 'gateway' ? '<p class="sec-hint">Redirecting to secure payment…</p>' : ''}
+            <div class="mrp-actions">
+              <a class="ek-btn ek-btn--primary" href="order.html?id=${order.id}">View order</a>
+              <a class="ek-btn ek-btn--secondary" href="account.html">Back to account</a>
+            </div>
+          </div>`;
+        if (opts.next === 'gateway') {
+          setTimeout(() => { location.href = 'order.html?id=' + order.id; }, 1800);
+        }
+      }
+
+      /* ---------- go ---------- */
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>

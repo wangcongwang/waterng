@@ -1,0 +1,835 @@
+/* Water V5 business layout extensions. Uses Elken tokens only. */
+
+.page,
+.dash-shell,
+.wv-account-shell { background: var(--ek-surface-page); }
+
+.ek-toast--success,
+.ek-alert--success,
+.wa-fab {
+  color: var(--ek-white);
+  background: var(--ek-blue);
+}
+
+.ek-chip--success,
+.ek-stat__delta--up {
+  --chip-bg: var(--ek-info-tint);
+  --chip-ink: var(--ek-blue);
+  color: var(--ek-blue);
+  background: var(--ek-info-tint);
+}
+
+.page-head {
+  border-bottom: 1px solid var(--ek-border);
+  padding-block: var(--ek-48);
+}
+
+.page-head .crumbs {
+  display: flex;
+  gap: var(--ek-8);
+  margin-bottom: var(--ek-16);
+}
+
+.page-head .sub {
+  max-width: 720px;
+  font-size: var(--ek-lead);
+  line-height: var(--ek-lead-lh);
+}
+
+.dash-shell,
+.checkout-shell,
+.cart-shell,
+.member-shell { padding-block: var(--ek-48) var(--ek-80); }
+
+.dash-head,
+.wv-account-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-16);
+  margin-bottom: var(--ek-20);
+  padding: var(--ek-24);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+}
+
+.dash-actions {
+  margin-left: auto;
+  display: flex;
+  gap: var(--ek-8);
+  flex-wrap: wrap;
+}
+
+.wv-account-nav {
+  display: flex;
+  gap: var(--ek-8);
+  overflow-x: auto;
+  margin-bottom: var(--ek-24);
+  padding: var(--ek-8);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+}
+
+.wv-account-nav a,
+.wv-account-nav button {
+  flex: 0 0 auto;
+  padding: var(--ek-8) var(--ek-12);
+  border: 0;
+  border-radius: var(--ek-radius-sm);
+  color: var(--ek-charcoal);
+  background: transparent;
+  text-decoration: none;
+  font: inherit;
+  font-size: var(--ek-small);
+  cursor: pointer;
+}
+
+.wv-account-nav a.active,
+.wv-account-nav a[aria-current="page"],
+.wv-account-nav button.active,
+.wv-account-nav button.is-active {
+  color: var(--ek-white);
+  background: var(--ek-blue);
+}
+
+/* Original portal-style tabs for the account dashboard (Overview/Orders/Profile/Sponsor). */
+.tabs {
+  display: flex;
+  gap: var(--ek-8);
+  margin-bottom: var(--ek-24);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--ek-border);
+}
+.tabs a {
+  flex: 0 0 auto;
+  padding: var(--ek-12) var(--ek-18);
+  position: relative;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  color: var(--ek-muted);
+  font-size: var(--ek-small);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.tabs a:hover { color: var(--ek-charcoal); }
+.tabs a.active {
+  color: var(--ek-blue);
+  border-bottom-color: var(--ek-blue);
+}
+
+.dash-view[hidden],
+[hidden] { display: none; }
+
+.kpi-grid,
+.overview-grid,
+.profile-grid,
+.checkout-grid,
+.cart-layout,
+.detail-grid,
+.split-layout,
+.water-system-layout,
+.row2,
+.row3,
+.signup-sections {
+  display: grid;
+  gap: var(--ek-20);
+}
+
+.kpi-grid,
+.row2 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+.overview-grid,
+.checkout-grid,
+.cart-layout,
+.detail-grid,
+.split-layout,
+.water-system-layout { grid-template-columns: minmax(0, 1fr) minmax(280px, 420px); }
+
+.product-detail-hero {
+  padding-block: var(--ek-48);
+  background: var(--ek-surface-page);
+}
+
+.product-detail-hero-grid,
+.product-detail-layout {
+  display: grid;
+  gap: var(--ek-24);
+}
+
+.product-detail-hero-grid {
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 440px);
+}
+
+.product-detail-visual {
+  display: grid;
+  place-items: center;
+  min-height: 280px;
+  max-height: 520px;
+  padding: var(--ek-24);
+  overflow: hidden;
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  box-shadow: var(--ek-shadow-sm);
+}
+
+.product-detail-visual img {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  max-height: 460px;
+  object-fit: contain;
+}
+
+#detailImage {
+  width: min(100%, 420px);
+  max-width: 420px;
+  height: auto;
+  max-height: 460px;
+  object-fit: contain;
+}
+
+.product-detail-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+}
+
+.detail-panel,
+.detail-note {
+  padding: var(--ek-20);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  box-shadow: var(--ek-shadow-sm);
+}
+
+.detail-main,
+.detail-aside {
+  display: grid;
+  align-content: start;
+  gap: var(--ek-20);
+}
+
+.prod-img-thumb,
+.row-img img,
+.summary-list img,
+.summary-item-img img {
+  display: block;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.prod-info,
+.product-list-row,
+.summary-list li,
+.summary-list .summary-item {
+  min-width: 0;
+}
+
+.profile-grid,
+.row3,
+.signup-sections { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+.kpi,
+.profile-card,
+.order-card,
+.sponsor-network-card,
+.referral-card,
+.address-card,
+/* .method-info-card is .ek-card.ek-card--quiet (elken-ui.css §2) — it used to
+   be grouped in here too, which silently overrode --quiet's shadow:none
+   because this file loads after elken-ui.css. */
+.cart-item,
+.cart-summary,
+.checkout-panel,
+.price-card {
+  padding: var(--ek-20);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  box-shadow: var(--ek-shadow-sm);
+}
+
+.kpi {
+  display: grid;
+  gap: var(--ek-8);
+}
+
+.kpi .k,
+.cart-summary .row,
+.summary .row,
+.order-item-meta,
+.referral-row-sub,
+.field-error,
+.help,
+.sub {
+  color: var(--ek-muted);
+  font-size: var(--ek-small);
+}
+
+.kpi .v,
+.panel-title,
+.order-item-name,
+.cart-item-name,
+.summary .total .v,
+.price-row .v {
+  color: var(--ek-charcoal-deep);
+  font-weight: var(--ek-w-bold);
+}
+
+.kpi .v {
+  font-size: var(--ek-h2);
+  line-height: var(--ek-h2-lh);
+}
+
+.panel-head,
+.orders-head,
+.toolbar,
+.price-row,
+.order-total-row,
+.referral-summary,
+.order-link-row,
+.actions,
+.form-actions,
+.rt-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ek-12);
+  flex-wrap: wrap;
+}
+
+.panel-title {
+  margin: var(--ek-24) 0 var(--ek-12);
+  font-size: var(--ek-h3);
+}
+
+.action-stack,
+.referral-list,
+.orders-table-wrap,
+.bank-rows,
+.summary-list,
+.drawer-auth {
+  display: grid;
+  gap: var(--ek-12);
+  /* Grid items default to min-width:auto, so a wide child (e.g. an order
+     card with a 9-column table) refuses to shrink and pushes overflow out
+     to the page instead of scrolling inside its own .ek-table-wrap. */
+  min-width: 0;
+}
+.action-stack > *,
+.referral-list > *,
+.orders-table-wrap > *,
+.bank-rows > *,
+.summary-list > *,
+.drawer-auth > * {
+  min-width: 0;
+}
+
+.hub-grid { margin-block: var(--ek-24); }
+
+.hub-cell {
+  display: grid;
+  gap: var(--ek-8);
+  padding: var(--ek-20);
+  color: var(--ek-charcoal);
+  text-decoration: none;
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  box-shadow: var(--ek-shadow-sm);
+}
+
+.hub-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  color: var(--ek-blue);
+  background: var(--ek-info-tint);
+  border-radius: var(--ek-radius);
+}
+
+.hub-label { font-weight: var(--ek-w-bold); }
+
+.hub-desc {
+  color: var(--ek-muted);
+  font-size: var(--ek-small);
+}
+
+.ek-field,
+.field-row,
+.sponsor-field {
+  display: grid;
+  gap: var(--ek-8);
+}
+
+.auth-form,
+.profile-form,
+.checkout-form {
+  display: grid;
+  gap: var(--ek-16);
+}
+
+.pwd { position: relative; }
+
+.pwd-toggle {
+  position: absolute;
+  right: var(--ek-8);
+  top: 50%;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  color: var(--ek-muted);
+  background: transparent;
+  border: 0;
+  transform: translateY(-50%);
+}
+
+.ek-input.invalid,
+.field-error,
+.req { color: var(--ek-error); }
+
+.ek-input.invalid { border-color: var(--ek-error); }
+
+.orders-segments,
+.pay-methods,
+.term-switcher,
+.filter-pills,
+.terms-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ek-8);
+}
+
+.orders-segment,
+.pay-method,
+.term,
+.filter-pill,
+.term-chip,
+.pickup-item {
+  padding: var(--ek-12);
+  color: var(--ek-charcoal);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+}
+
+.orders-segment.is-active,
+.pay-method.is-active,
+.term.active,
+.filter-pill.active,
+.pickup-item.is-active {
+  border-color: var(--ek-blue);
+  background: var(--ek-info-tint);
+}
+
+.ek-table,
+.plan-table,
+.cookie-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ek-table th,
+.ek-table td,
+.plan-table th,
+.plan-table td,
+.cookie-table th,
+.cookie-table td {
+  padding: var(--ek-12);
+  border-bottom: 1px solid var(--ek-border);
+  text-align: left;
+}
+
+.summary,
+.price-card {
+  color: var(--ek-white);
+  background: var(--ek-blue-hover);
+  border-color: var(--ek-stat-3);
+}
+
+.summary .row,
+.summary .total,
+.price-card .row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ek-12);
+}
+
+.summary .k,
+.summary p,
+.price-card .k { color: var(--ek-panel-cool); }
+
+.summary .v,
+.summary .total .v,
+.price-card .v { color: var(--ek-white); }
+
+.gallery {
+  display: grid;
+  gap: var(--ek-12);
+  align-content: start;
+}
+
+.gallery .main,
+.gallery .thumbs button {
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+}
+
+.gallery .thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--ek-8);
+}
+
+.cart-item,
+.order-item,
+.summary-item,
+.drawer-user {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-12);
+}
+
+.cart-item-img,
+.order-item-img,
+.summary-item-img {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--ek-surface-sunken);
+  border-radius: var(--ek-radius);
+}
+
+.qty-control,
+.summary-qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-pill);
+  overflow: hidden;
+}
+
+.qty-btn {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  color: var(--ek-charcoal);
+  background: var(--ek-surface-sunken);
+}
+
+.qty-value,
+.qty-input {
+  min-width: 40px;
+  text-align: center;
+}
+
+.category-grid,
+.demo-product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--ek-20);
+}
+
+.category-tile,
+.demo-product-card {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ek-charcoal);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  box-shadow: var(--ek-shadow-sm);
+  text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.category-tile:hover,
+.category-tile:focus-visible,
+.demo-product-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--ek-blue);
+  box-shadow: var(--ek-shadow);
+}
+
+.category-tile {
+  display: grid;
+}
+
+.category-tile img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--ek-surface-sunken);
+}
+
+.category-tile span {
+  display: grid;
+  gap: var(--ek-4);
+  padding: var(--ek-16);
+}
+
+.category-tile small {
+  color: var(--ek-muted);
+}
+
+.category-head {
+  display: grid;
+  gap: var(--ek-8);
+  margin-bottom: var(--ek-20);
+}
+
+.product-listing[hidden] {
+  display: none;
+}
+
+.demo-product-card {
+  display: grid;
+  cursor: pointer;
+}
+
+.demo-product-card .pic {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--ek-surface-sunken);
+}
+
+.demo-product-card .pic img {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  inset: var(--ek-16);
+  width: calc(100% - var(--ek-32));
+  height: calc(100% - var(--ek-32));
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.demo-product-card .body {
+  display: grid;
+  gap: var(--ek-8);
+  padding: var(--ek-16);
+}
+
+.demo-product-card h3,
+.demo-product-card p {
+  margin: 0;
+}
+
+.demo-product-card .desc {
+  color: var(--ek-muted);
+}
+
+.price-row,
+.ek-card-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-8);
+  flex-wrap: wrap;
+}
+
+.price-row {
+  justify-content: space-between;
+}
+
+.price {
+  color: var(--ek-blue);
+  font-weight: var(--ek-w-bold);
+}
+
+.product-tag,
+.bv-ek-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--ek-8);
+  border-radius: var(--ek-radius-pill);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+}
+
+.product-tag {
+  position: absolute;
+  top: var(--ek-8);
+  left: var(--ek-8);
+  color: var(--ek-white);
+  background: var(--ek-blue);
+}
+
+.bv-ek-chip {
+  color: var(--ek-blue);
+  background: var(--ek-info-tint);
+}
+
+
+/* Wide variant of the kit's .ek-modal, for the account.html data-table /
+   trading-record dialogs that don't fit the kit's default 560px width. */
+.ek-modal--wide { width: min(960px, calc(100vw - var(--ek-32))); }
+
+@media (max-width: 840px) {
+  .overview-grid,
+  .checkout-grid,
+  .cart-layout,
+  .detail-grid,
+  .product-detail-hero-grid,
+  .product-detail-layout,
+  .split-layout,
+  .water-system-layout { grid-template-columns: 1fr; }
+
+  .product-detail-visual {
+    min-height: 220px;
+    max-height: none;
+  }
+
+  #detailImage {
+    max-height: 360px;
+  }
+
+  .dash-head,
+  .wv-account-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+/* ================= Trading-record / data modals (account.html) =================
+   account.html builds these at runtime as native <dialog class="ek-modal">
+   (see elken-ui.css §14) with .ek-modal__head > h3.ek-modal__title + .modal-close,
+   .ek-modal__body holding .modal-filter-bar and an .ek-table, and .ek-modal__foot.
+   Only the page-specific bits that have no kit equivalent stay here. */
+.modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-surface);
+  color: var(--ek-muted);
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--ek-fast), color var(--ek-fast), border-color var(--ek-fast);
+}
+.modal-close:hover {
+  background: var(--ek-error-tint);
+  border-color: transparent;
+  color: var(--ek-error);
+}
+
+/* filter row */
+.modal-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--ek-border);
+  margin-bottom: 12px;
+}
+.modal-filter-bar input[type="date"],
+.modal-filter-bar select,
+.modal-filter-bar input[type="text"] {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-sm);
+  background: var(--ek-surface);
+  color: var(--ek-body-ink);
+  font: inherit;
+  font-size: var(--ek-small);
+  outline: none;
+  transition: border-color var(--ek-fast), box-shadow var(--ek-fast);
+}
+.modal-filter-bar input[type="date"] { width: 148px; }
+.modal-filter-bar input[type="text"] { flex: 1 1 160px; min-width: 140px; }
+.modal-filter-bar select { padding-right: 30px; }
+.modal-filter-bar input:focus,
+.modal-filter-bar select:focus {
+  border-color: var(--ek-blue);
+  box-shadow: 0 0 0 3px var(--ek-info-tint);
+}
+
+/* Grid variant: each control gets a label above it instead of relying on the
+   select's own first option / a title tooltip, and the action buttons sit on
+   their own row instead of wrapping unpredictably among the fields. */
+.modal-filter-bar--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--ek-16);
+  align-items: end;
+}
+.modal-filter-bar--grid .mf-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ek-4);
+  min-width: 0;
+}
+.modal-filter-bar--grid .mf-field label {
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-medium);
+  color: var(--ek-muted);
+}
+.modal-filter-bar--grid .mf-field .ek-input,
+.modal-filter-bar--grid .mf-field .ek-select {
+  width: 100%;
+  /* .modal-filter-bar input[type="text"] sets flex: 1 1 160px for the old
+     flex-row layout, where 160px was a width basis. .mf-field is a column
+     flex container, so that same basis gets reinterpreted as a HEIGHT basis
+     here, blowing the input up to 160px tall. Reset it. */
+  flex: none;
+}
+.modal-filter-bar--grid .mf-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ek-8);
+}
+@media (max-width: 639px) {
+  .modal-filter-bar--grid { grid-template-columns: 1fr 1fr; }
+  .modal-filter-bar--grid .mf-actions { justify-content: stretch; }
+  .modal-filter-bar--grid .mf-actions .ek-btn { flex: 1; }
+}
+
+/* Value-formatting modifiers on .ek-table cells — typographic choices the
+   kit doesn't make for you (kit only sets tabular-nums, not a mono face). */
+.mono { font-family: var(--ek-num), ui-monospace, SFMono-Regular, Menlo, monospace; }
+.amt-pos { color: var(--ek-success); font-weight: var(--ek-w-medium); }
+.amt-neg { color: var(--ek-error); font-weight: var(--ek-w-medium); }
+
+/* Recharge/Transfer's nested .ek-tabs: JS toggles .active, so the inactive
+   panel needs an explicit hide (the main dashboard tabs use [hidden] instead,
+   set directly by JS, so they don't need this). */
+.rt-panel:not(.active) { display: none; }
+/* .rt-toolbar borrows its flex layout from a shared selector list (this
+   file, above) with no spacing of its own, and .rt-tabs had none either —
+   the Recharge button sat flush against the tab strip above it and the
+   table below it with zero gap. */
+.rt-tabs { margin-bottom: var(--ek-16); }
+/* .rt-panel is also .ek-tabpanel, which adds its own padding-top: 24px —
+   stacked on top of .rt-tabs's margin-bottom above, that doubled up into a
+   40px gap before the Recharge button. Zero it out here since .rt-tabs
+   already provides the spacing. */
+.rt-panel.ek-tabpanel { padding-top: 0; }
+.rt-toolbar { margin-bottom: var(--ek-16); }
+.rt-panel .ek-table-wrap + .rt-toolbar { margin-top: var(--ek-16); margin-bottom: 0; }
+
+@media (max-width: 560px) {
+  .modal-filter-bar input[type="date"] { width: 100%; }
+}

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Team Inquiry · Elken</title>
+  <meta name="description" content="View your personal member details and team network summary." />
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
+  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260915c">
+  <script src="assets/js/elken-ui.js?v=20260909c" defer></script>
+</head>
+<body data-page="team-inquiry">
+  <div id="app-header" class="ek-site-header"></div>
+
+
+  <main id="main">
+    <section class="sec-banner sec-banner--gradient sec-banner--short">
+      <div class="sec-banner__glow" aria-hidden="true"></div>
+      <div class="sec-banner__inner">
+        <div class="sec-banner__crumb"><nav class="ek-breadcrumb" aria-label="Breadcrumb"><a href="account.html">My Account</a><span aria-hidden="true">/</span><span aria-current="page">Team Inquiry</span></nav></div>
+        <div class="sec-banner__copy">
+          <h1 class="ek-h1">Your team, <span class="t-accent">at a glance.</span></h1>
+          <p class="sec-banner__sub">View your personal member summary and your direct team details. Calculations are refreshed at the end of each pay cycle.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec-pad sec-about">
+      <div class="ek-container">
+        <div class="ek-sechead">
+          <div class="ek-sechead__left"><p class="ek-eyebrow">Team Inquiry</p><h2 class="ek-h2">Personal &amp; team details</h2></div>
+          <div class="ek-sechead__body"><p class="ek-lead">A clear view of your own standing and the members in your direct team. This is the same data your distributor sees when they register you.</p></div>
+        </div>
+
+        <h2 class="ek-h3 ek-mt-24">Personal Details</h2>
+        <div class="ek-card ek-card--flush">
+          <div class="ek-table-wrap">
+            <table class="ek-table ek-table--stack" id="personalTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Member Code</th>
+                  <th>Member Name</th>
+                  <th>Status</th>
+                  <th>Personal BV</th>
+                  <th>PGS</th>
+                  <th>Total BV</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td data-label="#">1</td>
+                  <td class="code" id="tiPersonalCode" data-label="Member Code">NG09246375</td>
+                  <td id="tiPersonalName" data-label="Member Name">David Okafor</td>
+                  <td data-label="Status"><span class="ek-chip ek-chip--success" id="tiPersonalStatus">ACTIVE</span></td>
+                  <td class="ek-table__num" id="tiPersonalBV" data-label="Personal BV">320</td>
+                  <td class="ek-table__num" id="tiPersonalPGS" data-label="PGS">1,450</td>
+                  <td class="ek-table__num" id="tiPersonalTotal" data-label="Total BV">1,770</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <h2 class="ek-h3 ek-mt-24">Team Details</h2>
+        <div class="ek-card ek-card--flush">
+          <div class="ek-table-wrap">
+            <table class="ek-table ek-table--stack" id="teamTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Member Code</th>
+                  <th>Member Name</th>
+                  <th>Status</th>
+                  <th>Personal BV</th>
+                  <th>PGS</th>
+                  <th>Total BV</th>
+                </tr>
+              </thead>
+              <tbody id="teamTableBody">
+                <tr><td colspan="7"><div class="ek-empty"><p class="ek-empty__title">No Data</p></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p class="ti-calc-time" id="tiCalcTime">Latest calculation time: <span id="tiCalcTimeVal"></span></p>
+      </div>
+    </section>
+  </main>
+
+  <div id="app-footer" class="ek-site-footer"></div>
+
+  <script src="assets/i18n/strings.js?v=20260909c"></script>
+  <script src="assets/js/app.js?v=20260923b"></script>
+  <script src="assets/js/website.js?v=20260909c"></script>
+  <script>
+    (function () {
+      function statusClass(status) {
+        // '' (no modifier) falls back to .ek-chip's own neutral default — inactive
+        // doesn't need its own variant.
+        const s = (status || '').toString().toLowerCase();
+        if (s === 'active') return 'ek-chip--success';
+        if (s === 'pending') return 'ek-chip--warning';
+        return '';
+      }
+      function statusText(status) {
+        const s = (status || '').toString().toLowerCase();
+        if (s === 'active') return 'ACTIVE';
+        if (s === 'pending') return 'PENDING';
+        return 'INACTIVE';
+      }
+      function fmt(n) {
+        const v = Number(n);
+        return Number.isFinite(v) ? v.toLocaleString('en-US') : '0';
+      }
+      const DEMO_PERSONAL = {
+        memberId: 'NG09246375', fullName: 'David Okafor', status: 'active',
+        personalBV: 320, pgs: 1450, totalBV: 1770
+      };
+      const DEMO_TEAM = [
+        { memberId: 'NG27187710', fullName: 'Amara Eze',      status: 'active',   personalBV: 210, pgs: 980,  totalBV: 1190 },
+        { memberId: 'NG66051653', fullName: 'Chinedu Bello',  status: 'inactive', personalBV: 0,   pgs: 0,    totalBV: 0 },
+        { memberId: 'NG48655323', fullName: 'Fatima Yusuf',   status: 'pending',  personalBV: 150, pgs: 640,  totalBV: 790 },
+        { memberId: 'NG13579024', fullName: 'Tunde Adeyemi',  status: 'active',   personalBV: 95,  pgs: 320,  totalBV: 415 },
+        { memberId: 'NG77881203', fullName: 'Ngozi Ibe',      status: 'active',   personalBV: 64,  pgs: 180,  totalBV: 244 }
+      ];
+      function loadPersonal() {
+        let md = {};
+        try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
+        if (!md.memberId && !md.id) md = DEMO_PERSONAL;
+        document.getElementById('tiPersonalCode').textContent = md.memberId || md.id;
+        document.getElementById('tiPersonalName').textContent = md.fullName || md.name || md.memberName;
+        const badge = document.getElementById('tiPersonalStatus');
+        badge.className = ('ek-chip ' + statusClass(md.status || 'inactive')).trim();
+        badge.textContent = statusText(md.status || 'inactive');
+        document.getElementById('tiPersonalBV').textContent = fmt(md.personalBV || md.bv || 0);
+        document.getElementById('tiPersonalPGS').textContent = fmt(md.pgs || 0);
+        document.getElementById('tiPersonalTotal').textContent = fmt(md.totalBV || md.totalBv || 0);
+      }
+      function loadTeam() {
+        let rows = [];
+        try { rows = JSON.parse(localStorage.getItem('al.teamMembers') || '[]'); } catch (e) {}
+        if (!rows || rows.length === 0) rows = DEMO_TEAM;
+        const tbody = document.getElementById('teamTableBody');
+        tbody.innerHTML = rows.map(function (m, i) {
+          return '<tr><td data-label="#">' + (i + 1) + '</td><td class="code" data-label="Member Code">' + (m.memberId || m.id) + '</td><td data-label="Member Name">' +
+            (m.fullName || m.name) + '</td><td data-label="Status"><span class="' + ('ek-chip ' + statusClass(m.status)).trim() + '">' +
+            statusText(m.status) + '</span></td><td class="ek-table__num" data-label="Personal BV">' + fmt(m.personalBV || m.bv || 0) +
+            '</td><td class="ek-table__num" data-label="PGS">' + fmt(m.pgs || 0) + '</td><td class="ek-table__num" data-label="Total BV">' + fmt(m.totalBV || m.totalBv || 0) + '</td></tr>';
+        }).join('');
+      }
+      function setCalcTime() {
+        const el = document.getElementById('tiCalcTimeVal');
+        const ts = new Date();
+        el.textContent =
+          ts.getFullYear() + '-' + String(ts.getMonth() + 1).padStart(2, '0') + '-' + String(ts.getDate()).padStart(2, '0') + ' ' +
+          String(ts.getHours()).padStart(2, '0') + ':' + String(ts.getMinutes()).padStart(2, '0') + ':' + String(ts.getSeconds()).padStart(2, '0');
+      }
+      function init() { loadPersonal(); loadTeam(); setCalcTime(); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
+    })();
+  </script>
+</body>
+</html>

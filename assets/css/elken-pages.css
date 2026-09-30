@@ -1,0 +1,2591 @@
+/* ============================================================
+   elken-pages.css — inner-page section + component styles
+   Ported verbatim from the designer system (staging.elkenafrica.com/ng)
+   tokens.css + sections.css + components.css + pages.css
+   Linked on inner pages after elken-ui, before elken-chrome.
+   ============================================================ */
+/* ==========================================================================
+   Elken Africa — design tokens
+   Single source for colour, type and layout. These map 1:1 onto Elementor
+   Global Colors and Global Fonts when the site moves to WordPress.
+   ========================================================================== */
+
+:root {
+  /* Colour — Figma "01 - Foundations" ------------------------------------ */
+  --ek-blue:            #202259;  /* Deep Vital Blue      */
+  --ek-blue-hover:      #0F1034;  /* Button hover         */
+  --ek-pink:            #F287B7;  /* Radiant Bloom Pink   */
+  --ek-aqua:            #2AA7CF;  /* Aqua Energy Blue     */
+  --ek-aqua-hover:      #1B96BD;  /* Aqua hover           */
+  --ek-error:           #B3261E;  /* Form error — 5.9:1 on white, and it is
+                                     not a brand colour on purpose: nothing
+                                     else on the site is red, so it can only
+                                     read as a problem. */
+  --ek-error-tint:      #FDF3F2;  /* the field ground behind it */
+  --ek-charcoal:        #25292C;  /* Charcoal Core        */
+  --ek-charcoal-deep:   #0D1417;  /* Footer ground */
+  --ek-footer-fine:     #3E4244;  /* Footer bottom-bar fine print, Figma fill      */
+  --ek-steel:           #859EB3;  /* Calm Steel Blue      */
+  --ek-blush:           #EDC4C2;  /* Soft Blush Nude      */
+  --ek-mauve:           #B57A99;  /* Elegant Mauve Rose   */
+  --ek-grey-light:      #F4F5F5;  /* Pure Light Grey      */
+  --ek-grey-mid:        #ECECEC;  /* Pure Mid Grey        */
+  /* Scrim over photography, as channels so rgba() can take an alpha.
+     Neutral on purpose — see the note in pages.css. */
+  --ek-scrim-rgb:       23, 25, 27;
+  --ek-panel-cool:      #E9EEF2;  /* Panel fill on --ek-ground-light. Pure Mid Grey is
+                                     neutral and reads warm against that cool ground. */
+  --ek-grey-out:        #D1D8DE;  /* Grey Out / disabled  */
+  --ek-white:           #FFFFFF;  /* Pure White           */
+  /* Navigation surfaces. The mobile menu builds its hierarchy from spacing
+     and type, so the only colour it needs is a whisper of cool tint for the
+     open section and a hairline for the two places a real grouping changes.
+     Anything stronger reads as a box, which is what these replaced. */
+  --ek-nav-tint:        #F7F9FC;  /* open section ground  */
+  --ek-nav-tint-deep:   #F1F5FA;  /* open nested section  */
+  --ek-nav-rule:        #E9EEF5;  /* hairline divider     */
+  --ek-nav-sub-ink:     #5A6470;  /* nested item label    */
+  --ek-body-ink:        #27282B;  /* Body copy            */
+
+  /* Statistic panels — Figma "Sec - StatsIntroSection" -------------------- */
+  --ek-stat-1:          #0B1944;
+  --ek-stat-2:          #152964;
+  --ek-stat-3:          #223A81;
+
+  /* Grounds --------------------------------------------------------------- */
+  --ek-ground-light:    linear-gradient(118deg, #FBFCFC 0%, #F3F6F9 52%, #E9EEF5 100%);
+  --ek-scrim-dark:      linear-gradient(90deg, rgba(13,15,19,.84) 0%, rgba(13,15,19,.66) 30%, rgba(13,15,19,0) 62%);
+
+  /* Type ------------------------------------------------------------------ */
+  --ek-font: Montserrat, "Helvetica Neue", Arial, sans-serif;
+
+  --ek-h1:      60px;  --ek-h1-lh: 1.1;   --ek-h1-ls: -2px;
+  --ek-h2:      33px;  --ek-h2-lh: 1.2;
+  --ek-h3:      23px;  --ek-h3-lh: 1.25;
+  --ek-h4:      18px;  --ek-h4-lh: 1.3;
+  --ek-lead:    16px;  --ek-lead-lh: 1.5;
+  --ek-text:    15px;  --ek-text-lh: 1.5;
+  --ek-small:   14px;  --ek-small-lh: 1.4;
+  --ek-caption: 12px;  --ek-caption-lh: 1.3;
+  --ek-eyebrow: 18px;
+
+  /* Layout — measured off the Figma pages, drawn at 1920 ------------------ */
+  --ek-nav-max:      1605px;   /* header and footer band   */
+  --ek-content-max:  1408px;   /* every section's content  */
+  --ek-page-pad:     48px;
+  --ek-section-pad:  130px;
+
+  /* Spacing scale --------------------------------------------------------- */
+  --ek-4: 4px;   --ek-8: 8px;   --ek-12: 12px; --ek-16: 16px; --ek-24: 24px;
+  --ek-32: 32px; --ek-40: 40px; --ek-56: 56px; --ek-76: 76px; --ek-120: 120px;
+
+  /* Motion ---------------------------------------------------------------- */
+  --ek-ease: cubic-bezier(.4, 0, .2, 1);
+  --ek-fast: .2s;
+  --ek-slow: .7s;
+}
+
+@media (max-width: 1199px) {
+  :root {
+    --ek-h1: 44px; --ek-h1-ls: -1.2px;
+    --ek-h2: 29px;
+    --ek-eyebrow: 16px;
+    --ek-page-pad: 40px;
+    --ek-section-pad: 88px;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --ek-h1: 34px; --ek-h1-ls: -1px;
+    --ek-h2: 27px;
+    --ek-h3: 20px;
+    --ek-h4: 16px;
+    --ek-lead: 15px;
+    --ek-text: 14px;
+    --ek-eyebrow: 15px;
+    --ek-page-pad: 20px;
+    --ek-section-pad: 60px;
+  }
+}
+
+/* ==========================================================================
+   Elken Africa — sections
+   One block per page section. Each name is the same in Figma, here, and in
+   Elementor, so a section maps onto exactly one template.
+   ========================================================================== */
+
+.sec-pad { padding-block: var(--ek-section-pad); }
+
+/* sec-products — Figma "Sec - ContentCardsSection" ------------------------ */
+.sec-products { background: var(--ek-ground-light); }
+.sec-products__foot { margin-top: 44px; }
+
+/* sec-about — Figma "Sec - StatsIntroSection" ----------------------------- */
+.sec-about { background: var(--ek-white); }
+.sec-about__foot { margin-top: 44px; }
+
+/* sec-locations — full-bleed Deep Vital Blue band ------------------------- */
+.sec-locations { background: var(--ek-blue); color: var(--ek-white); }
+.sec-locations .ek-h2 { color: var(--ek-white); }
+.sec-locations .ek-lead { color: var(--ek-grey-light); }
+.sec-locations__grid { display: grid; grid-template-columns: 561px 762px; align-items: start; }
+.sec-locations__copy { display: flex; flex-direction: column; gap: 22px; max-width: 470px; }
+.sec-locations__actions { display: flex; gap: var(--ek-16); margin-top: 14px; flex-wrap: wrap; }
+.sec-locations__note {
+  margin-top: 64px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,.16);
+  display: flex; align-items: center; gap: var(--ek-12); flex-wrap: wrap;
+  font-size: 16px; color: var(--ek-steel);
+}
+@media (max-width: 1439px) { .sec-locations__grid { grid-template-columns: 40% 1fr; column-gap: var(--ek-56); } }
+@media (max-width: 1023px) {
+  .sec-locations__grid { grid-template-columns: 1fr; }
+  .sec-locations__copy { max-width: none; }
+  .sec-locations__actions { flex-direction: column; }
+  .sec-locations__note { margin-top: 34px; padding-top: 24px; flex-direction: column; align-items: flex-start; gap: 2px; font-size: 14px; }
+}
+
+/* sec-closing ------------------------------------------------------------- */
+.sec-closing { padding-block: 110px; }
+.sec-closing .ek-h2 { color: var(--ek-blue); }
+@media (max-width: 767px) { .sec-closing { padding-block: 56px; } }
+
+/* ==========================================================================
+   Elken Africa — components
+   Every block here becomes a reusable Elementor widget or template part.
+   ========================================================================== */
+
+/* Buttons — Figma "EK - Button" set. Square corners, no radius. ----------- */
+.ek-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 12px 30px;
+  font-family: inherit; font-size: 18px; font-weight: 500; line-height: 1.5;
+  border: 1px solid transparent; cursor: pointer;
+  transition: background-color var(--ek-fast) var(--ek-ease),
+              color var(--ek-fast) var(--ek-ease),
+              border-color var(--ek-fast) var(--ek-ease);
+}
+.ek-btn--primary     { background: var(--ek-blue); color: var(--ek-grey-light); }
+.ek-btn--primary:hover { background: var(--ek-blue-hover); color: var(--ek-grey-light); }
+.ek-btn--ghost       { background: transparent; color: var(--ek-blue); border-color: var(--ek-blue); }
+.ek-btn--ghost:hover { background: var(--ek-blue); color: var(--ek-grey-light); }
+.ek-btn--white       { background: var(--ek-grey-light); color: var(--ek-blue); }
+.ek-btn--white:hover { background: var(--ek-white); color: var(--ek-blue); }
+.ek-btn--ghostwhite  { background: transparent; color: var(--ek-white); border-color: rgba(255,255,255,.55); }
+.ek-btn--ghostwhite:hover { background: var(--ek-white); color: var(--ek-blue); border-color: var(--ek-white); }
+.ek-btn--aqua        { background: var(--ek-aqua); color: var(--ek-white); }
+.ek-btn--aqua:hover  { background: var(--ek-aqua-hover); }
+.ek-btn--sm          { padding: 10px 24px; font-size: 16px; }
+
+@media (max-width: 767px) {
+  .ek-btn { width: 100%; min-height: 52px; padding: 14px 24px; font-size: 16px; }
+  /* Small buttons stay inline — three of them stacked full width reads as
+     three primary actions, which they are not. */
+  .ek-btn--sm { width: auto; flex: 1 1 auto; min-width: 96px; padding: 12px 18px; font-size: 15px; }
+}
+
+/* Arrow link -------------------------------------------------------------- */
+.ek-link {
+  display: inline-flex; align-items: center; gap: var(--ek-8);
+  font-size: 16px; font-weight: 600; color: var(--ek-blue);
+  transition: color var(--ek-fast) var(--ek-ease);
+}
+.ek-link svg { transition: transform .25s var(--ek-ease); }
+.ek-link:hover svg { transform: translateX(4px); }
+.ek-link--light { color: var(--ek-white); }
+.ek-link--light:hover { color: var(--ek-pink); }
+@media (max-width: 767px) { .ek-link { min-height: 44px; font-size: 15px; } }
+
+/* Header and navigation --------------------------------------------------- */
+.ek-header {
+  position: relative; z-index: 30; height: 78px;
+  display: flex; align-items: center;
+  background: var(--ek-white); border-bottom: 1px solid var(--ek-grey-mid);
+  color: var(--ek-charcoal);
+  transition: color var(--ek-slow) var(--ek-ease);
+}
+/* Overlay variant — used only where the header sits on a full-bleed banner. */
+.ek-header--overlay {
+  position: absolute; inset: 0 0 auto 0;
+  background: transparent; border-bottom: 0;
+}
+.ek-header .ek-container--nav {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ek-header--overlay.ek-header--dark { color: var(--ek-white); }
+
+.ek-logo { position: relative; display: block; width: 172px; height: 31px; flex: 0 0 auto; }
+.ek-logo img {
+  position: absolute; inset: 0; height: 31px; width: auto; display: block;
+  transition: opacity var(--ek-slow) var(--ek-ease);
+}
+.ek-logo__reversed { opacity: 0; }
+.ek-header--overlay.ek-header--dark .ek-logo__colour  { opacity: 0; }
+.ek-header--overlay.ek-header--dark .ek-logo__reversed { opacity: 1; }
+
+.ek-nav { display: flex; align-items: center; gap: 4px; }
+.ek-nav__item { position: relative; }
+
+/* Bridge the gap between a menu item and its panel. Without this the pointer
+   leaves the item on the way down, hover is lost, and the panel closes before
+   it can be reached. */
+.ek-nav__item--parent::after {
+  content: ""; position: absolute; top: 100%; left: 0; right: 0; height: 18px;
+}
+.ek-nav__link {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 16px; border-radius: 999px;
+  font-family: inherit; font-size: 16px; font-weight: 500; color: inherit;
+  background: none; border: 0; cursor: pointer;
+  transition: background-color var(--ek-fast) var(--ek-ease);
+}
+.ek-nav__link:hover { color: inherit; }
+.ek-nav__item:hover > .ek-nav__link,
+.ek-nav__link[aria-expanded="true"] { background: rgba(140,146,156,.22); }
+
+.ek-nav__panel {
+  position: absolute; top: calc(100% + 16px); left: 0; min-width: 252px;
+  background: var(--ek-white);
+  border: 1px solid var(--ek-grey-mid); border-top: 3px solid var(--ek-blue);
+  padding: 8px 0;
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: opacity var(--ek-fast) var(--ek-ease), transform var(--ek-fast) var(--ek-ease);
+}
+.ek-nav__item:hover > .ek-nav__panel,
+.ek-nav__item:focus-within > .ek-nav__panel,
+.ek-nav__item.is-open > .ek-nav__panel { opacity: 1; visibility: visible; transform: none; }
+.ek-nav__panel a { display: block; padding: 11px 24px; font-size: 15px; color: var(--ek-charcoal); }
+.ek-nav__panel a:hover { background: var(--ek-grey-light); color: var(--ek-blue); }
+
+/* The utility group holds the language item today and is where a future
+   account or cart row joins the menu. On desktop it is a grouping concept
+   only — display:contents leaves the header laid out exactly as before. */
+.ek-nav__utils { display: contents; }
+
+.ek-lang {
+  display: inline-flex; align-items: center; gap: 6px; margin-left: 12px;
+  padding: 9px 16px; border-radius: 999px;
+  background: var(--ek-blue); color: var(--ek-white);
+  font-size: 15px; font-weight: 600;
+}
+.ek-lang:hover { color: var(--ek-white); background: var(--ek-blue-hover); }
+
+.ek-burger {
+  display: none; width: 44px; height: 44px; padding: 0;
+  flex-direction: column; justify-content: center; align-items: flex-end; gap: 5px;
+  background: none; border: 0; cursor: pointer; color: inherit;
+}
+.ek-burger span { display: block; height: 2px; background: currentColor; }
+.ek-burger span:nth-child(1), .ek-burger span:nth-child(2) { width: 22px; }
+.ek-burger span:nth-child(3) { width: 14px; }
+
+@media (max-width: 1199px) {
+  /* The header hairline matches the menu's, so the panel reads as a
+     continuation of the header rather than a separate slab under it. */
+  .ek-header, .ek-header--overlay {
+    position: relative; height: 64px; background: var(--ek-white);
+    border-bottom: 1px solid var(--ek-nav-rule); color: var(--ek-charcoal);
+  }
+  .ek-header--dark, .ek-header--overlay.ek-header--dark { color: var(--ek-charcoal); }
+  .ek-header--overlay.ek-header--dark .ek-logo__colour { opacity: 1; }
+  .ek-header--overlay.ek-header--dark .ek-logo__reversed { opacity: 0; }
+  .ek-logo { width: 140px; height: 25px; }
+  .ek-logo img { height: 25px; }
+  /* The burger sits last on a phone, so a future account or cart control
+     lands between the logo and the menu trigger where the thumb expects it. */
+  .ek-burger { display: flex; order: 1; }
+  /* The mobile menu itself is one system, written once at the end of this
+     navigation section rather than as overrides scattered through the file. */
+}
+
+/* Hero carousel ----------------------------------------------------------- */
+.ek-hero { position: relative; }
+.ek-hero__slides { display: grid; cursor: grab; touch-action: pan-y; }
+.ek-hero__slides.is-dragging { cursor: grabbing; }
+.ek-hero__slides.is-dragging * { user-select: none; }
+.ek-hero__slides a, .ek-hero__slides button { cursor: pointer; }
+.ek-hero__slide {
+  grid-area: 1 / 1; position: relative;
+  opacity: 0; visibility: hidden;
+  transition: opacity var(--ek-slow) var(--ek-ease), visibility var(--ek-slow);
+}
+.ek-hero__slide.is-active { opacity: 1; visibility: visible; }
+.ek-hero__slide { transition: opacity var(--ek-slow) var(--ek-ease), visibility var(--ek-slow), transform .25s var(--ek-ease); }
+.ek-hero__slides.is-dragging .ek-hero__slide { transition: opacity var(--ek-slow) var(--ek-ease), visibility var(--ek-slow); }
+
+.ek-hero__media {
+  position: absolute; inset: 0;
+  background-size: cover; background-repeat: no-repeat;
+}
+.ek-hero__scrim { position: absolute; inset: 0; background: var(--ek-scrim-dark); }
+.ek-hero__inner {
+  position: relative;
+  min-height: clamp(600px, 48vw, 922px);
+  display: flex; align-items: center;
+  padding-block: 120px 150px;
+}
+/* A light copy-space slide. The family photograph fills its frame — cabinetry
+   left, the family and the product line-up centre-right — so unlike the old
+   brand banner there is no empty half to set navy type on, and at 1.9:1 against
+   a 1.76:1 frame `cover` leaves almost nothing to crop, so background-position
+   cannot move the products out of the way. Two things hold the headline
+   instead: a warm near-white wash that fades out before the products start, and
+   a narrower copy column with its own type step so the lines break early.
+   The wash is warm (255,251,246), not neutral white — the photograph is a warm
+   daylight kitchen and a cold white over it greys the wood. */
+.ek-hero__wash { position: absolute; inset: 0; pointer-events: none; }
+.ek-hero__slide--light .ek-hero__wash {
+  background: linear-gradient(94deg,
+    rgba(255,251,246,.95)  0%, rgba(255,251,246,.93) 20%, rgba(255,251,246,.82) 29%,
+    rgba(255,251,246,.55) 36%, rgba(255,251,246,.26) 42%, rgba(255,251,246,.08) 46%,
+    rgba(255,251,246,0)   50%); }
+/* ── HERO PHOTO ZOOM ──────────────────────────────────────────────────────
+   One number, and the only thing to touch if the product line-up needs to be
+   bigger or smaller. 1 is the photograph at its natural framing; 1.05 is five
+   per cent larger. Anything above about 1.15 starts pushing the family out of
+   the top of the frame.
+
+   It is a transform on the media layer rather than a background-size value,
+   because it has to compose with `cover` — a percentage background-size stops
+   covering on a taller window and leaves a gap. The origin sits on the product
+   cluster, so scaling grows the products in place instead of sliding them. */
+.ek-hero__slide--light .ek-hero__media {
+  transform: scale(var(--ek-hero-zoom, 1.05));
+  transform-origin: 66% 56%; }
+.ek-hero__slide--light { overflow: hidden; }
+
+.ek-hero__slide--light .ek-hero__copy { max-width: 520px; }
+.ek-hero__slide--light .ek-h1 { font-size: clamp(34px, 3.4vw, 50px); }
+@media (max-width: 1199px) { .ek-hero__slide--light .ek-hero__wash { display: none; }
+  .ek-hero__slide--light .ek-hero__copy { max-width: none; } }
+.ek-hero__copy { max-width: 620px; }
+.ek-hero__sub { margin-top: var(--ek-24); max-width: 520px; }
+.ek-hero__actions { display: flex; gap: var(--ek-16); margin-top: 36px; flex-wrap: wrap; }
+
+.ek-hero__slide--dark .ek-eyebrow { color: var(--ek-aqua); }
+.ek-hero__slide--dark .ek-lead { color: var(--ek-grey-light); }
+
+.t-blue  { color: var(--ek-blue); }
+.t-pink  { color: var(--ek-pink); }
+.t-white { color: var(--ek-white); }
+.t-aqua  { color: var(--ek-aqua); }
+
+/* Carousel dots — Figma "Pagination" -------------------------------------- */
+.ek-hero__dots { position: relative; height: 0; }
+.ek-hero__controls {
+  position: absolute; left: 0; right: 0; bottom: 60px; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--ek-24);
+}
+.ek-dots { display: flex; gap: 10px; align-items: center; }
+.ek-dots button {
+  width: 9px; height: 9px; padding: 0; border: 0; border-radius: 999px;
+  background: #C6C9CE; cursor: pointer;
+  transition: width var(--ek-fast) var(--ek-ease), background-color var(--ek-fast) var(--ek-ease);
+}
+.ek-dots button[aria-selected="true"] { width: 24px; background: var(--ek-pink); }
+.ek-hero--dark .ek-dots button { background: rgba(255,255,255,.42); }
+.ek-hero--dark .ek-dots button[aria-selected="true"] { background: var(--ek-pink); }
+
+/* Previous and next, bottom right of the banner --------------------------- */
+.ek-hero__arrows { display: flex; gap: var(--ek-12); }
+.ek-hero__arrow {
+  width: 56px; height: 56px; padding: 0; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.88); border: 1px solid rgba(32,34,89,.18);
+  color: var(--ek-blue); cursor: pointer;
+  transition: background-color var(--ek-fast) var(--ek-ease),
+              color var(--ek-fast) var(--ek-ease),
+              border-color var(--ek-fast) var(--ek-ease);
+}
+.ek-hero__arrow:hover { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); }
+.ek-hero--dark .ek-hero__arrow {
+  background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.45); color: var(--ek-white);
+}
+.ek-hero--dark .ek-hero__arrow:hover { background: var(--ek-white); border-color: var(--ek-white); color: var(--ek-blue); }
+
+@media (max-width: 1199px) {
+  .ek-hero { background: var(--ek-white); transition: background-color var(--ek-slow) var(--ek-ease); }
+  .ek-hero.ek-hero--dark { background: #0D0F13; }
+  .ek-hero__media { position: relative; inset: auto; height: 320px; }
+  .ek-hero__scrim { display: none; }
+  .ek-hero__inner { min-height: 0; padding-block: 40px 40px; align-items: flex-start; }
+  .ek-hero__slide--dark { background: #0D0F13; }
+  .ek-hero__dots { height: auto; padding-bottom: 40px; }
+  .ek-hero__controls { position: static; }
+  .ek-hero__slides { cursor: default; }
+}
+/* A second, differently framed copy of each hero photograph, for narrow screens.
+   Why it exists: the desktop family asset carries a 394px blurred pad down its
+   LEFT edge, put there so the product line-up clears the copy wash at desktop
+   (see the hero-banner note). Below 768 there is no wash and no overlaid copy,
+   so that pad is simply dead space on the left of a 260px band - which is what
+   Elken BC reported on 4 Sep: a large empty area on the left and the products
+   looking too small. He supplied re-framed mobile versions of both slides.
+   TWO ELEMENTS rather than one custom property holding a url(): a relative
+   url() inside a custom property resolves against the STYLESHEET, not the
+   document, which is the trap that once 404'd both hero banners. An inline
+   style attribute in the HTML has no such problem.
+   Only below 768. Between 768 and 1199 the band is 320px across a wide viewport,
+   about 2.4:1, which suits the landscape desktop assets better than a squarer
+   mobile crop - measured, not assumed. */
+.ek-hero__media--m { display: none; }
+
+@media (max-width: 767px) {
+  /* A SHAPE, not a fixed height. 260px was right at 390 wide (1.5:1) and wrong
+     by 767, where the same 260px band becomes nearly 3:1 and slices the top off
+     the GenQi and the bottom off the product line-up. Locking the ratio instead
+     means the framing Elken BC approved at phone width holds all the way to 767:
+     240px tall at 360, 260 at 390 (identical to before), 511 at 767.
+     3/2 is exactly what 390x260 already was, so the common phone is unchanged. */
+  .ek-hero__media { height: auto; aspect-ratio: 3 / 2; }
+  .ek-hero__media--d { display: none; }
+  /* transform:none because slide 1's --ek-hero-zoom scales the desktop media by
+     1.05 from a 66%/56% origin. That origin is meaningless on the mobile crop
+     and only pushes the products off-centre again. */
+  .ek-hero__media--m { display: block; transform: none; }
+  .ek-hero__arrow { width: 48px; height: 48px; }
+  .ek-hero__actions { flex-direction: column; gap: var(--ek-12); margin-top: var(--ek-24); }
+  .ek-dots button { height: 12px; }
+}
+
+/* Trust bar --------------------------------------------------------------- */
+.ek-trustbar { background: var(--ek-grey-light); padding: 34px 0; }
+.ek-trustbar__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ek-trust {
+  display: flex; align-items: center; gap: var(--ek-16);
+  padding-left: 44px; border-left: 1px solid #DCDEE0;
+}
+.ek-trust:first-child { padding-left: 0; border-left: 0; }
+.ek-trust svg { flex: 0 0 auto; }
+.ek-trust span {
+  font-size: 14px; font-weight: 600; letter-spacing: .08em; line-height: 1.45;
+  text-transform: uppercase; color: var(--ek-blue);
+}
+@media (max-width: 1199px) {
+  .ek-trustbar { padding: 26px 0; }
+  .ek-trustbar__grid { grid-template-columns: 1fr; }
+  .ek-trust { padding: 18px 0; border-left: 0; border-top: 1px solid #DCDEE0; }
+  .ek-trust:first-child { border-top: 0; padding-top: 0; }
+  .ek-trust:last-child { padding-bottom: 0; }
+  .ek-trust span { font-size: 12px; }
+}
+
+/* Section header — Figma "Sec - StatsIntroSection" ------------------------ */
+.ek-sechead { display: grid; grid-template-columns: 561px 762px; align-items: start; }
+.ek-sechead__left { display: flex; flex-direction: column; gap: 10px; max-width: 390px; }
+.ek-sechead__body { padding-top: 4px; display: flex; flex-direction: column; gap: var(--ek-24); }
+@media (max-width: 1439px) { .ek-sechead { grid-template-columns: 40% 1fr; column-gap: var(--ek-56); } }
+@media (max-width: 1023px) {
+  .ek-sechead { grid-template-columns: 1fr; row-gap: var(--ek-24); }
+  .ek-sechead__left { max-width: none; }
+  .ek-sechead__body { padding-top: 0; }
+}
+
+/* Category cards — Figma "Sec - ContentCardsSection" ---------------------- */
+.ek-cardrow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--ek-8); margin-top: var(--ek-76); }
+.ek-card { background: var(--ek-white); display: flex; flex-direction: column; }
+.ek-card__panel {
+  aspect-ratio: 346 / 260; background: var(--ek-grey-light);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.ek-card__panel img {
+  max-width: 72%; max-height: 76%; object-fit: contain;
+  transition: transform .35s var(--ek-ease);
+}
+.ek-card:hover .ek-card__panel img { transform: scale(1.05); }
+.ek-card__body { padding: 32px 30px 36px; display: flex; flex-direction: column; gap: var(--ek-12); flex-grow: 1; }
+.ek-card__body .ek-link { margin-top: auto; padding-top: 14px; font-size: 15px; }
+@media (max-width: 1199px) { .ek-cardrow { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: var(--ek-40); } }
+@media (max-width: 767px) {
+  .ek-cardrow { margin-top: var(--ek-32); }
+  .ek-card__body { padding: 18px 16px 22px; gap: var(--ek-8); }
+  .ek-card__body .ek-link { padding-top: 6px; }
+}
+
+/* Statistic panels — Figma "Sec - StatsIntroSection" ---------------------- */
+.ek-statgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: var(--ek-76); }
+.ek-stat { min-height: 220px; padding: 40px 55px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.ek-stat:nth-child(1) { background: var(--ek-stat-1); }
+.ek-stat:nth-child(2) { background: var(--ek-stat-2); }
+.ek-stat:nth-child(3) { background: var(--ek-stat-3); }
+.ek-stat__value { font-size: var(--ek-h2); font-weight: 700; line-height: 1.2; color: var(--ek-grey-light); }
+.ek-stat__label { font-size: var(--ek-h3); font-weight: 500; line-height: 1.25; color: var(--ek-grey-light); }
+@media (max-width: 1023px) {
+  .ek-statgrid { grid-template-columns: 1fr; margin-top: var(--ek-40); }
+  .ek-stat { min-height: 0; padding: 26px 24px; }
+}
+
+/* Locations --------------------------------------------------------------- */
+.ek-loclist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ek-8); }
+.ek-loc { display: flex; gap: var(--ek-16); align-items: flex-start; padding: 26px 28px; background: rgba(255,255,255,.06); }
+.ek-loc svg { flex: 0 0 auto; margin-top: 3px; }
+.ek-loc > span { display: block; }
+.ek-loc__name { display: block; font-size: 18px; font-weight: 700; line-height: 1.3; color: var(--ek-white); }
+.ek-loc__meta { display: block; font-size: 15px; line-height: 1.4; color: var(--ek-steel); margin-top: 6px; }
+@media (max-width: 1023px) { .ek-loclist { grid-template-columns: 1fr; margin-top: var(--ek-32); } }
+@media (max-width: 767px) {
+  .ek-loc { padding: 18px; gap: var(--ek-12); }
+  .ek-loc__name { font-size: 15px; }
+  .ek-loc__meta { font-size: 13px; }
+}
+
+/* Products menu, second level -------------------------------------------- */
+.ek-nav__panel--products { min-width: 330px; }
+.ek-nav__sub { position: relative; }
+.ek-nav__panel a.ek-nav__sublink {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--ek-16);
+  padding: 12px 24px; font-size: 15px; color: var(--ek-charcoal);
+}
+.ek-nav__sublink svg { flex: 0 0 auto; opacity: .55; transition: transform var(--ek-fast) var(--ek-ease), opacity var(--ek-fast) var(--ek-ease); }
+.ek-nav__sub:hover > .ek-nav__sublink,
+.ek-nav__sub:focus-within > .ek-nav__sublink { background: var(--ek-grey-light); color: var(--ek-blue); }
+.ek-nav__sub:hover > .ek-nav__sublink svg { transform: translateX(3px); opacity: 1; }
+
+.ek-nav__panel--l2 {
+  /* Opens inwards. The Products item sits near the right edge, so flying out
+     to the right pushed the panel past the viewport and widened the document. */
+  top: -11px; right: 100%; left: auto; min-width: 288px;
+  border-top: 1px solid var(--ek-grey-mid); border-left: 3px solid var(--ek-aqua);
+}
+.ek-nav__sub:hover > .ek-nav__panel--l2,
+.ek-nav__sub:focus-within > .ek-nav__panel--l2,
+.ek-nav__sub.is-open > .ek-nav__panel--l2 { opacity: 1; visibility: visible; transform: none; }
+.ek-nav__panel--l2 a.is-muted { color: #6B7278; }
+.ek-nav__tag {
+  display: inline-block; margin-left: 8px; padding: 2px 8px;
+  font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  background: var(--ek-grey-light); color: #6B7278;
+}
+.ek-nav__panel a.ek-nav__seeall {
+  display: flex; align-items: center; gap: var(--ek-8);
+  margin-top: 8px; padding: 14px 24px;
+  border-top: 1px solid var(--ek-grey-mid);
+  font-size: 15px; font-weight: 600; color: var(--ek-blue);
+}
+.ek-nav__seeall:hover { background: var(--ek-grey-light); }
+.ek-nav__seeall svg { transition: transform .25s var(--ek-ease); }
+.ek-nav__seeall:hover svg { transform: translateX(4px); }
+
+/* Mobile navigation ------------------------------------------------------
+   One system, not a set of patches. The desktop menu above is untouched.
+
+   The old mobile menu carried a 3px navy rule down the left of every open
+   panel, a second 3px aqua rule down the nested panel, a grey block behind the
+   expanded row and a blue pill for the language item. Four different devices
+   said the same thing — "this belongs to that" — and the framing read louder
+   than the links.
+
+   Here the same relationships are carried by:
+     indentation   0 / +16 / +32px from the page pad, one step per level
+     type          16px 600 navy, 15px 500 charcoal, 15px 400 muted
+     ground        a whisper of cool tint over the whole open section
+     chevrons      the existing icons, rotated, all landing on one right edge
+     hairlines     two, only where the kind of item changes
+
+   Every row is full width and shares the same right edge, so nothing reads as
+   a partial-width block. Touch targets are 48px at the top level and 44px
+   below it. Transitions are 240ms, inside the 200-300ms the brief asks for.
+   ------------------------------------------------------------------------ */
+@media (max-width: 1199px) {
+  .ek-nav {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 40;
+    flex-direction: column; align-items: stretch; gap: 0;
+    background: var(--ek-white);
+    border-bottom: 1px solid var(--ek-nav-rule);
+    /* A single soft drop reads the panel as a layer over the page rather than
+       as part of it, which is what the heavy bottom border used to do. */
+    box-shadow: 0 18px 32px -24px rgba(11, 26, 58, .30);
+    padding: 4px 0 8px; display: none;
+  }
+  .ek-nav.is-open { display: flex; }
+  .ek-nav__item--parent::after { display: none; }
+
+  /* Rows ------------------------------------------------------------------ */
+  .ek-nav__link,
+  .ek-nav__panel a,
+  .ek-lang {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--ek-16);
+    border-radius: 0; margin: 0; width: 100%;
+    padding-inline: var(--ek-page-pad);
+    transition: background-color .24s var(--ek-ease), color .24s var(--ek-ease);
+  }
+  .ek-nav__link:focus-visible,
+  .ek-nav__panel a:focus-visible,
+  .ek-lang:focus-visible { outline-offset: -3px; }
+
+  /* Level 1 — top-level navigation. Navy and semibold: the brand voice sits
+     here, and nothing below it needs to compete. */
+  .ek-nav__link {
+    padding-block: 15px; min-height: 48px;
+    font-size: 16px; font-weight: 600; color: var(--ek-blue);
+  }
+  .ek-nav__item:hover > .ek-nav__link,
+  .ek-nav__link[aria-expanded="true"] { background: none; }
+  .ek-nav__link svg { flex: 0 0 auto; opacity: .5; transition: transform .24s var(--ek-ease), opacity .24s var(--ek-ease); }
+  .ek-nav__link[aria-expanded="true"] svg { transform: rotate(180deg); opacity: .8; }
+
+  /* The open section takes one calm ground, row and panel together. That is
+     what replaces the navy rule: the group is legible because it is tinted,
+     not because it is fenced. */
+  .ek-nav__item.is-open { background: var(--ek-nav-tint); }
+
+  /* Level 2 — ranges under Products, pages under Who We Are. */
+  .ek-nav__panel {
+    position: static; opacity: 1; visibility: visible; transform: none;
+    border: 0; margin: 0; padding: 0 0 6px; min-width: 0; background: none;
+    display: none;
+  }
+  .ek-nav__item.is-open > .ek-nav__panel { display: block; }
+  .ek-nav__panel a {
+    padding-block: 12px; min-height: 44px;
+    padding-left: calc(var(--ek-page-pad) + 16px);
+    font-size: 15px; font-weight: 500; color: var(--ek-charcoal);
+  }
+  .ek-nav__panel a:hover,
+  .ek-nav__panel a:active { background: var(--ek-nav-tint-deep); color: var(--ek-blue); }
+  .ek-nav__panel--products { min-width: 0; }
+
+  /* Matches the desktop rule's specificity, which sets padding as a shorthand;
+     without that the range rows sit 16px left of every other row and the
+     chevrons miss the shared right edge. */
+  .ek-nav__panel a.ek-nav__sublink {
+    padding-block: 12px; min-height: 44px;
+    padding-left: calc(var(--ek-page-pad) + 16px); padding-right: var(--ek-page-pad);
+  }
+
+  /* The range row keeps the desktop's fly-out chevron; on a phone it points
+     down, and up once its list is open. Same icon, no second icon set. */
+  /* The 6x10 chevron is 10 wide once it is turned, so its painted right edge
+     lands 2px past the 10x6 chevron above it. The margin pulls it back onto
+     the same edge — every indicator in the menu sits on one line. */
+  .ek-nav__sublink svg { opacity: .5; transform: rotate(90deg); margin-right: 2px; }
+  .ek-nav__sub:hover > .ek-nav__sublink svg { transform: rotate(90deg); opacity: .5; }
+  .ek-nav__sub.is-open > .ek-nav__sublink svg,
+  .ek-nav__sub.is-open:hover > .ek-nav__sublink svg { transform: rotate(270deg); opacity: .8; }
+  .ek-nav__sub:hover > .ek-nav__sublink,
+  .ek-nav__sub:focus-within > .ek-nav__sublink { background: none; color: var(--ek-charcoal); }
+  .ek-nav__sub.is-open > .ek-nav__sublink { background: var(--ek-nav-tint-deep); color: var(--ek-blue); }
+
+  /* Level 3 — the products themselves. Lighter and one step further in, so it
+     is subordinate without being fenced off. */
+  .ek-nav__panel--l2 {
+    position: static; right: auto; opacity: 1; visibility: visible; transform: none;
+    border: 0; margin: 0; padding: 2px 0 6px; min-width: 0;
+    background: var(--ek-nav-tint-deep);
+    display: none;
+  }
+  .ek-nav__sub.is-open > .ek-nav__panel--l2 { display: block; }
+  .ek-nav__panel--l2 a {
+    padding-left: calc(var(--ek-page-pad) + 32px);
+    font-weight: 400; color: var(--ek-nav-sub-ink);
+  }
+  .ek-nav__panel--l2 a:hover,
+  .ek-nav__panel--l2 a:active { background: rgba(255, 255, 255, .7); color: var(--ek-blue); }
+  /* A product that is not on sale yet stays one step quieter again. */
+  .ek-nav__panel--l2 a.is-muted { color: #7A828C; }
+  .ek-nav__tag {
+    margin-left: var(--ek-12); padding: 2px 7px;
+    background: none; border: 1px solid var(--ek-nav-rule);
+    font-size: 10px; color: #7A828C;
+  }
+
+  /* The one action in the Products list. It reads as an action through weight
+     and the arrow it already has, not through a rule above it. */
+  .ek-nav__panel a.ek-nav__seeall {
+    margin-top: 2px; padding-block: 13px; min-height: 44px;
+    padding-left: calc(var(--ek-page-pad) + 16px);
+    border-top: 0; gap: var(--ek-8); justify-content: flex-start;
+    font-size: 15px; font-weight: 600; color: var(--ek-blue);
+  }
+  .ek-nav__seeall:hover { background: var(--ek-nav-tint-deep); }
+
+  /* Hairlines — two, and only where the kind of item changes: where the
+     expandable sections end and the plain links begin, and above the utility
+     row at the foot of the menu. Whitespace does the rest. */
+  .ek-nav__item--parent + .ek-nav__item:not(.ek-nav__item--parent) { border-top: 1px solid var(--ek-nav-rule); }
+  .ek-nav__item:not(.ek-nav__item--parent) > .ek-nav__link { font-weight: 500; }
+
+  /* Utility row — the language item today, and the natural home for the
+     account and cart actions when IT connects them. It is a navigation row
+     like any other, so adding to it cannot introduce a second visual style. */
+  .ek-nav__utils { display: block; border-top: 1px solid var(--ek-nav-rule); margin-top: 4px; }
+  .ek-lang {
+    align-self: stretch; padding-block: 14px; min-height: 48px;
+    background: none; color: var(--ek-blue);
+    font-size: 15px; font-weight: 500;
+  }
+  .ek-lang:hover, .ek-lang:active { background: var(--ek-nav-tint); color: var(--ek-blue); }
+  .ek-lang svg { opacity: .5; }
+}
+
+/* Utility actions — future Login / Account and Cart -----------------------
+   Not rendered. elken-chrome.js carries two empty lists, HEADER_UTILITIES and
+   NAV_UTILITIES, and emits nothing while they are empty, so the site ships no
+   button that implies a system that is not there yet.
+
+   These styles exist so that when IT does connect them, the action drops into
+   either place — beside the burger in the header, or as a row in the menu's
+   utility group — without a second visual language and without the menu
+   growing a new section. The badge is sized for a cart count.
+   ------------------------------------------------------------------------ */
+.ek-header__actions { display: flex; align-items: center; gap: var(--ek-8); }
+.ek-header__actions:empty { display: none; }
+.ek-util {
+  position: relative; display: inline-flex; align-items: center; gap: var(--ek-8);
+  min-height: 44px; padding: 9px 14px; border-radius: 999px;
+  background: none; border: 0; color: inherit; cursor: pointer;
+  font-family: inherit; font-size: 15px; font-weight: 500;
+  transition: background-color .24s var(--ek-ease), color .24s var(--ek-ease);
+}
+.ek-util:hover { background: var(--ek-nav-tint); color: var(--ek-blue); }
+.ek-util svg { flex: 0 0 auto; opacity: .7; }
+.ek-util__badge {
+  position: absolute; top: 4px; right: 6px;
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--ek-aqua); color: var(--ek-white);
+  font-size: 11px; font-weight: 700; line-height: 1;
+}
+.ek-util__badge:empty { display: none; }
+
+@media (max-width: 1199px) {
+  /* In the menu a utility action is a full-width row, identical in rhythm to
+     every navigation row above it. In the header it stays a compact control. */
+  .ek-nav .ek-util {
+    width: 100%; border-radius: 0; justify-content: space-between;
+    padding: 14px var(--ek-page-pad); min-height: 48px; color: var(--ek-blue);
+  }
+  .ek-nav .ek-util__badge { position: static; margin-left: auto; }
+}
+
+/* ==========================================================================
+   Elken Africa — inner page components
+   Built from the same tokens as the homepage. Each block maps to one
+   Elementor widget or template part.
+   ========================================================================== */
+
+/* sec-pagehero ------------------------------------------------------------ */
+.sec-pagehero { background: var(--ek-ground-light); padding-block: 96px 104px; }
+.sec-pagehero__inner { display: grid; grid-template-columns: 561px 762px; align-items: end; }
+.sec-pagehero .ek-h1 { color: var(--ek-blue); }
+.sec-pagehero__lead { padding-bottom: 8px; }
+.ek-breadcrumb { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--ek-24); font-size: 14px; color: #5C646A; }
+.ek-breadcrumb a { color: #5C646A; }
+.ek-breadcrumb a:hover { color: var(--ek-aqua); }
+.ek-breadcrumb span[aria-hidden] { opacity: .5; }
+@media (max-width: 1439px) { .sec-pagehero__inner { grid-template-columns: 44% 1fr; column-gap: var(--ek-56); } }
+@media (max-width: 1023px) {
+  .sec-pagehero { padding-block: 56px 64px; }
+  .sec-pagehero__inner { grid-template-columns: 1fr; row-gap: var(--ek-24); align-items: start; }
+  .sec-pagehero__lead { padding-bottom: 0; }
+}
+
+/* Media and copy band, alternating ---------------------------------------- */
+.ek-split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
+.ek-split__media { min-height: 460px; background-size: cover; background-position: center; }
+.ek-split__body { display: flex; flex-direction: column; justify-content: center; gap: var(--ek-16); padding: 96px 96px 96px 120px; }
+.ek-split--flip .ek-split__media { order: 2; }
+/* The stat panel is the second child, so flipping it means pulling it first —
+   the mirror of what --flip does to a media panel. Stacked it stays first, which
+   puts the photograph on top exactly as .ek-split__media does. */
+.ek-split--flip .ek-split__stat { order: -1; }
+.ek-split--flip .ek-split__body { padding: 96px 120px 96px 96px; }
+.ek-split--tint { background: var(--ek-grey-light); }
+/* A heavier ground than --tint, for a copy half that has to hold its own beside
+   a full-bleed photograph. --ek-panel-cool is the cool panel fill already used
+   elsewhere on the site, and being light is what gives it contrast against a
+   dark, navy-scrimmed picture — a dark copy half would merge with it. */
+.ek-split--panel { background: var(--ek-panel-cool); }
+.ek-split--dark { background: var(--ek-blue); color: var(--ek-white); }
+.ek-split--dark .ek-h2, .ek-split--dark .ek-h3 { color: var(--ek-white); }
+.ek-split--dark .ek-lead, .ek-split--dark .ek-text { color: var(--ek-grey-light); }
+@media (max-width: 1023px) {
+  .ek-split { grid-template-columns: 1fr; }
+  .ek-split__media { min-height: 260px; order: 0 !important; }
+  .ek-split__body, .ek-split--flip .ek-split__body { padding: 48px var(--ek-page-pad); }
+}
+
+/* Section separator ---------------------------------------------------------
+   Two stacked full-bleed sections on different subjects. --ek-76 off the
+   spacing scale is clearly a break without opening a hole; --ek-section-pad
+   (130) is the rhythm INSIDE a section and reads as emptiness between two.
+   A utility rather than a modifier, because it has been wanted on an .ek-split
+   (Community) and on a plain <section> (Global Strength) already. */
+.ek-sec-sep { margin-top: var(--ek-76); }
+@media (max-width: 1199px) { .ek-sec-sep { margin-top: var(--ek-56); } }
+@media (max-width:  767px) { .ek-sec-sep { margin-top: var(--ek-40); } }
+
+/* Quote -------------------------------------------------------------------- */
+.ek-quote { border-left: 3px solid var(--ek-pink); padding-left: var(--ek-32); }
+.ek-quote p { font-size: 23px; line-height: 1.45; font-weight: 500; color: var(--ek-blue); }
+.ek-quote cite { display: block; margin-top: var(--ek-16); font-size: 15px; font-style: normal; color: #5C646A; }
+@media (max-width: 767px) { .ek-quote { padding-left: var(--ek-16); } .ek-quote p { font-size: 19px; } }
+
+/* Numbered / labelled panel grid ------------------------------------------ */
+.ek-panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ek-8); }
+.ek-panels--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ek-panel { background: var(--ek-white); border-top: 3px solid var(--ek-aqua); padding: 32px 34px 36px; display: flex; flex-direction: column; gap: var(--ek-12); }
+.ek-panel__title { font-size: 18px; font-weight: 700; line-height: 1.3; color: var(--ek-blue); }
+@media (max-width: 1023px) { .ek-panels, .ek-panels--3 { grid-template-columns: 1fr; } }
+
+/* Link cards --------------------------------------------------------------- */
+.ek-linkcards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--ek-8); }
+.ek-linkcard { background: var(--ek-grey-light); padding: 32px 30px 34px; display: flex; flex-direction: column; gap: var(--ek-12); transition: background-color var(--ek-fast) var(--ek-ease); }
+.ek-linkcard:hover { background: var(--ek-white); }
+.ek-linkcard__title { font-size: 18px; font-weight: 700; color: var(--ek-blue); }
+.ek-linkcard .ek-link { margin-top: auto; padding-top: var(--ek-16); font-size: 15px; }
+@media (max-width: 1199px) { .ek-linkcards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 599px) { .ek-linkcards { grid-template-columns: 1fr; } }
+
+/* Category listing: a lead product, then a grid ----------------------------
+   The ranges hold 1, 4, 3 and 1 products, so no single repeating unit works
+   for all of them. The flagship gets a feature band, everything else sits in
+   a card grid — a range of one is then a finished band rather than one lonely
+   row, and a range of four does not become four near-identical bands. Both
+   blocks are generic: nothing here knows which product it is showing. */
+
+.ek-lead-prod {
+  position: relative;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: center; gap: var(--ek-76);
+  background: var(--ek-white); padding: 64px 72px;
+}
+.ek-lead-prod__copy { display: flex; flex-direction: column; align-items: flex-start; gap: var(--ek-16); }
+.ek-lead-prod__eyebrow {
+  font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ek-aqua);
+}
+.ek-lead-prod__name { margin: 0; font-size: var(--ek-h2); font-weight: 700; line-height: 1.2; color: var(--ek-blue); }
+.ek-lead-prod__desc { font-size: var(--ek-lead-size, 16px); line-height: 1.65; color: var(--ek-body-ink); max-width: 46ch; }
+.ek-lead-prod__price { font-size: 33px; font-weight: 700; line-height: 1.1; color: var(--ek-charcoal); }
+.ek-lead-prod__note { font-size: 13px; color: #6B7278; margin-top: -8px; }
+.ek-lead-prod__cta { margin-top: var(--ek-12); }
+.ek-lead-prod__panel {
+  /* A fixed height, not a minimum: a tall portrait pack shot would otherwise
+     stretch the whole band to its own proportions. */
+  background: var(--ek-grey-light); height: 460px;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+/* --pd-shot-scale comes from shotscale.py: each cut-out is trimmed to the
+   product, so without it a 350-tablet jar fills the panel exactly as much as
+   a whole-house water filter. Default 1 leaves an unknown image unchanged. */
+.ek-lead-prod__panel img { max-width: calc(82% * var(--pd-shot-scale, 1));
+  max-height: calc(90% * var(--pd-shot-scale, 1)); object-fit: contain; transition: transform .35s var(--ek-ease); }
+.ek-lead-prod:hover .ek-lead-prod__panel img { transform: scale(1.04); }
+/* One stretched link, so the whole band is clickable without nesting anchors. */
+.ek-lead-prod__cta::after { content: ""; position: absolute; inset: 0; }
+.ek-lead-prod:hover .ek-lead-prod__name { color: var(--ek-aqua); }
+@media (max-width: 1199px) {
+  .ek-lead-prod { grid-template-columns: 1fr; gap: var(--ek-40); padding: 40px; }
+  .ek-lead-prod__panel { height: 360px; order: -1; }
+}
+@media (max-width: 767px) {
+  .ek-lead-prod { padding: 24px; }
+  .ek-lead-prod__panel { height: 280px; }
+  .ek-lead-prod__desc { max-width: none; }
+}
+
+.ek-pgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--ek-8); }
+.ek-pcard {
+  position: relative; background: var(--ek-white); display: flex; flex-direction: column;
+}
+.ek-pcard__panel {
+  background: var(--ek-grey-light); height: 260px;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.ek-pcard__panel img { max-width: calc(78% * var(--pd-shot-scale, 1));
+  max-height: calc(84% * var(--pd-shot-scale, 1)); object-fit: contain; transition: transform .35s var(--ek-ease); }
+.ek-pcard:hover .ek-pcard__panel img { transform: scale(1.05); }
+.ek-pcard__body { padding: 28px 30px 32px; display: flex; flex-direction: column; gap: var(--ek-8); flex-grow: 1; }
+.ek-pcard__name { margin: 0; font-size: var(--ek-h4); font-weight: 700; line-height: 1.3; color: var(--ek-blue); }
+.ek-pcard__desc { font-size: 15px; line-height: 1.55; color: var(--ek-body-ink); }
+.ek-pcard__price { margin-top: auto; padding-top: var(--ek-16); font-size: 23px; font-weight: 700; color: var(--ek-charcoal); }
+.ek-pcard__price--soon { font-size: 13px; font-weight: 600; color: #6B7278; text-transform: uppercase; letter-spacing: .08em; }
+.ek-pcard__cta { padding-top: 12px; font-size: 15px; }
+.ek-pcard__cta::after { content: ""; position: absolute; inset: 0; }
+.ek-pcard:hover .ek-pcard__name, .ek-pcard:hover .ek-pcard__cta { color: var(--ek-aqua); }
+.ek-pcard:hover .ek-pcard__cta svg { transform: translateX(4px); }
+/* A product awaiting Nigeria keeps its place but does not compete. */
+.ek-pcard--soon .ek-pcard__panel img { opacity: .72; }
+@media (max-width: 1199px) { .ek-pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 767px)  { .ek-pgrid { grid-template-columns: 1fr; }
+  .ek-pcard__panel { height: 220px; }
+  .ek-pcard__body { padding: 20px 20px 24px; } }
+
+/* A group heading inside a category listing. */
+.ek-lead-prod + .ek-pgroup, .ek-pgroup + .ek-pgroup { margin-top: var(--ek-76); }
+.ek-pgroup__title { margin: 0 0 var(--ek-24); font-size: var(--ek-h3); font-weight: 700; color: var(--ek-charcoal); }
+
+
+/* Accordion — maps to the Elementor Toggle widget ------------------------- */
+.ek-accordion { border-top: 1px solid var(--ek-grey-mid); }
+.ek-accordion details { border-bottom: 1px solid var(--ek-grey-mid); }
+.ek-accordion summary {
+  list-style: none; cursor: pointer; padding: 26px 56px 26px 0; position: relative;
+  font-size: 18px; font-weight: 700; line-height: 1.35; color: var(--ek-blue);
+}
+.ek-accordion summary::-webkit-details-marker { display: none; }
+.ek-accordion summary::after {
+  content: ""; position: absolute; right: 16px; top: 32px;
+  width: 10px; height: 10px; border-right: 2px solid var(--ek-aqua); border-bottom: 2px solid var(--ek-aqua);
+  transform: rotate(45deg); transition: transform var(--ek-fast) var(--ek-ease);
+}
+.ek-accordion details[open] summary::after { transform: rotate(-135deg); top: 36px; }
+.ek-accordion summary:hover { color: var(--ek-aqua); }
+.ek-accordion__body { padding: 0 56px 28px 0; }
+.ek-accordion__body p + p { margin-top: var(--ek-12); }
+@media (max-width: 767px) {
+  .ek-accordion summary { font-size: 16px; padding: 20px 44px 20px 0; }
+  .ek-accordion summary::after { top: 26px; right: 10px; }
+  .ek-accordion details[open] summary::after { top: 30px; }
+  .ek-accordion__body { padding: 0 24px 22px 0; }
+}
+
+/* Simple data table -------------------------------------------------------- */
+.ek-table { width: 100%; border-collapse: collapse; }
+.ek-table th, .ek-table td { text-align: left; padding: 16px 20px; border-bottom: 1px solid var(--ek-grey-mid); font-size: 15px; line-height: 1.5; }
+.ek-table th { font-weight: 700; color: var(--ek-blue); width: 220px; }
+.ek-table tr:first-child th, .ek-table tr:first-child td { border-top: 1px solid var(--ek-grey-mid); }
+.ek-tablewrap { overflow-x: auto; }
+@media (max-width: 767px) { .ek-table th { width: 120px; } .ek-table th, .ek-table td { padding: 14px 12px; font-size: 14px; } }
+
+/* Timeline ---------------------------------------------------------------- */
+.ek-eras { display: flex; gap: var(--ek-8); flex-wrap: wrap; margin-bottom: var(--ek-40); }
+.ek-era {
+  padding: 14px 24px; background: var(--ek-white); border: 1px solid var(--ek-grey-mid);
+  font-family: inherit; font-size: 15px; font-weight: 600; color: var(--ek-blue); cursor: pointer;
+  transition: background-color var(--ek-fast) var(--ek-ease), color var(--ek-fast) var(--ek-ease);
+}
+.ek-era[aria-selected="true"] { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); }
+.ek-era:hover { border-color: var(--ek-blue); }
+.ek-erapane[hidden] { display: none; }
+.ek-erapane__lead { margin-bottom: var(--ek-32); }
+.ek-year { display: grid; grid-template-columns: 140px 1fr; gap: var(--ek-40); padding: 24px 0; border-top: 1px solid var(--ek-grey-mid); }
+.ek-year__no { font-size: 23px; font-weight: 700; color: var(--ek-aqua); }
+@media (max-width: 767px) {
+  .ek-eras { gap: 6px; }
+  .ek-era { padding: 12px 16px; font-size: 14px; }
+  .ek-year { grid-template-columns: 1fr; gap: 6px; padding: 18px 0; }
+  .ek-year__no { font-size: 19px; }
+}
+
+/* People ------------------------------------------------------------------ */
+.ek-people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ek-40) var(--ek-8); }
+.ek-person { display: grid; grid-template-columns: 240px 1fr; gap: var(--ek-32); align-items: start; }
+.ek-person__photo { background: var(--ek-grey-light); aspect-ratio: 3 / 4; overflow: hidden; }
+.ek-person__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ek-person__name { font-size: 23px; font-weight: 700; line-height: 1.25; color: var(--ek-blue); }
+.ek-person__role { font-size: 15px; font-weight: 600; color: var(--ek-aqua); margin-top: 6px; }
+.ek-person__bio { margin-top: var(--ek-16); }
+.ek-people--single { grid-template-columns: 1fr; }
+.ek-people--single .ek-person { grid-template-columns: 300px 1fr; }
+@media (max-width: 1199px) { .ek-people { grid-template-columns: 1fr; } }
+@media (max-width: 599px) {
+  .ek-person, .ek-people--single .ek-person { grid-template-columns: 1fr; gap: var(--ek-16); }
+  .ek-person__photo { max-width: 240px; }
+}
+
+/* Steps -------------------------------------------------------------------- */
+.ek-steps { counter-reset: step; display: flex; flex-direction: column; }
+.ek-step { counter-increment: step; display: grid; grid-template-columns: 88px 1fr; gap: var(--ek-32); padding: 28px 0; border-top: 1px solid var(--ek-grey-mid); }
+.ek-step::before { content: counter(step, decimal-leading-zero); font-size: 23px; font-weight: 700; color: var(--ek-aqua); }
+@media (max-width: 767px) { .ek-step { grid-template-columns: 56px 1fr; gap: var(--ek-16); padding: 22px 0; } }
+
+/* Location cards ----------------------------------------------------------- */
+.ek-loccards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ek-8); }
+.ek-loccard { background: var(--ek-white); border-top: 3px solid var(--ek-aqua); padding: 32px 34px 36px; display: flex; flex-direction: column; gap: var(--ek-12); }
+.ek-loccard--head { border-top-color: var(--ek-pink); grid-column: 1 / -1; }
+.ek-loccard__name { font-size: 23px; font-weight: 700; line-height: 1.25; color: var(--ek-blue); }
+.ek-loccard__meta { font-size: 15px; line-height: 1.6; color: var(--ek-body-ink); }
+.ek-loccard__meta strong { color: var(--ek-charcoal); }
+.ek-loccard__actions { display: flex; gap: var(--ek-8); flex-wrap: wrap; margin-top: var(--ek-8); }
+@media (max-width: 1023px) { .ek-loccards { grid-template-columns: 1fr; } }
+
+/* Form --------------------------------------------------------------------- */
+.ek-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ek-24); }
+.ek-field { display: flex; flex-direction: column; gap: var(--ek-8); }
+.ek-field--wide { grid-column: 1 / -1; }
+.ek-field label { font-size: 15px; font-weight: 600; color: var(--ek-charcoal); }
+.ek-field input, .ek-field select, .ek-field textarea {
+  font-family: inherit; font-size: 16px; line-height: 1.5; color: var(--ek-charcoal);
+  padding: 14px 16px; background: var(--ek-white);
+  border: 1px solid var(--ek-grey-out); min-height: 52px;
+}
+.ek-field textarea { min-height: 140px; resize: vertical; }
+/* `outline: none` used to sit here. base.css gives the whole site a
+   :focus-visible ring, and a form is the last place to throw it away — a
+   1px border change is not a focus indicator for anyone tabbing through.
+   The aqua border is the mouse-and-touch nicety; the ring is the real one. */
+.ek-field input:focus, .ek-field select:focus, .ek-field textarea:focus { border-color: var(--ek-aqua); }
+.ek-field input:focus-visible, .ek-field select:focus-visible, .ek-field textarea:focus-visible {
+  outline: 2px solid var(--ek-aqua); outline-offset: 2px; }
+
+/* Invalid field, and the message under it. Written by Forms() in elken.js. */
+.ek-field.is-invalid input, .ek-field.is-invalid select, .ek-field.is-invalid textarea {
+  border-color: var(--ek-error); background: var(--ek-error-tint); }
+.ek-field__error { margin: 0; font-size: 14px; line-height: 1.45; color: var(--ek-error); }
+
+/* The honeypot. Hidden by clipping rather than display:none, because some bots
+   skip fields they can tell are hidden; aria-hidden and tabindex="-1" keep it
+   away from screen readers and the tab order.
+   Clip, NOT `left: -9999px` — an off-screen box is still a box, and on a page
+   this wide it is one `position: static` ancestor away from adding 9999px of
+   horizontal scroll. The clip pattern occupies 1px and cannot. */
+.ek-hp {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* Submission status. Never green unless something was actually delivered —
+   while the form has no endpoint it uses the neutral pending tone. */
+.ek-form__status {
+  grid-column: 1 / -1; padding: 14px 16px; font-size: 15px; line-height: 1.5;
+  border-left: 3px solid var(--ek-aqua); background: var(--ek-grey-light);
+  color: var(--ek-charcoal); }
+.ek-form__status--error   { border-left-color: var(--ek-error); background: var(--ek-error-tint); color: var(--ek-error); }
+.ek-form__status--pending { border-left-color: var(--ek-aqua); }
+.ek-form__status--sent    { border-left-color: #2E7D4F; }
+.ek-form__actions { grid-column: 1 / -1; display: flex; gap: var(--ek-16); flex-wrap: wrap; }
+.ek-form__note { grid-column: 1 / -1; font-size: 14px; color: #5C646A; }
+@media (max-width: 767px) { .ek-form { grid-template-columns: 1fr; } }
+
+/* Placeholder marker — content the client still has to supply -------------- */
+.ek-todo {
+  display: inline-block; padding: 1px 8px; background: #FFF3D6;
+  border: 1px dashed #D9A300; color: #7A5C00;
+  font-size: 13px; font-weight: 600; letter-spacing: .02em;
+}
+
+/* The product row carries its own link, stretched over the whole row. */
+
+/* ==========================================================================
+   Who We Are pages — sections taken from the Figma "Who We Are" frames
+   ========================================================================== */
+
+/* Banner hero (Figma: "Who We Are - About Us", hero 1920x922) -------------- */
+.sec-banner { position: relative; min-height: clamp(560px, 48vw, 922px); display: flex; align-items: center; overflow: hidden; }
+.sec-banner__bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.sec-banner__veil { position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(14,17,42,.90) 0%, rgba(14,17,42,.68) 44%, rgba(14,17,42,.32) 100%); }
+/* Gradient variant. Same geometry as the photographic banner — only the plate
+   behind it changes. The ground and the two 1598px glow ellipses are the ones
+   in Figma "01 - Foundations", so this stays inside the one design language.  */
+/* Copy-space photography: the subject is framed right and the left of the shot
+   is deliberately near-empty. Keyed on its own modifier, not on the banner's
+   height — Leadership is a full-height banner shot exactly this way. The full-frame veil above is
+   built for a photograph with the subject under the copy, and over one of these
+   it flattens the empty half to navy and dulls the subject. This one holds just
+   enough on the left for white type and then lets go.
+   Measured against the brightest of the four (Beauty, mean left sRGB .94):
+   .62 gives 5.6:1 for the standfirst; the other three land above 8:1. */
+/* Copy-space photography: the subject is framed right and the left of the shot
+   is deliberately near-empty. Keyed on its own modifier, not on the banner's
+   height — Leadership is a full-height banner shot exactly this way. The full-frame veil above is
+   built for a photograph with the subject *under* the copy; over one of these it
+   flattens the empty half to navy and drains the subject. This one holds a wide,
+   even plateau across the copy column and then lets go completely.
+
+   The plateau width matters more than its opacity. At 1600 the copy box ends at
+   x=526; a stop at 32% (x=512) meant the last centimetre of every line was
+   already fading and the measured contrast was 3.06:1. Running the plateau to
+   44% fixed it at the same opacity. Measured with the copy hidden, worst case
+   across all four banners at 1600 / 1024 / 390 is 6.2:1 — Beauty sets it, being
+   the brightest (mean left sRGB .94). */
+/* Copy-space photography: the subject is framed right and the left of the shot
+   is deliberately near-empty. Keyed on its own modifier, not on the banner's
+   height — Leadership is a full-height banner shot exactly this way. The full-frame veil above is
+   built for a photograph with the subject *under* the copy; over one of these it
+   flattens the empty half and drains the subject. This one holds a wide, even
+   plateau across the copy column and then lets go completely.
+
+   THE SCRIM IS NEUTRAL, NOT NAVY, AND THAT IS DELIBERATE. It was Deep Vital
+   Blue's near-black `#0E112A` (hue 234, sat .67) and Elken BC saw it at once:
+   over a warm daylight interior it read lilac. The measurement backs him up —
+   the Vitamins photograph's left is hue 31 at sat .09, and 234 is close enough
+   to its complement that the mix passes through magenta. Composited, the left
+   landed at hue 273 with green as the lowest channel, which is the signature of
+   purple. `--ek-scrim-rgb` composites at saturation .01–.04 on all four
+   banners, so it darkens the photograph without tinting it.
+
+   The plateau's width matters more than its opacity. At 1600 the copy box ends
+   at x=526; a fade starting at 32% (x=512) left the last centimetre of every
+   line already lightening and measured 3.06:1. Running the plateau to 34% and
+   easing the falloff over eight stops fixed both the contrast and a visible
+   Mach band where a three-stop ramp used to start.
+
+   Verified by rendering each banner twice, once with the copy set to
+   `visibility: hidden`, and reading the ground from the copy-free frame — a
+   white-text region measured with the text still in it returns ~1.5:1 every
+   time, because the text is its own brightest pixel. */
+.sec-banner--copyspace .sec-banner__veil {
+  background: linear-gradient(90deg,
+    rgba(var(--ek-scrim-rgb), .70)   0%,
+    rgba(var(--ek-scrim-rgb), .67)  34%,
+    rgba(var(--ek-scrim-rgb), .60)  48%,
+    rgba(var(--ek-scrim-rgb), .44)  57%,
+    rgba(var(--ek-scrim-rgb), .26)  66%,
+    rgba(var(--ek-scrim-rgb), .12)  76%,
+    rgba(var(--ek-scrim-rgb), .04)  87%,
+    rgba(var(--ek-scrim-rgb), 0)   100%);
+}
+@media (max-width: 1199px) {
+  .sec-banner--copyspace .sec-banner__veil {
+    background: linear-gradient(90deg,
+      rgba(var(--ek-scrim-rgb), .76)  0%, rgba(var(--ek-scrim-rgb), .72) 52%,
+      rgba(var(--ek-scrim-rgb), .58) 66%, rgba(var(--ek-scrim-rgb), .32) 80%,
+      rgba(var(--ek-scrim-rgb), .14) 92%, rgba(var(--ek-scrim-rgb), .06) 100%);
+  }
+}
+@media (max-width: 767px) {
+  /* `cover` at this aspect crops a 3.3:1 photograph to a narrow strip, so aim it
+     at the subject and scrim the whole frame — the copy now sits over all of it
+     rather than beside it. */
+  .sec-banner--copyspace .sec-banner__bg { background-position: 74% center; }
+  .sec-banner--copyspace .sec-banner__veil {
+    background: linear-gradient(180deg, rgba(var(--ek-scrim-rgb), .80) 0%, rgba(var(--ek-scrim-rgb), .68) 100%);
+  }
+}
+/* A banner that carries an overlaid, transparent header needs its own ground
+   under the navigation. The copy-space veil is deliberately near-clear at the
+   right of the frame, which is exactly where the nav links sit — over the
+   distributor photograph's daylight windows they measured unreadable. ::after,
+   not ::before, so it paints above .sec-banner__bg and .sec-banner__veil; the
+   copy is lifted to z-index 1 so it stays above this in turn. */
+.sec-banner--overlayhead::after { content: ""; position: absolute; inset: 0 0 auto 0;
+  height: 190px; z-index: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(var(--ek-scrim-rgb), .62) 0%,
+    rgba(var(--ek-scrim-rgb), .34) 44%, rgba(var(--ek-scrim-rgb), 0) 100%); }
+@media (max-width: 1199px) { .sec-banner--overlayhead::after { display: none; } }
+/* A photograph that fills the whole frame, with the copy over it. The default
+   full-frame veil is a flat navy sheet at .90 falling to .32, which buries the
+   picture — and over the Elken Campus shot, whose sky is a strong cyan-blue,
+   the navy read as a purple cast. This one does three things separately:
+   a soft brand-navy hue held to the left, behind the title only; a neutral
+   darkening ramp (--ek-scrim-rgb) that carries the contrast without tinting;
+   and a top band so the overlaid header keeps its ground. */
+.sec-banner--titlewash .sec-banner__veil {
+  background:
+    /* Top band: the overlaid header's links sit at 2-6% of the banner height, and over
+       this photograph's bright sky they measured 3.4:1 at .50. */
+    linear-gradient(180deg, rgba(var(--ek-scrim-rgb), .62) 0%,
+      rgba(var(--ek-scrim-rgb), .18) 22%, rgba(var(--ek-scrim-rgb), 0) 44%),
+    linear-gradient(96deg, rgba(12,17,52,.50) 0%, rgba(12,17,52,.30) 30%, rgba(12,17,52,0) 56%),
+    /* The neutral ramp has to still be carrying weight at 46%, because that is where the
+       longest headline ends. At .46 there the pink accent line sat on the campus facade
+       at 2.3:1 — the white line above it measured fine, which is why this was missed the
+       first time. Measure the accent, not the headline. */
+    linear-gradient(96deg, rgba(var(--ek-scrim-rgb), .80) 0%, rgba(var(--ek-scrim-rgb), .76) 26%,
+      rgba(var(--ek-scrim-rgb), .66) 44%, rgba(var(--ek-scrim-rgb), .38) 58%,
+      rgba(var(--ek-scrim-rgb), .18) 74%, rgba(var(--ek-scrim-rgb), .12) 100%); }
+@media (max-width: 767px) {
+  .sec-banner--titlewash .sec-banner__veil {
+    background: linear-gradient(180deg, rgba(var(--ek-scrim-rgb), .74) 0%, rgba(var(--ek-scrim-rgb), .62) 100%); }
+}
+
+.sec-banner--gradient { background: var(--ek-blue); }
+.sec-banner__glow { position: absolute; inset: 0; overflow: hidden; }
+.sec-banner__glow::before, .sec-banner__glow::after {
+  content: ""; position: absolute; width: 1598px; height: 1598px; border-radius: 50%;
+}
+.sec-banner__glow::before {
+  left: -420px; top: -900px;
+  background: radial-gradient(circle, rgba(42,167,207,.42) 0%, rgba(42,167,207,0) 62%);
+}
+.sec-banner__glow::after {
+  right: -520px; bottom: -1010px;
+  background: radial-gradient(circle, rgba(242,135,183,.40) 0%, rgba(181,122,153,.14) 42%, rgba(242,135,183,0) 66%);
+}
+@media (max-width: 1023px) {
+  .sec-banner__glow::before { left: -600px; top: -1080px; }
+  .sec-banner__glow::after { right: -700px; bottom: -1120px; }
+}
+/* Content container, not the navigation container. Figma puts the banner H1 at
+   x=258 (the 1408 content column) while only the breadcrumb sits at x=153, and
+   the home page puts every section on 1408 — so a banner on 1605 left the hero
+   copy 98px further out than everything under it. */
+/* Leadership: the portraits stand in the banner itself. They are bottom-aligned
+   and the section's own edge crops them, so the group reads as a line of people
+   the frame happens to cut rather than four pictures pasted on a gradient. */
+.sec-banner--team .sec-banner__copy { padding-block: 96px; }
+.sec-banner__team { position: absolute; right: -2%; bottom: 0; width: 62%; height: 100%; pointer-events: none; }
+.sec-banner__team img { position: absolute; bottom: 0; width: auto; max-width: none; display: block; }
+/* a quiet pool of light so the group sits in the scene rather than on it */
+.sec-banner__spot { position: absolute; left: 4%; bottom: -34%; width: 92%; padding-top: 92%;
+  border-radius: 50%; background: radial-gradient(circle, rgba(133,158,179,.30) 0%, rgba(133,158,179,0) 62%); }
+/* and the ground they stand on, so nobody is cut off by a hard line */
+.sec-banner__foot { position: absolute; left: 0; right: 0; bottom: 0; height: 96px; z-index: 5;
+  background: linear-gradient(180deg, rgba(14,17,42,0) 0%, rgba(14,17,42,.22) 55%, rgba(14,17,42,.5) 100%); }
+/* Stays absolute at every width — putting it in flow makes it a flex item of
+   the banner and shoves the copy sideways. Below the desktop breakpoint the
+   group becomes a band under the copy and the copy reserves room for it. */
+@media (max-width: 1199px) {
+  .sec-banner--team .sec-banner__copy { padding-block: 88px 0; }
+  .sec-banner--team .sec-banner__inner { padding-bottom: 236px; }
+  .sec-banner__team { right: 0; width: 100%; height: 250px; }
+  .sec-banner__spot { bottom: -50%; }
+}
+@media (max-width: 767px) {
+  .sec-banner--team .sec-banner__inner { padding-bottom: 196px; }
+  .sec-banner__team { height: 205px; }
+  /* three across is the most that reads at phone width */
+  .sec-banner__team img:first-of-type { display: none; }
+  .sec-banner__team img:nth-of-type(2) { left: 2%; }
+  .sec-banner__team img:nth-of-type(3) { left: 26%; }
+  .sec-banner__team img:nth-of-type(4) { left: 54%; }
+}
+
+.sec-banner__inner { position: relative; z-index: 1; width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2)); margin-inline: auto; }
+.sec-banner__crumb { position: absolute; top: 79px; left: 0; }
+.sec-banner__crumb .ek-breadcrumb { margin: 0; color: rgba(255,255,255,.6); font-size: 13px; }
+.sec-banner__crumb .ek-breadcrumb a { color: rgba(255,255,255,.6); }
+.sec-banner__crumb .ek-breadcrumb a:hover { color: var(--ek-white); }
+.sec-banner__copy { max-width: 633px; padding-block: 120px; }
+.sec-banner .ek-h1 { color: var(--ek-white); }
+.sec-banner .ek-h1 .t-accent { color: var(--ek-pink); }
+.sec-banner__sub { margin-top: 18px; max-width: 430px; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.86); }
+.sec-banner__actions { display: flex; align-items: center; gap: var(--ek-16); margin-top: 32px; flex-wrap: wrap; }
+.sec-banner__actions .ek-link { margin-right: 12px; }
+@media (max-width: 1199px) {
+  .sec-banner { min-height: 0; }
+  .sec-banner__crumb { top: 26px; }
+  .sec-banner__copy { padding-block: 100px 72px; }
+  .sec-banner__veil { background: linear-gradient(180deg, rgba(14,17,42,.78) 0%, rgba(14,17,42,.86) 100%); }
+}
+
+/* Core strengths strip (Figma: "Sec - Our Core Strenghts", 1920x334) ------- */
+.sec-strengths { background: linear-gradient(180deg, #E8EBEE 0%, #DADFE4 100%); padding-block: 59px 62px; }
+.sec-strengths__title { font-size: var(--ek-h3); font-weight: 700; line-height: 1.25; color: var(--ek-charcoal); margin: 0; }
+.sec-strengths__row { display: flex; align-items: flex-start; margin-top: 42px; }
+.ek-strength { position: relative; flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.ek-strength + .ek-strength::before {
+  content: ""; position: absolute; left: 0; top: 26px; width: 1px; height: 23px; background: rgba(37,41,44,.22);
+}
+.ek-strength svg { color: var(--ek-blue); }
+.ek-strength span { font-size: 16px; font-weight: 700; color: var(--ek-charcoal); }
+@media (max-width: 1023px) {
+  .sec-strengths { padding-block: 40px; }
+  .sec-strengths__row { flex-wrap: wrap; gap: var(--ek-32) 0; margin-top: var(--ek-24); }
+  .ek-strength { flex: 0 0 50%; }
+  .ek-strength:nth-child(odd)::before { display: none; }
+}
+
+/* Journey zig-zag (Figma: the three alternating bands under "Our Journey") - */
+.ek-zig { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ek-zig__media { min-height: 314px; background-size: cover; background-position: center; }
+.ek-zig__body {
+  background: var(--ek-white); display: flex; gap: 48px; align-items: flex-start;
+  padding: 100px 90px 100px 102px; margin-left: clamp(0px, 8vw, 153px);
+}
+.ek-zig--flip .ek-zig__body { order: 2; margin-left: 0; margin-right: clamp(0px, 8vw, 153px); padding-left: 79px; }
+.ek-zig--tint .ek-zig__body { background: #EFF1F2; }
+.ek-zig__media--panel { background: var(--ek-blue); display: flex; align-items: center; justify-content: center; padding: 40px; }
+.ek-zig__media--panel p { max-width: 360px; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.86); text-align: center; }
+.ek-zig__year { flex: 0 0 150px; font-size: var(--ek-h2); font-weight: 700; line-height: 1.2; color: var(--ek-pink); }
+.ek-zig__title { font-size: var(--ek-h3); font-weight: 700; line-height: 1.25; color: var(--ek-charcoal); }
+.ek-zig__copy { margin-top: 14px; max-width: 340px; font-size: 14px; line-height: 1.6; color: var(--ek-body-ink); }
+@media (max-width: 1023px) {
+  .ek-zig { grid-template-columns: 1fr; }
+  .ek-zig__media, .ek-zig--flip .ek-zig__media { order: -1; min-height: 220px; }
+  .ek-zig--flip .ek-zig__body { order: 2; }
+  .ek-zig__body, .ek-zig--flip .ek-zig__body {
+    margin: 0; padding: 40px var(--ek-page-pad); flex-direction: column; gap: 8px;
+  }
+  .ek-zig__year { flex: none; }
+  .ek-zig__copy { max-width: none; }
+}
+
+/* Recognition band (Figma: "Sec - Recognition", four 398x208 cards) --------- */
+.sec-recog__title { text-align: center; margin: 0; }
+.ek-recog { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 96px; }
+.ek-recog__card { background: #EFF1F2; min-height: 208px; padding: 52px 40px 44px 60px; display: flex; flex-direction: column; gap: 12px; }
+.ek-recog__key { font-size: var(--ek-h2); font-weight: 700; line-height: 1.2; color: var(--ek-charcoal); }
+.ek-recog__label { font-size: 14px; line-height: 1.6; color: var(--ek-body-ink); }
+a.ek-recog__card { transition: background-color var(--ek-fast) var(--ek-ease); }
+a.ek-recog__card:hover { background: var(--ek-white); }
+a.ek-recog__card .ek-link { margin-top: auto; font-size: 15px; }
+@media (max-width: 1199px) { .ek-recog { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: var(--ek-40); }
+  .ek-recog__card { min-height: 0; padding: 32px 28px; } }
+@media (max-width: 599px) { .ek-recog { grid-template-columns: 1fr; } }
+
+/* Leadership (Figma: "Who We Are - Leadership Management", 3:302) ----------
+   Geometry read off the Figma frame:
+   - the opening row is full bleed, 689 tall, copy 434 wide at x=258, the
+     photograph occupying the right 1126 (58.65%)
+   - the leader bands are 1624 wide, inset 153 each side, split into two 812
+     halves, 695 tall, and they STACK WITH NO GAP between them
+   - the portrait is a transparent cut-out sitting flush to the bottom of its
+     panel at about 89% of the band height
+   - copy is top-aligned 100px down, on a 599 measure
+   - the copy panel alternates light and dark down the page, and the sides
+     swap with it. That alternation is the page's rhythm, not decoration.     */
+
+.sec-leaders { background: #F3F5F7; }
+
+.ek-lead-open { position: relative; background: #E9EBED; min-height: 689px; display: flex; align-items: center; }
+.ek-lead-open__media { position: absolute; right: 0; top: 0; bottom: 0; width: 58.65%; background-size: cover; background-position: center top; }
+.ek-lead-open__inner { position: relative; width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2)); margin-inline: auto; }
+.ek-lead-open__copy { max-width: 434px; padding-block: 100px; }
+
+.ek-leaders { padding-top: 149px; }
+.ek-leader {
+  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2)); margin-inline: auto;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); min-height: 695px;
+}
+.ek-leader__panel { position: relative; overflow: hidden; background: #E4E7EA; }
+.ek-leader__panel::before {
+  content: ""; position: absolute; left: -60%; top: -50%; width: 220%; height: 200%;
+  background: radial-gradient(circle at 50% 60%, rgba(255,255,255,.62) 0%, rgba(255,255,255,0) 60%);
+}
+/* Transparent cut-out. No background of its own — the panel behind it is the
+   background, which is the whole point of the asset being a cut-out.
+   Absolutely positioned on purpose. In flow, the portrait's intrinsic height
+   became the grid row's minimum and stretched every band from 695 to 858,
+   because `height: 89%` had nothing definite to resolve against yet. Out of
+   flow it contributes no intrinsic height, so the band is 695 as drawn and the
+   portrait then measures 89% of that. */
+.ek-leader__panel img {
+  position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  display: block; height: 89%; width: auto; max-width: 92%; object-fit: contain;
+}
+
+/* A portrait supplied as a studio JPEG with its own grey backdrop shows here as
+   a rectangle pasted onto a lighter panel — the panel's #E4E7EA and its white
+   glow ARE the background, which only works for a transparent cut-out. The
+   answer is the asset, not CSS: the Country Manager's photograph was reshot as
+   a cut-out and an `.ek-leader--photo` variant that rebuilt the backdrop in
+   gradients was deleted. Any new portrait dropped in here must be a cut-out. */
+/* Figma pads a 812 column 100/113; the band now sits on the 1408 content
+   container like every other section, so the pads scale with it. */
+.ek-leader__copy { display: flex; flex-direction: column; padding: 100px 96px 80px 88px; background: var(--ek-white); }
+.ek-leader--flip .ek-leader__copy { order: -1; }
+.ek-leader--navy .ek-leader__copy { background: var(--ek-blue); }
+.ek-leader--charcoal .ek-leader__copy { background: var(--ek-charcoal); }
+.ek-leader--navy .ek-leader__name, .ek-leader--charcoal .ek-leader__name { color: var(--ek-white); }
+.ek-leader--navy .ek-leader__role, .ek-leader--charcoal .ek-leader__role { color: var(--ek-pink); }
+.ek-leader--navy .ek-leader__bio,  .ek-leader--charcoal .ek-leader__bio  { color: rgba(255,255,255,.82); }
+.ek-leader--navy .ek-quote p, .ek-leader--charcoal .ek-quote p { color: var(--ek-white); }
+.ek-leader--navy .ek-quote cite, .ek-leader--charcoal .ek-quote cite { color: rgba(255,255,255,.6); }
+
+.ek-leader__name { font-size: var(--ek-h2); font-weight: 700; line-height: 1.2; color: var(--ek-blue); }
+.ek-leader__role { margin-top: 6px; font-size: var(--ek-h4); font-weight: 600; color: var(--ek-aqua); }
+.ek-leader__bio { margin-top: 22px; font-size: 15px; line-height: 1.7; color: var(--ek-body-ink); }
+.ek-leader__bio + .ek-leader__bio { margin-top: 14px; }
+
+@media (max-width: 1439px) { .ek-leader__copy { padding: 72px 56px 64px; } }
+@media (max-width: 1023px) {
+  .ek-lead-open { display: block; min-height: 0; }
+  .ek-lead-open__media { position: relative; width: 100%; height: 320px; }
+  .ek-lead-open__copy { max-width: none; padding-block: 48px; }
+  .ek-leaders { padding-top: 0; }
+  .ek-leader { grid-template-columns: 1fr; min-height: 0; width: 100%; }
+  .ek-leader__panel { min-height: 380px; }
+  .ek-leader__panel img { height: auto; width: auto; max-height: 380px; max-width: 70%; }
+  .ek-leader__copy, .ek-leader--flip .ek-leader__copy { order: 2; padding: 40px var(--ek-page-pad) 56px; }
+}
+
+/* Our Journey (Figma: "Achievement Milestones", 4:748) --------------------- */
+
+/* Award panels, three across with arrows and dots (Figma Awards-Panel) */
+.sec-awards { position: relative; background: var(--ek-ground-light); padding-block: 150px 130px; overflow: hidden; }
+.sec-awards::before { content: ""; position: absolute; left: -46%; top: -18%; width: 1598px; height: 1598px;
+  border-radius: 50%; background: radial-gradient(circle, rgba(42,167,207,.14) 0%, rgba(42,167,207,0) 62%); }
+.sec-awards__inner { position: relative; width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2)); margin-inline: auto; }
+.ek-awardrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+/* 440 clears the tallest card at the tightest desktop width (424 at 1024), so
+   paging the carousel never changes the row height and never moves the page. */
+.ek-award { display: flex; flex-direction: column; min-height: 440px; }
+.ek-award[hidden] { display: none; }
+.ek-award__top { background: #E4E9EE; padding: 44px 42px; }
+.ek-award__year { font-size: 52px; font-weight: 700; line-height: 1.1; color: var(--ek-blue); }
+.ek-award__body { background: var(--ek-blue); color: var(--ek-white); padding: 40px 42px 46px; flex-grow: 1; display: flex; flex-direction: column; gap: 14px; }
+.ek-award__title { font-size: var(--ek-h3); font-weight: 700; line-height: 1.25; }
+.ek-award__detail { font-size: 14px; line-height: 1.65; color: rgba(255,255,255,.82); }
+.sec-awards__nav { display: flex; align-items: center; justify-content: center; gap: var(--ek-16); margin-top: 44px; }
+.ek-round {
+  width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--ek-blue);
+  background: transparent; color: var(--ek-blue); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background-color var(--ek-fast) var(--ek-ease), color var(--ek-fast) var(--ek-ease);
+}
+.ek-round:hover { background: var(--ek-blue); color: var(--ek-white); }
+/* The system says no drop shadows, and that still holds for panels and cards.
+   These controls are the deliberate exception: they float over a light ground
+   and need to read as pressable. */
+.ek-round--soft { border-color: rgba(133,158,179,.34); background: var(--ek-white);
+  color: #6D7A85; box-shadow: 0 6px 16px rgba(31,45,74,.10), 0 1px 2px rgba(31,45,74,.06); }
+.ek-round--soft:hover { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white);
+  box-shadow: 0 8px 20px rgba(32,34,89,.24); }
+.ek-round--soft[disabled] { opacity: 1; color: #C3CCD4; border-color: rgba(133,158,179,.2);
+  box-shadow: 0 3px 10px rgba(31,45,74,.06); }
+.ek-round--soft[disabled]:hover { background: var(--ek-white); color: #C3CCD4; }
+.ek-round[disabled] { opacity: .3; cursor: default; }
+.ek-round[disabled]:hover { background: transparent; color: var(--ek-blue); }
+@media (max-width: 1023px) {
+  .sec-awards { padding-block: var(--ek-section-pad); }
+  /* One card at a time, all six sharing the same grid cell. The row then keeps
+     the height of the tallest card whichever one is showing. */
+  .ek-awardrow { grid-template-columns: 1fr; }
+  .ek-award { grid-area: 1 / 1; min-height: 0; }
+  .ek-award[hidden] { display: flex; visibility: hidden; }
+}
+
+
+/* Contact (Figma: "Contact", 1:840) ---------------------------------------
+   Short hero with a ribbon · flag half / head-office half · a grid of offices
+   each headed by a round badge. */
+.sec-banner--short { min-height: clamp(420px, 30vw, 560px); }
+.ct-ribbon { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+.ct-head { display: grid; grid-template-columns: 46fr 54fr; background: var(--ek-grey-light); }
+/* The holding colour behind the photograph. It was Nigeria green while the panel
+   held a flag; the panel now holds the head office building, so it is the
+   building's own sunlit stone rather than a green flash before the image paints. */
+.ct-head__flag { position: relative; overflow: hidden; min-height: 520px; background: #C9CDD2; }
+.ct-flag { position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 42%; }
+.ct-head__panel { display: flex; align-items: center; padding: 96px 0; }
+/* The panel's copy lines up with the content container, so the head office
+   block sits on the same left edge as every section below it. */
+.ct-head__inner { width: min(636px, 100% - (var(--ek-page-pad) * 2)); margin-left: 84px; }
+.ct-head__country { font-size: var(--ek-h2); font-weight: 700; line-height: 1.2; color: var(--ek-blue); }
+.ct-head__label { margin-top: 18px; font-size: 15px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ek-aqua); }
+.ct-head__addr { margin-top: 12px; font-size: var(--ek-h3); font-weight: 500; line-height: 1.35; color: var(--ek-charcoal); }
+.ct-head__rows { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 10px 24px; margin: 32px 0 0; }
+.ct-head__rows dt { font-size: 14px; color: #6D7A85; }
+.ct-head__rows dd { margin: 0; font-size: 15px; color: var(--ek-body-ink); }
+.ct-head__rows a { color: var(--ek-aqua); font-weight: 600; }
+.ct-head__rows a:hover { color: var(--ek-aqua-hover); text-decoration: underline; }
+.ct-head__actions { display: flex; flex-wrap: wrap; gap: var(--ek-16); margin-top: 40px; }
+
+.ct-offices { background: var(--ek-white); }
+.ct-officegrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 76px; }
+.ct-office { background: var(--ek-grey-light); padding: 44px 40px 40px; display: flex; flex-direction: column;
+  transition: background-color var(--ek-fast) var(--ek-ease); }
+.ct-office:hover { background: #E7EBEF; }
+.ct-office__badge { width: 44px; height: 44px; border-radius: 50%; background: var(--ek-blue); color: var(--ek-white);
+  display: flex; align-items: center; justify-content: center; }
+.ct-office__area { margin: 24px 0 0; font-size: 15px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ek-blue); }
+.ct-office__name { margin-top: 8px; font-size: var(--ek-h3); font-weight: 700; line-height: 1.25; color: var(--ek-charcoal); }
+.ct-office__addr { margin-top: 14px; font-size: 15px; line-height: 1.6; color: var(--ek-body-ink); }
+.ct-office__person { margin-top: 12px; font-size: 15px; font-weight: 600; color: var(--ek-charcoal); }
+.ct-office__tel { margin-top: 4px; font-size: 15px; }
+.ct-office__tel a { color: var(--ek-aqua); font-weight: 600; }
+.ct-office__tel a:hover { color: var(--ek-aqua-hover); text-decoration: underline; }
+.ct-office__when { display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 6px 16px; margin: 20px 0 0;
+  padding-top: 20px; border-top: 1px solid var(--ek-grey-mid); }
+.ct-office__when dt { font-size: 13px; color: #6D7A85; }
+.ct-office__when dd { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ek-body-ink); }
+.ct-office__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 28px; }
+/* The sixth cell. Five Expressions leave a hole in a three-up grid, and the
+   coverage line is exactly the thing a reader in the sixth position needs. */
+.ct-office--anywhere { background: var(--ek-blue); }
+.ct-office--anywhere:hover { background: var(--ek-blue-hover); }
+.ct-office--anywhere .ct-office__badge { background: var(--ek-aqua); }
+.ct-office--anywhere .ct-office__area { color: var(--ek-pink); }
+.ct-office--anywhere .ct-office__name { color: var(--ek-white); }
+.ct-office--anywhere .ct-office__addr { color: rgba(255,255,255,.82); }
+
+.ct-message { background: var(--ek-ground-light); }
+.ct-message__grid { display: grid; grid-template-columns: 470px minmax(0, 1fr); gap: 100px; align-items: start; }
+.ct-message__copy .ek-h2 { margin-top: 14px; }
+.ct-message__copy .ek-lead { margin-top: 22px; }
+
+@media (max-width: 1199px) {
+  .ct-head { grid-template-columns: 1fr; }
+  .ct-head__flag { min-height: 260px; }
+  .ct-head__panel { padding: 56px 0; }
+  .ct-head__inner { margin-inline: auto; width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2)); }
+  .ct-officegrid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: var(--ek-40); }
+  .ct-message__grid { grid-template-columns: 1fr; gap: var(--ek-40); }
+}
+@media (max-width: 767px) {
+  .ct-officegrid { grid-template-columns: 1fr; }
+  .ct-office { padding: 32px 24px; }
+  .ct-head__rows { grid-template-columns: 1fr; gap: 2px; }
+  .ct-head__rows dd + dt { margin-top: 12px; }
+  .ct-coverage { padding: 22px 20px; }
+}
+
+/* Year scrubber (Figma: "Achievement Milestones", 4:748) --------------------
+   A rail of years sitting on one continuous line, a round control at each end,
+   and a plate below whose notch points at the year you are reading. The plate
+   is what carries the shading — it is drawn as a clipped shape so the notch and
+   the shadow are the same silhouette. */
+.sec-scrub { position: relative; overflow: hidden; padding-top: 130px;
+  background: linear-gradient(158deg, #FBFCFD 0%, #F4F7FA 44%, #EAEEF4 100%); }
+.sec-scrub > .ek-container { position: relative; z-index: 1; }
+/* the pearlescent lift behind the rail, from the Foundations glow masks */
+.sec-scrub__glow { position: absolute; inset: 0; pointer-events: none; }
+.sec-scrub__glow::before, .sec-scrub__glow::after {
+  content: ""; position: absolute; width: 1598px; height: 1598px; border-radius: 50%;
+}
+.sec-scrub__glow::before { left: 50%; top: -150%; transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 58%); }
+.sec-scrub__glow::after { right: -30%; top: -60%;
+  background: radial-gradient(circle, rgba(42,167,207,.09) 0%, rgba(42,167,207,0) 60%); }
+.sec-scrub__title { text-align: center; margin: 0 0 92px; color: var(--ek-charcoal); }
+
+.ek-scrub { position: relative; padding-inline: 62px; }
+/* One static line under the whole rail. It does not live on the rail itself,
+   because the rail translates when you page through the years. */
+.ek-scrub__line { position: absolute; left: 0; right: 0; top: var(--ek-scrub-line, 70px);
+  height: 2px; border-radius: 2px; transform: translateY(-50%);
+  background: linear-gradient(90deg, rgba(133,158,179,.18) 0%, rgba(133,158,179,.5) 8%,
+    rgba(133,158,179,.5) 92%, rgba(133,158,179,.18) 100%); }
+.ek-scrub__viewport { overflow: hidden; }
+.ek-scrub__rail { position: relative; display: flex; transition: transform .4s var(--ek-ease); }
+.ek-year-btn {
+  position: relative; flex: 0 0 165px; height: 104px; background: none; border: 0; cursor: pointer;
+  font-family: inherit; padding: 0; display: block;
+}
+.ek-year-btn span { display: block; font-size: var(--ek-h2); font-weight: 700; line-height: 1.2;
+  color: #A7B0B9; transition: color var(--ek-fast) var(--ek-ease); }
+.ek-year-btn::after {
+  content: ""; position: absolute; left: 50%; top: var(--ek-scrub-line, 70px);
+  width: 9px; height: 9px; border-radius: 50%; background: #C3CCD4;
+  transform: translate(-50%, -50%); transition: all var(--ek-fast) var(--ek-ease);
+}
+.ek-year-btn:hover span { color: var(--ek-charcoal); }
+.ek-year-btn[aria-selected="true"] span { color: var(--ek-charcoal); }
+.ek-year-btn[aria-selected="true"]::after { width: 16px; height: 16px; background: var(--ek-aqua);
+  box-shadow: 0 0 0 6px rgba(42,167,207,.14); }
+
+.ek-scrub__arrow { position: absolute; top: var(--ek-scrub-line, 70px); transform: translateY(-50%); }
+.ek-scrub__arrow--prev { left: 0; }
+.ek-scrub__arrow--next { right: 0; }
+
+/* The plate. clip-path cuts the notch; the filter then casts a shadow that
+   follows that cut, which is what gives the fold its depth. */
+.ek-scrub__stage { position: relative; margin-top: 44px; padding-block: 126px 150px; }
+.ek-scrub__plate {
+  --notch: 50%;
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,.88) 30%, rgba(252,253,254,.42) 62%, rgba(250,252,253,0) 96%);
+  clip-path: polygon(
+    0 22px,
+    calc(var(--notch) - 46px) 22px,
+    var(--notch) 68px,
+    calc(var(--notch) + 46px) 22px,
+    100% 22px, 100% 100%, 0 100%);
+  filter: drop-shadow(0 -14px 28px rgba(31,45,74,.13));
+}
+.ek-scrub__stage > .ek-container { position: relative; z-index: 1; }
+/* Every year is laid into the same grid cell, so the detail area is always as
+   tall as the longest year and the page height never changes when you page
+   through. Hiding with display:none instead made the document grow and shrink
+   under the reader, which reads as the whole page jumping. */
+.ek-scrub__detail { display: grid; }
+.ek-scrub__panel { grid-area: 1 / 1;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ek-40) 90px;
+  max-width: 1120px; margin-inline: auto; width: 100%;
+  transition: opacity .28s var(--ek-ease); }
+.ek-scrub__panel[hidden] { display: grid; visibility: hidden; opacity: 0; }
+.ek-scrub__list { margin: 0; padding-left: 18px; list-style: none; }
+.ek-scrub__list li { position: relative; font-size: 15px; line-height: 1.7; color: var(--ek-body-ink); }
+.ek-scrub__list li + li { margin-top: 12px; }
+.ek-scrub__list li::before { content: ""; position: absolute; left: -18px; top: 10px;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--ek-steel); }
+@media (max-width: 1023px) {
+  .sec-scrub { padding-top: var(--ek-section-pad); }
+  .sec-scrub__title { margin-bottom: var(--ek-40); }
+  .ek-scrub { padding-inline: 54px; }
+  .ek-year-btn { flex: 0 0 140px; height: 88px; }
+  .ek-year-btn span { font-size: 22px; }
+  .ek-scrub { --ek-scrub-line: 58px; }
+  .ek-scrub__stage { margin-top: 24px; padding-block: 76px var(--ek-section-pad); }
+  .ek-scrub__panel { grid-template-columns: 1fr; gap: var(--ek-16); }
+}
+
+
+
+/* Become a Distributor ------------------------------------------------------
+   The brand promise is the page's subject, so it is set once at hero scale in
+   outline and never repeated at that size. */
+.sec-banner--pledge { min-height: clamp(560px, 44vw, 800px); }
+.bd-pledge { position: absolute; right: 6%; top: 50%; transform: translateY(-50%);
+  margin: 0; text-align: right; font-size: clamp(48px, 6.6vw, 118px); font-weight: 700;
+  line-height: 1.02; letter-spacing: -2px; color: transparent;
+  -webkit-text-stroke: 1px rgba(159,224,245,.34); pointer-events: none; }
+@supports not (-webkit-text-stroke: 1px red) { .bd-pledge { color: rgba(159,224,245,.16); } }
+
+.bd-honest { background: var(--ek-ground-light); }
+/* Become a Distributor lost its dark "How you earn" band on 26 Aug 2026, and
+   with it the page's only heavy block — five white cards on a pale ground with
+   nothing to sit against. The promises section takes that job: same charcoal
+   ground the band used, cards lifted off it rather than filled white. */
+.bd-honest--dark { background: var(--ek-charcoal); }
+.bd-honest--dark .ek-eyebrow { color: var(--ek-aqua); }
+.bd-honest--dark .ek-h2 { color: var(--ek-white); }
+.bd-honest--dark .ek-lead { color: rgba(255,255,255,.78); }
+.bd-honest--dark .bd-promise-item { background: rgba(255,255,255,.055); }
+.bd-honest--dark .bd-promise-item__no { color: rgba(255,255,255,.30); }
+.bd-honest--dark .bd-promise-item__title { color: var(--ek-white); }
+.bd-honest--dark .bd-promise-item__body { color: rgba(255,255,255,.70); }
+.bd-honest--dark .bd-honest__foot { color: rgba(255,255,255,.78); }
+.bd-promises { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 76px; }
+.bd-promise-item { background: var(--ek-white); border-top: 3px solid var(--ek-aqua); padding: 34px 30px 38px; }
+.bd-promise-item__no { display: block; font-size: 33px; font-weight: 700; line-height: 1; color: var(--ek-grey-out); }
+.bd-promise-item__title { margin: 18px 0 0; font-size: var(--ek-h4); font-weight: 700; line-height: 1.3; color: var(--ek-blue); }
+.bd-promise-item__body { margin-top: 12px; font-size: 14px; line-height: 1.65; color: var(--ek-body-ink); }
+.bd-honest__foot { margin-top: 48px; max-width: 762px; margin-left: auto; font-size: var(--ek-lead);
+  line-height: var(--ek-lead-lh); color: var(--ek-body-ink); }
+
+/* The one full-bleed dark moment on the page, and it carries the only claim
+   about money that can honestly be made. */
+.bd-earn { background: var(--ek-charcoal); padding-block: 118px; }
+.bd-earn .ek-eyebrow { color: var(--ek-aqua); }
+.bd-earn__line { margin-top: 20px; max-width: 1100px; font-size: clamp(26px, 2.6vw, 46px); font-weight: 700;
+  line-height: 1.22; letter-spacing: -.5px; color: var(--ek-white); }
+.bd-earn__note { margin-top: 28px; max-width: 720px; font-size: 15px; line-height: 1.75; color: rgba(255,255,255,.72); }
+
+.bd-start { background: var(--ek-white); }
+.bd-steps { list-style: none; margin: 76px 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 34px; }
+.bd-step { position: relative; padding-top: 54px; }
+/* the rule that runs between the numbers */
+.bd-step::before { content: ""; position: absolute; left: 0; right: -34px; top: 19px; height: 2px; background: var(--ek-grey-mid); }
+.bd-step:last-child::before { display: none; }
+.bd-step__dot { position: relative; z-index: 1; position: absolute; top: 0; left: 0;
+  width: 40px; height: 40px; border-radius: 50%; background: var(--ek-blue); color: var(--ek-white);
+  display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; }
+.bd-step__title { margin: 0; font-size: var(--ek-h4); font-weight: 700; line-height: 1.3; color: var(--ek-blue); }
+.bd-step__body { margin-top: 12px; font-size: 14px; line-height: 1.65; color: var(--ek-body-ink); }
+
+@media (max-width: 1199px) {
+  .bd-pledge { display: none; }
+  .bd-promises { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: var(--ek-40); }
+  .bd-honest__foot { margin-left: 0; }
+  .bd-earn { padding-block: var(--ek-section-pad); }
+  .bd-steps { grid-template-columns: 1fr; gap: 0; margin-top: var(--ek-40); }
+  .bd-step { padding: 0 0 32px 64px; }
+  .bd-step::before { left: 19px; right: auto; top: 40px; bottom: -8px; width: 2px; height: auto; }
+  .bd-step:last-child::before { display: none; }
+  .bd-step:last-child { padding-bottom: 0; }
+}
+@media (max-width: 599px) { .bd-promises { grid-template-columns: 1fr; } }
+
+/* FAQ (Figma legal page, 4:663) -------------------------------------------
+   Category buttons down the left, the matching questions on the right, the
+   active category filled Deep Vital Blue. */
+.sec-faq { background: var(--ek-ground-light); }
+.faq-layout { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 64px; align-items: start; }
+.faq-side { position: sticky; top: 96px; }
+.faq-nav { display: flex; flex-direction: column; gap: 8px; }
+.faq-help { margin-top: 40px; padding: 32px 34px 34px; background: var(--ek-white); border-top: 3px solid var(--ek-aqua); }
+.faq-help__title { font-size: var(--ek-h4); font-weight: 700; color: var(--ek-blue); }
+.faq-help__body { margin: 12px 0 22px; font-size: 15px; line-height: 1.7; color: var(--ek-body-ink); }
+.faq-help__body a { color: var(--ek-aqua); font-weight: 600; }
+.faq-help__body a:hover { text-decoration: underline; }
+.faq-cat {
+  display: block; width: 100%; text-align: left; border: 0; cursor: pointer; font-family: inherit;
+  background: var(--ek-panel-cool); color: var(--ek-charcoal);
+  padding: 30px 34px; font-size: var(--ek-h4); font-weight: 700; line-height: 1.35;
+  transition: background-color var(--ek-fast) var(--ek-ease), color var(--ek-fast) var(--ek-ease);
+}
+.faq-cat:hover { background: #DFE4E9; }
+.faq-cat[aria-selected="true"] { background: var(--ek-blue); color: var(--ek-white); }
+.faq-cat[aria-selected="true"]:hover { background: var(--ek-blue); }
+
+.faq-body { max-width: 860px; }
+.faq-panel[hidden] { display: none; }
+/* Switching category changes the panel height. Easing the wrapper between the
+   two heights keeps the document from changing length in a single frame,
+   which is what made the scroll position snap. */
+.faq-body--anim { overflow: hidden; transition: height var(--ek-slow) var(--ek-ease); }
+.faq-panel { transition: opacity .34s var(--ek-ease), transform .34s var(--ek-ease); }
+.faq-panel.is-entering { opacity: 0; transform: translateY(8px); }
+@media (prefers-reduced-motion: reduce) {
+  .faq-body--anim { transition: none; }
+  .faq-panel, .faq-panel.is-entering { transition: none; opacity: 1; transform: none; }
+}
+.faq-panel__title { margin: 0 0 8px; color: var(--ek-charcoal); }
+.faq-item { padding-top: 40px; }
+.faq-item__q { margin: 0; font-size: var(--ek-h3); font-weight: 700; line-height: 1.3; color: var(--ek-blue); }
+.faq-item__a { margin-top: 14px; font-size: var(--ek-text); line-height: 1.75; color: var(--ek-body-ink); }
+.faq-item__a a { color: var(--ek-aqua); font-weight: 600; }
+.faq-item__a a:hover { text-decoration: underline; }
+
+@media (max-width: 1199px) {
+  .faq-layout { grid-template-columns: 1fr; gap: var(--ek-32); }
+  .faq-side { position: static; }
+  .faq-help { margin-top: var(--ek-24); }
+  .faq-cat { padding: 20px 24px; font-size: 16px; }
+  .faq-body { max-width: none; }
+  .faq-item { padding-top: var(--ek-32); }
+}
+
+/* Community (Figma: "Who We Are - Community Social Responsibility", 4:1061) */
+/* Header band with the twin radial glows, no statistics under it. */
+.sec-glowhead { position: relative; overflow: hidden; background: var(--ek-ground-light); padding-block: 130px; }
+.sec-glowhead::before, .sec-glowhead::after { content: ""; position: absolute; width: 1598px; height: 1598px; border-radius: 50%; pointer-events: none; }
+.sec-glowhead::before { background: radial-gradient(circle, rgba(242,135,183,.16) 0%, rgba(242,135,183,0) 62%); left: -40%; top: -160%; }
+.sec-glowhead::after  { background: radial-gradient(circle, rgba(42,167,207,.16) 0%, rgba(42,167,207,0) 62%); right: -34%; top: -120%; }
+.sec-glowhead > .ek-container { position: relative; }
+@media (max-width: 1199px) { .sec-glowhead { padding-block: var(--ek-section-pad); } }
+
+/* Two features side by side, each card overlapping its photograph */
+.ek-overlaps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ek-overlap__media { height: 633px; background-size: cover; background-position: center; }
+.ek-overlaps__cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2)); margin: -70px auto 0; gap: 0; position: relative; }
+.ek-overlap__card { background: var(--ek-white); padding: 60px 50px 70px; }
+.ek-overlap__card:nth-child(2) { background: var(--ek-grey-light); }
+.ek-overlap__title { font-size: var(--ek-h2); font-weight: 700; line-height: 1.2; color: var(--ek-blue); }
+.ek-overlap__body { margin-top: 22px; font-size: 15px; line-height: 1.7; color: var(--ek-body-ink); }
+.ek-overlap__body p + p { margin-top: 14px; }
+@media (max-width: 1023px) {
+  .ek-overlaps { grid-template-columns: 1fr; }
+  .ek-overlap__media { height: 260px; }
+  .ek-overlaps__cards { grid-template-columns: 1fr; margin-top: 0; width: 100%; }
+  .ek-overlap__card { padding: 40px var(--ek-page-pad) 48px; }
+}
+
+/* A statistic panel. It stood in for a photograph while there was none; the
+   --photo modifier puts the real one behind it. */
+.ek-split__stat { background: var(--ek-blue); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 60px 40px; min-height: 460px; }
+.ek-split__stat b { font-size: 60px; font-weight: 700; line-height: 1.1; color: var(--ek-white); }
+.ek-split__stat > span { font-size: var(--ek-h3); font-weight: 500; color: var(--ek-grey-light); max-width: 340px; }
+/* The photograph sits under the figure, not beside it. The copy is centred on
+   both axes, so the scrim is a radial anchored on the middle — deepest exactly
+   where the type is, easing off toward the corners so the hall, the donor beds
+   and the yellow Elken shirts still read. One background shorthand: the gradient
+   layer paints over the image, and both sit behind the text with no pseudo
+   element and no stacking context to manage. Brand navy, so it stays the same
+   panel it was rather than becoming a photo block. */
+.ek-split__stat--photo {
+  background:
+    /* Brand navy, held lightly and only where the type is. */
+    radial-gradient(ellipse 84% 70% at 50% 50%,
+      rgba(32,34,89,.55) 0%, rgba(32,34,89,.44) 45%,
+      rgba(32,34,89,.22) 78%, rgba(32,34,89,.10) 100%),
+    /* The neutral ramp underneath does the contrast work. Splitting the two is
+       what keeps the yellow Elken shirts yellow — a single navy sheet heavy
+       enough to carry the type turned this warm interior purple, the same
+       complementary-hue problem the campus banner had. */
+    radial-gradient(ellipse 84% 70% at 50% 50%,
+      rgba(var(--ek-scrim-rgb),.62) 0%, rgba(var(--ek-scrim-rgb),.54) 45%,
+      rgba(var(--ek-scrim-rgb),.34) 78%, rgba(var(--ek-scrim-rgb),.22) 100%),
+    url('../img/cm-blood-hd.jpg');
+  background-size: cover;
+  background-position: center;
+}
+@media (max-width: 1023px) { .ek-split__stat { min-height: 240px; padding: 40px 24px; } .ek-split__stat b { font-size: 44px; } }
+
+/* Mobile: one whole year at a time, never a clipped neighbour. */
+@media (max-width: 767px) {
+  .ek-scrub { gap: var(--ek-12); }
+  .ek-year-btn { flex: 0 0 100%; }
+}
+
+/* ==========================================================================
+   Global Strength
+   No Figma frame exists for this page, so the composition is designed here —
+   but only from parts the system already owns: the dark full-bleed band, the
+   graduated blue statistic panels, the radial glow, the asymmetric two-up from
+   the home page, and the overlapping card from Community.
+   The page's job is weight and reach, so it opens dark and stays heavier than
+   About, which opens light and stays editorial.
+   ========================================================================== */
+
+/* Hero: a dark band carrying a network diagram rather than a photograph.
+   Nothing else on the site opens this way, which is the point.             */
+.gs-hero { position: relative; overflow: hidden; background: #12163A;
+  background-image:
+    radial-gradient(1200px 900px at 78% 44%, rgba(42,167,207,.30) 0%, rgba(42,167,207,0) 62%),
+    radial-gradient(900px 700px at 8% 78%, rgba(242,135,183,.20) 0%, rgba(242,135,183,0) 60%),
+    linear-gradient(160deg, #191E4C 0%, #10142F 55%, #0A0D22 100%);
+}
+/* The globe covers the whole hero and the section's own edges do the cropping,
+   so it reads as a planet the frame happens to cut rather than a picture in a
+   box. The SVG viewBox is 1920 wide and "slice" scales it to cover, so at
+   desktop widths one viewBox unit is one viewport pixel across — which is what
+   lets the market labels be hand-placed and the left third stay clear. */
+.gs-hero__media { position: absolute; inset: 0; }
+/* Scrim over the globe's left flank so the headline always has a dark ground.
+   ::after so it paints above the media; the copy sits above both on z-index 1. */
+.gs-hero::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(100deg, rgba(8,13,32,.88) 0%, rgba(8,13,32,.56) 13%, rgba(8,13,32,.20) 24%, rgba(8,13,32,0) 34%); }
+.gs-map { display: block; width: 100%; height: 100%; }
+
+.gs-hero__inner { position: relative; z-index: 1;
+  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2));
+  margin-inline: auto; display: grid; align-items: center;
+  padding-block: 150px 110px; min-height: min(92vh, 900px); }
+.gs-hero__crumb { position: absolute; top: 82px; left: 0; }
+.gs-hero__crumb .ek-breadcrumb { margin: 0; color: rgba(255,255,255,.55); font-size: 13px; }
+.gs-hero__crumb .ek-breadcrumb a { color: rgba(255,255,255,.55); }
+.gs-hero__crumb .ek-breadcrumb a:hover { color: var(--ek-white); }
+/* Colour only. The size, weight and case stay on the shared .ek-eyebrow so the
+   page speaks the same type language as the home page and About Us. */
+.gs-hero .ek-eyebrow { color: var(--ek-aqua); }
+.gs-hero .ek-h1 { margin-top: 18px; max-width: 580px; color: var(--ek-white); }
+.gs-hero .ek-h1 .t-accent { color: var(--ek-pink); }
+.gs-hero__sub { margin-top: 24px; max-width: 420px; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,.80); }
+.gs-hero__pair { display: flex; gap: 48px; margin-top: 44px; }
+.gs-hero__pair b { display: block; font-size: 40px; font-weight: 700; line-height: 1.1; color: var(--ek-white); }
+.gs-hero__pair span { display: block; margin-top: 6px; font-size: 14px; line-height: 1.4; color: rgba(255,255,255,.66); max-width: 220px; }
+.gs-map__label { font-size: 22px; font-weight: 700; }
+.gs-map__label--hub { font-size: 26px; }
+.gs-map__sub { font-size: 19px; font-weight: 400; }
+
+/* Below the desktop breakpoint the viewBox no longer maps 1:1 to pixels, the
+   hand-placed labels fall under about 12px, and covering would crop the globe
+   sideways and lose either Nigeria or Malaysia. So the graphic drops back into
+   the flow at its natural aspect and the markets are named in plain text. */
+.gs-map__key { display: none; }
+@media (max-width: 1199px) {
+  .gs-hero { display: flex; flex-direction: column; }
+  .gs-hero__inner { order: 1; gap: 40px; padding-block: 120px 56px; min-height: 0; }
+  .gs-hero__media { order: 2; position: static; padding-bottom: 56px; }
+  /* The band has to grow with the width, not sit at a fixed height, because the
+     globe is drawn to FILL the width (preserveAspectRatio="…slice"). At 34vw the
+     band was still 280px at 767 wide while the globe had grown to 401 across, so
+     it was sliced top and bottom. The globe's rendered diameter works out at
+     about 0.52 x the container width whenever the width is the driving edge, so
+     the band needs roughly 0.58 x the width to hold it with a little air.
+     Verified from 360 to 1199: the sphere fits at every step. */
+  .gs-map { height: clamp(280px, 58vw, 620px); }
+  .gs-map__pins { display: none; }
+  /* Centre the globe once the hero stacks. The drawing is deliberately
+     right-of-centre for the desktop layout, where the copy sits on the left:
+     the sphere's centre is at viewBox x 1210 of 1920, about 63%. Stacked, the
+     copy is above the map and that offset just reads as a big empty gap down
+     the left, which is what Elken BC reported on 4 Sep.
+     The SVG group already carries
+        translate(1210 660) scale(0.76) translate(-1210 -660)
+     which scales about the sphere's own centre. Changing only the FIRST
+     translate's x to 960 puts that centre on the viewBox's own centre line,
+     and 960 is what the container's horizontal centre maps to under
+     preserveAspectRatio="xMidYMid slice" at every mobile width. Nothing else
+     about the drawing moves relative to itself.
+     transform-origin MUST be 0 0. A CSS transform on an SVG element defaults to
+     a 50% 50% origin measured on the view box, which would silently add another
+     960/660 offset and undo the whole thing. The SVG presentation attribute has
+     no such default, so this is only a hazard when overriding it in CSS. */
+  .gs-map__scale { transform-box: view-box; transform-origin: 0 0;
+    transform: translate(960px, 660px) scale(0.76) translate(-1210px, -660px); }
+  .gs-hero__crumb { top: 26px; }
+  .gs-hero .ek-h1, .gs-hero__sub { max-width: none; }
+  .gs-map__key { display: block; width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2));
+    margin: 18px auto 0; font-size: 14px; line-height: 1.6; color: rgba(255,255,255,.7); }
+}
+@media (max-width: 767px) { .gs-hero__pair { gap: 32px; } .gs-hero__pair b { font-size: 30px; } }
+
+/* The scale band: graduated blues, full bleed, straight after the hero so the
+   page opens with one continuous heavy block. */
+.gs-scale { background: var(--ek-blue); }
+/* No gap. The 2px of --ek-blue showing between tiles read as a heavy dark rule
+   rather than a hairline, so the six figures are butted together and separated
+   by their own shades instead. That only works while no two neighbouring tiles
+   carry the same shade, which is why the colour cycle is restated when the grid
+   drops to two columns and one — see below. */
+.gs-scale__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+.gs-figure { padding: 62px 55px 66px; display: flex; flex-direction: column; gap: 8px; }
+.gs-figure:nth-child(1), .gs-figure:nth-child(5) { background: var(--ek-stat-1); }
+.gs-figure:nth-child(2), .gs-figure:nth-child(6) { background: var(--ek-stat-2); }
+.gs-figure:nth-child(3), .gs-figure:nth-child(4) { background: var(--ek-stat-3); }
+.gs-figure b { font-size: 52px; font-weight: 700; line-height: 1.1; color: var(--ek-white); }
+.gs-figure span { font-size: 17px; font-weight: 500; line-height: 1.4; color: rgba(255,255,255,.78); }
+@media (max-width: 1023px) { .gs-scale__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gs-figure { padding: 36px 28px 40px; } .gs-figure b { font-size: 38px; }
+  /* The three-column order runs 1 2 3 / 3 1 2, a shifted row that keeps every
+     neighbour different. Reflowed to two columns that puts tiles 3 and 4 side by
+     side, both on shade 3, and they merge into one block. A plain 1 2 3 1 2 3
+     cycle has no adjacent repeat in either two columns or one, so it covers both
+     stacked layouts. */
+  .gs-figure:nth-child(4) { background: var(--ek-stat-1); }
+  .gs-figure:nth-child(5) { background: var(--ek-stat-2); }
+  .gs-figure:nth-child(6) { background: var(--ek-stat-3); } }
+@media (max-width: 599px) { .gs-scale__grid { grid-template-columns: 1fr; } }
+
+/* Asymmetric two-up, the composition the home page uses for its R&D band. */
+.gs-band { display: grid; }
+.gs-band--a { grid-template-columns: 523fr 437fr 960fr; }
+.gs-band--b { grid-template-columns: 960fr 960fr; }
+.gs-band__media { min-height: 500px; background-size: cover; background-position: center; }
+.gs-band__panel { background: var(--ek-grey-light); display: flex; flex-direction: column;
+  justify-content: center; gap: 14px; padding: 78px 48px; }
+.gs-band__panel--wide { padding: 78px 100px 78px 84px; }
+.gs-band__title { font-size: var(--ek-h2); font-weight: 700; line-height: 1.2; color: var(--ek-blue); }
+.gs-band__copy { font-size: 15px; line-height: 1.7; color: var(--ek-body-ink); max-width: 583px; }
+@media (max-width: 1023px) {
+  .gs-band--a, .gs-band--b { grid-template-columns: 1fr; }
+  .gs-band__media { min-height: 240px; }
+  .gs-band__panel, .gs-band__panel--wide { padding: 44px var(--ek-page-pad); }
+}
+
+/* One large full-bleed photograph with a single card overlapping it. */
+.gs-campus__media { height: 700px; background-size: cover; background-position: center; }
+.gs-campus__card { width: min(760px, 100% - (var(--ek-page-pad) * 2)); margin: -140px auto 0;
+  position: relative; background: var(--ek-white); padding: 66px 70px 72px; display: flex; flex-direction: column; gap: 16px; }
+@media (max-width: 1023px) { .gs-campus__media { height: 300px; } .gs-campus__card { margin-top: 0; width: 100%; padding: 44px var(--ek-page-pad); } }
+
+/* The laboratory statement: one number carrying the whole section. */
+.gs-lab { background: var(--ek-charcoal); position: relative; overflow: hidden; isolation: isolate; }
+
+/* The laboratory photograph is environment, not exhibit. It is anchored to the section's
+   top-right corner and dissolved with a radial mask whose centre sits on that corner, so
+   it is fully present where it bleeds off the page and gone by the time it reaches the
+   copy column and the foot of the ISO 17025 mark. The image itself was graded down into
+   the charcoal range before export, which is why it reads as depth in the dark ground
+   rather than as a bright rectangle laid over it. Two knobs to turn: --gs-lab-photo-w
+   for how far across it reaches, --gs-lab-photo-o for how present it is. */
+.gs-lab__photo { position: absolute; top: 0; right: 0; z-index: 0; pointer-events: none;
+  width: var(--gs-lab-photo-w, 50%); height: 100%;
+  opacity: var(--gs-lab-photo-o, .95); overflow: hidden; }
+.gs-lab__photo img { width: 100%; height: 100%; object-fit: cover;
+  object-position: var(--gs-lab-photo-pos, 88% 48%); display: block; }
+/* Four scrims of the section's own charcoal, stacked. Because the ground behind the
+   photograph is that exact colour, painting it back at full alpha erases the image
+   completely, which is what dissolves the edges: the diagonal carries the bottom-left
+   away, and the three edge passes stop the layer ever reading as a rectangle. The
+   top-right corner is the only place all four are at zero, so that is where the
+   laboratory stays sharp. */
+.gs-lab__photo::after { content: ""; position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(37,41,44,.6) 0%, rgba(37,41,44,0) 20%),
+    linear-gradient(to top, var(--ek-charcoal) 0%, rgba(37,41,44,.82) 14%, rgba(37,41,44,0) 44%),
+    linear-gradient(to right, var(--ek-charcoal) 0%, rgba(37,41,44,.86) 14%, rgba(37,41,44,0) 46%),
+    linear-gradient(216deg, rgba(37,41,44,0) 14%, rgba(37,41,44,.32) 34%,
+      rgba(37,41,44,.63) 53%, rgba(37,41,44,.9) 78%, var(--ek-charcoal) 100%); }
+.gs-lab__inner { position: relative; z-index: 1;
+  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2)); margin-inline: auto;
+  display: grid; grid-template-columns: minmax(0, 1fr) 620px; gap: 100px; align-items: center; padding-block: 150px; }
+.gs-lab__mark { font-size: clamp(64px, 9vw, 150px); font-weight: 700; line-height: .95;
+  letter-spacing: -4px; color: var(--ek-aqua); }
+.gs-lab__mark small { display: block; margin-top: 20px; font-size: 17px; font-weight: 500;
+  letter-spacing: 0; color: rgba(255,255,255,.7); }
+.gs-lab__copy p { font-size: 16px; line-height: 1.75; color: rgba(255,255,255,.82); }
+.gs-lab__copy p + p { margin-top: 16px; }
+.gs-lab__copy h2 { color: var(--ek-white); margin-bottom: 20px; }
+@media (max-width: 1023px) { .gs-lab__inner { grid-template-columns: 1fr; gap: 40px; padding-block: var(--ek-section-pad); }
+  /* Stacked, the copy runs the full width and there is no empty right-hand column left
+     to give the photograph. It retreats to a corner wash: the top-right two-fifths of the
+     section, at well under half strength, so it still carries depth behind the heading
+     without ever getting under a line of body text. */
+  .gs-lab__photo { width: 72%; height: 46%; opacity: .42; }
+  .gs-lab__photo img { object-position: 78% 40%; }
+  .gs-lab__photo::after { background:
+    linear-gradient(to bottom, rgba(37,41,44,.55) 0%, rgba(37,41,44,0) 26%),
+    linear-gradient(to top, var(--ek-charcoal) 0%, rgba(37,41,44,.85) 18%, rgba(37,41,44,0) 62%),
+    linear-gradient(to right, var(--ek-charcoal) 0%, rgba(37,41,44,.9) 16%, rgba(37,41,44,0) 58%),
+    linear-gradient(212deg, rgba(37,41,44,0) 10%, rgba(37,41,44,.45) 40%,
+      rgba(37,41,44,.85) 68%, var(--ek-charcoal) 92%); } }
+
+/* Markets, set quietly after the heavy sections. */
+.gs-markets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; margin-top: 76px; }
+.gs-market { background: var(--ek-white); padding: 30px 32px 34px; display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.gs-market b { font-size: 17px; font-weight: 700; color: var(--ek-charcoal); }
+.gs-market span { font-size: 15px; color: #6B7278; }
+.gs-market--here { background: var(--ek-blue); }
+.gs-market--here b { color: var(--ek-white); }
+.gs-market--here span { color: var(--ek-pink); }
+@media (max-width: 1199px) { .gs-markets { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 599px) { .gs-markets { grid-template-columns: 1fr; } }
+/* Nigeria closes the markets grid, so the row finishes rather than leaving a hole. */
+/* Nigeria takes the whole final row. It used to span two of four columns,
+   which sat flush at the end of a row when the list was eleven. At thirteen the
+   twelve Asian branches fill three rows exactly and Nigeria starts a fresh one,
+   so a two-column span left two empty cells beside it. Full width also reads
+   better: the newest market, on its own line. */
+.gs-market--here { grid-column: 1 / -1; }
+@media (max-width: 599px) { .gs-market--here { grid-column: span 1; } }
+
+
+/* Banner variant for the Abuja head office photograph (About Us) -----------
+   The building sits centre-right in the frame with the neighbouring compound
+   filling the left. At 1200 and above the plate is scaled to 110% and anchored
+   left, which walks the building clear of the 633px copy column and makes it
+   the larger object in the frame while keeping the whole facade, the sign and
+   the entrance inside the crop. Below 1200 the copy sits over the picture
+   rather than beside it, so the crop is aimed at the building instead.
+   The wash is the titlewash ramp with a faster falloff: it holds the same
+   weight under the headline and the pink accent line, then releases at the
+   facade rather than carrying a .12 haze to the right edge. Measured with the
+   copy hidden, worst case at 1600 / 1440 / 1280 / 1024 is 3.46:1 on the pink
+   accent line (AA large) and 7.4:1 on the standfirst. */
+@media (min-width: 1200px) {
+  .sec-banner--officewash .sec-banner__bg { background-size: 110% auto; background-position: left center; }
+}
+@media (max-width: 1199px) {
+  .sec-banner--officewash .sec-banner__bg { background-position: 55% center; }
+}
+.sec-banner--officewash .sec-banner__veil {
+  background:
+    /* Top band, as titlewash: the overlaid header sits over this photograph's bright sky. */
+    linear-gradient(180deg, rgba(var(--ek-scrim-rgb), .62) 0%,
+      rgba(var(--ek-scrim-rgb), .18) 22%, rgba(var(--ek-scrim-rgb), 0) 44%),
+    /* A soft brand-navy hue behind the title only, gone before the facade. */
+    linear-gradient(96deg, rgba(12,17,52,.46) 0%, rgba(12,17,52,.26) 30%, rgba(12,17,52,0) 52%),
+    /* The neutral ramp that carries the contrast without tinting the photograph. */
+    linear-gradient(96deg, rgba(var(--ek-scrim-rgb), .82) 0%, rgba(var(--ek-scrim-rgb), .79) 26%,
+      rgba(var(--ek-scrim-rgb), .73) 42%, rgba(var(--ek-scrim-rgb), .56) 52%,
+      rgba(var(--ek-scrim-rgb), .30) 62%, rgba(var(--ek-scrim-rgb), .12) 73%,
+      rgba(var(--ek-scrim-rgb), .04) 85%, rgba(var(--ek-scrim-rgb), 0) 100%); }
+@media (max-width: 767px) {
+  .sec-banner--officewash .sec-banner__veil {
+    background: linear-gradient(180deg, rgba(var(--ek-scrim-rgb), .74) 0%, rgba(var(--ek-scrim-rgb), .62) 100%); }
+}
+
+/* --- ek-marktitle (from designer base.css; only missing piece for inner pages) --- */
+.ek-marktitle { display: flex; align-items: flex-start; gap: var(--ek-16); }
+.ek-marktitle__square { flex: 0 0 auto; width: 26px; height: 26px; background: var(--ek-pink); margin-top: 6px; }
+@media (max-width: 767px) { .ek-marktitle { gap: 14px; } .ek-marktitle__square { width: 22px; height: 22px; margin-top: 5px; } }
+
+/* --- Demo-page helpers (service / case-studies grids), built on designer tokens --- */
+.cs-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--ek-24); }
+@media (max-width: 767px){ .cs-grid{ grid-template-columns: 1fr; } }
+.cs-card { background: var(--ek-white); border: 1px solid var(--ek-grey-mid); border-radius: var(--ek-12); padding: var(--ek-32); display: flex; flex-direction: column; gap: var(--ek-16); }
+.cs-card__head { display: flex; align-items: center; gap: var(--ek-16); }
+.cs-card__badge { width: 56px; height: 56px; border-radius: 50%; background: var(--ek-blue); color: var(--ek-white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; flex: 0 0 auto; }
+.cs-card__name { font-weight: 700; font-size: var(--ek-h4); color: var(--ek-charcoal); line-height: 1.2; }
+.cs-card__type { font-size: var(--ek-small); color: var(--ek-grey-mid); }
+.cs-card p { font-size: var(--ek-text); line-height: var(--ek-text-lh); color: var(--ek-body-ink); margin: 0; }
+.cs-card strong { color: var(--ek-charcoal); }
+/* ==========================================================================
+   Elken Africa — product detail page
+   Built section by section from the Figma product template
+   ("Product - Health & Wellness - Spirulina", node 18:822).
+   Section names match Figma: Hero Banner, Quick Nip, What it is,
+   Nutritional Highlights, How it may help, Tablets, Award Winning,
+   Award Winning & Certified, Buy Now.
+
+   Each product sets its own accent on the <body>, exactly as Spirulina uses
+   green. The accents come from the Elken palette, not from new colours.
+   ========================================================================== */
+
+.pd {
+  --pd-accent: var(--ek-aqua);       /* on light grounds */
+  --pd-accent-dark: var(--ek-aqua);  /* on the deep hero ground */
+  --pd-deep:   var(--ek-blue);
+  --pd-ink:    var(--ek-charcoal);
+  /* The soft bloom behind light sections. Defaults to the accent; a product
+     whose pack carries a second colour can set it without touching the accent. */
+  --pd-glow:   var(--pd-accent);
+}
+/* Each family carries one accent, in two tunings: one that clears 4.5:1 against
+   white for small text, one that clears 3:1 against the deep hero ground for the
+   headline. Same colour, different ground — never two different colours. */
+.pd--beauty   { --pd-accent: #B5457F; --pd-accent-dark: var(--ek-pink); --pd-deep: #4A1E3C; }
+.pd--water    { --pd-accent: var(--ek-aqua); --pd-accent-dark: var(--ek-aqua); --pd-deep: #10224F; }
+.pd--wellness { --pd-accent: var(--ek-aqua); --pd-accent-dark: var(--ek-aqua); --pd-deep: #0D1B33; }
+/* Deep Vital Blue lightened until a 15px eyebrow clears 4.5:1 on white and a
+   60px headline clears 3:1 on the deep ground — the same derivation used for
+   beauty, which darkened Radiant Bloom Pink for the opposite reason. */
+.pd--health   { --pd-accent: #696CC9; --pd-accent-dark: #8C8FDA; --pd-deep: #171A46; }
+
+/* --pd-accent is for light grounds, --pd-accent-dark for dark ones. Anything
+   sitting on --pd-deep or on the charcoal buy band uses the dark tuning; get
+   this wrong and a muted product accent disappears into its own ground.
+   ========================================================================== */
+
+/* Sec - Hero Banner -------------------------------------------------------- */
+.pd-hero { position: relative; min-height: 841px; display: flex; align-items: center; overflow: hidden; }
+.pd-hero__bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+/* Two layers. The lower one is the original veil and is UNCHANGED, so every page
+   that does not opt in looks exactly as it did. The upper one is transparent by
+   default and only does something when a page sets --pd-veil-copy on <body>.
+   Why it exists: a hero shot into a window (Hydromi's kitchen and GenQi's living
+   room, both added 4 Sep) is close to blown out exactly where the white body copy
+   sits. The old single gradient measured 2.8:1 there against the 4.5:1 the 16px
+   line needs, and raising its 100% stop could not fix it — the copy column ends
+   at about 87% of the width, so most of that stop's effect lands past the text.
+   Hence a layer that ramps in BEFORE the copy starts and then holds flat.
+   Values are measured per photograph, never guessed: render the hero with
+   .pd-hero__copy hidden, read the 98th-percentile luminance under the copy box
+   and solve for the 16px line at rgba(255,255,255,.92). */
+.pd-hero__veil { position: absolute; inset: 0; background:
+  linear-gradient(90deg, rgba(6,10,18,0) 40%,
+    rgba(6,10,18, var(--pd-veil-copy, 0)) 62%,
+    rgba(6,10,18, var(--pd-veil-copy, 0)) 100%),
+  linear-gradient(90deg, rgba(6,10,18,.62) 0%, rgba(6,10,18,.34) 46%, rgba(6,10,18,.58) 100%); }
+.pd-hero__inner {
+  position: relative; width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2));
+  margin-inline: auto; display: grid; grid-template-columns: 1fr 556px;
+  align-items: center; gap: var(--ek-56); padding-block: 150px 130px;
+}
+/* The breadcrumb hangs off the section, not off .pd-hero__inner. The inner is
+   flex-centred, so `top` measured from it drifted with the length of the copy —
+   on a short page the crumb slid into the middle of the hero. Measured from the
+   section it is 104px from the top on every product page. */
+.pd-hero__crumb {
+  position: absolute; top: 104px; z-index: 2;
+  left: 50%; transform: translateX(-50%);
+  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2));
+}
+.pd-hero__crumb .ek-breadcrumb { margin: 0; color: rgba(255,255,255,.72); }
+.pd-hero__crumb .ek-breadcrumb a { color: rgba(255,255,255,.72); }
+.pd-hero__crumb .ek-breadcrumb a:hover { color: var(--ek-white); }
+
+.pd-hero__shot { display: flex; align-items: center; justify-content: center; }
+/* The cut-outs are trimmed to the product, so their widths differ wildly while
+   their heights do not. Size on HEIGHT and every product reads at the same
+   scale; size on width and a slim tube would tower over a boxed pack. */
+/* Sized on height so a slim tube does not tower over a boxed pack — but the
+   height has to be a MAXIMUM, not a fixed value. With `height: 560px` and
+   `max-width: 100%`, the moment the column is narrower than the pack wants
+   (El Marino Yang is 1100x900, so it asks for 684px at 560 tall) the width
+   clamps while the height does not, and the product is squashed sideways.
+   Both axes auto with both maxima set keeps the intrinsic ratio; every pack
+   on the site is taller than 560px natively, so the desktop size is unchanged.
+   `object-fit: contain` is insurance in case a fixed height ever returns. */
+/* --pd-shot-scale is set per product on <body> from the product's real height
+   in millimetres (see SHOT_REF_MM / SHOT_K in build_product.py). Without it a
+   350-tablet jar renders exactly as large as a whole-house water filter, which
+   is what got the Spirulina hero called out. Default 1 so a product without the
+   key is unaffected. */
+.pd-hero__shot img { height: auto; max-height: calc(560px * var(--pd-shot-scale, 1));
+  width: auto; max-width: 100%;
+  object-fit: contain; filter: drop-shadow(0 40px 60px rgba(0,0,0,.45)); }
+
+.pd-hero__title { margin: 0; color: var(--ek-white); font-weight: 700; line-height: 1.34; }
+.pd-hero__title .t-light { display: block; font-size: 40px; font-style: italic; font-weight: 500; line-height: 1.1; }
+.pd-hero__title .t-big { font-size: 52px; line-height: 1.34; }
+.pd-hero__title .t-em { font-style: italic; font-weight: 500; }
+.pd-hero__title .t-accent { color: var(--pd-accent-dark); }
+/* The carousel dots are Radiant Bloom Pink site-wide; on a product hero they
+   follow the family accent so the hero reads as one colour, not two. */
+.pd-hero__foot .ek-dots button[aria-selected="true"] { background: var(--pd-accent-dark); }
+.pd-hero__sub { margin-top: 12px; max-width: 595px; font-size: 16px; font-weight: 500; line-height: 1.7; color: rgba(255,255,255,.92); }
+.pd-hero__actions { display: flex; gap: var(--ek-16); margin-top: 32px; flex-wrap: wrap; }
+.pd-hero__price { display: block; margin-top: 26px; font-size: 33px; font-weight: 700; color: var(--ek-white); }
+.pd-hero__price small { display: block; font-size: 14px; font-weight: 500; color: rgba(255,255,255,.72); margin-top: 4px; }
+.pd-hero__foot {
+  position: absolute; left: 0; right: 0; bottom: 74px;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--ek-24);
+}
+.pd-hero__codes { font-size: 13px; color: rgba(255,255,255,.6); }
+
+@media (max-width: 1199px) {
+  /* The breadcrumb is absolutely positioned on desktop, which is right there:
+     .pd-hero__inner is flex-centred against a tall shot column, so a crumb
+     measured from the inner drifted with the length of the copy.
+     Once the hero stacks, the copy starts at the TOP of the inner and a crumb
+     pinned at 88px lands straight on the product name — reported on mobile on
+     3 Sep, "Elken" sitting on top of the trail. Below 1200 the crumb therefore
+     goes back into normal flow, above the copy, so it cannot collide however
+     many lines the trail wraps to on a narrow phone. .pd-hero__bg, __veil and
+     __foot are all absolute, so dropping the section out of flex changes
+     nothing else. */
+  .pd-hero { min-height: 0; display: block; }
+  /* Once the hero stacks the copy runs the FULL width, so a left-to-right ramp
+     leaves its left half unprotected — Hydromi measured 3.2:1 at 390 with the
+     desktop shape. Below 1200 the opt-in layer becomes a flat sheet instead.
+     Still 0 by default, so nothing changes on a page that has not opted in. */
+  .pd-hero__veil { background:
+    linear-gradient(rgba(6,10,18, var(--pd-veil-copy, 0)), rgba(6,10,18, var(--pd-veil-copy, 0))),
+    linear-gradient(90deg, rgba(6,10,18,.62) 0%, rgba(6,10,18,.34) 46%, rgba(6,10,18,.58) 100%); }
+  /* RELATIVE, not static. The base rule carries `z-index: 2`, which is what
+     lifts the crumb above .pd-hero__veil — and z-index does nothing on a static
+     element. Setting `position: static` here dropped the trail behind the veil:
+     the "/" separators still showed, because `opacity: .5` gives them their own
+     stacking context, and the words vanished. `left: auto` because the base rule
+     sets `left: 50%` for the absolute case — and `top: auto`, because the base
+     rule's `top: 104px` does not stop applying on a relative element, it just
+     changes meaning: it stops being "104px from the top of the section" and
+     becomes "shift 104px DOWN from where you sit in the flow", which dropped the
+     trail straight onto the price. */
+  .pd-hero__crumb {
+    position: relative; top: auto; left: auto; transform: none;
+    margin-inline: auto; padding-top: 96px;
+  }
+  .pd-hero__inner { grid-template-columns: 1fr; padding-block: 22px 120px; gap: var(--ek-32); }
+  .pd-hero__shot { order: 2; }
+  /* Floored, so the smallest pack still has presence once the hero stacks. */
+  .pd-hero__shot img { max-height: max(210px, calc(360px * var(--pd-shot-scale, 1))); }
+  .pd-hero__title .t-big { font-size: 40px; }
+  .pd-hero__title .t-light { font-size: 30px; }
+  .pd-hero__foot { bottom: 24px; }
+}
+@media (max-width: 767px) {
+  .pd-hero__title .t-big { font-size: 32px; }
+  .pd-hero__title .t-light { font-size: 24px; }
+  .pd-hero__foot { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+
+/* Sec - Quick Nip ---------------------------------------------------------- */
+.pd-nip { background: var(--pd-deep); }
+/* Five items, and they are content-sized, so a wrapping flex row with
+   space-between drops the two that wrap onto row two at the far left and far
+   right with a hole between them. A grid never does that — a short last row
+   simply fills from the left. The single row is kept only where every product's
+   five items genuinely fit: the widest set needs about 1320px of container, so
+   above 1500px viewport they run as one line, and below that they lay out
+   3 + 2, then 2 + 2 + 1 on tablet, then one per row. Equal columns cannot do
+   the single row at any width — five tracks wide enough for the longest item
+   ("Undenatured type II collagen") would need 1650px. */
+.pd-nip__inner {
+  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2)); margin-inline: auto;
+  min-height: 125px; display: grid; align-items: center;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px var(--ek-24); padding-block: 24px;
+}
+@media (min-width: 1500px) {
+  .pd-nip__inner { display: flex; justify-content: space-between; flex-wrap: wrap; }
+}
+@media (max-width: 1199px) {
+  /* Elken BC asked for two balanced columns at this breakpoint rather than a
+     three-column grid with a short second row. */
+  .pd-nip__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.pd-nip__item { display: flex; align-items: center; gap: 14px; color: var(--ek-white); }
+.pd-nip__item svg { flex: 0 0 auto; color: var(--pd-accent-dark); }
+.pd-nip__item span { font-size: 15px; font-weight: 600; }
+@media (max-width: 767px) { .pd-nip__inner { grid-template-columns: 1fr; gap: var(--ek-16); } .pd-nip__item span { font-size: 13px; } }
+
+/* Sec - What it is --------------------------------------------------------- */
+.pd-what { position: relative; display: grid; grid-template-columns: 938px 1fr; min-height: 817px; }
+.pd-what__left  { background: #EAEAE8; }
+.pd-what__right { background: #F2F2F0; }
+.pd-what__inner {
+  position: absolute; inset: 0;
+  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2)); margin-inline: auto;
+  display: grid; grid-template-columns: 375px 1fr; align-items: center; gap: 120px;
+}
+.pd-what__copy { display: flex; flex-direction: column; gap: var(--ek-16); }
+/* The tracks were a rigid 181px, which is narrower than several of the figures
+   actually set in them — "₦30,000" measures about 235px at 52px, so it ran out
+   of its column and off the page. Flexible tracks plus a clamped figure size. */
+.pd-what__stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 65px 97px; }
+.pd-stat__value { font-size: clamp(40px, 3.62vw, 52px); font-weight: 700; line-height: 1.1; color: var(--pd-ink); }
+.pd-stat__key { display: block; margin-top: 4px; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--pd-accent); }
+.pd-stat__note { display: block; margin-top: 10px; font-size: 14px; line-height: 1.5; color: var(--ek-body-ink); }
+.pd-what__shot { position: absolute; left: 45%; top: 50%; transform: translate(-50%, -50%); width: 520px; max-width: 34vw; pointer-events: none; }
+.pd-what__shot img { width: 100%; height: auto; display: block; filter: drop-shadow(0 30px 60px rgba(0,0,0,.18)); }
+/* Without the pack shot the middle of this band would be a hole. The copy
+   takes the design system's 561 header column and the figures sit in the
+   lighter panel, so the two-tone split becomes the divider. */
+.pd-what--noshot { --pd-what-gap: 90px; display: block; min-height: 620px;
+  /* The two-tone split has to land in the gutter between the copy and the figures, and
+     that gutter moves with the centred container. The old fixed 938px column was tuned
+     for the pack-shot variant; here it cut straight through the middle of the figures
+     grid. Painting the split as a background gradient on the section lets it be computed
+     from the same centring maths the inner uses — and percentages in a gradient resolve
+     against the section box, so unlike 100vw they are not thrown off by the scrollbar. */
+  /* With two equal columns in a centred container the gutter's midpoint is, by
+     definition, the middle of the viewport — and a percentage in a gradient
+     resolves against the section's own box, so no scrollbar correction. */
+  --pd-what-split: 50%;
+  background: linear-gradient(90deg,
+    #EAEAE8 0 var(--pd-what-split), #F2F2F0 var(--pd-what-split) 100%); }
+.pd-what--noshot .pd-what__left, .pd-what--noshot .pd-what__right { display: none; }
+/* The columns are equal so the composition stays 50/50 however wide the screen
+   gets — the old fixed 561px copy column meant the figures took every extra
+   pixel, and by 1920 they visibly outweighed the copy. The content inside each
+   half is capped instead: 561px on the copy so the measure never runs past
+   about 75 characters, 620px on the figures so they stay a block rather than
+   drifting apart. */
+.pd-what--noshot .pd-what__inner { grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--pd-what-gap); }
+/* No max-width on the copy and no narrower container for this band. Both were
+   tried and both were wrong: capping the copy stranded it inside a column that
+   kept growing, and giving the band its own 1240px container pulled its left
+   edge off the line every other section on the page starts from. Equal columns
+   in the site container give the 50/50 balance on their own; the copy simply
+   fills its half. */
+@media (max-width: 1439px) {
+  .pd-what--noshot { --pd-what-gap: 64px; }
+  .pd-what__inner { gap: var(--ek-56); }
+  .pd-what__stats { gap: 40px 48px; }
+}
+@media (max-width: 1199px) {
+  .pd-what--noshot { min-height: 0; background: #EFEFED; }
+  .pd-what--noshot .pd-what__inner { grid-template-columns: 1fr; gap: var(--ek-40); }
+}
+@media (max-width: 1199px) {
+  .pd-what { grid-template-columns: 1fr; min-height: 0; background: #EFEFED; }
+  .pd-what__left, .pd-what__right { display: none; }
+  .pd-what__inner { position: static; grid-template-columns: 1fr; gap: var(--ek-40); padding-block: var(--ek-section-pad); }
+  .pd-what__shot { position: static; transform: none; width: 320px; max-width: 70%; margin: 0 auto; }
+  .pd-what__stats { justify-content: start; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+  .pd-stat__value { font-size: 40px; }
+}
+@media (max-width: 599px) { .pd-what__stats { grid-template-columns: 1fr; } }
+
+/* Sec - Nutritional Highlights --------------------------------------------- */
+.pd-highlights { position: relative; overflow: hidden; background: #F7F8F9; padding-block: 130px; }
+.pd-highlights::before, .pd-highlights::after {
+  content: ""; position: absolute; width: 1598px; height: 1598px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--pd-accent) 16%, transparent) 0%, transparent 62%);
+  pointer-events: none;
+}
+.pd-highlights::before { right: -420px; top: -800px; }
+.pd-highlights::after  {
+  left: -740px; bottom: -900px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--pd-glow) 16%, transparent) 0%, transparent 62%);
+}
+.pd-highlights > .ek-container { position: relative; }
+.pd-cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 100px; }
+.pd-card { background: var(--ek-white); padding: 39px 32px 44px; display: flex; flex-direction: column; min-height: 333px; }
+.pd-card__icon { color: var(--pd-accent); line-height: 0; margin-bottom: 126px; }
+.pd-card__title { font-size: 18px; font-weight: 700; line-height: 1.3; color: var(--pd-ink); }
+.pd-card__body { margin-top: 12px; font-size: 14px; line-height: 1.6; color: var(--ek-body-ink); }
+@media (max-width: 1199px) {
+  .pd-highlights { padding-block: var(--ek-section-pad); }
+  .pd-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: var(--ek-40); }
+  .pd-card { min-height: 0; padding: 28px 24px 30px; }
+  .pd-card__icon { margin-bottom: var(--ek-32); }
+}
+@media (max-width: 599px) { .pd-cards { grid-template-columns: 1fr; } }
+
+/* Sec - How it may help ---------------------------------------------------- */
+.pd-help { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); min-height: 931px; }
+.pd-help__panel { position: relative; background: var(--pd-deep); overflow: hidden; display: flex; align-items: center; }
+.pd-help__panel::after {
+  content: ""; position: absolute; right: -520px; bottom: -520px; width: 1294px; height: 1294px;
+  border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--pd-accent) 26%, transparent) 0%, transparent 60%);
+}
+/* The left padding has to land on the page's container edge, and the panel is
+   the left half of a full-bleed section — so a percentage here resolves against
+   half the viewport, and `100% - half the container` IS that edge, exactly,
+   with no 100vw and therefore no scrollbar error. It was a flat 255px, which
+   only happened to line up at about 1920 and left the copy indented past
+   everything above it at every smaller width. */
+.pd-help__inner { position: relative; max-width: 100%;
+  padding: 130px 120px 130px max(var(--ek-page-pad), 100% - (var(--ek-content-max) / 2)); }
+.pd-help__eyebrow { font-size: 15px; font-weight: 600; color: var(--pd-accent-dark); }
+.pd-help__title { margin: 6px 0 0; font-size: 33px; font-weight: 700; line-height: 1.2; color: var(--ek-white); }
+.pd-help__title .t-accent { color: var(--pd-accent-dark); }
+.pd-help__lead { margin-top: 22px; max-width: 375px; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.8); }
+.pd-help__list { margin-top: 40px; max-width: 526px; }
+.pd-help__list li { position: relative; padding: 24px 0 24px 30px; border-top: 1px solid rgba(255,255,255,.14); }
+.pd-help__list li:first-child { border-top: 0; }
+.pd-help__list li::before { content: ""; position: absolute; left: 0; top: 30px; width: 14px; height: 14px; border-radius: 50%; background: color-mix(in srgb, var(--pd-accent-dark) 62%, transparent); }
+.pd-help__name { display: block; font-size: 16px; font-weight: 700; color: var(--ek-white); }
+.pd-help__note { display: block; margin-top: 6px; font-size: 15px; line-height: 1.5; color: rgba(255,255,255,.8); }
+.pd-help--short { min-height: 0; }
+.pd-help__media { background-size: cover; background-position: center; min-height: 360px; }
+
+/* A media panel in two layers: photographed backdrop, cut-out subject on top.
+   The subject stands on the ground of the backdrop and is capped by the panel
+   height, so it survives the panel going from tall-and-narrow on desktop to
+   short-and-wide on mobile. Reusable — not tied to any one page. */
+.pd-media--layered {
+  position: relative; overflow: hidden;
+  display: flex; align-items: flex-end; justify-content: center;
+  /* Side inset so a cut-out carrying its own caption pills does not run its
+     labels into the panel seam. */
+  padding: 40px 44px 0;
+}
+.pd-media--layered > img {
+  display: block; width: auto; max-width: 100%; max-height: 100%;
+  object-fit: contain; object-position: bottom;
+}
+@media (max-width: 1199px) {
+  .pd-media--layered { padding: 32px 32px 0; min-height: 420px; }
+}
+@media (max-width: 767px) {
+  .pd-media--layered { padding: 24px 20px 0; min-height: 340px; }
+}
+@media (max-width: 1199px) {
+  .pd-help { grid-template-columns: 1fr; min-height: 0; }
+  /* A tall portrait photograph loses its bottom edge in a fixed landscape box.
+     Pages that supply --pd-media-ratio get a box shaped to hold their subject
+     whole. Panels without it keep the 360px floor set above, unchanged. */
+  /* min-width:0 stops the grid item's automatic minimum size from being
+     transferred through the ratio, which would push the column wider than
+     the viewport and give the page a horizontal scrollbar. */
+  .pd-help__media { order: -1; width: 100%; min-width: 0; height: auto;
+    min-height: 360px; aspect-ratio: var(--pd-media-ratio, auto); }
+  .pd-help__inner { padding: 56px var(--ek-page-pad); }
+}
+
+/* Sec - Tablets / usage ---------------------------------------------------- */
+/* No gap above. Elken BC's rule: the usage band sits directly against the
+   section above it on every product page. */
+.pd-usage { padding-block: 0 130px; }
+.pd-usage__grid { display: grid; grid-template-columns: 705px 1fr; gap: 114px; align-items: center; padding-top: 0; }
+.pd-usage__cards { display: flex; flex-direction: column; gap: 0; }
+.pd-usage__card { position: relative; height: 269px; background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: flex-start; padding: 50px; }
+.pd-usage__card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,.9) 0%, rgba(255,255,255,.55) 46%, rgba(255,255,255,0) 78%); }
+.pd-usage__card > * { position: relative; }
+.pd-usage__who { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--pd-accent); }
+.pd-usage__dose { margin-top: 4px; font-size: 33px; font-weight: 700; line-height: 1.2; color: var(--pd-ink); }
+@media (max-width: 1199px) {
+  .pd-usage { padding-block: 0 var(--ek-section-pad); }
+  .pd-usage__grid { grid-template-columns: 1fr; gap: var(--ek-40); }
+  .pd-usage__card { height: 200px; padding: 28px; }
+  .pd-usage__dose { font-size: 27px; }
+}
+
+/* Sec - Award Winning ------------------------------------------------------ */
+.pd-awards { padding-bottom: 130px; }
+.pd-awards__panel { background: var(--ek-white); display: grid; grid-template-columns: 379px 1fr; gap: var(--ek-40); padding: 73px 0 0 50px; align-items: start; }
+.pd-awards__media { min-height: 353px; background-size: cover; background-position: center; }
+.pd-certified { display: grid; grid-template-columns: 368px 1fr; }
+.pd-certified__label { background: var(--pd-deep); color: var(--ek-white); padding: 60px 50px; display: flex; align-items: center; }
+.pd-certified__label span { font-size: 23px; font-weight: 700; line-height: 1.25; }
+.pd-certified__marks { background: var(--ek-grey-light); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ek-40); padding: 46px 60px; }
+.pd-certified__group h3 { margin: 0 0 20px; font-size: 15px; font-weight: 600; color: var(--pd-ink); }
+.pd-certified__icons { display: flex; gap: var(--ek-32); align-items: center; color: var(--pd-accent); }
+@media (max-width: 1199px) {
+  .pd-awards { padding-bottom: var(--ek-section-pad); }
+  .pd-awards__panel { grid-template-columns: 1fr; padding: 32px 24px 0; }
+  .pd-certified { grid-template-columns: 1fr; }
+  .pd-certified__label { padding: 32px 24px; }
+  .pd-certified__marks { grid-template-columns: 1fr; padding: 32px 24px; gap: var(--ek-24); }
+}
+
+/* Sec - Buy Now ------------------------------------------------------------ */
+.pd-buy { position: relative; background: var(--ek-charcoal); min-height: 652px; display: flex; align-items: center; overflow: hidden; }
+/* The pack and the copy are one object, centred in the section together.
+   A grid pins the copy to the container's right edge and leaves a hole on the
+   left, which reads as right-aligned however tight the gap is; a centred flex
+   row keeps the pair optically centred whatever width the product happens to
+   be — and the products vary from a 0.24 ratio tube to a 1.23 ratio box. */
+.pd-buy__inner {
+  position: relative; width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2)); margin-inline: auto;
+  display: flex; justify-content: center; align-items: center;
+  gap: 72px; padding-block: 90px;
+}
+.pd-buy__shot { flex: 0 1 auto; min-width: 0; display: flex; align-items: center; justify-content: center; }
+.pd-buy__shot img { height: auto; max-height: calc(430px * var(--pd-shot-scale, 1));
+  width: auto; max-width: 100%;
+  object-fit: contain; filter: drop-shadow(0 40px 60px rgba(0,0,0,.5)); }
+/* Wide enough that the two buttons stay on one line on every product, including
+   the longest CTA ("WhatsApp about El Marino Yang"). */
+.pd-buy__copy { flex: 0 1 520px; }
+.pd-buy__eyebrow { font-size: 15px; font-weight: 600; color: var(--pd-accent-dark); }
+.pd-buy__title { margin: 6px 0 0; font-size: 33px; font-weight: 700; line-height: 1.2; color: var(--ek-white); }
+.pd-buy__title .t-accent { color: var(--pd-accent-dark); }
+.pd-buy__note { margin-top: 22px; max-width: 348px; font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.66); }
+.pd-buy__actions { display: flex; gap: var(--ek-16); margin-top: 34px; flex-wrap: wrap; }
+@media (max-width: 1199px) {
+  .pd-buy { min-height: 0; }
+  .pd-buy__inner { flex-direction: column; padding-block: 56px; gap: var(--ek-32); }
+  .pd-buy__copy { flex: 0 1 auto; max-width: 470px; }
+  .pd-buy__shot img { max-height: max(180px, calc(280px * var(--pd-shot-scale, 1))); }
+}
+
+/* Specification and FAQ on a product page ---------------------------------- */
+.pd-spec { padding-block: 130px; background: var(--ek-ground-light); }
+.pd-spec__grid { display: grid; grid-template-columns: 561px 762px; align-items: start; }
+@media (max-width: 1439px) { .pd-spec__grid { grid-template-columns: 40% 1fr; column-gap: var(--ek-56); } }
+@media (max-width: 1023px) { .pd-spec__grid { grid-template-columns: 1fr; row-gap: var(--ek-24); } }
+@media (max-width: 1199px) { .pd-spec { padding-block: var(--ek-section-pad); } }
+
+.pd-cards--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pd-cards--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1199px) { .pd-cards--3, .pd-cards--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 599px) { .pd-cards--3, .pd-cards--4 { grid-template-columns: 1fr; } }
+
+/* How to take it — card awaiting its photograph */
+.pd-usage__card--todo {
+  background: linear-gradient(120deg, #EEF2F5 0%, #E3E9EE 100%);
+}
+.pd-usage__card--todo .ek-todo {
+  position: absolute;
+  right: 22px;
+  top: 20px;
+  max-width: 46%;
+  text-align: right;
+}
+
+/* Product FAQ — one centred column ----------------------------------------
+   Every product page uses this. The column is centred in the content
+   container and the rows are plates, so the block reads as a single
+   deliberate object rather than a full-width list. */
+.pd-faq { background: var(--ek-ground-light); }
+.pd-faq__inner { width: min(760px, 100%); margin-inline: auto; }
+.pd-faq__title { text-align: center; margin-bottom: 48px; }
+.pd-faq__list { display: flex; flex-direction: column; gap: 8px; }
+
+.pd-faq__item { background: var(--ek-panel-cool); }
+.pd-faq__item summary {
+  list-style: none; cursor: pointer; position: relative;
+  padding: 24px 30px 24px 58px;
+  font-size: 18px; font-weight: 700; line-height: 1.4; color: var(--ek-blue);
+  transition: color var(--ek-fast) var(--ek-ease);
+}
+.pd-faq__item summary::-webkit-details-marker { display: none; }
+.pd-faq__item summary:hover { color: var(--ek-aqua); }
+
+/* Left-hand plus / minus, drawn rather than typed so it stays optically centred */
+.pd-faq__item summary::before,
+.pd-faq__item summary::after {
+  content: ""; position: absolute; left: 28px; top: 50%;
+  width: 13px; height: 2px; background: var(--ek-aqua);
+  transform: translate(-50%, -50%);
+  transition: transform var(--ek-fast) var(--ek-ease), opacity var(--ek-fast) var(--ek-ease);
+}
+.pd-faq__item summary::after { transform: translate(-50%, -50%) rotate(90deg); }
+.pd-faq__item[open] summary::after { opacity: 0; transform: translate(-50%, -50%) rotate(0deg); }
+
+.pd-faq__body { padding: 0 30px 26px 58px; }
+.pd-faq__body p { font-size: 15px; line-height: 1.7; color: var(--ek-body-ink); }
+.pd-faq__body p + p { margin-top: var(--ek-12); }
+
+@media (max-width: 767px) {
+  .pd-faq__title { margin-bottom: 32px; }
+  .pd-faq__item summary { font-size: 16px; padding: 20px 20px 20px 46px; }
+  .pd-faq__item summary::before, .pd-faq__item summary::after { left: 22px; }
+  .pd-faq__body { padding: 0 20px 22px 46px; }
+}
+
+/* Imagery that has not arrived yet ----------------------------------------
+   A missing photograph must be visible as a gap in the plan, never as a
+   broken image and never as silence. */
+.pd-hero__bg--todo { background: var(--pd-deep); }
+/* Clear of the overlaid header, which is about 96px tall on this hero. */
+/* Top right of the hero: clear of the overlaid header and of the breadcrumb. */
+.pd-hero__todo { position: absolute; right: var(--ek-page-pad); top: 124px; z-index: 3; }
+@media (max-width: 1199px) { .pd-hero__todo { top: 100px; } }
+.pd-media--todo {
+  display: flex; align-items: center; justify-content: center; padding: 40px;
+  background: linear-gradient(120deg, #EEF2F5 0%, #E3E9EE 100%);
+}
+
+/* ==========================================================================
+   pd-process  —  the four-step ordering and installation row
+   Elken BC supplied a vertical timeline mock-up and asked for it horizontal,
+   so the steps run as a single row with the connector line behind the number
+   badges rather than down the left edge. The line is one pseudo-element on the
+   list, inset by half a column at each end so it starts and stops under the
+   first and last badge instead of running off into the margins.
+   ========================================================================== */
+.pd-process { background: var(--ek-white); padding-block: 118px; }
+.pd-process__head { text-align: center; max-width: 720px; margin-inline: auto; }
+.pd-process__head .ek-h2 { margin-top: 10px; }
+.pd-process__head .ek-h2 .t-accent { color: var(--pd-accent); }
+
+.pd-steps { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px; margin-top: 84px; list-style: none; padding: 0; }
+/* The line has to start and stop on the CENTRES of the outer badges. With four
+   equal columns and a 32px gap that is (100% - 3*32px) / 8 from each edge —
+   12.5% is wrong, because the gaps are not part of the column width. */
+.pd-steps::before { content: ""; position: absolute; top: 27px;
+  left: calc((100% - 96px) / 8); right: calc((100% - 96px) / 8);
+  height: 2px; background: #E4E7EA; z-index: 0; }
+.pd-step { position: relative; z-index: 1; text-align: center; }
+.pd-step__no { display: inline-flex; align-items: center; justify-content: center;
+  width: 54px; height: 54px; border-radius: 50%; background: var(--ek-blue); color: var(--ek-white);
+  font-size: 15px; font-weight: 700; letter-spacing: .02em;
+  box-shadow: 0 0 0 10px var(--ek-white); }
+.pd-step__icon { display: block; margin: 28px auto 0; color: var(--pd-accent); line-height: 0; }
+.pd-step__title { margin-top: 18px; font-size: var(--ek-h4); font-weight: 700; line-height: 1.25; color: var(--pd-ink); }
+.pd-step__note { margin-top: 8px; font-size: 15px; line-height: 1.6; color: var(--pd-accent); font-weight: 600; }
+
+@media (max-width: 1199px) {
+  .pd-process { padding-block: var(--ek-section-pad); }
+  .pd-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 24px; margin-top: 56px; }
+  .pd-steps::before { display: none; }
+}
+@media (max-width: 767px) {
+  /* One column, four rows — and each row keeps exactly the same centred stack
+     as the desktop columns: badge, icon, title, note. An earlier version laid
+     the badge beside the copy to save height; Elken BC asked for the card
+     composition to survive the breakpoint instead. */
+  .pd-steps { grid-template-columns: 1fr; gap: 52px; }
+}
+
+/* ---------- demo add-to-cart buttons injected into designer markup ---------- */
+[data-demo-add] { cursor: pointer; }
+[data-demo-add].is-added { opacity: .75; }
+.pd-hero__actions [data-demo-add] { margin-right: 14px; }
+.ek-lead-prod__copy [data-demo-add] { margin-top: 18px; margin-right: 14px; }
+.ek-pcard__body [data-demo-add] { margin-top: 14px; }

@@ -1,268 +1,343 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>AquaLease Nigeria · Pure water, on terms that fit</title>
-  <meta name="description" content="Lease a premium water purifier with a small down payment. Fully managed — installation, filters, maintenance. 24/7 water you can trust." />
-  <meta name="theme-color" content="#00875A" />
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%2300875A' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="assets/css/design-system.css" />
-  <link rel="stylesheet" href="assets/css/components.css" />
-  <link rel="stylesheet" href="assets/css/home.css" />
+<html lang="en"><head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Home · Elken</title>
+  <meta name="description" content="Elken brings together quality health, beauty, personal care and home products designed for modern living.">
+  <link rel="icon" href="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'&gt;&lt;path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/&gt;&lt;/svg&gt;">
+  <link rel="stylesheet" href="assets/css/fonts.css?v=20260908b">
+  <link rel="stylesheet" href="assets/css/elken-tokens.css?v=20260908b">
+  <link rel="stylesheet" href="assets/css/elken-base.css?v=20260908b">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css?v=20260908b">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
+  <link rel="stylesheet" href="assets/css/home-v2.css?v=20260908b">
+
 </head>
-<body data-page="home" data-header="default">
-  <div id="offline-banner" class="offline-banner">Offline mode · showing cached information</div>
-  <div id="app-header"></div>
+<body data-page="home" data-display-only="true">
+  <div id="offline-banner" class="offline-banner">Connection status</div>
+  <div id="app-header" class="ek-site-header"></div>
 
-  <main class="page">
+  <main class="site-home mk-home" id="main">
+    <!-- sec-hero — two slides, light brand banner then dark product banner -->
+    <section class="mk-hero" data-carousel data-interval="7000" aria-roledescription="carousel" aria-label="Elken highlights">
+      <div class="mk-hero__slides" data-track>
 
-    <!-- ====================== HERO ====================== -->
-    <section class="hero">
-      <div class="container">
-        <div class="grid-12">
-          <div class="hero-copy">
-            <div class="eyebrow anim-rise" data-i18n="hero.eyebrow"></div>
-            <h1 class="anim-rise anim-rise-d1">
-              <span data-i18n="hero.title_a"></span><br>
-              <em data-i18n="hero.title_b"></em><br>
-              <span data-i18n="hero.title_c"></span>
-            </h1>
-            <p class="sub anim-rise anim-rise-d2" data-i18n="hero.sub"></p>
-            <div class="ctas anim-rise anim-rise-d3">
-              <a class="btn btn-primary btn-lg" href="mall.html">
-                <span data-i18n="hero.cta"></span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-              </a>
-              <a class="btn btn-ghost btn-lg" href="service.html" data-i18n="hero.cta_secondary"></a>
-            </div>
-            <div class="meta-line anim-rise anim-rise-d4">
-              <span><strong>RC-1938472</strong> · CAC registered</span>
-              <span class="divider-dot"></span>
-              <span>NDPR compliant</span>
-              <span class="divider-dot"></span>
-              <span>Paystack · Flutterwave</span>
-            </div>
-          </div>
-          <div class="hero-visual anim-rise anim-rise-d2">
-            <div class="tile tile-1">
-              <img alt="A Nigerian family in their kitchen, drinking clean water" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=A%20warm%20Nigerian%20family%20in%20Lagos%20kitchen%2C%20modern%20minimal%20interior%2C%20mother%20pouring%20crystal%20clear%20water%20from%20a%20sleek%20countertop%20RO%20water%20purifier%20into%20a%20glass%2C%20two%20children%20smiling%2C%20soft%20natural%20morning%20light%2C%20editorial%20photography%2C%20warm%20cream%20tones%2C%20nigerian%20green%20accents%2C%2080mm%20lens%2C%20shallow%20depth%20of%20field&image_size=portrait_4_3" />
-              <div class="tile-meta">Lagos · Lekki · <b>AquaPure 800</b></div>
-            </div>
-            <div class="tile">
-              <img alt="Close-up of water being poured" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Close-up%20macro%20photography%20of%20crystal%20clear%20water%20being%20poured%20into%20a%20glass%2C%20bubbles%20rising%2C%20soft%20window%20light%2C%20warm%20cream%20background%2C%20editorial%20still%20life%2C%2085mm%20lens&image_size=square" />
-            </div>
-            <div class="tile">
-              <img alt="A Lagos office pantry with a commercial water purifier" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Modern%20Lagos%20co-working%20office%20pantry%20with%20a%20sleek%20commercial%20water%20purifier%20dispenser%2C%20employees%20gathering%20around%20refilling%20bottles%2C%20warm%20neutral%20tones%2C%20editorial%20photography%2C%20soft%20afternoon%20light&image_size=square" />
-            </div>
-
-            <!-- Floating cards -->
-            <div class="float-card a">
-              <div class="label">Down payment from</div>
-              <div class="v">₦76,000<small>/ lease</small></div>
-              <div class="meta">12-month plan · BV 430</div>
-            </div>
-            <div class="float-card b">
-              <div class="label">TDS today</div>
-              <div class="v">42<small>ppm</small></div>
-              <div class="meta">↑ 4 from yesterday · safe</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ====================== STAT STRIP ====================== -->
-    <section class="stat-strip">
-      <div class="container">
-        <div class="grid-12">
-          <div class="item anim-rise">
-            <div class="v"><em>36</em></div>
-            <div class="l" data-i18n="trust.stat_a.1"></div>
-          </div>
-          <div class="item anim-rise anim-rise-d1">
-            <div class="v">12,400<em>+</em></div>
-            <div class="l" data-i18n="trust.stat_b.1"></div>
-          </div>
-          <div class="item anim-rise anim-rise-d2">
-            <div class="v">98.6<em>%</em></div>
-            <div class="l" data-i18n="trust.stat_c.1"></div>
-          </div>
-          <div class="item anim-rise anim-rise-d3">
-            <div class="v">24<em>/7</em></div>
-            <div class="l" data-i18n="trust.stat_d.1"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ====================== PROMISE ====================== -->
-    <section class="promise section-lg">
-      <div class="grain"></div>
-      <div class="container">
-        <div class="grid-12">
-          <div class="head anim-rise">
-            <div class="eyebrow eyebrow-light" data-i18n="promise.eyebrow"></div>
-            <h2 data-i18n="promise.title"></h2>
-            <p class="lede" data-i18n="hero.sub"></p>
-          </div>
-          <div class="cards" id="promiseCards"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ====================== FEATURED PRODUCT ====================== -->
-    <section class="showcase">
-      <div class="container">
-        <div class="head anim-rise">
-          <div>
-            <div class="eyebrow" style="margin-bottom:8px">Featured · Editor's pick</div>
-            <h2>AquaPure <em>Home 800</em> — our most-loved lease.</h2>
-          </div>
-          <a class="btn btn-light" href="mall.html" data-i18n="common.view_all"></a>
-        </div>
-        <article class="feature-card anim-rise anim-rise-d1">
-          <div class="img-side">
-            <span class="price-stamp">BV 560 · Editor's pick</span>
-            <img alt="AquaPure Home 800" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Sleek%20modern%20countertop%20RO%20water%20purifier%20on%20a%20warm%20cream%20kitchen%20counter%2C%20minimal%20industrial%20design%2C%20matte%20white%20and%20deep%20green%20accents%2C%20soft%20product%20photography%2C%20soft%20shadow%2C%20editorial%20commercial%20look&image_size=portrait_4_3" />
-          </div>
-          <div class="info-side">
-            <div class="eyebrow">Home · 800 GPD · UV + Alkaline</div>
-            <h3>AquaPure Home 800</h3>
-            <p>Eight stages of purification. Built for Nigerian water conditions. Quiet enough for a nursery, powerful enough for a party.</p>
-            <div class="price-grid">
-              <div><div class="k" data-i18n="mall.down"></div><div class="v">₦112,000</div></div>
-              <div><div class="k" data-i18n="mall.month_pay"></div><div class="v">₦37,333</div></div>
-              <div><div class="k" data-i18n="mall.total"></div><div class="v">₦560,000</div></div>
-              <div><div class="k" data-i18n="mall.bv"></div><div class="v gold">560</div></div>
-            </div>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:auto">
-              <a class="btn btn-primary" href="mall-detail.html">View details</a>
-              <a class="btn btn-ghost" href="checkout.html" data-i18n="common.order_now"></a>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- ====================== HOW IT WORKS ====================== -->
-    <section class="steps">
-      <div class="container">
-        <div class="head anim-rise">
-          <div class="eyebrow" style="text-align:center;display:block" data-i18n="hero.cta_secondary"></div>
-          <h2>From <em>order</em> to <em>first glass</em> in 7 days.</h2>
-        </div>
-        <div class="grid-12">
-          <div class="step anim-rise">
-            <div class="num">01</div>
-            <h3>Pick your machine</h3>
-            <p>Browse the leasing mall, choose a term, see the live price. No quotes, no waiting.</p>
-          </div>
-          <div class="step anim-rise anim-rise-d1">
-            <div class="num">02</div>
-            <h3>Pay the down payment</h3>
-            <p>Paystack, Flutterwave, USSD or bank transfer. Confirmation in seconds, receipt by email.</p>
-          </div>
-          <div class="step anim-rise anim-rise-d2">
-            <div class="num">03</div>
-            <h3>Sign & schedule install</h3>
-            <p>Read and sign your lease online. Pick an install slot that fits your week.</p>
-          </div>
-          <div class="step anim-rise anim-rise-d3">
-            <div class="num">04</div>
-            <h3>Drink. Pay. Relax.</h3>
-            <p>Our team replaces filters quarterly. Your monthly payment is auto-reminded — never a surprise.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ====================== VOICES ====================== -->
-    <section class="voices">
-      <div class="container">
-        <div class="head anim-rise">
-          <h2>From <em>Yaba</em> to <em>Wuse</em>, families are switching.</h2>
-          <a class="btn btn-ghost-light" href="#" data-i18n="common.learn_more"></a>
-        </div>
-        <div class="grid-12">
-          <div class="voice anim-rise">
-            <div class="stars">★★★★★</div>
-            <blockquote>“The down payment was <em>less than my phone bill</em>. Now I never think about water.”</blockquote>
-            <div class="who">
-              <div class="avatar">CA</div>
-              <div>
-                <div>Chinwe A.</div>
-                <small>Lekki Phase 1 · Lease #00482</small>
-              </div>
-            </div>
-          </div>
-          <div class="voice anim-rise anim-rise-d1">
-            <div class="stars">★★★★★</div>
-            <blockquote>“Our office has <em>never run out</em>. The quarterly filter swap is silent and tidy.”</blockquote>
-            <div class="who">
-              <div class="avatar">IO</div>
-              <div>
-                <div>Ifeanyi O.</div>
-                <small>Yaba · Office of 24 · Lease #01193</small>
-              </div>
-            </div>
-          </div>
-          <div class="voice anim-rise anim-rise-d2">
-            <div class="stars">★★★★★</div>
-            <blockquote>“I love the BV value — I can <em>see my progress</em> on the dashboard. Smart product.”</blockquote>
-            <div class="who">
-              <div class="avatar">AM</div>
-              <div>
-                <div>Aisha M.</div>
-                <small>Wuse 2 · Lease #00631</small>
+        <div class="mk-hero__slide mk-hero__slide--light is-active" data-slide role="group" aria-roledescription="slide" aria-label="1 of 2: Elken">
+          <div class="mk-hero__media mk-hero__media--d" style="background-image: url('assets/img/banners/hero-brand-family-v4.jpg'); background-position: right center;"></div>
+          <div class="mk-hero__media mk-hero__media--m" style="background-image: url('assets/img/banners/hero-brand-family-m.jpg'); background-position: center;"></div>
+          <div class="mk-hero__wash" aria-hidden="true"></div>
+          <div class="mk-hero__inner">
+            <div class="ek-container">
+              <div class="mk-hero__copy">
+                <p class="ek-eyebrow">Elken</p>
+                <h1 class="ek-h1">
+                  <span class="t-blue">Health, beauty, wellness, and clean water for the</span>
+                  <span class="t-pink">Nigerian home.</span>
+                </h1>
+                <p class="ek-lead mk-hero__sub">Elken offers health &amp; beauty supplements, water filters, and wellness devices — stocked here in Nigeria and delivered nationwide.</p>
+                <div class="mk-hero__actions">
+                  <a class="ek-btn ek-btn--primary" href="products.html">View Our Products</a>
+                  <a class="ek-btn ek-btn--ghost" href="https://wa.me/2349131178401">Chat on WhatsApp</a>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        <div class="mk-hero__slide mk-hero__slide--dark" data-slide data-dark role="group" aria-roledescription="slide" aria-label="2 of 2: GenQi Hydrogen Inhaler">
+          <div class="mk-hero__media mk-hero__media--d" style="background-image: url('assets/img/banners/hero-genqi-v2.jpg'); background-position: center;"></div>
+          <div class="mk-hero__media mk-hero__media--m" style="background-image: url('assets/img/banners/hero-genqi-m.jpg'); background-position: center 56%;"></div>
+          <div class="mk-hero__scrim"></div>
+          <div class="mk-hero__inner">
+            <div class="ek-container">
+              <div class="mk-hero__copy">
+                <p class="ek-eyebrow">Wellness Devices</p>
+                <h2 class="ek-h1">
+                  <span class="t-white">GenQi</span>
+                  <span class="t-aqua">Hydrogen Inhaler</span>
+                </h2>
+                <p class="ek-lead mk-hero__sub">One device, three ways to take hydrogen: inhalation, hydrogen-rich water and eye goggles.</p>
+                <div class="mk-hero__actions">
+                  <a class="ek-btn ek-btn--white" href="https://wa.me/2349131178401?text=Hello%20Elken%20Nigeria.%20I%20would%20like%20to%20ask%20about%20the%20GenQi.">WhatsApp about GenQi</a>
+                  <a class="ek-btn ek-btn--ghostwhite" href="contact.html">Find a location</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="ek-container mk-hero__dots">
+        <div class="mk-hero__controls">
+          <div class="mk-dots" role="tablist" aria-label="Choose slide">
+            <button type="button" data-dot role="tab" aria-selected="true" aria-label="Elken"></button>
+            <button type="button" data-dot role="tab" aria-selected="false" aria-label="GenQi Hydrogen Inhaler"></button>
+          </div>
+          <div class="mk-hero__arrows">
+            <button class="mk-hero__arrow" type="button" data-prev aria-label="Previous slide">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M11.5 3.5L6 9l5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="mk-hero__arrow" type="button" data-next aria-label="Next slide">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M6.5 3.5L12 9l-5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- ====================== FINAL CTA ====================== -->
-    <section class="cta-band">
-      <div class="container">
-        <div class="inner anim-rise">
-          <h2>Start with a <em>glass of clean water</em> this week.</h2>
-          <a class="btn btn-lg" href="mall.html" data-i18n="hero.cta"></a>
+    <!-- sec-trustbar -->
+    <section class="mk-trustbar">
+      <div class="ek-container">
+        <div class="mk-trustbar__grid">
+          <div class="mk-trust">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.2-2.9 7.9-7 9.5-4.1-1.6-7-5.3-7-9.5V6l7-3z" stroke="#2AA7CF" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l2 2 4-4.5" stroke="#2AA7CF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="home.trust_1">NAFDAC-registered supplements</span>
+          </div>
+          <div class="mk-trust">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.5 8.5h10v8h-10z" stroke="#2AA7CF" stroke-width="1.5" stroke-linejoin="round"/><path d="M12.5 11h4l3 3v2.5h-7z" stroke="#2AA7CF" stroke-width="1.5" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="1.8" stroke="#2AA7CF" stroke-width="1.5"/><circle cx="16.5" cy="18" r="1.8" stroke="#2AA7CF" stroke-width="1.5"/></svg>
+            <span data-i18n="home.trust_2">Delivery across Nigeria, confirmed before you pay</span>
+          </div>
+          <div class="mk-trust">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="#2AA7CF" stroke-width="1.5"/><path d="M12 7v5.4l3.4 2" stroke="#2AA7CF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="home.trust_3">Trading in Nigeria since 2022</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- sec-products — Figma "Sec - ContentCardsSection" -->
+    <section class="mk-section mk-products">
+      <div class="ek-container">
+        <div class="mk-sechead">
+          <div class="mk-sechead__left">
+            <p class="ek-eyebrow" data-i18n="home.ranges_eyebrow">Our ranges</p>
+            <h2 class="ek-h2" data-i18n="home.ranges_title">Our Products</h2>
+          </div>
+          <div class="mk-sechead__body">
+            <p class="ek-lead" data-i18n="home.ranges_lead">We make four ranges, each developed for the way Nigerian households actually live. Every range is stocked here in Nigeria, sold through our head office in Abuja and the Elken Stockists across Lagos, and delivered nationwide.</p>
+          </div>
+        </div>
+
+        <div class="mk-cardrow">
+          <a class="mk-card" href="products.html?category=health-wellness">
+            <div class="mk-card__panel"><img src="assets/img/categories/cat-supplements.png" alt="Elken supplement" loading="lazy"></div>
+            <div class="mk-card__body">
+              <h3 class="ek-h4">Health</h3>
+              <p class="ek-text" data-i18n="home.range_health">Daily nutrition for you and your family, made in Elken's own plant.</p>
+              <span class="ek-link">View range <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </a>
+          <a class="mk-card" href="products.html?category=wellness-devices">
+            <div class="mk-card__panel"><img src="assets/img/categories/cat-wellness.png" alt="Elken wellness device" loading="lazy"></div>
+            <div class="mk-card__body">
+              <h3 class="ek-h4">Wellness</h3>
+              <p class="ek-text" data-i18n="home.range_wellness">Personal wellness technology you use at home.</p>
+              <span class="ek-link">View range <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </a>
+          <a class="mk-card" href="products.html?category=home-appliances">
+            <div class="mk-card__panel"><img src="assets/img/categories/cat-water.png" alt="Elken Bio Pure water purifier" loading="lazy"></div>
+            <div class="mk-card__body">
+              <h3 class="ek-h4">Water</h3>
+              <p class="ek-text" data-i18n="home.range_water">An indoor purifier for the water you drink, and outdoor filters for the supply that reaches the rest of the house.</p>
+              <span class="ek-link">View range <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </a>
+          <a class="mk-card" href="products.html?category=beauty-skincare">
+            <div class="mk-card__panel"><img src="assets/img/categories/cat-beauty.png" alt="Elken beauty supplement" loading="lazy"></div>
+            <div class="mk-card__body">
+              <h3 class="ek-h4">Beauty</h3>
+              <p class="ek-text" data-i18n="home.range_beauty">Supplements that work on your skin from within, taken as part of a daily routine.</p>
+              <span class="ek-link">View range <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </a>
+        </div>
+
+        <div class="mk-section__foot">
+          <a class="ek-link" href="products.html" data-i18n="home.ranges_cta">See all products <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- sec-about — Figma "Sec - StatsIntroSection" -->
+    <section class="mk-section mk-about">
+      <div class="ek-container">
+        <div class="mk-sechead">
+          <div class="mk-sechead__left">
+            <p class="ek-eyebrow" data-i18n="home.about_eyebrow">About Elken</p>
+            <h2 class="ek-h2" data-i18n="home.about_title_full">Building Healthier Lives. Creating Sustainable Opportunities.</h2>
+          </div>
+          <div class="mk-sechead__body">
+            <p class="ek-lead" data-i18n="home.about_p1">Elken has been trading here since 2022. Our head office is at Utako in Abuja, and our Elken Stockists, where the range can be seen and purchased, run across Lagos.</p>
+            <p class="ek-lead" data-i18n="home.about_p2">We specialise in four areas: health supplements, wellness devices, water filtration, and beauty food for the home. Our stock is held here in Nigeria, and our telephone lines are answered here in Nigeria.</p>
+          </div>
+        </div>
+
+        <div class="mk-statgrid">
+          <div class="mk-stat"><span class="mk-stat__value">Since 2022</span><span class="mk-stat__label" data-i18n="home.stat_1_label">Trading in Nigeria</span></div>
+          <div class="mk-stat"><span class="mk-stat__value">6</span><span class="mk-stat__label" data-i18n="home.stat_2_label">Locations in Abuja and Lagos</span></div>
+          <div class="mk-stat"><span class="mk-stat__value">Nationwide</span><span class="mk-stat__label" data-i18n="home.stat_3_label">Delivery, confirmed before you pay</span></div>
+        </div>
+
+        <div class="mk-section__foot">
+          <a class="ek-link" href="about.html" data-i18n="home.about_cta">About Elken <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- sec-locations — Deep Vital Blue band -->
+    <section class="mk-section mk-locations">
+      <div class="ek-container">
+        <div class="mk-locations__grid">
+          <div class="mk-locations__copy">
+            <h2 class="ek-h2" data-i18n="home.loc_title">Where to buy Elken products</h2>
+            <p class="ek-lead" data-i18n="home.loc_lead">Visit any of our six locations in Abuja and Lagos, or message us on WhatsApp. Tell us where you are and we will confirm delivery and put you in touch with your nearest distributor.</p>
+            <div class="mk-locations__actions">
+              <a class="ek-btn ek-btn--white" href="https://wa.me/2349131178401">Chat on WhatsApp</a>
+              <a class="ek-btn ek-btn--ghostwhite" href="contact.html">Find a location</a>
+            </div>
+          </div>
+          <ul class="mk-loclist">
+            <li class="mk-loc">
+              <svg width="20" height="20" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 16.5s6-4.9 6-9a6 6 0 10-12 0c0 4.1 6 9 6 9z" stroke="#F287B7" stroke-width="1.4" stroke-linejoin="round"/><circle cx="9" cy="7.5" r="2.1" stroke="#F287B7" stroke-width="1.4"/></svg>
+              <span><span class="mk-loc__name">Head Office</span><span class="mk-loc__meta">19A IBM Haruna Street, Utako, Abuja</span></span>
+            </li>
+            <li class="mk-loc">
+              <svg width="20" height="20" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 16.5s6-4.9 6-9a6 6 0 10-12 0c0 4.1 6 9 6 9z" stroke="#859EB3" stroke-width="1.4" stroke-linejoin="round"/><circle cx="9" cy="7.5" r="2.1" stroke="#859EB3" stroke-width="1.4"/></svg>
+              <span><span class="mk-loc__name">Elken Onyx Shop</span><span class="mk-loc__meta">Ajah, Lagos</span></span>
+            </li>
+            <li class="mk-loc">
+              <svg width="20" height="20" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 16.5s6-4.9 6-9a6 6 0 10-12 0c0 4.1 6 9 6 9z" stroke="#859EB3" stroke-width="1.4" stroke-linejoin="round"/><circle cx="9" cy="7.5" r="2.1" stroke="#859EB3" stroke-width="1.4"/></svg>
+              <span><span class="mk-loc__name">Shalom Shop</span><span class="mk-loc__meta">Ikeja, Lagos</span></span>
+            </li>
+            <li class="mk-loc">
+              <svg width="20" height="20" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 16.5s6-4.9 6-9a6 6 0 10-12 0c0 4.1 6 9 6 9z" stroke="#859EB3" stroke-width="1.4" stroke-linejoin="round"/><circle cx="9" cy="7.5" r="2.1" stroke="#859EB3" stroke-width="1.4"/></svg>
+              <span><span class="mk-loc__name">Elken Great Achievers</span><span class="mk-loc__meta">Surulere, Lagos</span></span>
+            </li>
+            <li class="mk-loc">
+              <svg width="20" height="20" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 16.5s6-4.9 6-9a6 6 0 10-12 0c0 4.1 6 9 6 9z" stroke="#859EB3" stroke-width="1.4" stroke-linejoin="round"/><circle cx="9" cy="7.5" r="2.1" stroke="#859EB3" stroke-width="1.4"/></svg>
+              <span><span class="mk-loc__name">De Wellness Centre</span><span class="mk-loc__meta">Maryland, Lagos</span></span>
+            </li>
+            <li class="mk-loc">
+              <svg width="20" height="20" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 16.5s6-4.9 6-9a6 6 0 10-12 0c0 4.1 6 9 6 9z" stroke="#859EB3" stroke-width="1.4" stroke-linejoin="round"/><circle cx="9" cy="7.5" r="2.1" stroke="#859EB3" stroke-width="1.4"/></svg>
+              <span><span class="mk-loc__name">Elken JC Solution Centre</span><span class="mk-loc__meta">Bariga, Lagos</span></span>
+            </li>
+          </ul>
+        </div>
+        <div class="mk-locations__note">
+          <span data-i18n="home.loc_note">Interested in selling Elken products?</span>
+          <a class="ek-link ek-link--light" href="team-inquiry.html">Read about the Elken business <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- sec-closing -->
+    <section class="mk-closing">
+      <div class="ek-container">
+        <div class="mk-marktitle">
+          <span class="mk-marktitle__square" aria-hidden="true"></span>
+          <h2 class="ek-h2">Better Health. Better Life.<br>Build Your Future with Elken.</h2>
         </div>
       </div>
     </section>
   </main>
 
-  <div id="app-footer"></div>
+  <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="assets/i18n/strings.js?v=20260909c"></script>
+
+  <script src="assets/js/elken-ui.js?v=20260909c" defer></script>
+  <script src="assets/js/app.js?v=20260923b"></script>
+  <script src="assets/js/website.js?v=20260909c"></script>
   <script>
-    // i18n binding
-    function applyI18n() {
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const path = el.dataset.i18n;
-        el.textContent = window.T.tr(path);
-      });
-      // promise cards
-      const cards = window.T.trArray('promise.items');
-      if (Array.isArray(cards)) {
-        const host = document.getElementById('promiseCards');
-        if (host && !host.dataset.rendered) {
-          host.innerHTML = cards.map((c, i) => `
-            <div class="card anim-rise anim-rise-d${i}">
-              <div class="num">0${i+1} / 04</div>
-              <h3>${c.t}</h3>
-              <p>${c.d}</p>
-            </div>
-          `).join('');
-          host.dataset.rendered = '1';
-        }
+    /* ---------- Home: hero carousel ---------- */
+    (function () {
+      const root = document.querySelector('.mk-hero');
+      if (!root) return;
+      const slides = Array.from(root.querySelectorAll('.mk-hero__slide'));
+      const dots = Array.from(root.querySelectorAll('.mk-dots button'));
+      const prev = root.querySelector('[data-prev]');
+      const next = root.querySelector('[data-next]');
+      if (!slides.length) return;
+
+      let index = slides.findIndex(s => s.classList.contains('is-active'));
+      if (index < 0) index = 0;
+      let timer = null;
+      const INTERVAL = 7000;
+
+      function show(i) {
+        index = (i + slides.length) % slides.length;
+        slides.forEach((s, k) => s.classList.toggle('is-active', k === index));
+        dots.forEach((d, k) => {
+          const on = k === index;
+          d.classList.toggle('is-active', on);
+          d.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        root.classList.toggle('mk-hero--dark', !!slides[index].hasAttribute('data-dark'));
+        // Ink follows the slide: the overlay header goes white on dark slides.
+        document.querySelector('.ek-header')?.classList.toggle('header-on-dark', !!slides[index].hasAttribute('data-dark'));
       }
-    }
-    applyI18n();
+      function start() { stop(); timer = setInterval(() => show(index + 1), INTERVAL); }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+      prev && prev.addEventListener('click', () => { show(index - 1); start(); });
+      next && next.addEventListener('click', () => { show(index + 1); start(); });
+      dots.forEach((d, k) => d.addEventListener('click', () => { show(k); start(); }));
+
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+      document.addEventListener('visibilitychange', () => { document.hidden ? stop() : start(); });
+
+      show(index);
+      start();
+    })();
   </script>
+
+  <div id="cookieBanner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie consent">
+      <span class="cookie-icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10c0-.46-.04-.92-.1-1.36a5.5 5.5 0 0 1-7.78-7.78A9.97 9.97 0 0 0 12 2Z"></path><circle cx="9" cy="13" r="1" fill="currentColor"></circle><circle cx="14" cy="9" r="1" fill="currentColor"></circle><circle cx="16" cy="14" r="1" fill="currentColor"></circle></svg>
+      </span>
+      <div class="cookie-body">
+        <strong data-i18n="cookie.title">cookie.title</strong>
+        <span>
+          <span data-i18n="cookie.text">cookie.text</span>
+          <a href="privacy.html" data-i18n="cookie.learn_more">cookie.learn_more</a>
+        </span>
+      </div>
+      <div class="cookie-actions">
+        <button type="button" class="cb-btn" data-cookie="customise" data-i18n="cookie.custom">cookie.custom</button>
+        <button type="button" class="cb-btn" data-cookie="reject" data-i18n="cookie.reject">cookie.reject</button>
+        <button type="button" class="cb-btn cb-primary" data-cookie="accept" data-i18n="cookie.accept">cookie.accept</button>
+      </div>
+      <div class="cookie-prefs" aria-hidden="true">
+        <div class="row">
+          <div class="text">
+            <strong>Essential cookies</strong>
+            <small>Required for sign-in, cart and security. Cannot be disabled.</small>
+          </div>
+          <div class="toggle on locked" data-cookie-pref="essential" aria-label="Essential cookies (always on)"></div>
+        </div>
+        <div class="row">
+          <div class="text">
+            <strong>Analytics cookies</strong>
+            <small>Help us understand which pages are useful and improve the product.</small>
+          </div>
+          <div class="toggle" data-cookie-pref="analytics" role="switch" aria-checked="false" tabindex="0"></div>
+        </div>
+        <div class="row">
+          <div class="text">
+            <strong>Marketing cookies</strong>
+            <small>Used to measure campaign effectiveness. Off by default.</small>
+          </div>
+          <div class="toggle" data-cookie-pref="marketing" role="switch" aria-checked="false" tabindex="0"></div>
+        </div>
+      </div>
+    </div>
 </body>
 </html>

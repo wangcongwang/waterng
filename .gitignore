@@ -1,0 +1,13 @@
+# internal project memory (do not publish)
+.workbuddy/
+# generated demo artifacts
+outputs/
+# React source (not part of the static demo site)
+docs/
+# build / IDE artifacts
+.build/
+.trae/
+# local dev server (not needed on Pages)
+serve.py
+# macOS
+.DS_Store

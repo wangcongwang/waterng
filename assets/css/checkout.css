@@ -1,0 +1,366 @@
+/* ============================================================
+   checkout.css — Elken UI Kit styles for the checkout / order page
+   Token-only (--ek-*). No hex colors, no px font-sizes, no !important.
+   Linked AFTER water-pages.css on checkout.html so it completes the
+   checkout UI that water-pages.css does not cover (stepper, delivery &
+   payment selectors, pickup, card, summary sub-items, qty controls).
+   ============================================================ */
+
+/* ---------- Stepper ---------- */
+.stepper {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ek-12);
+  margin-bottom: var(--ek-32);
+}
+.stepper .step {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-8);
+  font-size: var(--ek-small);
+  color: var(--ek-muted);
+}
+.stepper .step .n {
+  width: var(--ek-28, var(--ek-24));
+  height: var(--ek-28, var(--ek-24));
+  border-radius: var(--ek-radius-pill);
+  border: 1.5px solid var(--ek-border-strong);
+  display: grid;
+  place-items: center;
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-muted);
+}
+.stepper .step.active { color: var(--ek-blue); }
+.stepper .step.active .n { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); }
+.stepper .step.done { color: var(--ek-charcoal); }
+.stepper .step.done .n { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); }
+.stepper .sep { width: var(--ek-24); height: 1px; background: var(--ek-border); align-self: center; flex-shrink: 0; }
+
+/* ---------- Cards & headings: .checkout-card / .summary are .ek-card (elken-ui.css §2)
+   now, so only the card-title treatment below is still page-specific. ---------- */
+.checkout-card > h2 {
+  margin: 0 0 var(--ek-16);
+  font-size: var(--ek-h4);
+  line-height: var(--ek-h4-lh);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-blue);
+}
+.checkout-shell h1 {
+  margin: 0 0 var(--ek-20);
+  font-size: var(--ek-h1);
+  line-height: var(--ek-h1-lh);
+  letter-spacing: var(--ek-h1-ls);
+  color: var(--ek-charcoal);
+  font-weight: var(--ek-w-bold);
+}
+
+/* ---------- Fields (labels + focus ring) ---------- */
+.checkout-shell .field { margin-bottom: var(--ek-16); }
+.checkout-shell .field > label {
+  display: block;
+  font-size: var(--ek-small);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal);
+  margin-bottom: var(--ek-8);
+}
+.checkout-shell .req { color: var(--ek-error); margin-left: 2px; }
+.checkout-shell .field-error { display: block; color: var(--ek-error); font-size: var(--ek-caption); margin-top: var(--ek-4); }
+/* Focus ring on inputs is provided by the global :focus-visible rule in
+   elken-base.css (box-shadow: var(--ek-focus-ring)); kit's .ek-input:focus
+   already sets border-color: var(--ek-aqua). No extra outline needed. */
+
+/* ---------- Saved-address picker ---------- */
+.saved-addr-picker {
+  display: grid;
+  gap: var(--ek-8);
+  padding: var(--ek-16);
+  margin-bottom: var(--ek-20);
+  background: var(--ek-surface-sunken);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+}
+.saved-addr-picker label { font-size: var(--ek-small); font-weight: var(--ek-w-medium); color: var(--ek-charcoal); }
+
+/* ---------- Consent checkboxes ---------- */
+.consent { margin-top: var(--ek-12); }
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ek-8);
+  font-size: var(--ek-small);
+  color: var(--ek-body-ink);
+  line-height: var(--ek-small-lh, 1.5);
+}
+.checkbox input {
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--ek-blue);
+}
+/* .ek-check is styled by the UI Kit (.ek-check in elken-ui.css): 18px control,
+   flex-start, accent-color blue. No override needed here. */
+
+/* ---------- Delivery method selector ---------- */
+.deliv-method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ek-12); margin-bottom: var(--ek-20); }
+.deliv-method {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ek-12);
+  padding: var(--ek-16);
+  border: 1.5px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  cursor: pointer;
+  background: var(--ek-surface);
+  transition: border-color var(--ek-fast) var(--ek-ease), background var(--ek-fast) var(--ek-ease), transform var(--ek-fast) var(--ek-ease);
+}
+.deliv-method:hover { border-color: var(--ek-border-strong); transform: translateY(-1px); }
+.deliv-method input { position: absolute; opacity: 0; pointer-events: none; }
+.deliv-method-icon {
+  width: var(--ek-40); height: var(--ek-40);
+  border-radius: var(--ek-radius-sm);
+  display: grid; place-items: center;
+  background: var(--ek-surface-sunken); color: var(--ek-charcoal); flex-shrink: 0;
+}
+.deliv-method-body { flex: 1; min-width: 0; }
+.deliv-method-name { font-weight: var(--ek-w-medium); font-size: var(--ek-small); color: var(--ek-charcoal); }
+.deliv-method-sub { font-size: var(--ek-caption); color: var(--ek-muted); margin-top: 2px; }
+.deliv-method-check {
+  width: var(--ek-22, var(--ek-20)); height: var(--ek-22, var(--ek-20));
+  border-radius: var(--ek-radius-pill);
+  border: 1.5px solid var(--ek-border);
+  display: grid; place-items: center; color: transparent; flex-shrink: 0;
+  transition: all var(--ek-fast) var(--ek-ease);
+}
+.deliv-method:has(input:checked) { border-color: var(--ek-blue); background: var(--ek-info-tint); }
+.deliv-method:has(input:checked) .deliv-method-icon { background: var(--ek-blue); color: var(--ek-white); }
+.deliv-method:has(input:checked) .deliv-method-check { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); }
+.deliv-method:has(input:focus-visible) { box-shadow: var(--ek-focus-ring); }
+
+/* ---------- Pickup locations ---------- */
+.pickup-list { display: grid; gap: var(--ek-12); }
+.pickup-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ek-14, var(--ek-12));
+  padding: var(--ek-16) var(--ek-18, var(--ek-16));
+  border: 1.5px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  cursor: pointer;
+  background: var(--ek-surface);
+  transition: border-color var(--ek-fast) var(--ek-ease), background var(--ek-fast) var(--ek-ease);
+}
+.pickup-item:hover { border-color: var(--ek-border-strong); }
+.pickup-item input { position: absolute; opacity: 0; pointer-events: none; }
+.pickup-radio {
+  width: var(--ek-20); height: var(--ek-20);
+  border-radius: var(--ek-radius-pill);
+  border: 1.5px solid var(--ek-border-strong);
+  display: grid; place-items: center; flex-shrink: 0; margin-top: 2px; position: relative;
+}
+.pickup-radio::after {
+  content: ""; width: 10px; height: 10px; border-radius: var(--ek-radius-pill);
+  background: var(--ek-blue); transform: scale(0); transition: transform var(--ek-fast) var(--ek-ease);
+}
+.pickup-item:has(input:checked) { border-color: var(--ek-blue); background: var(--ek-info-tint); }
+.pickup-item:has(input:checked) .pickup-radio { border-color: var(--ek-blue); }
+.pickup-item:has(input:checked) .pickup-radio::after { transform: scale(1); }
+.pickup-body { flex: 1; min-width: 0; }
+.pickup-head { display: flex; align-items: center; gap: var(--ek-8); margin-bottom: var(--ek-4); }
+.pickup-name { font-weight: var(--ek-w-medium); font-size: var(--ek-body, var(--ek-small)); color: var(--ek-charcoal); }
+.pickup-tag {
+  display: inline-block; padding: 2px var(--ek-8);
+  background: var(--ek-blue); color: var(--ek-white);
+  border-radius: var(--ek-radius-pill); font-size: var(--ek-caption);
+  letter-spacing: .08em; text-transform: uppercase; font-weight: var(--ek-w-bold);
+}
+.pickup-addr { font-size: var(--ek-small); color: var(--ek-body-ink); margin-bottom: var(--ek-4); }
+.pickup-hours { font-size: var(--ek-caption); color: var(--ek-muted); }
+.pickup-hours span:first-child { font-weight: var(--ek-w-medium); color: var(--ek-charcoal); }
+.pickup-check {
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold); color: var(--ek-blue);
+  align-self: center; flex-shrink: 0; padding: 2px var(--ek-8);
+  border: 1px solid var(--ek-blue); border-radius: var(--ek-radius-pill);
+  opacity: 0; transition: opacity var(--ek-fast) var(--ek-ease);
+}
+.pickup-item:has(input:checked) .pickup-check { opacity: 1; }
+
+/* ---------- Payment method selector ---------- */
+.pay-method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--ek-12); }
+.pay-method {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ek-12);
+  padding: var(--ek-16);
+  border: 1.5px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  cursor: pointer;
+  background: var(--ek-surface);
+  transition: border-color var(--ek-fast) var(--ek-ease), background var(--ek-fast) var(--ek-ease), transform var(--ek-fast) var(--ek-ease);
+}
+.pay-method:hover { border-color: var(--ek-border-strong); transform: translateY(-1px); }
+.pay-method input { position: absolute; opacity: 0; pointer-events: none; }
+.pay-method-icon {
+  width: var(--ek-40); height: var(--ek-40);
+  border-radius: var(--ek-radius-sm);
+  display: grid; place-items: center;
+  background: var(--ek-surface-sunken); color: var(--ek-charcoal); flex-shrink: 0;
+}
+.pay-method-body { flex: 1; min-width: 0; }
+.pay-method-name { font-weight: var(--ek-w-medium); font-size: var(--ek-small); color: var(--ek-charcoal); }
+.pay-method-sub { font-size: var(--ek-caption); color: var(--ek-muted); margin-top: 2px; }
+.pay-method-check {
+  width: var(--ek-22, var(--ek-20)); height: var(--ek-22, var(--ek-20));
+  border-radius: var(--ek-radius-pill);
+  border: 1.5px solid var(--ek-border);
+  display: grid; place-items: center; color: transparent; flex-shrink: 0;
+  transition: all var(--ek-fast) var(--ek-ease);
+}
+.pay-method:has(input:checked) { border-color: var(--ek-blue); background: var(--ek-info-tint); }
+.pay-method:has(input:checked) .pay-method-icon { background: var(--ek-blue); color: var(--ek-white); }
+.pay-method:has(input:checked) .pay-method-check { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); }
+.pay-method:has(input:focus-visible) { box-shadow: var(--ek-focus-ring); }
+.pay-method input:disabled { cursor: not-allowed; }
+.pay-method:has(input:disabled) { opacity: .55; cursor: not-allowed; }
+
+/* ---------- USSD code ---------- */
+.ussd-code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: var(--ek-h2, 24px);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-blue);
+  padding: var(--ek-20);
+  background: var(--ek-info-tint);
+  border: 1.5px dashed var(--ek-blue);
+  border-radius: var(--ek-radius);
+  text-align: center;
+  letter-spacing: .04em;
+  margin: var(--ek-16) 0;
+}
+
+/* ---------- Card input ---------- */
+.card-input-wrap { position: relative; display: flex; align-items: center; }
+.card-input-wrap .ek-input { padding-right: var(--ek-56); }
+.card-brand { position: absolute; right: var(--ek-12); top: 50%; transform: translateY(-50%); font-size: var(--ek-caption); font-weight: var(--ek-w-bold); color: var(--ek-muted); letter-spacing: .04em; }
+.card-brand.visa { color: var(--ek-blue); }
+.card-brand.mc { color: var(--ek-error); }
+.card-brand.verve { color: var(--ek-aqua); }
+.card-brand.amex { color: var(--ek-blue); }
+
+/* ---------- Order summary sub-items (JS-rendered) ---------- */
+.summary-items { display: grid; gap: var(--ek-12); margin-bottom: var(--ek-16); }
+.summary-item { display: grid; grid-template-columns: var(--ek-56) 1fr auto; gap: var(--ek-12); align-items: center; }
+.summary-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: var(--ek-4); min-width: 72px; }
+.summary-item-img { width: var(--ek-56); height: var(--ek-56); border-radius: var(--ek-radius-sm); overflow: hidden; background: var(--ek-surface-sunken); display: grid; place-items: center; }
+.summary-item-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.summary-item-img svg { width: 56%; height: 56%; color: var(--ek-muted); }
+.summary-item-body { min-width: 0; }
+.summary-item-name { font-weight: var(--ek-w-medium); font-size: var(--ek-small); color: var(--ek-charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.summary-item-meta { font-size: var(--ek-caption); color: var(--ek-muted); margin-top: 2px; }
+.summary-item-qty { display: flex; align-items: center; }
+.summary-item-line { font-weight: var(--ek-w-bold); color: var(--ek-charcoal); white-space: nowrap; }
+.cart-qty-static { font-size: var(--ek-small); color: var(--ek-muted); }
+.summary .row.method-row { display: flex; justify-content: space-between; align-items: center; }
+
+/* ---------- Order summary is a dark card (water-pages.css: bg --ek-blue-hover, white ink).
+   The generic summary-item-* colours above are meant for light surfaces; override them
+   inside .summary so text remains readable on the dark blue background. ---------- */
+.summary .summary-item-name { color: var(--ek-white); }
+.summary .summary-item-meta { color: var(--ek-panel-cool); }
+.summary .summary-item-line { color: var(--ek-white); }
+.summary .cart-qty-static { color: var(--ek-panel-cool); }
+.summary .summary-item-img { background: var(--ek-stat-3); }
+.summary .summary-item-img svg { color: var(--ek-panel-cool); }
+.summary .qty-btn { background: var(--ek-stat-3); border-color: var(--ek-stat-2); color: var(--ek-white); }
+.summary .qty-btn:hover { background: var(--ek-stat-2); border-color: var(--ek-aqua); }
+.summary .orderQty { background: var(--ek-stat-3); border-color: var(--ek-stat-2); color: var(--ek-white); }
+.summary .link-btn { color: var(--ek-aqua); }
+.summary .link-btn:hover { color: var(--ek-white); }
+
+/* ---------- Place order button ---------- */
+/* .summary is a dark card (see the light-on-dark overrides above/below), but
+   #payBtn kept the default .ek-btn--primary look — brand navy on navy, so it
+   barely read as a button at all. Give it the same light-on-dark treatment
+   as the payment chips just below it. */
+.summary #payBtn { --btn-bg: var(--ek-white); --btn-ink: var(--ek-blue); --btn-border: transparent; }
+/* .ek-btn:hover (elken-ui.css) sets `background` as a literal declaration
+   (background: var(--ek-blue-hover)), not through --btn-bg, so merely
+   reassigning --btn-bg here does nothing — the hover state was falling
+   straight back to brand navy on navy. Set `background` explicitly instead;
+   the ID selector gives this enough specificity to win. */
+.summary #payBtn:hover { background: var(--ek-grey-light); color: var(--ek-blue); }
+
+/* ---------- Pay methods chip container in summary ---------- */
+.summary .pay-methods { display: flex; flex-wrap: wrap; gap: var(--ek-8); margin-top: var(--ek-12); }
+.summary .pay-methods .ek-chip { background: rgba(255,255,255,0.15); color: var(--ek-white); border-color: rgba(255,255,255,0.3); }
+.summary .pay-methods .ek-chip:hover { background: rgba(255,255,255,0.25); }
+
+/* ---------- Quantity controls ---------- */
+.qty-control, .summary-qty { display: inline-flex; align-items: center; gap: var(--ek-4); }
+.qty-btn {
+  width: var(--ek-28, var(--ek-24)); height: var(--ek-28, var(--ek-24));
+  display: grid; place-items: center;
+  border: 1px solid var(--ek-border-strong);
+  background: var(--ek-surface);
+  color: var(--ek-charcoal);
+  border-radius: var(--ek-radius-sm);
+  font-size: var(--ek-body, var(--ek-small));
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--ek-fast) var(--ek-ease), border-color var(--ek-fast) var(--ek-ease);
+}
+.qty-btn:hover { background: var(--ek-surface-sunken); border-color: var(--ek-blue); }
+.qty-btn:focus-visible { box-shadow: var(--ek-focus-ring); }
+.orderQty {
+  width: var(--ek-40);
+  text-align: center;
+  border: 1px solid var(--ek-border-strong);
+  border-radius: var(--ek-radius-sm);
+  padding: var(--ek-4) 0;
+  font-size: var(--ek-small);
+  color: var(--ek-charcoal);
+  background: var(--ek-surface);
+}
+.orderQty:focus-visible { box-shadow: var(--ek-focus-ring); border-color: var(--ek-aqua); }
+
+/* ---------- Link button (edit in cart) ---------- */
+.link-btn {
+  display: inline-block;
+  margin: var(--ek-4) 0 var(--ek-12);
+  background: none; border: 0; padding: 0;
+  color: var(--ek-aqua); font-size: var(--ek-small); font-weight: var(--ek-w-medium);
+  cursor: pointer; text-decoration: underline;
+}
+.link-btn:hover { color: var(--ek-blue); }
+
+/* ---------- Primary button (kit omits --primary modifier) ---------- */
+.ek-btn--primary {
+  --btn-bg: var(--ek-blue);
+  --btn-ink: var(--ek-white);
+  --btn-border: var(--ek-blue);
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  border: 1px solid var(--btn-border);
+}
+.ek-btn--primary:hover { background: var(--ek-blue-hover); border-color: var(--ek-blue-hover); color: var(--ek-white); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .checkout-grid,
+  .cart-layout { grid-template-columns: minmax(0, 1fr); }
+  .deliv-method-grid { grid-template-columns: 1fr; }
+  .pay-method-grid { grid-template-columns: 1fr 1fr; }
+  .summary { position: static; }
+}
+@media (max-width: 560px) {
+  .pay-method-grid { grid-template-columns: 1fr; }
+  .summary-item { grid-template-columns: var(--ek-48) 1fr auto; }
+  .summary-item-right { min-width: 64px; }
+  .stepper { gap: var(--ek-8); }
+  .stepper .sep { width: var(--ek-16); }
+}

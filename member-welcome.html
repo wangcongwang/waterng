@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Member Welcome Pack · Elken Nigeria</title>
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
+
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/signup.css?v=20260923a">
+  <link rel="stylesheet" href="assets/css/member-flows.css?v=20260923a">
+  <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
+  <script src="assets/js/elken-ui.js" defer></script>
+</head>
+<body data-page="member-welcome">
+  <div id="offline-banner" class="offline-banner">Connection status</div>
+
+  <main id="main">
+
+    <!-- Page banner (matches the marketing site's section banners) -->
+    <section class="sec-banner sec-banner--gradient sec-banner--short">
+      <div class="sec-banner__glow" aria-hidden="true"></div>
+      <div class="sec-banner__inner">
+        <div class="sec-banner__crumb">
+          <nav class="ek-breadcrumb" aria-label="Breadcrumb">
+            <a href="account.html">My Account</a><span aria-hidden="true">/</span><span aria-current="page">Member Welcome Pack</span>
+          </nav>
+        </div>
+        <div class="sec-banner__copy">
+          <h1 class="ek-h1">Member <span class="t-accent">Welcome Pack.</span></h1>
+          <p class="sec-banner__sub">Continue your order with your current member info. Referrer fields are pre-filled with your profile.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec-pad member-section">
+      <div class="ek-container member-container">
+
+        <form id="regForm" autocomplete="off" novalidate>
+          <!-- ====== Section 1: Basic Info ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_basic">Basic Information</div>
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label data-i18n="signup.country">Country</label>
+                <select class="ek-select" name="country" id="regCountry">
+                  <option value="Nigeria" selected>Nigeria</option>
+                </select>
+              </div>
+
+              <div class="field-row ek-field">
+                <label data-i18n="signup.language">Language</label>
+                <select class="ek-select" name="language" id="regLanguage">
+                  <option value="en" selected>English</option>
+                  <option value="zh">中文</option>
+                </select>
+              </div>
+
+              <div class="field-row ek-field">
+                <label data-i18n="signup.member_id">Member ID</label>
+                <input class="ek-input" type="text" id="regMemberId" readonly aria-label="Member ID (auto-generated)" />
+              </div>
+
+              <div class="field-row ek-field">
+                <label data-i18n="signup.order_level">Order Level</label>
+                <select class="ek-select" name="orderLevel" id="regOrderLevel">
+                  <option value="" disabled selected data-i18n="signup.select_level">Select level</option>
+                  <option value="silver" data-i18n="signup.level_silver">Silver Card</option>
+                  <option value="gold" data-i18n="signup.level_gold">Gold Card</option>
+                </select>
+              </div>
+
+              <div class="field-row ek-field field-row--full">
+                <label><span data-i18n="signup.center_id">Reporting Center ID</span><span class="req-star">*</span></label>
+                <input class="ek-input" type="text" name="centerId" id="regCenterId"
+                       value="NG00000001"
+                       data-i18n-ph="signup.center_id_ph" placeholder="Enter reporting center ID" required />
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Section 2: Product Selection ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_products">Products</div>
+            <p class="sec-hint" data-i18n="signup.products_hint">Tap a product to add it to your starter order, then set the quantity you need.</p>
+            <div class="prod-grid" id="prodList" aria-live="polite"></div>
+            <div class="prod-summary-bar" id="prodSummary">
+              <span data-i18n="signup.summary_price">Subtotal:</span> <b id="summaryPrice">NGN 0</b>
+              <span>BV:</span> <b id="summaryBV">0</b>
+              <span data-i18n="signup.summary_tax">Tax:</span> <b id="summaryTax">NGN 0</b>
+            </div>
+          </div>
+
+          <!-- ====== Section 3: Network Information ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_network">Network Information</div>
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label data-i18n="signup.referrer_id">Referrer ID</label>
+                <input class="ek-input" type="text" name="referrerId" id="regReferrerId"
+                       placeholder="e.g. NG12345678" autocomplete="off" />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
+                <input class="ek-input" type="text" name="actualReferrerId" id="regActualReferrerId"
+                       placeholder="e.g. NG12345678" autocomplete="off" />
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Section 4: Personal Information ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_personal">Personal Information</div>
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label data-i18n="signup.member_name">Member Name</label>
+                <input class="ek-input" type="text" name="memberName" id="regMemberName"
+                       data-i18n-ph="signup.name_ph" placeholder="Full name" required />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.phone">Phone</label>
+                <input class="ek-input" type="tel" name="phone" id="regPhone"
+                       placeholder="+234 ..." required />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.email">Email</label>
+                <input class="ek-input" type="email" name="email" id="regEmail"
+                       placeholder="name@example.com" required />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.login_password">Login Password</label>
+                <input class="ek-input" type="password" name="loginPassword" id="regLoginPwd"
+                       minlength="6" autocomplete="new-password" required />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.payment_password">Payment Password</label>
+                <input class="ek-input" type="password" name="paymentPassword" id="regPayPwd"
+                       minlength="6" autocomplete="new-password" required />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.recipient">Recipient</label>
+                <input class="ek-input" type="text" name="recipient" id="regRecipient"
+                       data-i18n-ph="signup.recipient_ph" placeholder="Recipient full name" />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.recipient_phone">Recipient Phone</label>
+                <input class="ek-input" type="tel" name="recipientPhone" id="regRecipientPhone"
+                       placeholder="+234 ..." />
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Section 5: Delivery Method ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_delivery">Delivery Method</div>
+            <div class="field-row ek-field field-row--full">
+              <label data-i18n="signup.delivery_method">Delivery Method</label>
+              <div class="radio-group">
+                <label class="radio-item">
+                  <input type="radio" name="deliveryMethod" value="door" checked />
+                  <span data-i18n="signup.door_delivery">Door Delivery</span>
+                </label>
+                <label class="radio-item">
+                  <input type="radio" name="deliveryMethod" value="pickup" />
+                  <span data-i18n="signup.pickup">Pickup</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Section 6: Address Details ====== -->
+          <div class="ek-card sec-block" id="addressSection">
+            <div class="sec-title" data-i18n="signup.sec_address">Address Details</div>
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label data-i18n="signup.region">Region / State</label>
+                <select class="ek-select" name="region" id="regRegion">
+                  <option value="" disabled selected data-i18n="signup.select_region">Select region</option>
+                  <option value="Lagos">Lagos</option>
+                  <option value="Abuja FCT">Abuja FCT</option>
+                  <option value="Rivers">Rivers</option>
+                  <option value="Kano">Kano</option>
+                  <option value="Oyo">Oyo</option>
+                  <option value="Edo">Edo</option>
+                  <option value="Delta">Delta</option>
+                  <option value="Enugu">Enugu</option>
+                  <option value="Kaduna">Kaduna</option>
+                  <option value="Ogun">Ogun</option>
+                  <option value="Anambra">Anambra</option>
+                  <option value="Imo">Imo</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.city">City</label>
+                <input class="ek-input" type="text" name="city" id="regCity" placeholder="City" />
+              </div>
+              <div class="field-row ek-field field-row--full">
+                <label data-i18n="signup.detail_address">Detailed Address</label>
+                <textarea class="ek-input" name="detailAddress" id="regDetailAddress" rows="2"
+                          data-i18n-ph="signup.address_ph" placeholder="Street address, building, landmark..."></textarea>
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.area">Area / District</label>
+                <input class="ek-input" type="text" name="area" id="regArea" placeholder="Area or district" />
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Section 7: Payment Method ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_payment">Payment Method</div>
+
+            <div class="pay-method-grid" id="signupPayGrid"></div>
+
+            <!-- Method panels are built on demand by the shared payment layer
+                 (assets/js/payment-methods.js) so every flow behaves the same. -->
+            <div id="signupPayPanels"></div>
+
+            <!-- Remittance details — shown for Bank Transfer / Pay with Bank only -->
+            <div class="ek-card ek-card--quiet method-info-card" id="signupRemitFields">
+              <div data-i18n="signup.remit_title">Remittance details</div>
+              <p>Tell us which bank the transfer will come from so we can match it faster.</p>
+              <div class="reg-grid">
+                <div class="field-row ek-field">
+                  <label data-i18n="signup.bank_name">Remittance Bank</label>
+                  <select class="ek-select" name="bankName" id="regBankName">
+                    <option value="" disabled selected data-i18n="signup.select_bank">Select bank</option>
+                    <option value="Access Bank">Access Bank</option>
+                    <option value="First Bank of Nigeria">First Bank of Nigeria</option>
+                    <option value="Guaranty Trust Bank (GTB)">Guaranty Trust Bank (GTB)</option>
+                    <option value="United Bank for Africa (UBA)">United Bank for Africa (UBA)</option>
+                    <option value="Zenith Bank">Zenith Bank</option>
+                    <option value="Ecobank Nigeria">Ecobank Nigeria</option>
+                    <option value="Fidelity Bank">Fidelity Bank</option>
+                    <option value="Stanbic IBTC">Stanbic IBTC</option>
+                    <option value="Union Bank">Union Bank</option>
+                    <option value="Wema Bank">Wema Bank</option>
+                    <option value="Sterling Bank">Sterling Bank</option>
+                    <option value="Polaris Bank">Polaris Bank</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="field-row ek-field">
+                  <label data-i18n="signup.bank_branch">Bank Branch</label>
+                  <input class="ek-input" type="text" name="bankBranch" id="regBankBranch"
+                         data-i18n-ph="signup.branch_ph" placeholder="Enter branch name" />
+                </div>
+                <div class="field-row ek-field field-row--full">
+                  <label data-i18n="signup.bank_account">Account Number</label>
+                  <input class="ek-input" type="text" name="bankAccount" id="regBankAccount"
+                         placeholder="10-digit account number" maxlength="10" inputmode="numeric" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Submit ====== -->
+          <div class="reg-submit-wrap">
+            <button type="submit" class="ek-btn ek-btn--primary" id="regSubmitBtn" data-i18n="signup.submit_btn">Save</button>
+          </div>
+
+        </form>
+
+        <p class="auth-switch-reg">
+          <span data-i18n="login.have_account">Already have an account?</span>
+          <a href="login.html" data-i18n="common.sign_in">Sign in</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Site footer (rendered by app.js, same as the marketing site) -->
+  <div id="app-footer" class="ek-site-footer"></div>
+
+  <script src="assets/i18n/strings.js?v=20260909c"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
+  <script src="assets/js/website.js?v=20260909c"></script>
+  <script src="assets/js/qr.js?v=20260915a"></script>
+  <script src="assets/js/payment-methods.js?v=20260915a"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      /* ---------- i18n apply ---------- */
+      function tr(key) {
+        return (window.T && typeof window.T === 'function') ? window.T.tr(key) : key;
+      }
+
+      /* ---------- Error helpers ---------- */
+      function setErr(input, msg) {
+        if (!input) return;
+        const row = input.closest('.field-row');
+        let errEl = row ? row.querySelector('.field-err-text') : null;
+        if (!errEl && row) {
+          errEl = document.createElement('small');
+          errEl.className = 'field-err-text';
+          row.appendChild(errEl);
+        }
+        if (errEl) errEl.textContent = msg || '';
+        if (msg) input.setAttribute('aria-invalid', 'true');
+        else input.removeAttribute('aria-invalid');
+      }
+      function clearErr(input) { setErr(input, ''); }
+
+      /* ---------- Generate Member ID on load ---------- */
+      const memberIdInput = document.getElementById('regMemberId');
+      if (memberIdInput && window.ProductCatalog && window.ProductCatalog.genMemberId) {
+        memberIdInput.value = window.ProductCatalog.genMemberId();
+      } else if (memberIdInput) {
+        memberIdInput.value = 'NG' + Math.floor(Math.random() * 90000000 + 10000000).toString();
+      }
+
+      /* ---------- Auto-fill referrer: current member info by default ---------- */
+      // Read current member's referrer data from al.memberData (written by account page on sign-in)
+      let memberReferrerId = null;
+      let memberActualReferrerId = null;
+      let md = {};
+      try {
+        md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+        memberReferrerId = md.referrerId || null;
+        memberActualReferrerId = md.actualReferrerId || null;
+      } catch(e) {}
+
+      const referrerInput = document.getElementById('regReferrerId');
+      const actualReferrerInput = document.getElementById('regActualReferrerId');
+      // URL ?ref= parameter takes priority over stored member data
+      let refId = memberReferrerId || 'NG00000001';
+      let actualRefId = memberActualReferrerId || refId;
+      try {
+        const refParam = new URLSearchParams(location.search).get('ref');
+        if (refParam && /^NG\d{8}$/i.test(refParam.trim())) {
+          refId = refParam.trim().toUpperCase();
+          actualRefId = refId;
+        }
+      } catch(e) {}
+      if (referrerInput) referrerInput.value = refId;
+      if (actualReferrerInput) actualReferrerInput.value = actualRefId;
+
+      /* ---------- Prefill the current member's own profile (editable defaults) ----------
+         Keeps the welcome-pack form from looking empty; every field stays editable. */
+      const setIfEmpty = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && !el.value.trim() && val) el.value = val;
+      };
+      setIfEmpty('regMemberName', md.fullName || md.name || '');
+      setIfEmpty('regPhone', md.phone || '');
+      setIfEmpty('regEmail', md.email || '');
+      setIfEmpty('regCity', md.city || '');
+      setIfEmpty('regArea', md.district || md.area || '');
+
+      /* ---------- Delivery Method toggles Address Details ---------- */
+      const addressSection = document.getElementById('addressSection');
+      const deliveryRadios = document.querySelectorAll('input[name="deliveryMethod"]');
+      function syncAddressVisibility() {
+        if (!addressSection) return;
+        const method = document.querySelector('input[name="deliveryMethod"]:checked');
+        addressSection.style.display = (method && method.value === 'pickup') ? 'none' : '';
+      }
+      deliveryRadios.forEach(r => r.addEventListener('change', syncAddressVisibility));
+      syncAddressVisibility();
+
+      /* ---------- Shared payment layer (assets/js/payment-methods.js) ----------
+         The chooser and every method panel come from PayMethods, so this flow
+         behaves exactly like checkout. */
+      let payMethods = null;
+
+      function selectedTotal() {
+        let total = 0;
+        Object.keys(selectedProds || {}).forEach(pid => {
+          const p = products.find(x => x.id === pid);
+          if (p) total += (p.price || 0) * ((selectedProds[pid] || {}).qty || 1);
+        });
+        return total;
+      }
+
+      function buildPayMethods() {
+        payMethods = window.PayMethods.wire('#signupPayGrid', {
+          name: 'paymentMethod',
+          panelHost: '#signupPayPanels',
+          panelClass: 'ek-card ek-card--quiet method-info-card',
+          prefix: 'mw',
+          amount: selectedTotal,
+          selected: 'card',
+          includeBalance: true,
+          balanceMemberId: () => {
+            const el = document.getElementById('regMemberId');
+            return el ? el.value : null;
+          },
+          balanceAmountId: 'mwPayBalanceAmount',
+          companions: { bank: '#signupRemitFields', paybank: '#signupRemitFields' },
+          // no onChange: this flow has no live pay button — the form's own
+          // validation runs on submit, so a channel change needs no callback.
+        });
+        return payMethods;
+      }
+
+      function refreshPayPanels() { if (payMethods) payMethods.refresh(); }
+      function selectPayMethod(value) { if (payMethods) payMethods.select(value); }
+      function payMethodComplete() {
+        return !!(payMethods && payMethods.value() && payMethods.isComplete());
+      }
+      function paymentReference() { return payMethods ? payMethods.reference : null; }
+
+      /* ---------- Render product grid (official card style) ---------- */
+      const prodList = document.getElementById('prodList');
+      const products = (window.ProductCatalog && window.ProductCatalog.allProducts)
+        ? window.ProductCatalog.allProducts : [];
+
+      // State: selected products { productId: qty }
+      const selectedProds = {};
+
+      function renderProducts() {
+        if (!prodList) return;
+
+        if (!products.length) {
+          prodList.innerHTML = '<div class="prod-empty">No products available.</div>';
+          updateSummary();
+          return;
+        }
+
+        prodList.innerHTML = products.map(p => {
+          const sel = selectedProds[p.id];
+          const qty = sel ? sel.qty : 0;
+          const checked = !!sel;
+          const imgSrc = p.img
+            ? ('assets/img/products/' + (p.category || '') + '/' + p.img)
+            : '';
+          const bvVal = typeof p.bv === 'number' ? p.bv : Math.round((p.price || 0) * 0.001 * 100) / 100;
+          const rpVal = Number(p.rp || 0).toFixed(2);
+          const stock = Number(p.stock) || 0;
+          const stockCls = stock <= 0 ? ' is-out' : (stock < 5 ? ' is-low' : ' is-ok');
+          const badge = checked ? `<span class="prod-card__badge">✓ Added</span>` : '';
+          const media = imgSrc
+            ? `<div class="prod-card__media">${badge}<img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'" /></div>`
+            : `<div class="prod-card__media prod-card__media--empty">${badge}</div>`;
+          const foot = checked
+            ? `<div class="prod-card__foot prod-card__foot--added">
+                 <div class="qty-stepper" data-id="${p.id}">
+                   <button type="button" class="qty-minus" data-id="${p.id}" aria-label="Decrease quantity">−</button>
+                   <input type="number" class="qty-val" data-id="${p.id}" value="${qty}" min="1" max="99" aria-label="Quantity" />
+                   <button type="button" class="qty-plus" data-id="${p.id}" aria-label="Increase quantity">+</button>
+                 </div>
+                 <button type="button" class="prod-card__remove" data-id="${p.id}">Remove</button>
+               </div>`
+            : `<div class="prod-card__foot">
+                 <button type="button" class="prod-card__add" data-id="${p.id}">＋ Add to registration</button>
+               </div>`;
+          return `
+            <article class="prod-card${checked ? ' is-added' : ''}" data-id="${p.id}">
+              ${media}
+              <div class="prod-card__body">
+                <h3 class="prod-card__name">${p.name}</h3>
+                <span class="prod-card__sku">${p.id.toUpperCase()}</span>
+                <div class="prod-card__meta">
+                  <span class="prod-card__price">NGN ${(p.price || 0).toLocaleString()}</span>
+                  <span class="prod-card__bv">BV ${bvVal}</span>
+                </div>
+                <span class="prod-card__rp">RP: NGN ${rpVal}</span>
+                <span class="prod-card__stock${stockCls}">Stock: ${stock}</span>
+              </div>
+              ${foot}
+            </article>`;
+        }).join('');
+
+        updateSummary();
+      }
+
+      function updateSummary() {
+        const priceEl = document.getElementById('summaryPrice');
+        const bvEl = document.getElementById('summaryBV');
+        const taxEl = document.getElementById('summaryTax');
+        let total = 0, totalBV = 0;
+        Object.keys(selectedProds).forEach(pid => {
+          const s = selectedProds[pid];
+          const p = products.find(x => x.id === pid);
+          if (p) {
+            total += (p.price || 0) * s.qty;
+            const bv = typeof p.bv === 'number' ? p.bv : Math.round((p.price || 0) * 0.001 * 100) / 100;
+            totalBV += bv * s.qty;
+          }
+        });
+        if (priceEl) priceEl.textContent = 'NGN ' + total.toLocaleString();
+        if (bvEl) bvEl.textContent = totalBV.toFixed(totalBV % 1 === 0 ? 0 : 1);
+        if (taxEl) taxEl.textContent = 'NGN 0';
+        // Keep the open payment panel's amount in sync with the selection
+        refreshPayPanels();
+      }
+
+      // Set/reset a product's quantity. qty<=0 deselects the product (removes it
+      // from the order); qty>=1 selects it and records the quantity. Re-renders
+      // the grid so the card reflects its selected/added state.
+      function setQty(pid, qty) {
+        qty = Math.max(0, Math.min(99, parseInt(qty, 10) || 0));
+        if (qty <= 0) delete selectedProds[pid];
+        else {
+          if (!selectedProds[pid]) selectedProds[pid] = { qty: 1 };
+          selectedProds[pid].qty = qty;
+        }
+        renderProducts();
+      }
+
+      // Card interactions — delegated so re-renders don't lose listeners.
+      prodList.addEventListener('click', e => {
+        const addBtn = e.target.closest('.prod-card__add');
+        if (addBtn) { setQty(addBtn.dataset.id, 1); return; }
+        const remBtn = e.target.closest('.prod-card__remove');
+        if (remBtn) { setQty(remBtn.dataset.id, 0); return; }
+        const step = e.target.closest('.qty-minus, .qty-plus');
+        if (step) {
+          const pid = step.dataset.id;
+          const input = prodList.querySelector(`.qty-val[data-id="${pid}"]`);
+          let v = input ? (parseInt(input.value, 10) || 1) : 1;
+          v = step.classList.contains('qty-minus') ? v - 1 : v + 1;
+          setQty(pid, v);
+        }
+      });
+
+      // Direct number input — typing a value selects; clearing/0 deselects
+      prodList.addEventListener('change', e => {
+        if (e.target.classList.contains('qty-val')) {
+          setQty(e.target.dataset.id, parseInt(e.target.value, 10) || 0);
+        }
+      });
+
+      // Initial render
+      renderProducts();
+      buildPayMethods();
+
+      /* ---------- Form validation & submit ---------- */
+      const form = document.getElementById('regForm');
+      const submitBtn = document.getElementById('regSubmitBtn');
+
+      // Clear errors on input
+      form.querySelectorAll('.input, .select, textarea').forEach(el => {
+        el.addEventListener('input', () => clearErr(el));
+        el.addEventListener('change', () => clearErr(el));
+      });
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        let ok = true;
+        const firstInvalid = () => form.querySelector('[aria-invalid="true"]');
+
+        // Required fields check
+        const requiredMap = [
+          ['regCenterId', 'signup.err_center_id'],
+          ['regMemberName', 'login.err_required'],
+          ['regPhone', 'login.err_required'],
+          ['regEmail', 'login.err_required'],
+          ['regLoginPwd', 'login.err_required'],
+          ['regPayPwd', 'login.err_required'],
+        ];
+        requiredMap.forEach(([id, errKey]) => {
+          const el = document.getElementById(id);
+          if (el && !el.value.trim()) { setErr(el, tr(errKey)); ok = false; }
+          else if (el) clearErr(el);
+        });
+
+        // Email format
+        const emailEl = document.getElementById('regEmail');
+        if (emailEl && emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
+          setErr(emailEl, tr('checkout.email_invalid')); ok = false;
+        }
+
+        // Password length
+        const pwdEl = document.getElementById('regLoginPwd');
+        if (pwdEl && pwdEl.value.length > 0 && pwdEl.value.length < 6) {
+          setErr(pwdEl, tr('login.err_pwd')); ok = false;
+        }
+        const payPwdEl = document.getElementById('regPayPwd');
+        if (payPwdEl && payPwdEl.value.length > 0 && payPwdEl.value.length < 6) {
+          setErr(payPwdEl, tr('login.err_pwd')); ok = false;
+        }
+
+        // Order Level required
+        const levelEl = document.getElementById('regOrderLevel');
+        if (levelEl && !levelEl.value) { setErr(levelEl, tr('signup.err_level_required')); ok = false; }
+        else if (levelEl) clearErr(levelEl);
+
+        // At least one product checked
+        const hasProduct = Object.keys(selectedProds).length > 0;
+        if (!hasProduct) {
+          window.toast(tr('signup.err_product_required'), 'error');
+          ok = false;
+        }
+
+        // The selected payment channel must carry every detail it needs
+        if (!payMethodComplete()) {
+          window.toast(tr('payment.err_incomplete'), 'error');
+          ok = false;
+        }
+
+        if (!ok) {
+          const first = firstInvalid();
+          if (first) first.focus();
+          return;
+        }
+
+        // --- All valid → process registration ---
+        submitBtn.disabled = true;
+        submitBtn.textContent = tr('signup.saving') || 'Saving...';
+
+        setTimeout(() => {
+          const memberId = memberIdInput ? memberIdInput.value : '';
+
+          // Collect order items from selected products
+          const orderItems = [];
+          let orderTotal = 0, orderBV = 0;
+          Object.keys(selectedProds).forEach(pid => {
+            const s = selectedProds[pid];
+            const p = products.find(x => x.id === pid);
+            if (p) {
+              orderItems.push({
+                id: p.id, name: p.name, price: p.price,
+                img: p.img, category: p.category, qty: s.qty
+              });
+              orderTotal += p.price * s.qty;
+              const bv = typeof p.bv === 'number' ? p.bv : Math.round(p.price * 0.001 * 100) / 100;
+              orderBV += bv * s.qty;
+            }
+          });
+
+          // Collect form data
+          const userData = {
+            firstName: form.memberName.value.split(/\s+/)[0] || '',
+            name: form.memberName.value.trim(),
+            email: form.email.value.trim(),
+            phone: form.phone.value.trim(),
+            memberId: memberId,
+            country: form.country.value,
+            language: form.language.value,
+            orderLevel: form.orderLevel.value,
+            centerId: form.centerId.value.trim(),
+            referrerId: form.referrerId.value.trim().toUpperCase(),
+            actualReferrerId: form.actualReferrerId.value.trim().toUpperCase(),
+            loginPassword: form.loginPassword.value,
+            paymentPassword: form.paymentPassword.value,
+            recipient: form.recipient.value.trim(),
+            recipientPhone: form.recipientPhone.value.trim(),
+            deliveryMethod: form.deliveryMethod.value,
+            region: form.region.value,
+            detailAddress: form.detailAddress.value.trim(),
+            city: form.city.value.trim(),
+            area: form.area.value.trim(),
+            bankName: form.bankName.value,
+            bankBranch: form.bankBranch.value.trim(),
+            bankAccount: form.bankAccount.value.trim(),
+            paymentMethod: (payMethods && payMethods.value()) || form.paymentMethod.value,
+            paymentReference: paymentReference(),
+            type: 'member',
+            signedInAt: Date.now(),
+          };
+
+          // Save member data to localStorage via Auth
+          if (window.Auth && window.Auth.login) {
+            window.Auth.login(userData);
+          } else {
+            localStorage.setItem('al.memberData', JSON.stringify(userData));
+          }
+
+          // Save selected products as cart (for checkout flow)
+          if (window.ProductCatalog && window.ProductCatalog.clearCart) {
+            window.ProductCatalog.clearCart();
+          }
+          orderItems.forEach(item => {
+            if (window.ProductCatalog && window.ProductCatalog.addToCart) {
+              window.ProductCatalog.addToCart(item, item.qty);
+            }
+          });
+
+          // Create order record
+          const orderId = (window.ProductCatalog && window.ProductCatalog.genOrderId)
+            ? window.ProductCatalog.genOrderId() : ('ORD' + Date.now().toString(36));
+          const order = {
+            id: orderId,
+            memberId: memberId,
+            items: orderItems,
+            total: orderTotal,
+            bv: orderBV,
+            status: 'completed',
+            date: new Date().toISOString(),
+            contactEmail: userData.email,
+            contactPhone: userData.phone,
+            recipient: userData.recipient || userData.name,
+            phone: userData.recipientPhone || userData.phone,
+            deliveryMethod: userData.deliveryMethod,
+            region: userData.region,
+            detailAddress: userData.detailAddress,
+            city: userData.city,
+            area: userData.area,
+            paymentMethod: userData.paymentMethod,
+            payment: userData.paymentMethod,
+            paymentLabel: (window.PayMethods && window.PayMethods.label(userData.paymentMethod)) || userData.paymentMethod || null,
+            paymentReference: userData.paymentReference || null,
+            payStatus: 'Unpaid',
+            orderLevel: userData.orderLevel,
+            centerId: userData.centerId,
+          };
+
+          // Handle referral BV credit
+          if (userData.referrerId && userData.referrerId !== memberId) {
+            order.referrerId = userData.referrerId;
+            if (window.ProductCatalog && window.ProductCatalog.creditReferralBV) {
+              window.ProductCatalog.creditReferralBV({
+                id: orderId, referrerId: userData.referrerId,
+                bv: orderBV, customerName: userData.name, date: order.date
+              });
+            }
+          }
+
+          // Save order
+          try {
+            const orders = JSON.parse(localStorage.getItem('al.orders') || '[]');
+            orders.push(order);
+            localStorage.setItem('al.orders', JSON.stringify(orders));
+            window.dispatchEvent(new CustomEvent('al:orderschange'));
+          } catch(err) {}
+
+          // Pay-by-balance settles immediately — deduct the new member's wallet.
+          if (userData.paymentMethod === 'balance' && memberId && window.ProductCatalog && window.ProductCatalog.debitEcoin) {
+            window.ProductCatalog.debitEcoin({
+              memberId: memberId,
+              amount: orderTotal,
+              type: 'debit',
+              orderId: orderId,
+              remark: 'Member Welcome Pack'
+            });
+          }
+
+          // Success feedback
+          if (window.toast) {
+            window.toast(tr('signup.success_msg', { memberId }), 'success');
+          }
+
+          submitBtn.textContent = tr('signup.success_done') || 'Registration Complete!';
+          submitBtn.style.background = 'var(--ek-blue)';
+
+          // Redirect after delay
+          let remaining = 3;
+          const redirectTimer = setInterval(() => {
+            remaining -= 1;
+            if (remaining > 0) {
+              submitBtn.textContent = (tr('login.redirecting_in') || 'Redirecting in {s}s').replace('{s}', remaining);
+            } else {
+              clearInterval(redirectTimer);
+              location.href = 'account.html';
+            }
+          }, 1000);
+        }, 600);
+      });
+
+      /* ---------- Apply i18n to static texts ---------- */
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = tr(el.dataset.i18n);
+      });
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        el.setAttribute('placeholder', tr(el.dataset.i18nPh));
+      });
+
+    })();
+  </script>
+</body>
+</html>

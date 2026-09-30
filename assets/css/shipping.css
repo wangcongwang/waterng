@@ -1,0 +1,84 @@
+/* shipping.css — Elken UI Kit styles for shipping.html
+   Loaded AFTER water-pages.css and checkout.css.
+   Token-only (--ek-*); shared checkout primitives (.stepper / .pickup-* /
+   .checkout-card / .summary) are provided by checkout.css. This file covers the
+   shipping-specific two-column shell and the order-meta / order-link components. */
+
+/* ---------- Two-column shell: order content + sticky help sidebar ---------- */
+.shipping-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--ek-sidebar-w);
+  gap: var(--ek-24);
+  align-items: start;
+}
+.shipping-side {
+  position: sticky;
+  top: calc(var(--ek-header-h) + var(--ek-24));
+}
+
+/* ---------- Alert spacing (ek-alert base comes from elken-ui.css) ---------- */
+.shipping-alert { margin-bottom: var(--ek-24); }
+
+/* ---------- Active pickup item (complement water-pages.css border/background) ---------- */
+.pickup-item.is-active .pickup-radio { border-color: var(--ek-blue); }
+.pickup-item.is-active .pickup-radio::after { transform: scale(1); }
+
+/* ---------- Order summary rows (inside the "Order summary" checkout-card) ---------- */
+.sign-side { padding: var(--ek-4) 0; }
+.terms-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ek-12);
+  margin: var(--ek-16) 0 0;
+}
+.terms-meta .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--ek-12);
+  padding: var(--ek-10) var(--ek-14);
+  background: var(--ek-surface-sunken);
+  border-radius: var(--ek-radius-sm);
+}
+.terms-meta .row span {
+  font-size: var(--ek-caption);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ek-muted);
+}
+.terms-meta .row b {
+  font-size: var(--ek-small);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal);
+  text-align: right;
+}
+
+/* ---------- Order detail link box ---------- */
+.order-link-box { margin-top: var(--ek-16); }
+.order-link-box > label {
+  display: block;
+  font-size: var(--ek-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ek-muted);
+  margin-bottom: var(--ek-8);
+}
+.order-link-row {
+  display: flex;
+  gap: var(--ek-8);
+  align-items: center;
+  margin-bottom: var(--ek-16);
+}
+.order-link-row .ek-input { flex: 1; min-width: 0; }
+
+/* ---------- Help sidebar: vertical spacing between stacked buttons ---------- */
+.shipping-side .checkout-card > .ek-btn--block + .ek-btn--block { margin-top: var(--ek-12); }
+
+/* ---------- Responsive: stack to single column ---------- */
+@media (max-width: 767px) {
+  .shipping-grid {
+    grid-template-columns: 1fr;
+    gap: var(--ek-16);
+  }
+  .shipping-side { position: static; }
+}

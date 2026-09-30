@@ -1,0 +1,365 @@
+/* ==========================================================================
+   Product detail page
+   Several detail-page regions previously had no styling at all (chip row,
+   BV row, price, benefit/list/scenario grids, related list), which made the
+   page read as loose stacked text. This file gives every region a proper
+   token-based layout. Loaded last, after water-pages.css.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- HERO --- */
+.product-detail-hero {
+  padding-block: var(--ek-48);
+  background: var(--ek-surface-page);
+  border-bottom: 1px solid var(--ek-border);
+}
+
+.product-detail-hero-grid {
+  align-items: center;
+  gap: var(--ek-48);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
+}
+
+.product-detail-copy {
+  display: grid;
+  align-content: center;
+  gap: var(--ek-16);
+  min-width: 0;
+}
+
+.product-detail-copy .crumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ek-8);
+  margin: 0;
+  color: var(--ek-muted);
+}
+
+.product-detail-copy .crumbs a {
+  color: var(--ek-muted);
+  text-decoration: none;
+}
+
+.product-detail-copy .crumbs a:hover {
+  color: var(--ek-blue);
+  text-decoration: underline;
+}
+
+.product-detail-copy .crumbs span { color: var(--ek-grey-out); }
+
+.product-detail-copy .eyebrow {
+  margin: 0;
+  color: var(--ek-blue);
+}
+
+.product-detail-copy h1 {
+  margin: 0;
+  font-size: var(--ek-h1);
+  font-weight: var(--ek-w-bold);
+  line-height: var(--ek-h1-lh);
+  letter-spacing: var(--ek-h1-ls);
+  color: var(--ek-charcoal-deep);
+}
+
+.product-detail-copy #detailIntro {
+  margin: 0;
+  max-width: 56ch;
+  font-size: var(--ek-lead);
+  line-height: var(--ek-lead-lh);
+  color: var(--ek-muted);
+}
+
+/* Tag chips */
+.detail-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ek-8);
+}
+
+.detail-chip-row span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 var(--ek-12);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-surface);
+  color: var(--ek-charcoal);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+}
+
+/* Price + BV */
+.detail-price-block {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ek-12);
+  flex-wrap: wrap;
+  padding-top: var(--ek-4);
+}
+
+.detail-price {
+  font-size: var(--ek-h2);
+  font-weight: var(--ek-w-bold);
+  line-height: var(--ek-h2-lh);
+  color: var(--ek-charcoal-deep);
+}
+
+.detail-price-was {
+  font-size: var(--ek-text);
+  color: var(--ek-muted);
+  text-decoration: line-through;
+}
+
+.detail-bv-row { display: flex; align-items: center; }
+
+.detail-bv-row .bv-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ek-4);
+  min-height: 28px;
+  padding: 0 var(--ek-12);
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-info-tint);
+  color: var(--ek-blue);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+}
+
+.detail-bv-row .bv-badge b { color: var(--ek-blue); }
+
+/* Buy bar */
+.detail-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-12);
+  flex-wrap: wrap;
+  padding-top: var(--ek-8);
+}
+
+.detail-qty { flex-shrink: 0; }
+
+.detail-actions .ek-btn { flex: 0 1 auto; }
+
+/* Product visual: framed panel, image contained */
+.product-detail-visual {
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow);
+}
+
+/* ------------------------------------------------------------- CONTENT --- */
+.product-detail-section { padding-block: var(--ek-48); }
+
+.product-detail-layout {
+  gap: var(--ek-24);
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+}
+
+.detail-panel,
+.detail-note {
+  display: grid;
+  gap: var(--ek-16);
+  padding: var(--ek-24);
+  border-radius: var(--ek-radius-lg);
+}
+
+.detail-section-head {
+  display: grid;
+  gap: var(--ek-4);
+}
+
+.detail-section-head .eyebrow {
+  margin: 0;
+  color: var(--ek-blue);
+}
+
+.detail-section-head h2 {
+  margin: 0;
+  font-size: var(--ek-h3);
+  font-weight: var(--ek-w-bold);
+  line-height: var(--ek-h3-lh);
+  color: var(--ek-charcoal-deep);
+}
+
+.detail-lead {
+  margin: 0;
+  font-size: var(--ek-text);
+  line-height: var(--ek-text-lh);
+  color: var(--ek-muted);
+}
+
+/* Benefits */
+.detail-benefit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--ek-16);
+}
+
+.detail-benefit-grid article {
+  display: grid;
+  gap: var(--ek-8);
+  padding: var(--ek-20);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  background: var(--ek-surface-sunken);
+}
+
+.detail-benefit-grid h3 {
+  margin: 0;
+  font-size: var(--ek-h4);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-blue);
+}
+
+.detail-benefit-grid p {
+  margin: 0;
+  font-size: var(--ek-small);
+  line-height: var(--ek-small-lh);
+  color: var(--ek-muted);
+}
+
+/* Formula points */
+.detail-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--ek-8);
+}
+
+.detail-list-item {
+  position: relative;
+  padding: var(--ek-12) var(--ek-16) var(--ek-12) var(--ek-32);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  background: var(--ek-surface);
+  font-size: var(--ek-small);
+  line-height: var(--ek-small-lh);
+  color: var(--ek-charcoal);
+}
+
+.detail-list-item::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: var(--ek-16);
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-blue);
+}
+
+/* Use cases: left accent rail */
+.detail-scenario-list {
+  display: grid;
+  gap: var(--ek-12);
+}
+
+.detail-scenario-item {
+  padding: var(--ek-16) var(--ek-20);
+  border: 1px solid var(--ek-border);
+  border-left: 3px solid var(--ek-blue);
+  border-radius: var(--ek-radius);
+  background: var(--ek-surface-sunken);
+  font-size: var(--ek-text);
+  line-height: var(--ek-text-lh);
+  color: var(--ek-charcoal);
+}
+
+/* Aside -------------------------------------------------------------- */
+.detail-note h3 {
+  margin: 0;
+  font-size: var(--ek-h4);
+  font-weight: var(--ek-w-bold);
+  line-height: var(--ek-h4-lh);
+  color: var(--ek-charcoal-deep);
+}
+
+.detail-note .eyebrow {
+  margin: 0;
+  color: var(--ek-blue);
+}
+
+.detail-note p:not(.eyebrow) {
+  margin: 0;
+  font-size: var(--ek-small);
+  line-height: var(--ek-small-lh);
+  color: var(--ek-muted);
+}
+
+.related-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ek-12);
+}
+
+.related-list a {
+  display: grid;
+  justify-items: center;
+  gap: var(--ek-8);
+  padding: var(--ek-12);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  background: var(--ek-surface);
+  color: var(--ek-charcoal);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  text-align: center;
+  text-decoration: none;
+  transition: border-color var(--ek-fast) var(--ek-ease),
+              box-shadow var(--ek-fast) var(--ek-ease);
+}
+
+.related-list a:hover {
+  border-color: var(--ek-blue);
+  box-shadow: var(--ek-shadow-sm);
+}
+
+.related-list a img {
+  display: block;
+  width: 100%;
+  height: 72px;
+  object-fit: contain;
+}
+
+.related-list a span {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------ RESPONSIVE */
+@media (max-width: 1024px) {
+  .product-detail-hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--ek-32);
+  }
+
+  .product-detail-visual { order: -1; }
+
+  .product-detail-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .product-detail-hero,
+  .product-detail-section { padding-block: var(--ek-32); }
+
+  .detail-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .detail-actions .ek-btn,
+  .detail-qty {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .detail-qty { justify-content: space-between; }
+
+  .related-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

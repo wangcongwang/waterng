@@ -3,115 +3,115 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Products · AquaLease Nigeria</title>
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%2300875A' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
-  <link rel="stylesheet" href="assets/css/design-system.css" />
-  <link rel="stylesheet" href="assets/css/components.css" />
-  <link rel="stylesheet" href="assets/css/pages.css" />
+  <title>Elken Products | Supplements, Skincare &amp; Water Filters</title>
+  <meta name="description" content="Browse the Elken range: skincare supplements, vitamins and supplements, water filters and wellness devices. Prices published openly." />
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
+  <script src="assets/js/elken-ui.js?v=20260909c" defer></script>
 </head>
 <body data-page="products">
-  <div id="offline-banner" class="offline-banner">Offline mode · showing cached information</div>
-  <div id="app-header"></div>
+  <div id="app-header" class="ek-site-header"></div>
 
-  <main class="page">
-    <section class="page-head">
-      <div class="container">
-        <div class="crumbs"><a href="index.html">Home</a> <span>›</span> <span data-i18n="nav.products"></span></div>
-        <div class="row">
-          <div>
-            <h1 data-i18n="products.title"></h1>
-            <p class="sub" data-i18n="products.sub"></p>
-          </div>
-          <a class="btn btn-primary" href="mall.html" data-i18n="hero.cta"></a>
+  <main id="main">
+    <section class="sec-banner sec-banner--gradient sec-banner--short" id="categoryChooser">
+      <div class="sec-banner__glow" aria-hidden="true"></div>
+      <div class="sec-banner__inner">
+        <div class="sec-banner__crumb"><nav class="ek-breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">Products</span></nav></div>
+        <div class="sec-banner__copy">
+          <h1 class="ek-h1">Elken <span class="t-accent">products.</span></h1>
+          <p class="sec-banner__sub">Four ranges, sold through our head office in Abuja, our Elken Stockists across Lagos and registered Elken distributors.</p>
         </div>
       </div>
     </section>
 
-    <section>
-      <div class="container">
-        <div class="toolbar">
-          <div class="filter-pills" id="filterPills">
-            <button class="filter-pill active" data-cat="all" data-i18n="products.filters.all"></button>
-            <button class="filter-pill" data-cat="residential" data-i18n="products.filters.residential"></button>
-            <button class="filter-pill" data-cat="commercial" data-i18n="products.filters.commercial"></button>
-            <button class="filter-pill" data-cat="industrial" data-i18n="products.filters.industrial"></button>
-          </div>
-          <select class="sort-select" id="sortSelect">
-            <option value="recent" data-i18n="products.sort_recent"></option>
-            <option value="low" data-i18n="products.sort_low"></option>
-            <option value="high" data-i18n="products.sort_high"></option>
-          </select>
+    <section class="sec-pad sec-products">
+      <div class="ek-container">
+        <div class="ek-sechead">
+          <div class="ek-sechead__left"><p class="ek-eyebrow">Our ranges</p><h2 class="ek-h2">Four ranges, built for Nigerian households</h2></div>
+          <div class="ek-sechead__body"><p class="ek-lead">Each range answers a need Nigerian households already live with, whether that is water which must be treated before anyone can drink it, or the daily nutrition a family depends upon.</p></div>
         </div>
-        <div class="product-grid" id="grid"></div>
+        <div class="ek-cardrow">
+          <a class="ek-card" href="products-health.html">
+            <div class="ek-card__panel"><img src="assets/img/categories/cat-supplements.png" alt="Elken Spirulina supplement" loading="lazy"></div>
+            <div class="ek-card__body">
+              <h3 class="ek-h4">Health</h3>
+              <p class="ek-text">Daily nutrition for you and your family, made in Elken&rsquo;s own plant.</p>
+              <span class="ek-link">View range<svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </a>
+          <a class="ek-card" href="products-wellness.html">
+            <div class="ek-card__panel"><img src="assets/img/categories/cat-wellness.png" alt="Elken wellness device" loading="lazy"></div>
+            <div class="ek-card__body">
+              <h3 class="ek-h4">Wellness</h3>
+              <p class="ek-text">Personal wellness technology you use at home.</p>
+              <span class="ek-link">View range<svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </a>
+          <a class="ek-card" href="products-water-filters.html">
+            <div class="ek-card__panel"><img src="assets/img/categories/cat-water.png" alt="Elken Bio Pure water purifier" loading="lazy"></div>
+            <div class="ek-card__body">
+              <h3 class="ek-h4">Water</h3>
+              <p class="ek-text">An indoor purifier for the water you drink, and outdoor filters for the supply that reaches the rest of the house.</p>
+              <span class="ek-link">View range<svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </a>
+          <a class="ek-card" href="products-beauty.html">
+            <div class="ek-card__panel"><img src="assets/img/categories/cat-beauty.png" alt="Elken beauty supplement" loading="lazy"></div>
+            <div class="ek-card__body">
+              <h3 class="ek-h4">Beauty</h3>
+              <p class="ek-text">Supplements that work on your skin from within, taken as part of a daily routine.</p>
+              <span class="ek-link">View range<svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec-pad sec-about">
+      <div class="ek-container">
+        <div class="ek-sechead">
+          <div class="ek-sechead__left"><p class="ek-eyebrow">Buying safely</p><h2 class="ek-h2">How to be sure your products are genuine</h2></div>
+          <div class="ek-sechead__body">
+            <p class="ek-lead">Genuine Elken products are sold through our head office in Abuja, our Elken Stockists across Lagos, and registered Elken distributors. Every registered distributor can show you their Elken identification.</p>
+            <p class="ek-lead">If you are not sure whether a seller is authorised, call us on <a href="tel:+2349131178401">+234 913 117 8401</a> or message us on WhatsApp and we will confirm it for you.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec-pad sec-locations">
+      <div class="ek-container">
+        <div class="sec-locations__grid">
+          <div class="sec-locations__copy">
+            <h2 class="ek-h2">Come and see the range for yourself</h2>
+            <p class="ek-lead">Visit any of our six locations in Abuja and Lagos, or message us on WhatsApp and we will talk it through.</p>
+            <div class="sec-locations__actions"><a class="ek-btn ek-btn--white" href="https://wa.me/2349131178401">Chat on WhatsApp</a><a class="ek-btn ek-btn--ghostwhite" href="contact.html">Find a location</a></div>
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec-pad sec-products" id="productListing" hidden>
+      <div class="ek-container">
+        <div class="category-head">
+          <h2 id="categoryTitle"></h2>
+          <p id="categoryIntro"></p>
+        </div>
+        <div class="demo-product-grid" id="productGrid"></div>
       </div>
     </section>
   </main>
 
-  <div id="app-footer"></div>
+  <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js"></script>
-  <script src="assets/js/app.js"></script>
-  <script>
-    let state = { cat: 'all', sort: 'recent' };
-
-    function productImg(id) {
-      const prompts = {
-        'home-400': 'sleek white countertop RO water purifier on a warm cream kitchen counter, minimal industrial design, soft product photography, soft shadow, editorial commercial look, 800 GPD style but slimmer',
-        'home-800': 'modern countertop RO water purifier, two-tone white and deep green accents, soft product photography on a cream background, 800 GPD style',
-        'biz-1500': 'freestanding commercial water dispenser, matte black and brushed steel, hot and cold taps, soft product photography on a neutral office background',
-        'biz-3000': 'large freestanding commercial water dispenser for office use, twin RO, brushed steel finish, soft product photography on a neutral background',
-        'factory-6000': 'industrial stainless steel water purification system, multiple filter housings, frame mounted, on a clean industrial floor, soft product photography',
-        'kiosk-200': 'modern vending-style water kiosk with coin slot and POS, freestanding, colorful branding area, soft product photography on a neutral background',
-      };
-      const p = encodeURIComponent(prompts[id] || 'sleek water purifier');
-      return `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${p}&image_size=portrait_4_3`;
-    }
-
-    function renderProducts() {
-      const cards = window.T.trArray('products.cards');
-      if (!Array.isArray(cards)) return;
-      let list = cards.slice();
-      if (state.cat !== 'all') list = list.filter(c => c.cat === state.cat);
-      if (state.sort === 'low') list.sort((a, b) => a.price - b.price);
-      if (state.sort === 'high') list.sort((a, b) => b.price - a.price);
-      const grid = document.getElementById('grid');
-      grid.innerHTML = list.map(c => `
-        <article class="product-card" data-cat="${c.cat}">
-          <div class="pic">
-            <span class="tag">${c.tag}</span>
-            <img src="${productImg(c.img)}" alt="${c.name}" loading="lazy" />
-          </div>
-          <div class="body">
-            <div class="cat">${c.cat.toUpperCase()} · ${c.spec.split('·')[0].trim()}</div>
-            <h3>${c.name}</h3>
-            <div class="spec">${c.spec}</div>
-            <div class="price-row">
-              <div class="v">${window.Money.format(c.price)}<small> / unit</small></div>
-              <a class="btn btn-light btn-sm" href="mall.html">Lease now</a>
-            </div>
-          </div>
-        </article>
-      `).join('');
-    }
-
-    function bindProductUI() {
-      document.getElementById('filterPills').addEventListener('click', e => {
-        const b = e.target.closest('[data-cat]'); if (!b) return;
-        document.querySelectorAll('.filter-pill').forEach(x => x.classList.remove('active'));
-        b.classList.add('active');
-        state.cat = b.dataset.cat;
-        renderProducts();
-      });
-      document.getElementById('sortSelect').addEventListener('change', e => { state.sort = e.target.value; renderProducts(); });
-    }
-
-    function applyI18nProducts() {
-      document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = window.T.tr(el.dataset.i18n));
-      const sortMap = { recent: 'sort_recent', low: 'sort_low', high: 'sort_high' };
-      document.querySelectorAll('#sortSelect option').forEach(o => o.textContent = window.T.tr('products.' + sortMap[o.value]));
-    }
-
-    document.addEventListener('DOMContentLoaded', () => { applyI18nProducts(); renderProducts(); bindProductUI(); });
-  </script>
+  <script src="assets/i18n/strings.js?v=20260909c"></script>
+  <script src="assets/js/app.js?v=20260923b"></script>
+  <script src="assets/js/website.js?v=20260909c"></script>
 </body>
 </html>

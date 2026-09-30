@@ -1,0 +1,340 @@
+/* ============================================================================
+   Signup — marketing-site style registration page
+   ----------------------------------------------------------------------------
+   Visual language now matches the Elken marketing site: section banner +
+   ek-container + ek-card sections + an official product card grid for the
+   starter-product selection. Tokens only — no hex, no px font-sizes, no
+   !important. Section cards rely on the .ek-card base (elken-ui.css §2) for
+   surface, border, radius and padding; this file only adds spacing + titles.
+   ============================================================================ */
+
+/* ---------- Page shell ---------- */
+.signup-section { padding-top: var(--ek-48); padding-bottom: var(--ek-64); }
+.signup-container { max-width: 880px; }
+
+/* Section cards already get .ek-card styling. Just space them + title. */
+.sec-block + .sec-block { margin-top: var(--ek-20); }
+.sec-title {
+  margin: 0 0 var(--ek-16);
+  padding-bottom: var(--ek-12);
+  border-bottom: 1px solid var(--ek-border);
+  font-size: var(--ek-h4);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-blue);
+}
+.sec-hint {
+  margin: calc(-1 * var(--ek-4)) 0 var(--ek-16);
+  font-size: var(--ek-small);
+  color: var(--ek-muted);
+}
+
+/* ---------- Field grid ---------- */
+.reg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ek-16); }
+.field-row { grid-column: auto; min-width: 0; }
+.field-row--full { grid-column: 1 / -1; }
+
+.field-row > label {
+  display: block;
+  font-size: var(--ek-small);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal);
+  margin-bottom: var(--ek-8);
+}
+.field-row > label .req-star { color: var(--ek-blue); margin-left: 2px; }
+.field-row .ek-input,
+.field-row .ek-select,
+.field-row textarea.ek-input { width: 100%; }
+
+/* Inline field error (set by signup.html) */
+.field-err-text,
+.field-err {
+  display: block;
+  color: var(--fail, rgba(199, 56, 56, 1));
+  font-size: var(--ek-caption);
+  margin-top: var(--ek-4);
+}
+
+/* ---------- Product grid (official card style) ---------- */
+.prod-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--ek-20);
+}
+.prod-empty {
+  grid-column: 1 / -1;
+  padding: var(--ek-32);
+  text-align: center;
+  color: var(--ek-muted);
+  font-size: var(--ek-small);
+}
+
+.prod-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-sm);
+  transition: transform var(--ek-fast) var(--ek-ease),
+              box-shadow var(--ek-fast) var(--ek-ease),
+              border-color var(--ek-fast) var(--ek-ease);
+}
+.prod-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--ek-blue);
+  box-shadow: var(--ek-shadow);
+}
+.prod-card.is-added {
+  border-color: var(--ek-blue);
+  box-shadow: 0 0 0 1px var(--ek-blue), var(--ek-shadow-sm);
+}
+
+.prod-card__media {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 180px;
+  padding: var(--ek-24);
+  background: var(--ek-surface-sunken);
+  border-bottom: 1px solid var(--ek-border);
+}
+.prod-card__media img {
+  display: block;
+  max-width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  transition: transform var(--ek-fast) var(--ek-ease);
+}
+.prod-card:hover .prod-card__media img { transform: translateY(-4px); }
+.prod-card__media--empty { background: var(--ek-surface-sunken); }
+
+.prod-card__badge {
+  position: absolute;
+  top: var(--ek-12);
+  right: var(--ek-12);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ek-4);
+  padding: 2px var(--ek-8);
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-blue);
+  color: var(--ek-white);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  letter-spacing: .02em;
+}
+
+.prod-card__body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ek-8);
+  padding: var(--ek-20);
+  background: var(--ek-surface);
+}
+.prod-card__name {
+  margin: 0;
+  font-size: var(--ek-h4);
+  font-weight: var(--ek-w-bold);
+  line-height: var(--ek-h4-lh);
+  color: var(--ek-charcoal-deep);
+}
+.prod-card__sku {
+  font-size: var(--ek-caption);
+  color: var(--ek-muted);
+  letter-spacing: .04em;
+}
+.prod-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-12);
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+.prod-card__price {
+  font-size: var(--ek-h3);
+  font-weight: var(--ek-w-bold);
+  line-height: 1.2;
+  color: var(--ek-charcoal-deep);
+}
+.prod-card__bv {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 var(--ek-8);
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-info-tint);
+  color: var(--ek-blue);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+}
+
+/* Default foot: full-width blue action */
+.prod-card__foot {
+  flex-shrink: 0;
+  padding: var(--ek-16) var(--ek-20);
+  background: var(--ek-blue);
+}
+.prod-card__add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--ek-12) var(--ek-16);
+  border: 0;
+  border-radius: var(--ek-radius);
+  background: transparent;
+  color: var(--ek-white);
+  font: inherit;
+  font-size: var(--ek-small);
+  font-weight: var(--ek-w-bold);
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--ek-fast) var(--ek-ease);
+}
+.prod-card__add:hover { background: rgba(255, 255, 255, 0.12); }
+.prod-card__add:focus-visible { outline: 2px solid var(--ek-white); outline-offset: 2px; }
+
+/* Added foot: sunken panel with qty stepper + remove */
+.prod-card__foot--added {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ek-12);
+  padding: var(--ek-12) var(--ek-20);
+  background: var(--ek-surface-sunken);
+}
+.prod-card__remove {
+  border: 0;
+  background: transparent;
+  color: var(--ek-muted);
+  font: inherit;
+  font-size: var(--ek-small);
+  font-weight: var(--ek-w-bold);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--ek-fast) var(--ek-ease);
+}
+.prod-card__remove:hover { color: var(--ek-error); }
+
+/* Quantity stepper (shared with checkout) */
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  overflow: hidden;
+  background: var(--ek-surface);
+}
+.qty-stepper button {
+  width: 32px; height: 36px; border: 0; background: transparent;
+  color: var(--ek-charcoal); cursor: pointer; font-size: var(--ek-h4);
+  display: grid; place-items: center;
+}
+.qty-stepper button:hover { background: var(--ek-surface-sunken); }
+.qty-stepper .qty-val {
+  width: 44px; height: 36px; border: 0; text-align: center;
+  font-size: var(--ek-small); color: var(--ek-charcoal-deep);
+  -moz-appearance: textfield; appearance: textfield; background: var(--ek-surface);
+}
+.qty-stepper .qty-val:disabled { color: var(--ek-muted); background: var(--ek-surface-sunken); }
+.qty-stepper .qty-val::-webkit-outer-spin-button,
+.qty-stepper .qty-val::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Subtotal bar */
+.prod-summary-bar {
+  display: flex; align-items: center; gap: var(--ek-16); flex-wrap: wrap;
+  margin-top: var(--ek-20); padding: var(--ek-12) var(--ek-16);
+  background: var(--ek-info-tint); border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius); font-size: var(--ek-small); color: var(--ek-charcoal);
+}
+.prod-summary-bar b { color: var(--ek-blue); }
+
+/* ---------- Delivery method (radio group) ---------------------------------- */
+.radio-group { display: flex; gap: var(--ek-12); flex-wrap: wrap; }
+.radio-item {
+  display: flex; align-items: center; gap: var(--ek-8);
+  padding: var(--ek-12) var(--ek-16);
+  border: 1.5px solid var(--ek-border); border-radius: var(--ek-radius);
+  cursor: pointer; background: var(--ek-surface);
+  font-size: var(--ek-small); color: var(--ek-charcoal);
+}
+.radio-item:has(input:checked) { border-color: var(--ek-blue); background: var(--ek-info-tint); color: var(--ek-charcoal-deep); }
+.radio-item:has(input:focus-visible) { box-shadow: var(--ek-focus-ring); }
+
+/* ---------- Payment method selector (matches checkout) --------------------- */
+.pay-method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--ek-12); }
+.pay-method {
+  position: relative; display: flex; align-items: center; gap: var(--ek-12);
+  padding: var(--ek-16);
+  border: 1.5px solid var(--ek-border); border-radius: var(--ek-radius);
+  cursor: pointer; background: var(--ek-surface);
+  transition: border-color var(--ek-fast) var(--ek-ease), background var(--ek-fast) var(--ek-ease), transform var(--ek-fast) var(--ek-ease);
+}
+.pay-method:hover { border-color: var(--ek-border-strong); transform: translateY(-1px); }
+.pay-method input { position: absolute; opacity: 0; pointer-events: none; }
+.pay-method-icon {
+  width: var(--ek-40); height: var(--ek-40); border-radius: var(--ek-radius-sm);
+  display: grid; place-items: center; flex-shrink: 0;
+  background: var(--ek-surface-sunken); color: var(--ek-charcoal);
+}
+.pay-method-body { flex: 1; min-width: 0; }
+.pay-method-name { font-weight: var(--ek-w-medium); font-size: var(--ek-small); color: var(--ek-charcoal); }
+.pay-method-sub { font-size: var(--ek-caption); color: var(--ek-muted); margin-top: 2px; }
+.pay-method-check {
+  width: 20px; height: 20px; border-radius: var(--ek-radius-pill);
+  border: 1.5px solid var(--ek-border); display: grid; place-items: center;
+  color: transparent; flex-shrink: 0; transition: all var(--ek-fast) var(--ek-ease);
+}
+.pay-method:has(input:checked) { border-color: var(--ek-blue); background: var(--ek-info-tint); }
+.pay-method:has(input:checked) .pay-method-icon { background: var(--ek-blue); color: var(--ek-white); }
+.pay-method:has(input:checked) .pay-method-check { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); }
+.pay-method:has(input:focus-visible) { box-shadow: var(--ek-focus-ring); }
+
+/* ---------- Method info cards (card / ussd / bank / cod) -------------------
+   .method-info-card is .ek-card.ek-card--quiet now (elken-ui.css §2) — quiet
+   because it's nested inside the (flattened) .sec-block "Payment Method"
+   section, and a card inside a card should not double up on shadow. */
+.method-info-card { margin-top: var(--ek-16); }
+.method-info-card > div:first-child {
+  margin-bottom: var(--ek-8); font-size: var(--ek-h4);
+  font-weight: var(--ek-w-bold); color: var(--ek-charcoal);
+}
+.method-info-card p { margin: 0 0 var(--ek-12); font-size: var(--ek-small); color: var(--ek-muted); }
+
+.ussd-code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue);
+  padding: var(--ek-16) var(--ek-20);
+  background: var(--ek-info-tint); border: 1.5px dashed var(--ek-blue);
+  border-radius: var(--ek-radius); text-align: center; letter-spacing: .04em;
+}
+.bank-rows { display: flex; flex-direction: column; gap: var(--ek-8); margin-bottom: var(--ek-12); }
+.bank-row { display: flex; justify-content: space-between; gap: var(--ek-12); font-size: var(--ek-small); }
+.bank-row span { color: var(--ek-muted); }
+.bank-row b { color: var(--ek-charcoal-deep); }
+
+/* ---------- Submit + switch ------------------------------------------------ */
+.reg-submit-wrap { margin-top: var(--ek-24); }
+.reg-submit-wrap .ek-btn { width: 100%; }
+.auth-switch-reg {
+  text-align: center; font-size: var(--ek-small); color: var(--ek-muted);
+  margin: var(--ek-20) 0 0;
+}
+.auth-switch-reg a { color: var(--ek-blue); font-weight: var(--ek-w-medium); margin-left: var(--ek-4); }
+.auth-switch-reg a:hover { text-decoration: underline; }
+
+/* ---------- Responsive: stack to a single column --------------------------- */
+@media (max-width: 900px) {
+  .signup-container { max-width: 100%; }
+}
+@media (max-width: 640px) {
+  .signup-section { padding-top: var(--ek-32); }
+  .reg-grid { grid-template-columns: 1fr; }
+  .sec-block { padding: var(--ek-20); }
+  .pay-method-grid { grid-template-columns: 1fr 1fr; }
+  .prod-card__media { min-height: 160px; padding: var(--ek-20); }
+  .prod-card__media img { max-height: 130px; }
+}

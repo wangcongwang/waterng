@@ -1,123 +1,195 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Sign in · AquaLease Nigeria</title>
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%2300875A' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
-  <link rel="stylesheet" href="assets/css/design-system.css" />
-  <link rel="stylesheet" href="assets/css/components.css" />
-  <link rel="stylesheet" href="assets/css/pages.css" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sign in · Elken Nigeria</title>
+  <link rel="icon"
+    href="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'&gt;&lt;path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/&gt;&lt;/svg&gt;">
+
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
+  <link rel="stylesheet" href="assets/css/login.css?v=20260909c">
+  <script src="assets/js/elken-ui.js" defer></script>
 </head>
+
 <body data-page="login">
-  <div id="offline-banner" class="offline-banner">Offline mode · showing cached information</div>
-  <div id="app-header"></div>
 
-  <main class="auth-shell" data-mode="signin">
-    <div class="auth-card card" data-mode="signin">
-      <!-- Logo / brand mark (mobile only) -->
-      <a href="index.html" class="auth-mark" aria-label="AquaLease">
-        <span class="mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3 C 8 9 6 12 6 15 a6 6 0 0 0 12 0 c0-3-2-6-6-12z"></path>
-          </svg>
-        </span>
-        <span class="word">AquaLease<small>Water · on terms</small></span>
-      </a>
+  <!-- ============ Standalone login: brand panel + form card (no site chrome) ============ -->
+  <main class="auth-page">
 
-      <!-- Headline + sub -->
-      <div class="auth-head">
-        <h1 data-i18n="login.title">Sign in to AquaLease</h1>
-        <p data-i18n="login.sub" class="muted">Manage your leases, payments and water quality in one place.</p>
+    <!-- Left: brand value panel -->
+    <aside class="auth-brand">
+      <div class="brand-grain" aria-hidden="true"></div>
+
+      <div class="auth-brand__top">
+        <a class="brand-logo" href="index.html" aria-label="Elken, home" target="_blank" rel="noopener noreferrer">
+          <img class="brand-logo-img" src="assets/img/brand/elken-logo-white-v4.svg" alt="Elken">
+        </a>
       </div>
 
-      <!-- ============ SIGN IN form — minimal: account + password ============ -->
-      <form id="signinForm" class="auth-form" novalidate>
-        <label class="field">
-          <span data-i18n="login.email_label">Email or phone</span>
-          <input type="text" name="email" autocomplete="username" required data-i18n-ph="login.email_ph" placeholder="you@example.com" value="adaeze@aqualease.ng" />
-        </label>
-        <label class="field">
-          <span data-i18n="login.password_label">Password</span>
-          <div class="pwd">
-            <input type="password" name="password" autocomplete="current-password" required data-i18n-ph="login.password_ph" placeholder="••••••••" minlength="6" value="aqua2026" />
-            <button type="button" class="pwd-toggle" data-toggle-pwd aria-label="Show password">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-        </label>
-        <div class="auth-row">
-          <label class="check">
-            <input type="checkbox" name="remember" />
-            <span data-i18n="login.remember">Keep me signed in</span>
-          </label>
-          <a href="#" class="link" data-i18n="login.forgot">Forgot password?</a>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block btn-loading" id="signinSubmit" data-i18n="login.submit">Sign in</button>
-      </form>
-
-      <!-- Divider + social auth -->
-      <div class="auth-divider"><span data-i18n="login.or">or continue with</span></div>
-      <div class="auth-social">
-        <button type="button" class="btn btn-light btn-block social" data-social="whatsapp">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-1 1.1-.2.2-.4.2-.7.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.6-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.4.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2.5C6.8 2.5 2.6 6.7 2.6 12c0 1.7.5 3.4 1.5 4.8L2.5 21.5l4.8-1.6c1.4.8 3 1.2 4.7 1.2 5.2 0 9.4-4.2 9.4-9.4 0-2.5-1-4.9-2.8-6.6-1.7-1.8-4.1-2.8-6.6-2.8z"/></svg>
-          <span data-i18n="login.wa_btn">Continue with WhatsApp</span>
-        </button>
-        <button type="button" class="btn btn-light btn-block social" data-social="google">
-          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="#4285F4" d="M22 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.6c-.2 1.3-.9 2.4-2 3.1v2.6h3.3c2-1.8 3.1-4.5 3.1-7.5z"/>
-            <path fill="#34A853" d="M12 22c2.7 0 5-.9 6.7-2.4l-3.3-2.6c-.9.6-2 1-3.4 1-2.6 0-4.8-1.7-5.6-4.1H3v2.7C4.7 19.7 8.1 22 12 22z"/>
-            <path fill="#FBBC05" d="M6.4 13.9c-.2-.6-.3-1.2-.3-1.9s.1-1.3.3-1.9V7.4H3C2.4 8.6 2 10 2 12s.4 3.4 1 4.6l3.4-2.7z"/>
-            <path fill="#EA4335" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9C17 2.9 14.7 2 12 2 8.1 2 4.7 4.3 3 7.4l3.4 2.7c.8-2.4 3-4.2 5.6-4.2z"/>
-          </svg>
-          <span data-i18n="login.google_btn">Continue with Google</span>
-        </button>
-      </div>
-
-      <!-- Switch link to signup page -->
-      <p class="auth-switch">
-        <span data-i18n="login.no_account">Don't have an account?</span>
-        <a href="signup.html" data-i18n="login.create">Create one</a>
-      </p>
-    </div>
-
-    <!-- Right side: brand value panel (signin) -->
-    <aside class="auth-aside auth-aside-signin">
-      <div class="aside-grain"></div>
-      <div class="aside-inner">
-        <div class="eyebrow" data-i18n="common.welcome">Welcome back</div>
-        <h2>
+      <div class="auth-brand__center">
+        <span class="auth-brand__eyebrow" data-i18n="common.welcome">Welcome</span>
+        <h2 class="auth-brand__title">
           <em>Clean water,</em>
           <span>one tap away.</span>
         </h2>
-        <p>Manage your lease, track water quality, and pay your instalments in seconds — wherever you are in Nigeria.</p>
-        <ul class="aside-bullets">
+        <p class="auth-brand__lede">Manage your orders, track water quality, and pay with ease — wherever you are in Nigeria.</p>
+        <ul class="auth-brand__bullets">
           <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Free installation & filter changes
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Free installation &amp; filter changes
           </li>
           <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Smart dunning — never lose water
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Smart reminders — stay on top of payments
           </li>
           <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            BV rewards on every payment
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Exclusive rewards on every purchase
           </li>
         </ul>
-        <div class="aside-foot">
-          <div class="aside-stat"><b>12,400+</b><span>active leases</span></div>
-          <div class="aside-stat"><b>36</b><span>cities</span></div>
-          <div class="aside-stat"><b>98.6%</b><span>on-time</span></div>
-        </div>
+      </div>
+
+      <div class="auth-brand__foot">
+        <div class="stat"><b>12,400+</b><span>happy customers</span></div>
+        <div class="stat"><b>36</b><span>cities</span></div>
+        <div class="stat"><b>98.6%</b><span>on-time</span></div>
       </div>
     </aside>
+
+    <!-- Right: form card -->
+    <section class="auth-main">
+      <div class="auth-card">
+
+        <!-- Brand mark — only visible on mobile where the panel collapses -->
+        <a class="auth-card__brand brand-logo" href="index.html" aria-label="Elken, home" target="_blank" rel="noopener noreferrer">
+          <img class="brand-logo-img brand-logo-img--dark" src="assets/img/brand/elken-logo-colour.svg" alt="Elken">
+        </a>
+
+        <header class="auth-head">
+          <h1 data-i18n="login.title">Sign in</h1>
+          <p data-i18n="login.sub" class="muted">Welcome back — sign in to manage your orders and water quality.</p>
+        </header>
+
+        <form id="signinForm" class="ek-form auth-form" novalidate="">
+          <label class="ek-field">
+            <span data-i18n="login.email_label">Member ID</span>
+            <input class="ek-input" type="text" name="email" autocomplete="username" required=""
+              data-i18n-ph="login.email_ph" placeholder="Enter your member ID" value="">
+          </label>
+
+          <label class="ek-field">
+            <span data-i18n="login.password_label">Password</span>
+            <div class="pwd">
+              <input class="ek-input" type="password" name="password" autocomplete="current-password" required=""
+                data-i18n-ph="login.password_ph" placeholder="••••••••" minlength="6" value="aqua2026">
+              <button type="button" class="pwd-toggle" data-toggle-pwd="" aria-label="Show password">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </label>
+
+          <div class="auth-row">
+            <label class="ek-check">
+              <input type="checkbox" name="remember">
+              <span data-i18n="login.remember">Remember me</span>
+            </label>
+            <a href="#" class="link" data-i18n="login.forgot">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="ek-btn ek-btn--block btn-loading" id="signinSubmit"
+            data-i18n="login.submit">Sign in</button>
+        </form>
+
+        <p class="auth-switch">
+          <span data-i18n="login.no_account">No account yet?</span>
+          <a href="signup.html" data-i18n="login.create">Create one</a>
+        </p>
+
+        <div class="auth-guest">
+          <p class="auth-guest__note">You can browse and buy without signing in.</p>
+          <a href="guest-repeat-purchase.html?guest=1" class="auth-guest__link">Shop now</a>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <div id="app-footer"></div>
+  <!-- Cookie consent (NDPR) — kept on the standalone page -->
+  <div id="cookieBanner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie consent">
+    <span class="cookie-icon" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 1 0 10 10c0-.46-.04-.92-.1-1.36a5.5 5.5 0 0 1-7.78-7.78A9.97 9.97 0 0 0 12 2Z"></path>
+        <circle cx="9" cy="13" r="1" fill="currentColor"></circle>
+        <circle cx="14" cy="9" r="1" fill="currentColor"></circle>
+        <circle cx="16" cy="14" r="1" fill="currentColor"></circle>
+      </svg>
+    </span>
+    <div class="cookie-body">
+      <strong data-i18n="cookie.title">cookie.title</strong>
+      <span>We use essential cookies to run the site and optional analytics cookies to improve it. You can accept all,
+        reject all, or customise your choice. Nigeria Data Protection Regulation (NDPR) requires your explicit consent
+        before non-essential cookies are set. <a href="privacy.html"
+          data-i18n="cookie.learn_more">cookie.learn_more</a></span>
+    </div>
+    <div class="cookie-actions">
+      <button type="button" class="cb-btn" data-cookie="customise" data-i18n="cookie.custom">cookie.custom</button>
+      <button type="button" class="cb-btn" data-cookie="reject" data-i18n="cookie.reject">cookie.reject</button>
+      <button type="button" class="cb-btn cb-primary" data-cookie="accept"
+        data-i18n="cookie.accept">cookie.accept</button>
+    </div>
+    <div class="cookie-prefs" aria-hidden="true">
+      <div class="row">
+        <div class="text">
+          <strong>Essential</strong>
+          <small>Required for sign-in, shopping cart and security. Cannot be turned off.</small>
+        </div>
+        <div class="toggle on locked" data-cookie-pref="essential" aria-label="Essential cookies (always on)"></div>
+      </div>
+      <div class="row">
+        <div class="text">
+          <strong>Analytics</strong>
+          <small>Helps us understand which pages are useful so we can improve the product.</small>
+        </div>
+        <div class="toggle" data-cookie-pref="analytics" role="switch" aria-checked="false" tabindex="0"></div>
+      </div>
+      <div class="row">
+        <div class="text">
+          <strong>Marketing</strong>
+          <small>Used to measure the effectiveness of campaigns. Off by default.</small>
+        </div>
+        <div class="toggle" data-cookie-pref="marketing" role="switch" aria-checked="false" tabindex="0"></div>
+      </div>
+      <div class="cookie-actions cookie-actions--prefs">
+        <button type="button" class="cb-btn cb-primary" data-cookie="save" data-i18n="cookie.save">cookie.save</button>
+      </div>
+    </div>
+  </div>
 
-  <script src="assets/i18n/strings.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
+  <script src="assets/js/app.js?v=20260923b"></script>
+  <script src="assets/js/website.js?v=20260909c-2"></script>
   <script>
     /* ---------- i18n apply ---------- */
     function applyI18n() {
@@ -128,7 +200,7 @@
 
     /* ---------- Validation helpers ---------- */
     function setError(input, msg) {
-      const field = input.closest('.field, .check');
+      const field = input.closest('.ek-field, .ek-check');
       let err = field?.querySelector('.field-err');
       if (!err && field) {
         err = document.createElement('small');
@@ -138,14 +210,15 @@
       if (err) err.textContent = msg || '';
       if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
     }
-    function isEmailOrPhone(v) { return /@|\+?\d{7,}/.test(v.trim()); }
+    // Member ID must be exactly "NG" + 8 digits, e.g. NG12345678
+    function isMemberId(v) { return /^NG\d{8}$/.test(v.trim().toUpperCase()); }
 
     /* ---------- Loading button ---------- */
     function startLoading(btn, loadingLabel) {
       btn.setAttribute('aria-busy', 'true');
       btn.disabled = true;
       btn.dataset._old = btn.innerHTML;
-      btn.innerHTML = `<span class="spinner"></span> ${loadingLabel || ''}`;
+      btn.innerHTML = `<span class="ek-spinner"></span> ${loadingLabel || ''}`;
     }
     function stopLoading(btn) {
       btn.removeAttribute('aria-busy');
@@ -153,24 +226,18 @@
       if (btn.dataset._old) btn.innerHTML = btn.dataset._old;
     }
 
-    function deriveNameFromEmail(email) {
-      const local = (email.split('@')[0] || '').replace(/[._-]+/g, ' ').trim();
-      if (!local) return 'Friend';
-      return local.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    }
-
     function redirectAfterAuth() {
-      const next = new URLSearchParams(location.search).get('next') || 'index.html';
+      const next = new URLSearchParams(location.search).get('next') || 'account.html';
       location.href = next;
     }
 
     /* ---------- SIGN IN: instant ---------- */
     function doSignIn(form, btn) {
-      const email = form.email.value.trim();
+      const memberId = form.email.value.trim();
       const pwd = form.password.value;
       let ok = true;
-      if (!email) { setError(form.email, window.T.tr('login.err_required')); ok = false; }
-      else if (!isEmailOrPhone(email)) { setError(form.email, window.T.tr('login.err_email')); ok = false; }
+      if (!memberId) { setError(form.email, window.T.tr('login.err_required')); ok = false; }
+      else if (!isMemberId(memberId)) { setError(form.email, window.T.tr('login.err_email')); ok = false; }
       else setError(form.email, '');
       if (!pwd) { setError(form.password, window.T.tr('login.err_required')); ok = false; }
       else if (pwd.length < 6) { setError(form.password, window.T.tr('login.err_pwd')); ok = false; }
@@ -179,9 +246,12 @@
 
       startLoading(btn, window.T.tr('login.submit_loading'));
       setTimeout(() => {
-        const firstName = deriveNameFromEmail(email).split(' ')[0];
+        const uid = memberId.toUpperCase();
         window.Auth.login({
-          firstName, name: deriveNameFromEmail(email), email,
+          firstName: 'Member',
+          name: 'Member ' + uid,
+          email: uid.toLowerCase() + '@elkenafrica.com',
+          memberId: uid,
           signedInAt: Date.now(),
         });
         window.toast(window.T.tr('login.success_signin'), 'success');
@@ -201,30 +271,27 @@
       });
     }
 
-    /* ---------- Social buttons (stub) ---------- */
-    function wireSocial() {
-      document.querySelectorAll('[data-social]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const provider = btn.dataset.social;
-          const user = {
-            firstName: provider === 'whatsapp' ? 'Adaeze' : 'Friend',
-            name: provider === 'whatsapp' ? 'Adaeze Okonkwo' : 'Guest',
-            email: provider + '@aqualease.ng',
-            signedInAt: Date.now(),
-          };
-          window.Auth.login(user);
-          window.toast(window.T.tr('login.success_signin'), 'success');
-          redirectAfterAuth();
-        });
-      });
-    }
+    /* ---------- Demo account for deterministic previews ---------- */
+    const DEMO_ACCOUNT = {
+      memberId: 'NG09246375',
+      firstName: 'Adaeze',
+      name: 'Amara Okafor',
+      email: 'adaeze@elkenafrica.com',
+      phone: '+234 803 123 4567',
+      signedInAt: Date.UTC(2026, 5, 3, 8, 52, 21),
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
       applyI18n();
 
+      // Pre-fill the fixed demo member ID + password so http:// and file:// previews match.
+      const emailInput = document.querySelector('#signinForm input[name="email"]');
+      if (emailInput && !emailInput.value) emailInput.value = DEMO_ACCOUNT.memberId;
+      const pwdInput = document.querySelector('#signinForm input[name="password"]');
+      if (pwdInput && !pwdInput.value) pwdInput.value = 'aqua2026';
+
       const signinForm = document.getElementById('signinForm');
       const signinBtn = document.getElementById('signinSubmit');
-
       signinForm.addEventListener('submit', e => { e.preventDefault(); doSignIn(signinForm, signinBtn); });
 
       // clear error on input
@@ -235,8 +302,8 @@
       });
 
       wirePasswordToggles();
-      wireSocial();
     });
   </script>
 </body>
+
 </html>

@@ -1,0 +1,372 @@
+/* ==========================================================================
+   AquaLife — site chrome: header, navigation, utility actions.
+
+   Ported from the marketing site's components.css (Figma "EK - Header",
+   "EK - Nav", "EK - Nav Tag"), with the portal's Phase 2 utilities —
+   account, cart and the bilingual switch — carried as .ek-util rows in the
+   navigation's utility group, so they cannot introduce a second visual
+   language. Loaded by every page; safe standalone.
+
+   Rule: no hardcoded colour, size or spacing — always var(--ek-…).
+   ========================================================================== */
+
+:root { --ek-nav-max: 1605px; }
+
+.ek-header {
+  position: relative; z-index: 30; height: 78px;
+  display: flex; align-items: center;
+  background: var(--ek-white);
+  border-bottom: 1px solid var(--ek-grey-mid);
+  color: var(--ek-charcoal);
+  transition: color var(--ek-slow) var(--ek-ease), background-color var(--ek-slow) var(--ek-ease);
+}
+/* The nav container is wider than the content column and centred, just
+   like the marketing site: logo on the left, the whole menu group on the
+   right, with the middle left open. */
+.ek-header .ek-container--nav {
+  width: min(var(--ek-nav-max), 100% - (var(--ek-page-pad) * 2));
+  margin-inline: auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--ek-24);
+}
+
+/* Logo ------------------------------------------------------------------- */
+.ek-logo { position: relative; display: block; width: 172px; height: 31px; flex: 0 0 auto; }
+.ek-logo img {
+  position: absolute; inset: 0; height: 31px; width: auto; display: block;
+  transition: opacity var(--ek-slow) var(--ek-ease);
+}
+.ek-logo__reversed { opacity: 0; }
+
+/* Navigation ------------------------------------------------------------- */
+.ek-nav { display: flex; align-items: center; gap: 4px; }
+.ek-nav__item { position: relative; }
+
+/* Bridge the gap between a menu item and its panel, so the pointer does not
+   leave the item on the way down and close the panel before it is reached. */
+.ek-nav__item--parent::after {
+  content: ""; position: absolute; top: 100%; left: 0; right: 0; height: 18px;
+}
+.ek-nav__link {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 16px; border-radius: 999px;
+  font-family: inherit; font-size: 16px; font-weight: 500; color: inherit;
+  background: none; border: 0; cursor: pointer; text-decoration: none;
+  transition: background-color var(--ek-fast) var(--ek-ease);
+}
+.ek-nav__link:hover { color: inherit; }
+.ek-nav__item:hover > .ek-nav__link,
+.ek-nav__link[aria-expanded="true"] { background: rgba(140,146,156,.22); }
+
+.ek-nav__panel {
+  position: absolute; top: calc(100% + 16px); left: 0; min-width: 252px;
+  background: var(--ek-white);
+  border: 1px solid var(--ek-grey-mid); border-top: 3px solid var(--ek-blue);
+  padding: 8px 0;
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: opacity var(--ek-fast) var(--ek-ease), transform var(--ek-fast) var(--ek-ease);
+}
+.ek-nav__item:hover > .ek-nav__panel,
+.ek-nav__item:focus-within > .ek-nav__panel,
+.ek-nav__item.is-open > .ek-nav__panel { opacity: 1; visibility: visible; transform: none; }
+.ek-nav__panel a { display: block; padding: 11px 24px; font-size: 15px; color: var(--ek-charcoal); text-decoration: none; }
+.ek-nav__panel a:hover { background: var(--ek-grey-light); color: var(--ek-blue); }
+
+/* Utility group: account, cart, language. display:contents keeps the header
+   laid out exactly as if these were top-level items. */
+.ek-nav__utils { display: contents; }
+
+/* Products menu, second level -------------------------------------------- */
+.ek-nav__panel--products { min-width: 330px; }
+.ek-nav__sub { position: relative; }
+.ek-nav__panel a.ek-nav__sublink {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--ek-16);
+  padding: 12px 24px; font-size: 15px; color: var(--ek-charcoal);
+}
+.ek-nav__sublink svg { flex: 0 0 auto; opacity: .55; transition: transform var(--ek-fast) var(--ek-ease), opacity var(--ek-fast) var(--ek-ease); }
+.ek-nav__sub:hover > .ek-nav__sublink,
+.ek-nav__sub:focus-within > .ek-nav__sublink { background: var(--ek-grey-light); color: var(--ek-blue); }
+.ek-nav__sub:hover > .ek-nav__sublink svg { transform: translateX(3px); opacity: 1; }
+
+.ek-nav__panel--l2 {
+  /* Opens inwards: Products sits near the right edge, so flying out to the
+     right would push the panel past the viewport. */
+  top: -11px; right: 100%; left: auto; min-width: 288px;
+  border-top: 1px solid var(--ek-grey-mid); border-left: 3px solid var(--ek-aqua);
+}
+.ek-nav__sub:hover > .ek-nav__panel--l2,
+.ek-nav__sub:focus-within > .ek-nav__panel--l2,
+.ek-nav__sub.is-open > .ek-nav__panel--l2 { opacity: 1; visibility: visible; transform: none; }
+
+.ek-nav__tag {
+  display: inline-block; margin-left: 8px; padding: 2px 8px;
+  font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  background: var(--ek-grey-light); color: var(--ek-muted);
+}
+.ek-nav__panel a.ek-nav__seeall {
+  display: flex; align-items: center; gap: var(--ek-8);
+  margin-top: 8px; padding: 14px 24px;
+  border-top: 1px solid var(--ek-grey-mid);
+  font-size: 15px; font-weight: 600; color: var(--ek-blue);
+}
+.ek-nav__seeall:hover { background: var(--ek-grey-light); }
+.ek-nav__seeall svg { transition: transform .25s var(--ek-ease); }
+.ek-nav__seeall:hover svg { transform: translateX(4px); }
+
+/* Utility actions — account, cart, language ------------------------------
+   One control style for all three, so adding a fourth cannot introduce a new
+   visual language. The badge is sized for a cart count. */
+.ek-util {
+  position: relative; display: inline-flex; align-items: center; gap: var(--ek-8);
+  min-height: 44px; padding: 9px 14px; border-radius: 999px;
+  background: none; border: 0; color: inherit; cursor: pointer;
+  font-family: inherit; font-size: 15px; font-weight: 500; text-decoration: none;
+  transition: background-color .24s var(--ek-ease), color .24s var(--ek-ease);
+}
+.ek-util:hover { background: var(--ek-grey-light); color: var(--ek-blue); }
+.ek-util svg { flex: 0 0 auto; opacity: .7; }
+.ek-util__badge {
+  position: absolute; top: 4px; right: 6px;
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--ek-aqua); color: var(--ek-white);
+  font-size: 11px; font-weight: 700; line-height: 1;
+}
+.ek-util__badge:empty { display: none; }
+
+/* The Phase 2 chip rides inside a utility control one step quieter than the
+   label it sits beside. */
+.ek-util .phase-badge { margin-left: var(--ek-8); vertical-align: 0; }
+
+/* Language pill — the one action that reads as a brand element.
+   Placed inside .ek-nav__utils so it is the last item of the menu row. */
+.ek-lang {
+  display: inline-flex; align-items: center; gap: 6px; margin-left: 12px;
+  padding: 9px 16px; border-radius: 999px;
+  background: var(--ek-blue); color: var(--ek-white);
+  font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer;
+  transition: background-color var(--ek-fast) var(--ek-ease);
+}
+.ek-lang:hover { background: var(--ek-blue-hover); color: var(--ek-white); }
+.ek-lang svg { opacity: .8; }
+.ek-lang .ek-util__phase {
+  position: static; margin-left: 4px;
+  background: rgba(255,255,255,.25); color: var(--ek-white);
+}
+
+/* Burger ----------------------------------------------------------------- */
+.ek-burger {
+  display: none; width: 44px; height: 44px; padding: 0;
+  flex-direction: column; justify-content: center; align-items: flex-end; gap: 5px;
+  background: none; border: 0; cursor: pointer; color: inherit;
+}
+.ek-burger span { display: block; height: 2px; background: currentColor; }
+.ek-burger span:nth-child(1), .ek-burger span:nth-child(2) { width: 22px; }
+.ek-burger span:nth-child(3) { width: 14px; }
+
+/* ==========================================================================
+   Below the desktop breakpoint the navigation collapses into the drawer.
+   ========================================================================== */
+@media (max-width: 1199px) {
+  .ek-header { height: 64px; }
+  /* Collapsed header: logo left, burger right. Utilities move to drawer. */
+  .ek-logo { width: 140px; height: 25px; }
+  .ek-logo img { height: 25px; }
+  .ek-nav { display: none; }
+  .ek-burger { display: flex; order: 1; }
+}
+
+@media (min-width: 1200px) {
+  /* The old marketing header's own bar is replaced by .ek-header. */
+  .ek-site-header .site-header { display: none; }
+}
+
+/* The host wrapper carries the old marketing bar's chrome; .ek-header now
+   provides the ground, so the wrapper must not double it up. */
+.ek-site-header { background: transparent; border-bottom: 0; box-shadow: none; }
+
+/* Fit: at 1280 the nav plus three utility controls is tight, so labels never
+   wrap — a wrapping nav item reads as a broken menu. */
+.ek-nav__link, .ek-util, .ek-util span, .ek-nav__panel a { white-space: nowrap; }
+@media (max-width: 1519px) {
+  .ek-nav__link { padding: 9px 12px; font-size: 15px; }
+  .ek-util { padding: 8px 10px; font-size: 14px; }
+  .ek-util .phase-badge { font-size: 9px; padding: 1px 5px; }
+  .ek-logo { width: 150px; height: 27px; }
+  .ek-logo img { height: 27px; }
+}
+
+/* Icon-only utility control — one compact square per action, with the Phase 2
+   tag as a corner chip instead of a label-side badge. These sit inside
+   .ek-nav__utils alongside .ek-lang. */
+.ek-util--icon { padding: 9px 11px; }
+.ek-util__phase {
+  position: absolute; top: 1px; right: 1px;
+  min-width: 16px; height: 13px; padding: 0 3px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 8.5px; font-weight: 700; letter-spacing: .04em;
+  border-radius: 999px;
+  background: var(--ek-grey-mid); color: var(--ek-muted);
+}
+
+
+/* ---------- Cookie consent banner (moved from water-pages.css: needed site-wide) ---------- */
+.cookie-banner {
+  position: fixed;
+  left: var(--ek-16);
+  right: var(--ek-16);
+  bottom: var(--ek-16);
+  z-index: var(--ek-z-toast);
+  display: none;
+  gap: var(--ek-16);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ek-16);
+  color: var(--ek-white);
+  background: var(--ek-blue-hover);
+  border-radius: var(--ek-radius);
+  box-shadow: var(--ek-shadow-lg);
+}
+
+.cookie-banner.show {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cookie-banner .cookie-body,
+.cookie-banner .cookie-body a { color: var(--ek-panel-cool); }
+
+.cookie-banner .cookie-icon {
+  flex: 0 0 auto;
+}
+
+.cookie-banner .cookie-body {
+  flex: 1 1 420px;
+}
+
+.cookie-banner .cookie-actions {
+  flex: 0 0 auto;
+  display: flex;
+  gap: var(--ek-8);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.cookie-banner .cookie-actions--prefs {
+  width: 100%;
+  padding-top: var(--ek-8);
+}
+
+.cookie-banner .cb-btn {
+  min-height: 36px;
+  padding: var(--ek-8) var(--ek-12);
+  color: var(--ek-blue);
+  background: var(--ek-white);
+  border: 1px solid var(--ek-border-strong);
+  border-radius: var(--ek-radius-sm);
+  cursor: pointer;
+}
+
+.cookie-banner .cb-primary {
+  color: var(--ek-white);
+  background: var(--ek-blue);
+  border-color: var(--ek-blue);
+}
+
+.cookie-banner .cookie-prefs {
+  display: none;
+  flex: 1 1 100%;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--ek-12);
+  padding-top: var(--ek-16);
+  border-top: 1px solid var(--ek-stat-3);
+}
+
+.cookie-banner.show-prefs .cookie-prefs {
+  display: grid;
+}
+
+.cookie-prefs .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ek-12);
+}
+
+.cookie-prefs small {
+  display: block;
+  color: var(--ek-panel-cool);
+  margin-top: var(--ek-4);
+}
+
+.cookie-prefs .toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-neutral);
+  cursor: pointer;
+}
+
+.cookie-prefs .toggle.on {
+  background: var(--ek-aqua);
+}
+
+/* ==========================================================================
+   Footer — rendered by app.js on every page, so it lives in the chrome file.
+   ========================================================================== */
+
+/* The footer sits below dark sections on the product pages, so it needs its own
+   ground a clear step darker than Charcoal Core — otherwise the two read as one
+   continuous band. Same relationship as the Elken corporate site. */
+.sec-footer { background: var(--ek-charcoal-deep); color: var(--ek-white); }
+/* Alignment, measured off the design snapshot at 1280: the footer BAND is the
+   centred nav container (1184px wide, 48px gutters each side); inside that band
+   the columns are spread — logo pinned left, the last column pinned right.
+   It is the band that is centred, not the group of columns. */
+.sec-footer .ek-container--nav {
+  --ek-page-pad: 48px;                /* the design's footer gutters */
+  width: min(var(--ek-nav-max), 100% - (var(--ek-page-pad) * 2));
+  margin-inline: auto;
+}
+.sec-footer__inner {
+  display: grid; grid-template-columns: 1fr 315px 238px 231px;
+  gap: var(--ek-40); padding-block: 93px 80px;
+}
+.sec-footer__logo { height: 26px; width: auto; display: block; }
+.ek-fcol h2 { font-size: 15px; font-weight: 700; color: var(--ek-white); margin: 0 0 22px; }
+.ek-fcol ul { display: flex; flex-direction: column; gap: 14px; }
+.ek-fcol li { display: flex; gap: 10px; font-size: 14px; line-height: 1.4; color: var(--ek-grey-light); }
+.ek-fcol li::before { content: ""; flex: 0 0 auto; width: 4px; height: 4px; background: var(--ek-pink); margin-top: 8px; }
+.ek-fcol a { color: var(--ek-grey-light); }
+.ek-fcol a:hover { color: var(--ek-pink); }
+.ek-faddr { font-style: normal; font-size: 14px; line-height: 1.7; color: var(--ek-grey-light); }
+.ek-faddr strong { color: var(--ek-white); font-weight: 700; }
+.ek-faddr a { color: var(--ek-grey-light); text-decoration: underline; }
+.ek-faddr a:hover { color: var(--ek-pink); }
+
+.sec-footer__bar {
+  border-top: 1px solid rgba(255,255,255,.10); padding-block: 24px 34px;
+  display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: var(--ek-32);
+}
+/* The whole bottom bar is fine print, at the Figma fill. Deliberately
+   recessive: 1.83:1 on the footer ground, which is the design's intent here and is
+   well below the 4.5:1 a reader needs. Flagged to Elken BC, applied as drawn. */
+.sec-footer__bar p, .sec-footer__bar a { font-size: 12px; line-height: 1.6; color: var(--ek-footer-fine); }
+.sec-footer__bar a:hover { color: var(--ek-pink); }
+.ek-social { display: flex; gap: var(--ek-8); }
+.ek-social a {
+  width: 44px; height: 44px; background: rgba(255,255,255,.10);
+  display: flex; align-items: center; justify-content: center;
+  transition: background-color var(--ek-fast) var(--ek-ease);
+}
+.ek-social a:hover { background: var(--ek-pink); }
+
+@media (max-width: 1199px) {
+  .sec-footer .ek-container--nav { --ek-page-pad: 40px; }
+  .sec-footer__inner { grid-template-columns: 1fr 1fr; gap: var(--ek-40); padding-block: 56px 40px; }
+  .sec-footer__bar { grid-template-columns: 1fr; gap: var(--ek-16); }
+}
+@media (max-width: 767px) {
+  .sec-footer .ek-container--nav { --ek-page-pad: 20px; }
+  .sec-footer__inner { grid-template-columns: 1fr; gap: var(--ek-32); padding-block: 48px 32px; }
+}

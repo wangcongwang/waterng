@@ -1,0 +1,148 @@
+/* ==========================================================================
+   Elken UI — base / 基础样式
+   v1.1.1
+   Reset, fonts, typography primitives. Load AFTER elken-tokens.css.
+   重置、字体、排版基础。必须在 elken-tokens.css 之后加载。
+   ========================================================================== */
+
+/* Self-hosted. No CDN, no Google Fonts — not reachable from mainland China.
+   本地托管字体，不用任何 CDN。 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Bold.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--ek-font);
+  font-size: var(--ek-text);
+  line-height: var(--ek-text-lh);
+  color: var(--ek-body-ink);
+  background: var(--ek-surface-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, svg, video { max-width: 100%; height: auto; display: block; }
+
+/* Inputs do not inherit the font by default. / 表单元素默认不继承字体。 */
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* One focus ring for the whole product. :focus-visible, so a mouse click does
+   not draw it but the Tab key does. NEVER write `outline: none` without
+   putting something visible back.
+   全局统一焦点环。绝对不要只写 outline: none 而不给替代样式。 */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ek-focus-ring);
+  border-radius: var(--ek-radius-sm);
+}
+
+/* Type primitives / 排版基础类 ------------------------------------------ */
+.ek-h1, .ek-h2, .ek-h3, .ek-h4 { margin: 0; color: var(--ek-blue); font-weight: var(--ek-w-bold); }
+.ek-h1 { font-size: var(--ek-h1); line-height: var(--ek-h1-lh); letter-spacing: var(--ek-h1-ls); }
+.ek-h2 { font-size: var(--ek-h2); line-height: var(--ek-h2-lh); }
+.ek-h3 { font-size: var(--ek-h3); line-height: var(--ek-h3-lh); }
+.ek-h4 { font-size: var(--ek-h4); line-height: var(--ek-h4-lh); }
+
+.ek-lead    { font-size: var(--ek-lead); line-height: var(--ek-lead-lh); }
+.ek-text    { font-size: var(--ek-text); line-height: var(--ek-text-lh); }
+.ek-small   { font-size: var(--ek-small); line-height: var(--ek-small-lh); }
+.ek-caption { font-size: var(--ek-caption); line-height: var(--ek-caption-lh); color: var(--ek-muted); }
+.ek-muted   { color: var(--ek-muted); }
+.ek-num     { font-variant-numeric: tabular-nums lining-nums; font-feature-settings: var(--ek-num); }
+
+/* An eyebrow / section label above a heading. / 小标签（标题上方的引导文字）。 */
+.ek-eyebrow {
+  margin: 0 0 var(--ek-4);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ek-aqua);
+}
+
+a { color: var(--ek-aqua); text-decoration: none; }
+a:hover { color: var(--ek-aqua-hover); text-decoration: underline; }
+
+.ek-link {
+  display: inline-flex; align-items: center; gap: var(--ek-8);
+  font-weight: var(--ek-w-bold); color: var(--ek-blue);
+}
+.ek-link:hover { color: var(--ek-aqua); text-decoration: none; }
+.ek-link svg { flex: none; transition: transform var(--ek-fast) var(--ek-ease); }
+.ek-link:hover svg { transform: translateX(3px); }
+
+hr, .ek-rule { border: 0; border-top: 1px solid var(--ek-border); margin: var(--ek-24) 0; }
+
+/* Layout helpers / 布局辅助 --------------------------------------------- */
+.ek-container {
+  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2));
+  margin-inline: auto;
+}
+
+/* A simple auto-fitting grid. Set --cols for a fixed count, or leave it and
+   the cards wrap on their own. / 自适应网格，可用 --cols 指定列数。 */
+.ek-grid {
+  display: grid;
+  gap: var(--ek-16);
+  grid-template-columns: repeat(var(--cols, auto-fit), minmax(var(--min, 240px), 1fr));
+}
+.ek-stack  { display: flex; flex-direction: column; gap: var(--gap, var(--ek-16)); }
+
+/* flex-direction is stated explicitly. Without it, .ek-row placed on an element
+   that already carries a column layout (e.g. .ek-field) inherits nothing but
+   keeps that element's own `flex-direction: column`, and the row silently
+   stacks. This shipped once — the form's Save / Cancel buttons sat one above
+   the other with half the row empty beside them.
+   必须显式声明 flex-direction。否则 .ek-row 和本身是纵向布局的元素
+   （如 .ek-field）写在同一个标签上时，仍然按纵向排列，按钮会上下堆叠。
+   本项目已经踩过这个坑。 */
+.ek-row    { display: flex; flex-direction: row; align-items: center; gap: var(--gap, var(--ek-12)); flex-wrap: wrap; }
+.ek-spacer { flex: 1 1 auto; }
+
+/* Visually hidden but readable by a screen reader.
+   视觉隐藏但屏幕阅读器可读（无障碍必需）。 */
+.ek-sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* Skip link / 跳到主内容 */
+.ek-skip {
+  position: absolute; left: var(--ek-16); top: -60px; z-index: var(--ek-z-toast);
+  padding: var(--ek-8) var(--ek-16); background: var(--ek-blue); color: var(--ek-white);
+  border-radius: var(--ek-radius); transition: top var(--ek-fast) var(--ek-ease);
+}
+.ek-skip:focus { top: var(--ek-16); text-decoration: none; }
+
+/* ---------- Page ownership banner (env marker) -----------------------------
+   贴在页面最顶部的细标识条，用于区分页面归属：
+   未登录 → 归属 WordPress 页面；已登录 → 归属外部 AE 页面。
+   由 assets/js/app.js 的 renderEnvBanner() 注入，登录态变化时自动刷新。 */
+:root { --ek-env-banner-h: 26px; }
+.env-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: var(--ek-z-toast);
+  display: flex; align-items: center; justify-content: center;
+  height: var(--ek-env-banner-h); padding: 0 var(--ek-12);
+  font-size: var(--ek-caption); font-weight: var(--ek-w-medium); letter-spacing: .02em;
+  color: var(--ek-white); background: var(--ek-blue);
+  text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.env-banner--member { background: var(--ek-charcoal-deep); }
+body.has-env-banner { padding-top: var(--ek-env-banner-h); }

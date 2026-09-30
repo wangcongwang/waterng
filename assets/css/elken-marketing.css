@@ -1,0 +1,507 @@
+/* Elken website shell extensions for Water V5. */
+
+body {
+  color: var(--ek-charcoal);
+  background: var(--ek-surface-page);
+}
+
+a { color: var(--ek-blue); }
+
+.container,
+.ek-site-header__inner,
+.ek-site-footer__inner {
+  width: min(var(--ek-content-max), calc(100% - var(--ek-page-pad) * 2));
+  margin-inline: auto;
+}
+
+.ek-site-header,
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--ek-z-header);
+  background: var(--ek-surface);
+  border-bottom: 1px solid var(--ek-border);
+}
+
+.ek-site-header__inner,
+.site-header .bar {
+  min-height: var(--ek-header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ek-24);
+}
+
+.ek-site-brand,
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ek-12);
+  min-width: 0;
+  color: var(--ek-blue);
+  text-decoration: none;
+  font-weight: var(--ek-w-bold);
+}
+
+.ek-site-brand__logo,
+.brand .mark,
+.footer-brand .mark,
+.auth-mark .mark {
+  width: auto;
+  height: clamp(28px, 4vw, 40px);
+  max-width: 148px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.brand .word,
+.ek-site-footer__tag {
+  display: grid;
+  gap: var(--ek-4);
+}
+
+.brand small {
+  display: block;
+  color: var(--ek-muted);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-medium);
+}
+
+.ek-site-nav,
+.nav,
+.ek-site-actions,
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-16);
+}
+
+.ek-site-nav a,
+.nav a,
+.drawer-nav a,
+.ek-site-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ek-site-nav a,
+.nav a {
+  color: var(--ek-charcoal);
+  font-size: var(--ek-small);
+  font-weight: var(--ek-w-medium);
+}
+
+.ek-site-nav a:hover,
+.nav a:hover,
+.ek-site-nav a.active,
+.nav a.active { color: var(--ek-blue); }
+
+.hamburger,
+.ek-site-menu-toggle,
+.icon-btn {
+  display: inline-grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  color: var(--ek-charcoal);
+  background: var(--ek-surface);
+}
+
+.hamburger span {
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+}
+
+.ek-site-drawer,
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--ek-z-drawer);
+  background: var(--ek-neutral-tint);
+}
+
+.drawer:not(.open),
+.ek-site-drawer[hidden] { display: none; }
+
+.drawer-panel,
+.ek-site-drawer__panel {
+  margin-left: auto;
+  width: min(360px, 100%);
+  min-height: 100%;
+  padding: var(--ek-24);
+  background: var(--ek-surface);
+  border-left: 1px solid var(--ek-border);
+}
+
+.drawer-head,
+.ek-site-drawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ek-16);
+  margin-bottom: var(--ek-24);
+}
+
+.drawer-nav,
+.ek-site-drawer__nav {
+  display: grid;
+  gap: var(--ek-12);
+}
+
+.wa-fab {
+  position: fixed;
+  right: var(--ek-20);
+  bottom: var(--ek-20);
+  z-index: var(--ek-z-sticky);
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  color: var(--ek-white);
+  background: var(--ek-blue);
+  border-radius: var(--ek-radius-pill);
+  box-shadow: var(--ek-shadow-lg);
+}
+
+.wa-fab svg {
+  width: 24px;
+  height: 24px;
+}
+
+.ek-site-footer,
+.site-footer {
+  color: var(--ek-white);
+  background: var(--ek-blue-hover);
+  margin-top: var(--ek-80);
+}
+
+#app-footer.ek-site-footer {
+  color: inherit;
+  background: transparent;
+  margin-top: 0;
+}
+
+#app-footer > .site-footer {
+  margin-top: var(--ek-80);
+}
+
+.ek-site-footer__inner,
+.footer-inner {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) repeat(3, minmax(140px, 1fr));
+  gap: var(--ek-32);
+  padding-block: var(--ek-56);
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) repeat(3, minmax(140px, 1fr));
+  gap: var(--ek-32);
+  padding-block: var(--ek-56);
+}
+
+.footer-cols,
+.ek-site-footer__cols { display: contents; }
+
+.footer-col,
+.ek-site-footer__col {
+  display: grid;
+  gap: var(--ek-8);
+  align-content: start;
+}
+
+.footer-col h5,
+.ek-site-footer__col h3 {
+  color: var(--ek-white);
+  font-size: var(--ek-small);
+}
+
+.site-footer ul,
+.ek-site-footer ul {
+  display: grid;
+  gap: var(--ek-8);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.site-footer li,
+.ek-site-footer li {
+  min-width: 0;
+}
+
+.footer-contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ek-8);
+}
+
+.footer-contact svg,
+.footer-social svg {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+}
+
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ek-8);
+}
+
+.footer-bottom,
+.ek-site-footer__bottom {
+  border-top: 1px solid var(--ek-stat-3);
+  padding-block: var(--ek-20);
+  color: var(--ek-panel-cool);
+  font-size: var(--ek-caption);
+}
+
+.site-hero,
+.ek-hero,
+.page-head,
+.auth-shell { background: var(--ek-surface); }
+
+.site-hero,
+.ek-hero {
+  min-height: min(680px, calc(100vh - var(--ek-header-h)));
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ek-slow) var(--ek-ease);
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hero-slide img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-content {
+  position: relative;
+  width: min(680px, calc(100% - var(--ek-page-pad) * 2));
+  margin-left: max(var(--ek-page-pad), calc((100vw - var(--ek-content-max)) / 2));
+  padding-block: var(--ek-80);
+  color: var(--ek-charcoal-deep);
+}
+
+.hero-content-light { color: var(--ek-white); }
+
+.hero-content h1,
+.page-head h1 {
+  font-size: clamp(var(--ek-h1), 5vw, 56px);
+  line-height: 1.08;
+  letter-spacing: 0;
+  margin: 0 0 var(--ek-20);
+}
+
+.hero-content p,
+.page-head .sub,
+.muted { color: var(--ek-muted); }
+
+.hero-content-light p { color: var(--ek-panel-cool); }
+
+.hero-actions,
+.site-actions,
+.cta-actions,
+.body-cta,
+.cookie-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ek-12);
+  align-items: center;
+}
+
+.hero-arrow,
+.hero-dots button {
+  border: 1px solid var(--ek-border);
+  background: var(--ek-surface);
+  color: var(--ek-charcoal);
+}
+
+.hero-arrow {
+  position: absolute;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ek-radius-pill);
+}
+
+.hero-prev { left: var(--ek-20); }
+.hero-next { right: var(--ek-20); }
+
+.hero-dots {
+  position: absolute;
+  left: 50%;
+  bottom: var(--ek-24);
+  display: flex;
+  gap: var(--ek-8);
+  transform: translateX(-50%);
+}
+
+.hero-dots button {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--ek-radius-pill);
+}
+
+.hero-dots button.is-active { background: var(--ek-blue); }
+
+.site-section,
+.section,
+.section-lg,
+.legal-shell { padding-block: var(--ek-64); }
+
+.section-head,
+.with-cta,
+.page-head .row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--ek-24);
+  flex-wrap: wrap;
+}
+
+.eyebrow,
+.hero-kicker,
+.crumbs,
+.cat {
+  color: var(--ek-muted);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.category-grid,
+.product-grid,
+.grid-3,
+.feature-grid,
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--ek-20);
+}
+
+.product-card,
+.category-card,
+.value-card,
+.tool-card,
+.location-card,
+.checkout-card,
+.summary,
+.auth-card,
+.legal-card,
+.mrp-card {
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  box-shadow: var(--ek-shadow-sm);
+}
+
+.product-card,
+.category-card { overflow: hidden; }
+
+.product-card .pic,
+.category-card .pic,
+.gallery .main,
+.gallery .thumbs button { background: var(--ek-surface-sunken); }
+
+.product-card img,
+.category-card img,
+.gallery img {
+  max-width: 100%;
+  height: auto;
+}
+
+.cta-band,
+.ek-cta {
+  padding: var(--ek-40);
+  color: var(--ek-white);
+  background: var(--ek-blue);
+  border-radius: var(--ek-radius);
+}
+
+.auth-shell {
+  min-height: calc(100vh - var(--ek-header-h));
+  display: grid;
+  place-items: center;
+  padding: var(--ek-48) var(--ek-page-pad);
+}
+
+.auth-card {
+  width: min(520px, 100%);
+  padding: var(--ek-32);
+}
+
+/* Phase 2 marker — "二期" -------------------------------------------------
+   Features that are not live yet carry a `Phase 2` badge in the header and the
+   mobile drawer. It is styled as the marketing site styles its own secondary
+   tags (Figma "EK - Nav Tag"): a quiet uppercase chip in the brand's neutral
+   ground, never a coloured pill — a coloured badge reads as a status, and a
+   phase is not a status. It is always subordinate to the label beside it. */
+.phase-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: var(--ek-w-bold);
+  line-height: 1.4;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  vertical-align: 1px;
+  background: var(--ek-grey-light);
+  color: var(--ek-muted);
+  border-radius: var(--ek-radius-sm);
+  white-space: nowrap;
+}
+.ek-site-header .phase-badge,
+.ek-site-nav .phase-badge { background: var(--ek-grey-light); }
+
+/* On the dark locations band and inside the blue header the neutral ground
+   would flash light-on-dark, so the chip becomes a hairline outline instead. */
+.phase-badge--on-dark,
+.mk-locations .phase-badge {
+  background: none;
+  border: 1px solid var(--ek-nav-rule, var(--ek-grey-out));
+  color: var(--ek-steel);
+}
+
+.offline-banner { display: none; }
+
+@media (max-width: 900px) {
+  .nav,
+  .ek-site-nav { display: none; }
+
+  .ek-site-footer__inner,
+  .footer-inner,
+  .footer-top { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 901px) {
+  .hamburger,
+  .ek-site-menu-toggle { display: none; }
+}
+
+/* Header brand logo — replaces the text wordmark with the brand SVG pair
+   (colour for light grounds, white-v4 for dark/overlay grounds). */
+.brand .brand-logo { display: block; height: 26px; width: auto; }
+.brand .logo-white { display: none; }

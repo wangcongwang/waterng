@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Your Cart · Elken</title>
+  <meta name="description" content="Review the items in your Elken shopping cart and proceed to secure checkout." />
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
+  <link rel="stylesheet" href="assets/css/cart.css?v=20260917a">
+  <script src="assets/js/elken-ui.js" defer></script>
+</head>
+<body data-page="cart" data-guest-no-nav="true">
+  <div id="offline-banner" class="offline-banner">Connection status</div>
+  <div id="app-header" class="ek-site-header"></div>
+
+  <main class="site-main">
+    <section class="site-section cart-page">
+      <div class="container">
+        <header class="section-head">
+          <p class="eyebrow eyebrow-ink">Shopping</p>
+          <h1>Your Cart</h1>
+          <p class="section-sub">Review your items, adjust quantities, then proceed to checkout.</p>
+        </header>
+
+        <div id="cartView">
+          <!-- Filled by JS: either the cart list or the empty state -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="app-footer" class="ek-site-footer"></div>
+  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
+  <script src="assets/js/website.js?v=20260909c-2"></script>
+  <script>
+    (function() {
+      'use strict';
+      const N = n => 'N' + Number(n || 0).toLocaleString();
+
+      function imgOf(item) {
+        if (item.img) {
+          // "Add to cart" buttons on some marketing pages set data-img to a
+          // full path (assets/img/prod-x.png) rather than a bare filename —
+          // prepending the category folder to that mangles it into a
+          // nonexistent nested path. Only prepend when img is actually bare.
+          if (/^(assets\/|https?:)/i.test(item.img)) return item.img;
+          return item.category ? `assets/img/products/${item.category}/${item.img}` : item.img;
+        }
+        return 'assets/img/categories/health-wellness.webp';
+      }
+
+      function render() {
+        const view = document.getElementById('cartView');
+        if (!view) return;
+        const cart = (window.ProductCatalog && window.ProductCatalog.getCart) ? window.ProductCatalog.getCart() : [];
+        if (!cart.length) {
+          view.innerHTML = `
+            <div class="cart-empty">
+              <div class="cart-empty-icon">🛒</div>
+              <h2>Your cart is empty</h2>
+              <p>Add products you love and they will appear here.</p>
+              <a class="ek-btn ek-btn--primary" href="products.html">Browse products</a>
+            </div>`;
+          return;
+        }
+
+        const lines = cart.map(item => {
+          const qty = item.qty || 1;
+          const lineTotal = (item.price || 0) * qty;
+          return `
+            <div class="cart-item" data-id="${item.id}">
+              <div class="cart-item-img"><img src="${imgOf(item)}" alt="${item.name}" loading="lazy" /></div>
+              <div class="cart-item-body">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-unit">${N(item.price)} each</div>
+                <button type="button" class="cart-item-remove" data-remove="${item.id}">Remove</button>
+              </div>
+              <div class="cart-item-qty">
+                <div class="qty-control">
+                  <button type="button" class="qty-btn" data-dec="${item.id}" aria-label="Decrease">−</button>
+                  <input type="number" class="cartQty" data-id="${item.id}" value="${qty}" min="1" max="99" inputmode="numeric" aria-label="Quantity" />
+                  <button type="button" class="qty-btn" data-inc="${item.id}" aria-label="Increase">+</button>
+                </div>
+              </div>
+              <div class="cart-item-line">${N(lineTotal)}</div>
+            </div>`;
+        }).join('');
+
+        const subtotal = cart.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
+        const count = cart.reduce((s, i) => s + (i.qty || 1), 0);
+
+        // BV rewards — members only. Real per-unit `bv` comes from the catalogue
+        // (looked up by product id), so the total never drifts from the cards.
+        const loggedIn = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
+        let totalBV = 0;
+        if (loggedIn && window.ProductCatalog && window.ProductCatalog.allProducts) {
+          const catalog = window.ProductCatalog.allProducts;
+          cart.forEach(item => {
+            const matched = catalog.find(p => p.id === item.id);
+            const bv = (matched && typeof matched.bv === 'number') ? matched.bv : 0;
+            totalBV += bv * (item.qty || 1);
+          });
+        }
+
+        // "Continue shopping" returns to the product list that matches the
+        // shopper's state: members → repeat-purchase.html, guests → the guest
+        // copy of that page (also keeps the compact guest nav).
+        const guestMode = (() => {
+          try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; }
+        })();
+        const continueHref = (!loggedIn && guestMode)
+          ? 'guest-repeat-purchase.html?guest=1'
+          : 'repeat-purchase.html';
+
+        view.innerHTML = `
+          <div class="cart-layout">
+            <div class="cart-list">${lines}</div>
+            <div class="cart-side">
+              <div class="cart-summary">
+                <h2>Order summary</h2>
+                <div class="row"><span class="k">Items</span><span class="v">${count}</span></div>
+                <div class="row"><span class="k">Subtotal</span><span class="v">${N(subtotal)}</span></div>
+                <div class="row"><span class="k">Shipping</span><span class="v">Calculated at checkout</span></div>
+                ${loggedIn && totalBV > 0 ? `<div class="row"><span class="k">BV rewards</span><span class="v">+${totalBV} BV</span></div>` : ''}
+                <div class="total"><span class="k">Total</span><span class="v" id="cartTotal">${N(subtotal)}</span></div>
+                <a class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" href="checkout.html?cart=1">Proceed to checkout</a>
+                <button type="button" class="ek-btn ek-btn--ghost ek-btn--block" id="clearCart">Clear cart</button>
+                <a class="ek-btn ek-btn--secondary ek-btn--block" href="${continueHref}">Continue shopping</a>
+              </div>
+            </div>
+          </div>`;
+
+        // Quantity controls
+        view.querySelectorAll('[data-inc]').forEach(b => b.addEventListener('click', () => {
+          const id = b.dataset.inc;
+          const input = view.querySelector(`.cartQty[data-id="${id}"]`);
+          input.value = Math.min(99, (parseInt(input.value, 10) || 1) + 1);
+          if (window.ProductCatalog) window.ProductCatalog.updateCartQty(id, input.value);
+        }));
+        view.querySelectorAll('[data-dec]').forEach(b => b.addEventListener('click', () => {
+          const id = b.dataset.dec;
+          const input = view.querySelector(`.cartQty[data-id="${id}"]`);
+          input.value = Math.max(1, (parseInt(input.value, 10) || 1) - 1);
+          if (window.ProductCatalog) window.ProductCatalog.updateCartQty(id, input.value);
+        }));
+        view.querySelectorAll('.cartQty').forEach(input => input.addEventListener('input', () => {
+          if (window.ProductCatalog) window.ProductCatalog.updateCartQty(input.dataset.id, input.value);
+        }));
+        view.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', () => {
+          if (window.ProductCatalog) window.ProductCatalog.removeFromCart(b.dataset.remove);
+        }));
+        const clearBtn = document.getElementById('clearCart');
+        if (clearBtn) clearBtn.addEventListener('click', () => {
+          if (window.ProductCatalog) window.ProductCatalog.clearCart();
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', render);
+      window.addEventListener('al:cartchange', render);
+      window.addEventListener('al:authchange', render);
+    })();
+  </script>
+</body>
+</html>

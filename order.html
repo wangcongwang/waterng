@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Order Details · Elken</title>
+  <meta name="description" content="View your Elken order details." />
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260919d">
+  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260919i">
+  <script src="assets/js/elken-ui.js" defer></script>
+</head>
+<body data-page="order" data-guest-no-nav="true">
+  <div id="offline-banner" class="offline-banner">Connection status</div>
+  <div id="app-header" class="ek-site-header"></div>
+
+  <main class="page order-shell">
+    <div class="container">
+      <div class="crumbs">
+        <a href="index.html">Home</a> <span>›</span> <span>Order details</span>
+      </div>
+      <h1>Order details</h1>
+      <p>Reference for your Elken purchase. Shareable via the link below.</p>
+
+      <div id="orderHost"></div>
+    </div>
+  </main>
+
+  <div id="app-footer" class="ek-site-footer"></div>
+
+  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
+<script src="assets/js/app.js?v=20260923b"></script>
+  <script src="assets/js/website.js?v=20260909c-2"></script>
+  <script src="assets/js/order-receipt.js?v=20260915a"></script>
+  <script>
+    const PICKUP_LOCATIONS = {
+      lagos: { name: 'Lagos HQ', addr: '12B Admiralty Way, Lekki Phase 1', hours: 'Mon–Sat · 8:00 – 18:00' },
+      abuja: { name: 'Abuja branch', addr: 'Plot 24, Wuse Zone 5', hours: 'Mon–Fri · 9:00 – 17:00' },
+      ph:    { name: 'Port Harcourt branch', addr: '5 Aba Road, GRA Phase 2', hours: 'Mon–Fri · 9:00 – 17:00' },
+    };
+    // Literal fallback for stored orders (this page does not load the shared
+    // payment layer, so the Nigeria channels are spelled out here too).
+    const PAY_LABELS = {
+      card: 'Debit Card', ussd: 'USSD', bank: 'Bank Transfer',
+      paybank: 'Pay with Bank', visaqr: 'Pay with Visa QR', balance: 'Account Balance',
+      // legacy values still readable on older stored orders
+      cod: 'Cash on delivery', transfer: 'Bank Transfer', cash: 'Cash', account: 'Account Balance'
+    };
+
+    function getOrder() {
+      const id = new URLSearchParams(location.search).get('order');
+      if (!id) return null;
+      return (window.ProductCatalog && window.ProductCatalog.getOrderById)
+        ? window.ProductCatalog.getOrderById(id) : null;
+    }
+    function orderDetailLink(orderId) {
+      try { return new URL('order.html?order=' + encodeURIComponent(orderId), location.href).href; }
+      catch (e) { return 'order.html?order=' + encodeURIComponent(orderId); }
+    }
+    function buildOrderMailto(order) {
+      const item = (order.items && order.items[0]) || {};
+      const qty = item.qty || 1;
+      const isPickup = order.delivery && order.delivery.method === 'pickup';
+      const methodLabel = isPickup ? 'Self-pickup' : 'Door delivery';
+      const payLabel = PAY_LABELS[order.payment] || order.payment || 'Not specified';
+      const link = orderDetailLink(order.id);
+      const subject = 'Elken Order ' + order.id + ': Your order details';
+      const body =
+        'Hello ' + (order.customer && order.customer.name ? order.customer.name : 'there') + ',\n\n' +
+        'Thank you for your order with Elken.\n\n' +
+        'Order: ' + order.id + '\n' +
+        'Product: ' + (item.name || 'Unnamed product') + ' × ' + qty + '\n' +
+        'Total: N' + (order.total || 0).toLocaleString() + '\n' +
+        'Delivery: ' + methodLabel + '\n' +
+        'Payment: ' + payLabel + '\n\n' +
+        'View your full order details here:\n' + link + '\n\n' +
+        'If you have any questions, reply to this email or contact hello@elkenafrica.com.\n\n' +
+        'Best regards,\nElken Nigeria';
+      const email = (order.customer && order.customer.email) || '';
+      return 'mailto:' + encodeURIComponent(email) +
+        '?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(body);
+    }
+
+    // --- order-item helpers (shared with the Orders tab in account.html) ---
+    window.__ORDER_PIC_SVG = '<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z"/><path d="M5 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/></svg>';
+    function _getBV(item) {
+      if (typeof item.bv === 'number') return item.bv;
+      if (item.bvString !== undefined) return item.bvString;
+      if (typeof item.price === 'number') return Math.round(item.price / 1000) * (item.qty || 1);
+      return 0;
+    }
+    function _currencySymbol(c) {
+      const m = { NGN: 'N', USD: '$', EUR: '€', GBP: '£', CNY: '¥', KES: 'KSh', GHS: 'GH₵' };
+      return m[c] || 'N';
+    }
+    function _resolveOrderItemImage(it) {
+      if (!it) return null;
+      // Orders placed before the double-prefix bug (below) was fixed have
+      // that mangled path baked into their stored it.image forever — fixing
+      // the builder doesn't repair data already written. Detect and discard
+      // it here too (two "assets/" segments is the telltale sign) so old
+      // orders self-heal instead of showing the placeholder icon forever.
+      if (it.image && !/assets\/.*assets\//i.test(it.image)) return it.image;
+      // it.img may already be a full path (some marketing pages' "Add to
+      // cart" buttons set it that way) — prepending the category folder to
+      // that mangles it into a nonexistent nested path.
+      if (it.img && /^(assets\/|https?:)/i.test(it.img)) return it.img;
+      if (it.category && it.img) return 'assets/img/products/' + it.category + '/' + it.img;
+      const pc = window.ProductCatalog;
+      // ProductCatalog.allProducts is exposed as an ARRAY (not a function) in
+      // website.js — handle both shapes so the catalog lookup actually runs.
+      let list = [];
+      if (pc) {
+        if (typeof pc.allProducts === 'function') list = pc.allProducts();
+        else if (Array.isArray(pc.allProducts)) list = pc.allProducts;
+        else if (pc.PRODUCTS) {
+          Object.keys(pc.PRODUCTS).forEach(k => {
+            const arr = pc.PRODUCTS[k];
+            if (Array.isArray(arr)) for (let j = 0; j < arr.length; j++) list.push(arr[j]);
+          });
+        }
+      }
+      if (list.length) {
+        const iid = String(it.id || '').trim();
+        const iname = String(it.name || '').trim().toLowerCase();
+        const isku = String(it.sku || it.code || it.productCode || '').trim().toLowerCase();
+        const match = list.find(p => {
+          if (!p) return false;
+          if (iid && String(p.id || '').trim() === iid) return true;
+          const pn = String(p.name || '').trim().toLowerCase();
+          if (iname && (pn === iname || pn.includes(iname) || iname.includes(pn))) return true;
+          if (isku && String(p.sku || p.code || '').trim().toLowerCase() === isku) return true;
+          return false;
+        });
+        if (match) {
+          if (match.image) return match.image;
+          if (match.category && match.img) return 'assets/img/products/' + match.category + '/' + match.img;
+        }
+      }
+      if (it.pic) return it.pic;
+      if (it.img) return it.img;
+      return null;
+    }
+    function _resolveOrderItemCode(it) {
+      if (!it) return null;
+      if (it.sku || it.code || it.id) return it.sku || it.code || it.id;
+      const pc = window.ProductCatalog;
+      const iname = String(it.name || '').trim();
+      if (pc && typeof pc.allProducts === 'function' && iname) {
+        const match = pc.allProducts().find(p => p && String(p.name).trim() === iname);
+        if (match) return match.sku || match.code || match.id || null;
+      }
+      return null;
+    }
+    function fmtDateTime(ts, fb) {
+      if (!ts) return (fb != null ? fb : '—');
+      const d = new Date(ts);
+      if (isNaN(d.getTime())) return (fb != null ? fb : '—');
+      const pad = n => String(n).padStart(2, '0');
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+             ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+    // Return `fb` (friendly text) instead of a dash when value is empty.
+    function orFallback(v, fb) {
+      if (v === null || v === undefined || v === '' || v === '—') return fb;
+      return v;
+    }
+
+    function render() {
+      const host = document.getElementById('orderHost');
+      const order = getOrder();
+      if (!order) {
+        host.innerHTML = `
+          <div class="ek-card checkout-card">
+            <h2>Order not found</h2>
+            <p>
+              We couldn't find this order on this device. Orders are stored locally in your browser,
+              so a link opened on a different phone or computer won't show the details.
+              Please open the link on the device where you placed the order, or contact
+              <a href="mailto:hello@elkenafrica.com">hello@elkenafrica.com</a> with your order ID.
+            </p>
+            <a href="index.html" class="ek-btn ek-btn--primary ek-btn--sm">Back to home</a>
+          </div>`;
+        return;
+      }
+
+      const items = order.items || [];
+      const isPickup = order.delivery && order.delivery.method === 'pickup';
+      const link = orderDetailLink(order.id);
+      const email = (order.customer && order.customer.email) || '';
+      const statusLabel = (order.status || 'pending').toUpperCase();
+
+      // ---- Member / order meta (mirrors the member data shown on the Orders list) ----
+      const authUser = (window.Auth && window.Auth.user) || {};
+      const authMemberId = authUser.memberId || null;
+      const authName = authUser.name || authUser.fullName || null;
+
+      const memberId = orFallback(order.memberId || authMemberId, 'Not registered');
+      const memberName = orFallback(order.memberName || (order.customer && order.customer.name) || authName, 'Guest');
+      const recipient = orFallback(order.customer && order.customer.name, memberName);
+      const phone = orFallback(order.customer && order.customer.phone, 'No phone on file');
+      const pickupLoc = (order.delivery && order.delivery.pickupLoc) || 'lagos';
+      const pickup = PICKUP_LOCATIONS[pickupLoc] || PICKUP_LOCATIONS.lagos;
+      const addressParts = [order.customer && order.customer.address, order.customer && order.customer.city, order.customer && order.customer.state].filter(Boolean);
+      const addressStr = isPickup
+        ? (pickup.name + ' · ' + pickup.addr)
+        : (addressParts.join(', ') || 'No address provided');
+      const country = order.country || 'Nigeria';
+      const currency = order.currency || 'NGN';
+      const payMethod = order.paymentLabel || PAY_LABELS[order.payment] || order.payment || 'Not specified';
+      const placedStr = fmtDateTime(order.date || order.createdAt || order.placeTime || null, 'Unknown date');
+      const paidStr = fmtDateTime(order.paidAt || null, 'Not yet paid');
+      const isMemberOrder = !!(order.operatorId && order.memberId && order.operatorId !== order.memberId);
+      const orderTypeLabel = isMemberOrder ? 'Member order' : 'My order';
+      const payStatusLabel = order.payStatus || statusLabel;
+
+      // BV only for signed-in members (visitor orders credit the referrer's ID)
+      const showBV = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
+
+      const TAX_RATE = (typeof order.taxRate === 'number') ? order.taxRate
+        : (typeof (items[0] && items[0].taxRate) === 'number' ? items[0].taxRate : 0.075);
+      const sym = _currencySymbol(currency);
+      const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+      // Items read as product rows (image · name · qty × unit price · line total).
+      // The per-line tax / BV columns move into one summary block underneath, so
+      // the page no longer looks like a spreadsheet.
+      const itemRows = (items.length ? items : [{}]).map((it) => {
+        const qty = Number(it.qty) || 1;
+        const price = Number(it.price) || 0;
+        const lineTotal = qty * price;
+        const code = _resolveOrderItemCode(it) || '';
+        const img = _resolveOrderItemImage(it);
+        const picInner = img
+          ? `<img src="${img}" alt="" loading="lazy" onerror="this.outerHTML=window.__ORDER_PIC_SVG">`
+          : window.__ORDER_PIC_SVG;
+        return `
+          <li class="odet-item">
+            <span class="odet-item-img">${picInner}</span>
+            <span class="odet-item-body">
+              <span class="odet-item-name">${esc(it.name || 'Unnamed product')}</span>
+              <span class="odet-item-meta">${code ? esc(code) + ' · ' : ''}${sym}${fmtNum(price)} each</span>
+            </span>
+            <span class="odet-item-qty">×${qty}</span>
+            <span class="odet-item-line">${sym}${fmtNum(lineTotal)}</span>
+          </li>`;
+      }).join('');
+
+      const subtotal = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number(it.price) || 0), 0);
+      const sumBV = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number((typeof it.bv === 'number' ? it.bv : _getBV(it))) || 0), 0);
+      const sumTax = subtotal * TAX_RATE;
+      const grand = subtotal + sumTax;
+      const totalQty = items.reduce((s, it) => s + (Number(it.qty) || 1), 0);
+
+      const taxPct = Math.round(TAX_RATE * 1000) / 10;
+
+      const totalsHtml = `
+        <div class="odet-money">
+          <div class="odet-money-row"><span>Subtotal</span><b>${sym}${fmtNum(subtotal)}</b></div>
+          <div class="odet-money-row"><span>Tax (${taxPct}%)</span><b>${sym}${fmtNum(sumTax)}</b></div>
+          ${showBV ? `<div class="odet-money-row"><span>BV earned</span><b class="odet-bv">+${order.bv != null ? order.bv : sumBV} BV</b></div>` : ''}
+          <div class="odet-money-total"><span>Total</span><b>${sym}${fmtNum(grand)}</b></div>
+        </div>`;
+
+      // ---- Status badge tone (paid / pending / failed / neutral) ----
+      // Order matters: "unpaid" contains the substring "paid", so the
+      // paid/success check must run after the pending/unpaid check or every
+      // unpaid order gets misclassified (and colored) as paid.
+      const badgeClass = (v) => {
+        const s = String(v || '').toLowerCase();
+        if (/pending|unpaid|process|await/.test(s)) return 'ek-chip--warning';
+        if (/fail|cancel|refund|reject/.test(s)) return 'ek-chip--error';
+        if (/paid|complete|success|deliver/.test(s)) return 'ek-chip--success';
+        return '';
+      };
+      const noteText = (order.customer && order.customer.note) ? order.customer.note : '';
+
+      host.innerHTML = `
+        <div class="odet">
+          <!-- ---------- Hero: reference + state + amount ---------- -->
+          <header class="ek-card odet-hero">
+            <div class="odet-hero-main">
+              <span class="ek-chip odet-badge ${badgeClass(order.status)}">${esc(statusLabel)}</span>
+              <h2 class="odet-ref">Order ${esc(order.id)}</h2>
+              <p class="odet-hero-sub">
+                Placed ${esc(placedStr)} · ${totalQty} item${totalQty === 1 ? '' : 's'} · ${esc(orderTypeLabel)}
+              </p>
+            </div>
+            <div class="odet-hero-total">
+              <span class="odet-k">Order total</span>
+              <b class="odet-amount">${sym}${fmtNum(grand)}</b>
+              <span class="ek-chip odet-badge ${badgeClass(payStatusLabel)}">${esc(payStatusLabel)}</span>
+            </div>
+          </header>
+
+          <div class="odet-grid">
+            <div class="odet-main">
+              <!-- ---------- Items + money ---------- -->
+              <section class="ek-card odet-card">
+                <div class="odet-card-head">
+                  <h3 class="odet-card-title">Items</h3>
+                  <span class="odet-pill">${items.length}</span>
+                </div>
+                <ul class="odet-items">${itemRows}</ul>
+                ${totalsHtml}
+              </section>
+
+              <!-- ---------- Delivery · Payment · Member ----------
+                   Kept in the left (wide) column, under the items, so the order
+                   facts read as one block and the narrow right column is left for
+                   the keep-a-copy actions. -->
+              <div class="odet-info">
+                <!-- ---------- Delivery ---------- -->
+                <section class="ek-card odet-card">
+                  <h3 class="odet-card-title">${isPickup ? 'Pickup' : 'Delivery'}</h3>
+                  <p class="odet-person">${esc(recipient)}</p>
+                  <p class="odet-lines">${esc(phone)}<br>${esc(addressStr)}<br>${esc(country)}</p>
+                  ${noteText ? `<p class="odet-note">${esc(noteText)}</p>` : ''}
+                </section>
+
+                <!-- ---------- Payment ---------- -->
+                <section class="ek-card odet-card">
+                  <h3 class="odet-card-title">Payment</h3>
+                  <div class="odet-pay-row">
+                    <b class="odet-pay-name">${esc(payMethod)}</b>
+                    <span class="ek-chip odet-badge ${badgeClass(payStatusLabel)}">${esc(payStatusLabel)}</span>
+                  </div>
+                  ${order.paymentReference
+                    ? `<p class="odet-ref-line">Reference <b class="odet-mono">${esc(order.paymentReference)}</b></p>`
+                    : ''}
+                </section>
+
+                <!-- ---------- Member ---------- -->
+                <section class="ek-card odet-card">
+                  <h3 class="odet-card-title">Member</h3>
+                  <dl class="odet-rows">
+                    <div class="odet-row"><dt>Member ID</dt><dd>${esc(memberId)}</dd></div>
+                    <div class="odet-row"><dt>Name</dt><dd>${esc(memberName)}</dd></div>
+                    <div class="odet-row"><dt>Placed</dt><dd>${esc(placedStr)}</dd></div>
+                    <div class="odet-row"><dt>Paid</dt><dd>${esc(paidStr)}</dd></div>
+                    <div class="odet-row"><dt>Currency</dt><dd>${esc(currency)}</dd></div>
+                  </dl>
+                </section>
+              </div>
+            </div>
+
+            <aside class="odet-side">
+              <!-- ---------- Receipt (works signed in AND as a guest) ---------- -->
+              <section class="ek-card odet-card">
+                <h3 class="odet-card-title">Receipt</h3>
+                <p class="odet-lines">Download a copy of this order receipt to keep for warranty or bonus enquiries.</p>
+                <button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="downloadReceipt">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                    <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/>
+                  </svg>
+                  <span>Download receipt</span>
+                </button>
+              </section>
+
+              <!-- ---------- Shareable link ---------- -->
+              <section class="ek-card odet-card">
+                <h3 class="odet-card-title">Order details link</h3>
+                <div class="order-link-box">
+                  <div class="order-link-row">
+                    <input class="ek-input" id="orderLinkInput" readonly value="${link.replace(/"/g, '&quot;')}" />
+                    <button type="button" class="ek-btn ek-btn--secondary ek-btn--sm" id="copyOrderLink">Copy</button>
+                  </div>
+                  ${email
+                    ? `<button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="emailOrderLink">
+                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l9 6 9-6M3 7v10h18V7H3z"/></svg>
+                         Email order link to ${email}
+                       </button>`
+                    : ''}
+                  <p>
+                    This link is stored in your browser, so it only opens on this device.
+                    Email it to yourself to keep a copy. (Static demo: no server-side email is sent; the button opens your email app with the link pre-filled.)
+                  </p>
+                </div>
+                <a href="index.html" class="odet-back">← Back to home</a>
+              </section>
+            </aside>
+          </div>
+        </div>
+      `;
+
+      const copyBtn = document.getElementById('copyOrderLink');
+      if (copyBtn) copyBtn.addEventListener('click', () => {
+        const inp = document.getElementById('orderLinkInput');
+        inp.select();
+        try { navigator.clipboard.writeText(inp.value); } catch (e) { document.execCommand('copy'); }
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1500);
+      });
+      const emailBtn = document.getElementById('emailOrderLink');
+      if (emailBtn) emailBtn.addEventListener('click', () => { location.href = buildOrderMailto(order); });
+
+      // Download receipt — delegated to the shared module so the signed-in and
+      // guest (share-link) cases produce the identical document.
+      const receiptBtn = document.getElementById('downloadReceipt');
+      if (receiptBtn) receiptBtn.addEventListener('click', () => {
+        try {
+          if (!window.OrderReceipt) throw new Error('Receipt module unavailable');
+          window.OrderReceipt.download(order, { showBV });
+        } catch (err) {
+          console.error(err);
+          if (window.toast) window.toast(String(err.message || err), 'danger');
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', render);
+  </script>
+</body>
+</html>

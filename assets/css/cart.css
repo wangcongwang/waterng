@@ -1,0 +1,159 @@
+/* ============================================================================
+   Cart — Elken UI Kit tokens only
+   ----------------------------------------------------------------------------
+   Refines the cart page (cart.html) with the same visual language as
+   checkout/signup: item cards, a bordered quantity stepper, a sticky order
+   summary card and a centred empty state. Loaded AFTER water-pages.css so
+   these overrides win the cascade. No hex, no px font-sizes, no !important.
+   购物车样式：沿用 checkout/signup 的视觉语言（商品卡片、边框步进器、
+   吸顶订单摘要卡、居中空态）。仅用 --ek- token。
+   ============================================================================ */
+
+/* ---------- Page header -----------------------------------------------------
+   .section-head (elken-marketing.css) is a flex row built for a "title block
+   + CTA button" split (justify-content: space-between). Cart's header is a
+   plain eyebrow/h1/sub stack with no CTA, so the same three elements were
+   being spread apart as flex siblings instead of stacking — the eyebrow
+   floated to one corner and the h1 to another. Force it back to a block
+   stack here rather than repurpose the shared class for every page. */
+.cart-page .section-head { display: block; }
+
+/* ---------- Two-column shell ----------------------------------------------- */
+.cart-page .cart-layout { gap: var(--ek-24); align-items: start; }
+.cart-list { display: flex; flex-direction: column; gap: var(--ek-12); min-width: 0; }
+.cart-side { min-width: 0; }
+
+/* ---------- Item cards ------------------------------------------------------ */
+.cart-item {
+  padding: var(--ek-16);
+  border-radius: var(--ek-radius-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--ek-16);
+}
+.cart-item-img {
+  width: 72px; height: 72px; flex: 0 0 72px;
+  padding: var(--ek-8);
+}
+.cart-item-img img { width: 100%; height: 100%; object-fit: contain; }
+.cart-item-body {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--ek-4);
+}
+.cart-item-name {
+  font-size: var(--ek-h4); font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal-deep); line-height: 1.25;
+}
+.cart-item-unit { font-size: var(--ek-caption); color: var(--ek-muted); }
+.cart-item-remove {
+  border: 0; background: none; padding: 0; cursor: pointer;
+  font: inherit; font-size: var(--ek-caption); font-weight: var(--ek-w-medium);
+  color: var(--ek-error); margin-top: var(--ek-4);
+}
+.cart-item-remove:hover { text-decoration: underline; }
+.cart-item-remove:focus-visible { outline: none; box-shadow: var(--ek-focus-ring); border-radius: var(--ek-radius-sm); }
+
+/* Quantity stepper (same pattern as signup) */
+.cart-item-qty { flex: 0 0 auto; }
+.qty-control {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--ek-border); border-radius: var(--ek-radius);
+  overflow: hidden; background: var(--ek-surface);
+}
+.qty-btn {
+  width: 32px; height: 36px; border: 0; background: transparent;
+  color: var(--ek-charcoal); cursor: pointer; font-size: var(--ek-h4);
+  display: grid; place-items: center;
+}
+.qty-btn:hover { background: var(--ek-surface-sunken); }
+.qty-btn:focus-visible { outline: none; box-shadow: inset var(--ek-focus-ring); }
+.cartQty {
+  width: 44px; height: 36px; border: 0; text-align: center;
+  font: inherit; font-size: var(--ek-small); color: var(--ek-charcoal-deep);
+  background: var(--ek-surface);
+  -moz-appearance: textfield; appearance: textfield;
+}
+.cartQty:focus-visible { outline: none; box-shadow: inset var(--ek-focus-ring); }
+.cartQty::-webkit-outer-spin-button,
+.cartQty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Line total */
+.cart-item-line {
+  flex: 0 0 auto; min-width: 96px; text-align: right;
+  font-weight: var(--ek-w-bold); color: var(--ek-charcoal-deep);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ---------- Order summary card ---------------------------------------------- */
+.cart-summary {
+  padding: var(--ek-24);
+  border-radius: var(--ek-radius-lg);
+  position: sticky;
+  top: calc(var(--ek-header-h) + var(--ek-24));
+}
+.cart-summary h2 {
+  margin: 0 0 var(--ek-16);
+  padding-bottom: var(--ek-12);
+  border-bottom: 1px solid var(--ek-border);
+  font-size: var(--ek-h4); font-weight: var(--ek-w-bold); color: var(--ek-blue);
+}
+.cart-summary .row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--ek-12); margin-bottom: var(--ek-12);
+  font-size: var(--ek-small);
+}
+.cart-summary .row .v { color: var(--ek-charcoal); font-weight: var(--ek-w-medium); text-align: right; }
+.cart-summary .total {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--ek-12);
+  margin: var(--ek-4) 0 var(--ek-16);
+  padding-top: var(--ek-12);
+  border-top: 1px solid var(--ek-border);
+}
+.cart-summary .total .k { font-size: var(--ek-small); font-weight: var(--ek-w-bold); color: var(--ek-charcoal); }
+.cart-summary .total .v {
+  font-size: var(--ek-h3); font-weight: var(--ek-w-bold); color: var(--ek-blue);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.cart-summary .ek-btn--block + .ek-btn--block { margin-top: var(--ek-8); }
+.cart-summary .ek-btn--primary { margin-top: var(--ek-8); }
+
+/* ---------- Empty state ------------------------------------------------------ */
+.cart-empty {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: var(--ek-8);
+  padding: var(--ek-56) var(--ek-24);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-sm);
+}
+.cart-empty-icon {
+  font-size: var(--ek-h1); line-height: 1;
+  width: 64px; height: 64px; display: grid; place-items: center;
+  background: var(--ek-info-tint); border-radius: var(--ek-radius-pill);
+  margin-bottom: var(--ek-4);
+}
+.cart-empty h2 { margin: 0; font-size: var(--ek-h3); font-weight: var(--ek-w-bold); color: var(--ek-charcoal-deep); }
+.cart-empty p { margin: 0 0 var(--ek-12); font-size: var(--ek-small); color: var(--ek-muted); }
+
+/* ---------- Responsive ------------------------------------------------------- */
+@media (max-width: 840px) {
+  .cart-summary { position: static; }
+}
+@media (max-width: 600px) {
+  .cart-item {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "img body qty"
+      "img body line";
+    align-items: center;
+  }
+  .cart-item-img { grid-area: img; width: 64px; height: 64px; flex: none; }
+  .cart-item-body { grid-area: body; }
+  .cart-item-qty { grid-area: qty; justify-self: end; }
+  .cart-item-line { grid-area: line; justify-self: end; align-self: center; }
+  .cart-summary { padding: var(--ek-20); }
+  .cart-empty { padding: var(--ek-40) var(--ek-16); }
+}
