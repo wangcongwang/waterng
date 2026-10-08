@@ -170,6 +170,9 @@
 .auth-switch a { color: var(--ek-blue); font-weight: var(--ek-w-medium); margin-left: var(--ek-4); }
 .auth-switch a:hover { text-decoration: underline; }
 
+/* Register button below the sign-in form */
+.auth-switch__btn { margin: calc(var(--ek-4) / 2) 0 0; }
+
 /* Guest checkout entry — sits at the bottom of the card, kept very faint */
 .auth-guest {
   margin: var(--ek-16) 0 0;

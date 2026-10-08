@@ -974,8 +974,17 @@
   function openLoginNewTab() {
     const file = location.pathname.split('/').pop() || 'index.html';
     const next = '?next=' + encodeURIComponent(file + location.search);
-    const w = window.open('login.html' + next, '_blank', 'noopener');
-    if (!w) location.href = 'login.html' + next; // popup blocked → same tab fallback
+    const url = 'login.html' + next;
+    // Open via an anchor with target=_blank so it reliably opens in a NEW tab.
+    // window.open(url, '_blank', 'noopener') returns null in some browsers, which wrongly
+    // triggered the same-tab fallback (location.href) and navigated the current tab.
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   }
   function applyBuyNowGate() {
     const unlogged = isGateUnlogged();

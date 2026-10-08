@@ -122,10 +122,7 @@
             data-i18n="login.submit">Sign in</button>
         </form>
 
-        <p class="auth-switch">
-          <span data-i18n="login.no_account">No account yet?</span>
-          <a href="signup.html" data-i18n="login.create">Create one</a>
-        </p>
+        <a href="signup.html" class="ek-btn ek-btn--block ek-btn--secondary auth-switch__btn">Register</a>
 
         <div class="auth-guest">
           <p class="auth-guest__note">You can browse and buy without signing in.</p>
@@ -302,6 +299,15 @@
       });
 
       wirePasswordToggles();
+
+      // Forgot password — no self-service reset; route through customer service.
+      const forgotLink = document.querySelector('.auth-row a[data-i18n="login.forgot"]');
+      if (forgotLink) {
+        forgotLink.addEventListener('click', e => {
+          e.preventDefault();
+          window.toast(window.T.tr('login.forgot_toast'), 'info');
+        });
+      }
     });
   </script>
 </body>
