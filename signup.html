@@ -860,7 +860,8 @@
               submitBtn.textContent = (tr('login.redirecting_in') || 'Redirecting in {s}s').replace('{s}', remaining);
             } else {
               clearInterval(redirectTimer);
-              location.href = 'account.html';
+              // Land directly on the Orders view of the account dashboard.
+              location.href = 'account.html#orders';
             }
           }, 1000);
         }, 600);

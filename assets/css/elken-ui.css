@@ -275,7 +275,7 @@
        <td data-label="订单号">EK-1024</td>                                 */
 @media (max-width: 639px) {
   .ek-table--stack thead { display: none; }
-  .ek-table--stack, .ek-table--stack tbody, .ek-table--stack tr, .ek-table--stack td { display: block; width: 100%; }
+  .ek-table--stack, .ek-table--stack tbody, .ek-table--stack tfoot, .ek-table--stack tr, .ek-table--stack td { display: block; width: 100%; }
   .ek-table--stack tr {
     border: 1px solid var(--ek-border); border-radius: var(--ek-radius);
     margin-bottom: var(--ek-12); padding: var(--ek-4) 0; background: var(--ek-surface);

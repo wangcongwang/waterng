@@ -151,6 +151,37 @@ a { color: var(--ek-blue); }
   gap: var(--ek-12);
 }
 
+/* Drawer signed-in user block: avatar + name/ID row above the actions. */
+.drawer-user { margin-bottom: var(--ek-8); }
+.drawer-avatar {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 50%;
+  background: var(--ek-info-tint);
+  color: var(--ek-blue);
+  font-weight: var(--ek-w-bold);
+}
+.drawer-user-meta {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.drawer-user-meta strong {
+  font-size: var(--ek-small);
+  color: var(--ek-charcoal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.drawer-user-meta small {
+  font-size: var(--ek-caption);
+  color: var(--ek-muted);
+  font-variant-numeric: var(--ek-num);
+}
+
 .wa-fab {
   position: fixed;
   right: var(--ek-20);

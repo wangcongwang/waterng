@@ -1270,20 +1270,20 @@
                 <tbody>${itemRows}</tbody>
                 <tfoot>
                   <tr>
-                    <td class="col-img" data-label="Image"></td>
+                    <td class="col-img stack-hide" data-label="Image"></td>
                     <td colspan="2" class="lbl" data-i18n="account.orders_label_subtotal">Subtotal</td>
                     <td class="num" data-label="Qty">${items.reduce((s, it) => s + (Number(it.qty) || 1), 0)}</td>
-                    <td data-label="Price"></td>
+                    <td class="stack-hide" data-label="Price"></td>
                     <td class="num" data-label="Total Price">${sym}${fmtNum(subtotal)}</td>
                     <td class="num" data-label="Total BV">${sumBV}</td>
-                    <td data-label="Tax Rate"></td>
+                    <td class="stack-hide" data-label="Tax Rate"></td>
                     <td class="num" data-label="Total Tax">${sym}${fmtNum(sumTax)}</td>
                   </tr>
                   <tr class="ocard__grand">
-                    <td class="col-img" data-label="Image"></td>
+                    <td class="col-img stack-hide" data-label="Image"></td>
                     <td colspan="5" class="lbl" data-i18n="account.orders_label_total">Total (incl. tax)</td>
-                    <td data-label="Total BV"></td>
-                    <td data-label="Tax Rate"></td>
+                    <td class="stack-hide" data-label="Total BV"></td>
+                    <td class="stack-hide" data-label="Tax Rate"></td>
                     <td class="num" data-label="">${sym}${fmtNum(grand)}</td>
                   </tr>
                 </tfoot>

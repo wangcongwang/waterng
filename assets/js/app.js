@@ -247,13 +247,13 @@
               ${mid ? `<small>${mid}</small>` : ''}
             </span>
           </div>
-          <a href="account.html" class="btn btn-dark btn-block">${T.tr('nav.account')}</a>
-          <button class="btn btn-ghost btn-block" id="drawerLogout" type="button">${T.tr('common.logout')}</button>
+          <a href="account.html" class="ek-btn ek-btn--block">${T.tr('nav.account')}</a>
+          <button class="ek-btn ek-btn--secondary ek-btn--block" id="drawerLogout" type="button">${T.tr('common.logout')}</button>
         </div>`;
     }
     return `
       <div class="drawer-auth drawer-auth-out">
-        <a href="login.html${ACCOUNT_NEXT}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block">${T.tr('common.sign_in')}</a>
+        <a href="login.html${ACCOUNT_NEXT}" target="_blank" rel="noopener noreferrer" class="ek-btn ek-btn--block">${T.tr('common.sign_in')}</a>
         <a href="signup.html${nextParam}" class="drawer-auth-alt">${T.tr('common.create_account')}</a>
       </div>`;
   }
@@ -377,6 +377,14 @@
       : '';
     const langUtil = `<button class="ek-lang" type="button" id="headerLang" aria-label="Language">EN ${CHEVRON}</button>`;
 
+    /* 移动端专用购物车入口：桌面隐藏、手机（≤1199px）直接显示在头部栏，
+       不藏进抽屉菜单，方便随时查看/结算。显示逻辑与桌面购物车一致
+       （仅登录态或 guest 下单流程显示）。角标复用 [id="cartBadgeMobile"]，
+       由 updateCartBadge 同步。 */
+    const cartUtilMobile = (loggedIn || isGuestEntry)
+      ? `<a class="ek-util ek-util--icon" href="cart.html" id="headerCartMobile" title="Cart" aria-label="Cart">${ICON_CART}<span class="ek-util__badge" id="cartBadgeMobile"></span></a>`
+      : '';
+
     const productsNavItem = `
             <div class="ek-nav__item ek-nav__item--parent">
               <a class="ek-nav__link" href="products.html" data-submenu-toggle aria-expanded="false" aria-haspopup="true"${on('products')}>Products ${CHEVRON}</a>
@@ -415,6 +423,7 @@
           <button class="ek-burger" type="button" id="openDrawer" aria-expanded="false" aria-label="Menu">
             <span></span><span></span><span></span>
           </button>
+          <div class="ek-header__mobile-actions" id="headerMobileActions">${cartUtilMobile}</div>
           <nav class="ek-nav" data-nav aria-label="Main">
             ${mainNavItems}
             <div class="ek-nav__utils">
@@ -435,13 +444,10 @@
             <button class="icon-btn" id="closeDrawer" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
           </div>
           ${drawerAuthHTML(user, nextParam)}
-          <nav class="drawer-nav">
+          ${isGuestEntry || !loggedIn ? `<nav class="drawer-nav">
             ${isGuestEntry
-              ? `<a href="products.html" class="${active === 'products' ? 'active' : ''}">Products</a>
-            <a href="cart.html">Cart</a>`
-              : loggedIn
-                ? `<a href="cart.html">Cart</a>`
-                : `<a href="index.html" class="${active === 'home' ? 'active' : ''}">Home</a>
+              ? `<a href="products.html" class="${active === 'products' ? 'active' : ''}">Products</a>`
+              : `<a href="index.html" class="${active === 'home' ? 'active' : ''}">Home</a>
             <a href="about.html" class="${active === 'about' ? 'active' : ''}">About Us</a>
             <a href="products.html" class="${active === 'products' ? 'active' : ''}">Products</a>
             <a href="become-a-distributor.html" class="${active === 'distributor' ? 'active' : ''}">Become a Distributor</a>
@@ -450,7 +456,7 @@
             <a href="faq.html" class="${active === 'faq' ? 'active' : ''}">FAQ</a>
             <a href="service.html">Service &amp; Support</a>
             <a href="case-studies.html">Case Studies</a>`}
-          </nav>
+          </nav>` : ''}
         </div>
       </div>
       <a class="wa-fab" href="https://wa.me/2348000000000" target="_blank" rel="noopener" aria-label="WhatsApp">
@@ -975,6 +981,12 @@
     const file = location.pathname.split('/').pop() || 'index.html';
     const next = '?next=' + encodeURIComponent(file + location.search);
     const url = 'login.html' + next;
+    // Embedded preview webviews (WorkBuddy built-in browser etc.) handle
+    // target=_blank window creation poorly and can crash the host app.
+    // Fall back to same-tab navigation there; real browsers keep the new tab.
+    let embedded = false;
+    try { embedded = window.self !== window.top; } catch (e) { embedded = true; }
+    if (embedded) { location.href = url; return; }
     // Open via an anchor with target=_blank so it reliably opens in a NEW tab.
     // window.open(url, '_blank', 'noopener') returns null in some browsers, which wrongly
     // triggered the same-tab fallback (location.href) and navigated the current tab.
@@ -986,6 +998,24 @@
     a.click();
     a.remove();
   }
+  /* Embedded-preview compatibility: opening a new window from an iframe-based
+     webview can crash the host app. Intercept same-origin target=_blank links
+     (header sign-in icon, footer links, Buy Now gate) and open them in this
+     tab instead. External http(s) links keep native behaviour. */
+  (function () {
+    let embedded = false;
+    try { embedded = window.self !== window.top; } catch (e) { embedded = true; }
+    if (!embedded) return;
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0) return;
+      const a = e.target && e.target.closest ? e.target.closest('a[target="_blank"]') : null;
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (!href || /^https?:\/\//i.test(href)) return;
+      e.preventDefault();
+      location.href = href;
+    }, true);
+  })();
   function applyBuyNowGate() {
     const unlogged = isGateUnlogged();
     const hasDetailBuyNow = !!document.getElementById('detailBuyNow');

@@ -142,15 +142,6 @@
           if (window.toast) window.toast(`Interest registered for ${currentProduct.name}.`, 'success');
           closeModal();
         });
-
-        // Delegate register-interest clicks (cards rendered after DOMContentLoaded)
-        grid.addEventListener('click', (e) => {
-          const btn = e.target.closest('[data-interest]');
-          if (!btn) return;
-          const id = btn.dataset.interest;
-          const product = (window.ProductCatalog.allProducts || []).find(p => p.id === id);
-          if (product) openModal(product);
-        });
       });
     })();
   </script>

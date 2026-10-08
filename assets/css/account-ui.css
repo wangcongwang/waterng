@@ -430,6 +430,9 @@
      normal record row — show the label as its own line instead of pairing
      it with a data-label prefix. */
   .ocard__items.ek-table--stack tfoot td.lbl { display: block; text-align: left; }
+  /* Empty placeholder cells in tfoot would each render as a label-only row
+     in stacked mode — hide them there (desktop table layout keeps them). */
+  .ocard__items.ek-table--stack td.stack-hide { display: none !important; }
 }
 /* This table has 9 columns (image, code, product, qty, price, total price,
    BV, tax rate, tax) — too wide to fit without horizontal scroll on tablet
@@ -438,7 +441,7 @@
    it here rather than globally. */
 @media (min-width: 640px) and (max-width: 899px) {
   .ocard__items.ek-table--stack thead { display: none; }
-  .ocard__items.ek-table--stack, .ocard__items.ek-table--stack tbody, .ocard__items.ek-table--stack tr, .ocard__items.ek-table--stack td {
+  .ocard__items.ek-table--stack, .ocard__items.ek-table--stack tbody, .ocard__items.ek-table--stack tfoot, .ocard__items.ek-table--stack tr, .ocard__items.ek-table--stack td {
     display: block; width: 100%;
   }
   .ocard__items.ek-table--stack tr {
@@ -456,6 +459,7 @@
     text-align: left; flex: none;
   }
   .ocard__items.ek-table--stack tfoot td.lbl { display: block; text-align: left; }
+  .ocard__items.ek-table--stack td.stack-hide { display: none !important; }
 }
 .o-download {
   display: inline-flex; align-items: center; gap: var(--ek-4);

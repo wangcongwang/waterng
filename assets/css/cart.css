@@ -144,10 +144,10 @@
 @media (max-width: 600px) {
   .cart-item {
     display: grid;
-    grid-template-columns: 64px minmax(0, 1fr) auto;
+    grid-template-columns: 64px minmax(0, 1fr) auto auto;
     grid-template-areas:
-      "img body qty"
-      "img body line";
+      "img body body body"
+      "img qty  line line";
     align-items: center;
   }
   .cart-item-img { grid-area: img; width: 64px; height: 64px; flex: none; }

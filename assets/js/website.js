@@ -585,27 +585,23 @@
     const loggedIn = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
     container.innerHTML = list.map(p => {
       const detailUrl = `product-detail.html?name=${encodeURIComponent(p.name)}&category=${p.category}`;
-      const isSoon = p.comingSoon;
-      const desc = isSoon && p.comingSoonDesc ? p.comingSoonDesc : p.desc;
       const bv = getBV(p);
       return `
-      <article class="rp-product-card${isSoon ? ' rp-product-card--soon' : ''}">
+      <article class="rp-product-card">
         <div class="rp-product-card__media">
           <img src="assets/img/products/${p.category}/${p.img}" alt="${p.name}" loading="lazy" />
         </div>
         <div class="rp-product-card__body">
           <h3>${p.name}</h3>
-          <p class="rp-product-card__desc">${desc}</p>
-          ${isSoon ? '' : `<div class="rp-product-card__price-row">
+          <p class="rp-product-card__desc">${p.desc}</p>
+          <div class="rp-product-card__price-row">
             <span class="rp-product-card__price">N${p.price.toLocaleString()}</span>
             ${loggedIn && bv > 0 ? `<span class="rp-product-card__bv" title="Bonus volume earned with this purchase">${bv} BV</span>` : ''}
           </div>
-          <a href="${detailUrl}" class="rp-product-card__view">View product</a>`}
+          <a href="${detailUrl}" class="rp-product-card__view">View product</a>
         </div>
         <div class="rp-product-card__foot">
-          ${isSoon
-            ? `<span class="rp-product-card__soon-label">Coming soon</span><a href="#" class="rp-product-card__interest" data-interest="${p.id}">Register interest</a>`
-            : `<button type="button" class="rp-product-card__add" data-rp-add="${p.id}">Add to cart</button>`}
+          <button type="button" class="rp-product-card__add" data-rp-add="${p.id}">Add to cart</button>
         </div>
       </article>
     `;
@@ -643,7 +639,7 @@
   function updateCartBadge() {
     const cart = getCart();
     const total = cart.reduce((s, c) => s + c.qty, 0);
-    document.querySelectorAll('[id="cartBadge"], [id="hubCartBadge"]').forEach(badge => {
+    document.querySelectorAll('[id="cartBadge"], [id="hubCartBadge"], [id="cartBadgeMobile"]').forEach(badge => {
       badge.textContent = total || '';
       if (badge.classList.contains('hub-badge')) {
         badge.hidden = total === 0;
