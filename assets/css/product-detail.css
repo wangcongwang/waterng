@@ -26,26 +26,30 @@
   min-width: 0;
 }
 
-.product-detail-copy .crumbs {
-  display: flex;
+/* Back button — replaces the breadcrumb trail on the detail hero */
+.detail-back {
+  display: inline-flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: var(--ek-8);
-  margin: 0;
+  justify-self: start;
+  margin: 0 0 var(--ek-16);
+  padding: var(--ek-8) var(--ek-16);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-surface, transparent);
   color: var(--ek-muted);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-.product-detail-copy .crumbs a {
-  color: var(--ek-muted);
-  text-decoration: none;
-}
-
-.product-detail-copy .crumbs a:hover {
+.detail-back:hover {
   color: var(--ek-blue);
-  text-decoration: underline;
+  border-color: var(--ek-blue);
 }
 
-.product-detail-copy .crumbs span { color: var(--ek-grey-out); }
+.detail-back svg { flex: none; }
 
 .product-detail-copy .eyebrow {
   margin: 0;
@@ -127,19 +131,6 @@
 }
 
 .detail-bv-row .bv-badge b { color: var(--ek-blue); }
-
-/* Buy bar */
-.detail-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--ek-12);
-  flex-wrap: wrap;
-  padding-top: var(--ek-8);
-}
-
-.detail-qty { flex-shrink: 0; }
-
-.detail-actions .ek-btn { flex: 0 1 auto; }
 
 /* Product visual: framed panel, image contained */
 .product-detail-visual {
@@ -347,19 +338,6 @@
 @media (max-width: 640px) {
   .product-detail-hero,
   .product-detail-section { padding-block: var(--ek-32); }
-
-  .detail-actions {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .detail-actions .ek-btn,
-  .detail-qty {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .detail-qty { justify-content: space-between; }
 
   .related-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

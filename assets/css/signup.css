@@ -10,7 +10,12 @@
 
 /* ---------- Page shell ---------- */
 .signup-section { padding-top: var(--ek-48); padding-bottom: var(--ek-64); }
-.signup-container { max-width: 880px; }
+.signup-container {
+  /* Same column formula as .sec-banner__inner so the card column spans the
+     full banner width (left/right edges align with "Create your account."). */
+  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2));
+  margin-inline: auto;
+}
 
 /* Section cards already get .ek-card styling. Just space them + title. */
 .sec-block + .sec-block { margin-top: var(--ek-20); }
@@ -57,8 +62,16 @@
 /* ---------- Product grid (official card style) ---------- */
 .prod-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--ek-20);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ek-24);
+}
+
+@media (max-width: 1024px) {
+  .prod-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .prod-grid { grid-template-columns: 1fr; }
 }
 .prod-empty {
   grid-column: 1 / -1;
@@ -68,48 +81,17 @@
   font-size: var(--ek-small);
 }
 
-.prod-card {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-  background: var(--ek-surface);
-  border: 1px solid var(--ek-border);
-  border-radius: var(--ek-radius-lg);
-  box-shadow: var(--ek-shadow-sm);
-  transition: transform var(--ek-fast) var(--ek-ease),
-              box-shadow var(--ek-fast) var(--ek-ease),
-              border-color var(--ek-fast) var(--ek-ease);
-}
-.prod-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--ek-blue);
-  box-shadow: var(--ek-shadow);
-}
-.prod-card.is-added {
+/* The grid reuses the Repeat Purchase card component (.rp-product-card from
+   repeat-purchase.css) so the two pages share one visual language. Only the
+   signup-specific selection states live here. */
+.rp-product-card.is-added {
   border-color: var(--ek-blue);
   box-shadow: 0 0 0 1px var(--ek-blue), var(--ek-shadow-sm);
 }
 
-.prod-card__media {
-  position: relative;
-  display: grid;
-  place-items: center;
-  min-height: 180px;
-  padding: var(--ek-24);
-  background: var(--ek-surface-sunken);
-  border-bottom: 1px solid var(--ek-border);
-}
-.prod-card__media img {
-  display: block;
-  max-width: 100%;
-  max-height: 150px;
-  object-fit: contain;
-  transition: transform var(--ek-fast) var(--ek-ease);
-}
-.prod-card:hover .prod-card__media img { transform: translateY(-4px); }
-.prod-card__media--empty { background: var(--ek-surface-sunken); }
+.rp-product-card__media--empty { background: var(--ek-surface-sunken); }
 
+/* "✓ Added" corner badge (reused class name from the old signup card) */
 .prod-card__badge {
   position: absolute;
   top: var(--ek-12);
@@ -126,87 +108,16 @@
   letter-spacing: .02em;
 }
 
-.prod-card__body {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--ek-8);
-  padding: var(--ek-20);
-  background: var(--ek-surface);
-}
-.prod-card__name {
-  margin: 0;
-  font-size: var(--ek-h4);
-  font-weight: var(--ek-w-bold);
-  line-height: var(--ek-h4-lh);
-  color: var(--ek-charcoal-deep);
-}
-.prod-card__sku {
-  font-size: var(--ek-caption);
-  color: var(--ek-muted);
-  letter-spacing: .04em;
-}
-.prod-card__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--ek-12);
-  flex-wrap: wrap;
-  margin-top: auto;
-}
-.prod-card__price {
-  font-size: var(--ek-h3);
-  font-weight: var(--ek-w-bold);
-  line-height: 1.2;
-  color: var(--ek-charcoal-deep);
-}
-.prod-card__bv {
-  display: inline-flex;
-  align-items: center;
-  min-height: 22px;
-  padding: 0 var(--ek-8);
-  border-radius: var(--ek-radius-pill);
-  background: var(--ek-info-tint);
-  color: var(--ek-blue);
-  font-size: var(--ek-caption);
-  font-weight: var(--ek-w-bold);
-}
-
-/* Default foot: full-width blue action */
-.prod-card__foot {
-  flex-shrink: 0;
-  padding: var(--ek-16) var(--ek-20);
-  background: var(--ek-blue);
-}
-.prod-card__add {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: var(--ek-12) var(--ek-16);
-  border: 0;
-  border-radius: var(--ek-radius);
-  background: transparent;
-  color: var(--ek-white);
-  font: inherit;
-  font-size: var(--ek-small);
-  font-weight: var(--ek-w-bold);
-  line-height: 1;
-  cursor: pointer;
-  transition: background var(--ek-fast) var(--ek-ease);
-}
-.prod-card__add:hover { background: rgba(255, 255, 255, 0.12); }
-.prod-card__add:focus-visible { outline: 2px solid var(--ek-white); outline-offset: 2px; }
-
-/* Added foot: sunken panel with qty stepper + remove */
-.prod-card__foot--added {
+/* Added foot: sunken panel with qty stepper + remove (RP has no added state) */
+.rp-product-card__foot--added {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--ek-12);
-  padding: var(--ek-12) var(--ek-20);
+  padding: var(--ek-12) var(--ek-24);
   background: var(--ek-surface-sunken);
 }
-.prod-card__remove {
+.rp-product-card__remove {
   border: 0;
   background: transparent;
   color: var(--ek-muted);
@@ -217,7 +128,7 @@
   white-space: nowrap;
   transition: color var(--ek-fast) var(--ek-ease);
 }
-.prod-card__remove:hover { color: var(--ek-error); }
+.rp-product-card__remove:hover { color: var(--ek-error); }
 
 /* Quantity stepper (shared with checkout) */
 .qty-stepper {
@@ -335,8 +246,6 @@
   .reg-grid { grid-template-columns: 1fr; }
   .sec-block { padding: var(--ek-20); }
   .pay-method-grid { grid-template-columns: 1fr 1fr; }
-  .prod-card__media { min-height: 160px; padding: var(--ek-20); }
-  .prod-card__media img { max-height: 130px; }
 }
 
 /* ---------- Paystack payment modals --------------------------------------- */
