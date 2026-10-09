@@ -16,12 +16,15 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/repeat-purchase.css?v=20260922a">
   <link rel="stylesheet" href="assets/css/signup.css?v=20260923a">
   <link rel="stylesheet" href="assets/css/member-flows.css?v=20260923a">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="member-upgrade">
+  <div id="app-header" class="ek-site-header"></div>
+
   <div id="offline-banner" class="offline-banner">Connection status</div>
 
   <main id="main">
@@ -386,33 +389,36 @@
           const bvVal = Number(p.bv) || 0;
           const rpVal = Number(p.rp || 0).toFixed(2);
           const badge = checked ? `<span class="prod-card__badge">✓ Added</span>` : '';
+          const bvHtml = bvVal > 0 ? `<span class="rp-product-card__bv">BV ${bvVal}</span>` : '';
+          const detailUrl = `product-detail.html?name=${encodeURIComponent(p.name)}&category=${encodeURIComponent(p.category || '')}`;
           const media = img
-            ? `<div class="prod-card__media">${badge}<img src="${img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'" /></div>`
-            : `<div class="prod-card__media prod-card__media--empty">${badge}</div>`;
+            ? `<div class="rp-product-card__media">${badge}<img src="${img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'" /></div>`
+            : `<div class="rp-product-card__media rp-product-card__media--empty">${badge}</div>`;
           const foot = checked
-            ? `<div class="prod-card__foot prod-card__foot--added">
+            ? `<div class="rp-product-card__foot rp-product-card__foot--added">
                  <div class="qty-stepper" data-id="${p.id}">
                    <button type="button" class="qty-minus" data-id="${p.id}" aria-label="Decrease quantity">−</button>
                    <input type="number" class="qty-val" data-id="${p.id}" value="${qty}" min="1" max="${stock || 99}" aria-label="Quantity" />
                    <button type="button" class="qty-plus" data-id="${p.id}" aria-label="Increase quantity">+</button>
                  </div>
-                 <button type="button" class="prod-card__remove" data-id="${p.id}">Remove</button>
+                 <button type="button" class="rp-product-card__remove" data-id="${p.id}">Remove</button>
                </div>`
-            : `<div class="prod-card__foot">
-                 <button type="button" class="prod-card__add" data-id="${p.id}">＋ Add</button>
+            : `<div class="rp-product-card__foot">
+                 <button type="button" class="rp-product-card__add" data-id="${p.id}">＋ Add</button>
                </div>`;
           return `
-            <article class="prod-card${checked ? ' is-added' : ''}" data-id="${p.id}" data-stock="${stock}">
+            <article class="rp-product-card${checked ? ' is-added' : ''}" data-id="${p.id}" data-stock="${stock}">
               ${media}
-              <div class="prod-card__body">
-                <h3 class="prod-card__name">${p.name}</h3>
-                <span class="prod-card__sku">${p.sku || p.id.toUpperCase()}</span>
-                <div class="prod-card__meta">
-                  <span class="prod-card__price">DP NGN ${(p.price || 0).toLocaleString()}</span>
-                  <span class="prod-card__bv">BV ${bvVal}</span>
+              <div class="rp-product-card__body">
+                <h3>${p.name}</h3>
+                <p class="rp-product-card__desc">${p.desc || ''}</p>
+                <div class="rp-product-card__price-row">
+                  <span class="rp-product-card__price">DP NGN ${(p.price || 0).toLocaleString()}</span>
+                  ${bvHtml}
                 </div>
                 <span class="prod-card__rp">RP: NGN ${rpVal}</span>
                 <span class="prod-card__stock${stockCls}">Stock: ${stock}</span>
+                <a href="${detailUrl}" class="rp-product-card__view">View product</a>
               </div>
               ${foot}
             </article>`;
@@ -422,7 +428,7 @@
       }
 
       function setQty(pid, qty) {
-        const el = document.querySelector(`#productPick .prod-card[data-id="${pid}"]`);
+        const el = document.querySelector(`#productPick .rp-product-card[data-id="${pid}"]`);
         const stock = el ? (Number(el.dataset.stock) || 0) : 99;
         qty = Math.max(0, Math.min(stock || 99, parseInt(qty, 10) || 0));
         if (qty <= 0) delete state.items[pid];
@@ -432,9 +438,9 @@
 
       const productPick = $('productPick');
       productPick.addEventListener('click', e => {
-        const addBtn = e.target.closest('.prod-card__add');
+        const addBtn = e.target.closest('.rp-product-card__add');
         if (addBtn) { setQty(addBtn.dataset.id, 1); return; }
-        const remBtn = e.target.closest('.prod-card__remove');
+        const remBtn = e.target.closest('.rp-product-card__remove');
         if (remBtn) { setQty(remBtn.dataset.id, 0); return; }
         const step = e.target.closest('.qty-minus, .qty-plus');
         if (step) {
@@ -445,8 +451,9 @@
           setQty(pid, v);
           return;
         }
-        const card = e.target.closest('.prod-card');
-        if (card && !card.classList.contains('is-added')) {
+        const card = e.target.closest('.rp-product-card');
+        // Ignore clicks on the "View product" link — that should navigate, not add.
+        if (card && !card.classList.contains('is-added') && !e.target.closest('.rp-product-card__view')) {
           setQty(card.dataset.id, 1);
         }
       });
