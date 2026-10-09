@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260919d">
-  <link rel="stylesheet" href="assets/css/checkout.css?v=20260918a">
+  <link rel="stylesheet" href="assets/css/checkout.css?v=20261009b">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
@@ -44,24 +44,12 @@
           <div class="ek-card checkout-card">
             <h2 data-i18n="checkout.addr">Delivery address</h2>
 
+            <!-- Pickup-only flow: Door delivery has been removed — Self-pickup
+                 is the only (and default) method. The address form and the
+                 pickup-location list stay out of the flow entirely. -->
             <div class="deliv-method-grid" id="delivMethodGrid">
               <label class="deliv-method">
-                <input type="radio" name="delivMethod" value="delivery" checked />
-                <div class="deliv-method-icon" aria-hidden="true">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                    <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-                  </svg>
-                </div>
-                <div class="deliv-method-body">
-                  <div class="deliv-method-name" data-i18n="checkout.addr_delivery">Door delivery</div>
-                  <div class="deliv-method-sub" data-i18n="checkout.addr_delivery_sub">We deliver to your address</div>
-                </div>
-                <div class="deliv-method-check" aria-hidden="true">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>
-                </div>
-              </label>
-              <label class="deliv-method">
-                <input type="radio" name="delivMethod" value="pickup" />
+                <input type="radio" name="delivMethod" value="pickup" checked />
                 <div class="deliv-method-icon" aria-hidden="true">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                     <path d="M3 9l1.5-5h15L21 9M3 9v11h18V9M3 9h18M9 13h6"/>
@@ -77,8 +65,9 @@
               </label>
             </div>
 
-            <!-- Delivery form -->
-            <div id="deliveryForm">
+            <!-- Delivery address form — kept in the DOM for validation/id
+                 lookups but never shown in the pickup-only flow. -->
+            <div id="deliveryForm" style="display:none;">
               <!-- Saved address picker (synced with My Account addresses) -->
               <div class="saved-addr-picker">
                 <label for="savedAddrSelect">Use a saved address</label>
@@ -116,50 +105,6 @@
                     <option>Lagos</option><option>FCT Abuja</option><option>Rivers</option><option>Oyo</option><option>Kano</option><option>Other</option>
                   </select>
                 </div>
-              </div>
-            </div>
-
-            <!-- Pickup panel: starts hidden since "Door delivery" is the default
-                 checked radio above; bindDelivMethod() toggles it on change. -->
-            <div id="pickupPanel" style="display: none;">
-              <div class="pickup-list" id="pickupList">
-                <label class="pickup-item">
-                  <input type="radio" name="pickupLoc" value="lagos" checked />
-                  <div class="pickup-radio" aria-hidden="true"></div>
-                  <div class="pickup-body">
-                    <div class="pickup-head">
-                      <span class="pickup-name" data-i18n="checkout.pickup_hq_name">Lagos HQ</span>
-                      <span class="pickup-tag">HQ</span>
-                    </div>
-                    <div class="pickup-addr" data-i18n="checkout.pickup_hq_addr">12B Admiralty Way, Lekki Phase 1</div>
-                    <div class="pickup-hours"><span data-i18n="checkout.pickup_hours">Opening hours</span>: <span data-i18n="checkout.pickup_hq_hours">Mon–Sat · 8:00 – 18:00</span></div>
-                  </div>
-                  <div class="pickup-check"><span data-i18n="checkout.pickup_select">Selected</span></div>
-                </label>
-                <label class="pickup-item">
-                  <input type="radio" name="pickupLoc" value="abuja" />
-                  <div class="pickup-radio" aria-hidden="true"></div>
-                  <div class="pickup-body">
-                    <div class="pickup-head">
-                      <span class="pickup-name" data-i18n="checkout.pickup_2_name">Abuja branch</span>
-                    </div>
-                    <div class="pickup-addr" data-i18n="checkout.pickup_2_addr">Plot 24, Wuse Zone 5</div>
-                    <div class="pickup-hours"><span data-i18n="checkout.pickup_hours">Opening hours</span>: <span data-i18n="checkout.pickup_2_hours">Mon–Fri · 9:00 – 17:00</span></div>
-                  </div>
-                  <div class="pickup-check"><span data-i18n="checkout.pickup_select">Selected</span></div>
-                </label>
-                <label class="pickup-item">
-                  <input type="radio" name="pickupLoc" value="ph" />
-                  <div class="pickup-radio" aria-hidden="true"></div>
-                  <div class="pickup-body">
-                    <div class="pickup-head">
-                      <span class="pickup-name" data-i18n="checkout.pickup_3_name">Port Harcourt branch</span>
-                    </div>
-                    <div class="pickup-addr" data-i18n="checkout.pickup_3_addr">5 Aba Road, GRA Phase 2</div>
-                    <div class="pickup-hours"><span data-i18n="checkout.pickup_hours">Opening hours</span>: <span data-i18n="checkout.pickup_3_hours">Mon–Fri · 9:00 – 17:00</span></div>
-                  </div>
-                  <div class="pickup-check"><span data-i18n="checkout.pickup_select">Selected</span></div>
-                </label>
               </div>
             </div>
           </div>
@@ -229,6 +174,81 @@
   </main>
 
   <div id="app-footer" class="ek-site-footer"></div>
+
+  <!-- ====== Paystack payment modals (shown when Paystack is selected) ====== -->
+  <!-- Step 1: confirm email + amount -->
+  <div class="ps-overlay" id="psPayModal" style="display:none" role="dialog" aria-modal="true" aria-label="Paystack payment">
+    <div class="ps-dialog">
+      <button type="button" class="ps-dialog__close" id="psPayCancel" aria-label="Close">&times;</button>
+      <h3 class="ps-dialog__title">Paystack Payment</h3>
+      <p class="ps-dialog__note">Confirm your email to continue to the Paystack secure checkout.</p>
+      <div class="field">
+        <label for="psPayEmail">Email</label>
+        <input class="ek-input" type="email" id="psPayEmail" placeholder="you@example.com" autocomplete="email" />
+        <span class="field-error" id="psPayEmailErr" style="display:none">Please enter a valid email address</span>
+      </div>
+      <div class="ps-amount-row"><span>Amount</span><b id="psPayAmount">NGN 0</b></div>
+      <button type="button" class="ek-btn ek-btn--primary ps-dialog__go" id="psPayConfirm">Continue to Paystack</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Paystack checkout (test) page -->
+  <div class="ps-overlay ps-overlay--ck" id="psCheckoutModal" style="display:none" role="dialog" aria-modal="true" aria-label="Paystack checkout">
+    <div class="ps-ck-wrap">
+      <button type="button" class="ps-ck-close" id="psCkClose" aria-label="Close">&times;</button>
+      <div class="ps-ck">
+        <aside class="ps-ck__side">
+          <div class="ps-ck__side-title">Pay With</div>
+          <label class="ps-ck__channel is-active">
+            <input type="radio" name="psChannel" value="card" checked />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            Card
+          </label>
+          <label class="ps-ck__channel">
+            <input type="radio" name="psChannel" value="bank" />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/></svg>
+            Bank
+          </label>
+          <label class="ps-ck__channel">
+            <input type="radio" name="psChannel" value="ussd" />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>
+            USSD
+          </label>
+        </aside>
+        <div class="ps-ck__main" id="psCkBody">
+          <div class="ps-ck__head">
+            <svg class="ps-ck__logo" width="34" height="34" viewBox="0 0 24 24" fill="var(--ek-aqua)" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="3.4" rx="1.7"/>
+              <rect x="3" y="10.3" width="18" height="3.4" rx="1.7"/>
+              <rect x="3" y="16.6" width="12" height="3.4" rx="1.7"/>
+            </svg>
+            <div class="ps-ck__head-right">
+              <div class="ps-ck__email" id="psCkEmail"></div>
+              <div class="ps-ck__payline">Pay <b id="psCkAmount"></b></div>
+            </div>
+          </div>
+          <div class="ps-ck__testrow"><span class="ps-ck__test">Test</span></div>
+          <p class="ps-ck__hint">Use any of the options below to test the payment flow</p>
+          <div class="ps-ck__options">
+            <label class="ps-ck__option"><input type="radio" name="psOutcome" value="success" checked /><span>Success</span></label>
+            <label class="ps-ck__option"><input type="radio" name="psOutcome" value="bank_auth" /><span>Bank Authentication</span></label>
+            <label class="ps-ck__option"><input type="radio" name="psOutcome" value="declined" /><span>Declined</span></label>
+          </div>
+          <div class="ps-ck__error" id="psCkError" style="display:none">Payment was declined. Please choose another option and try again.</div>
+          <button type="button" class="ps-ck__paybtn" id="psCkPayBtn">Pay</button>
+          <button type="button" class="ps-ck__another">Use another card</button>
+        </div>
+        <div class="ps-ck__main ps-ck__success" id="psCkSuccess" style="display:none">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--ek-success)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.6 2.6L16 9.5"/></svg>
+          <p>Payment successful</p>
+        </div>
+      </div>
+      <div class="ps-ck__secured">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        Secured by <b>paystack</b>
+      </div>
+    </div>
+  </div>
 
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
 <script src="assets/js/app.js?v=20260923b"></script>
@@ -333,7 +353,7 @@
 
     let state = {
       qty: 1,
-      delivMethod: 'delivery',
+      delivMethod: 'pickup', // pickup-only flow (Door delivery removed)
       pickupLoc: 'lagos',
       payMethod: null,
       savedAddressId: null,
@@ -490,19 +510,18 @@
     }
 
     function bindDelivMethod() {
+      // Pickup-only flow: a single always-checked radio. The change listener
+      // stays for safety; the address form and pickup list are never shown.
       const radios = document.querySelectorAll('input[name="delivMethod"]');
       const deliveryForm = document.getElementById('deliveryForm');
       const pickupPanel = document.getElementById('pickupPanel');
       radios.forEach(r => {
         r.addEventListener('change', () => {
           state.delivMethod = r.value;
-          deliveryForm.style.display = r.value === 'delivery' ? 'block' : 'none';
-          pickupPanel.style.display = r.value === 'pickup' ? 'block' : 'none';
+          if (deliveryForm) deliveryForm.style.display = r.value === 'delivery' ? 'block' : 'none';
+          if (pickupPanel) pickupPanel.style.display = r.value === 'pickup' ? 'block' : 'none';
           updatePayBtn();
         });
-      });
-      document.querySelectorAll('input[name="pickupLoc"]').forEach(r => {
-        r.addEventListener('change', () => { state.pickupLoc = r.value; });
       });
     }
 
@@ -515,6 +534,9 @@
       const loggedIn = !!(window.Auth && window.Auth.isLoggedIn());
       payMethods = window.PayMethods.wire('#payMethodGrid', {
         name: 'payMethod',
+        // Full catalogue + the opt-in Paystack channel (balance is added
+        // separately via includeBalance below).
+        only: ['card', 'ussd', 'bank', 'paybank', 'visaqr', 'paystack'],
         panelHost: '#payPanels',
         panelClass: 'ek-card checkout-card method-info-card',
         prefix: 'co',
@@ -647,6 +669,13 @@
           if (window.toast) window.toast(window.T.tr('payment.err_incomplete'), 'error');
           return;
         }
+        // Paystack runs its own confirm → checkout modal flow first; the
+        // order is only created once the payment succeeds.
+        if (state.payMethod === 'paystack') { openPsPayModal(); return; }
+        placeOrder();
+      });
+
+      function placeOrder() {
         payBtn.setAttribute('aria-busy', 'true');
         payBtn.querySelector('[data-label]').innerHTML = `<span class="ek-spinner"></span> ${window.T.tr('common.loading')}`;
         const pc = window.ProductCatalog || {};
@@ -739,6 +768,82 @@
         setTimeout(() => {
           location.href = 'shipping.html?order=' + encodeURIComponent(order.id);
         }, 900);
+      }
+
+      /* ---------- Paystack modal wiring (mirrors the signup flow) ---------- */
+      const psPayModal = document.getElementById('psPayModal');
+      const psCkModal = document.getElementById('psCheckoutModal');
+
+      function openPsPayModal() {
+        // Prefill with the contact email the customer already entered
+        const emailEl = document.getElementById('psPayEmail');
+        if (emailEl && !emailEl.value) {
+          emailEl.value = document.getElementById('contactEmail').value.trim();
+        }
+        document.getElementById('psPayAmount').textContent = 'NGN ' + (state.total || 0).toLocaleString();
+        psPayModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+      function closePsPayModal() {
+        psPayModal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+      function closePsCheckout() {
+        psCkModal.style.display = 'none';
+        document.body.style.overflow = '';
+        // Reset to the default test state for a possible retry
+        const first = psCkModal.querySelector('input[name="psOutcome"]');
+        if (first) first.checked = true;
+        document.getElementById('psCkError').style.display = 'none';
+        document.getElementById('psCkSuccess').style.display = 'none';
+        document.getElementById('psCkBody').style.display = '';
+      }
+
+      document.getElementById('psPayCancel').addEventListener('click', closePsPayModal);
+      psPayModal.addEventListener('click', e => { if (e.target === psPayModal) closePsPayModal(); });
+
+      document.getElementById('psPayConfirm').addEventListener('click', () => {
+        const emailInput = document.getElementById('psPayEmail');
+        const email = (emailInput.value || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          emailInput.setAttribute('aria-invalid', 'true');
+          document.getElementById('psPayEmailErr').style.display = 'block';
+          return;
+        }
+        emailInput.removeAttribute('aria-invalid');
+        document.getElementById('psPayEmailErr').style.display = 'none';
+        // Hand the confirmed email + amount to the Paystack checkout modal
+        document.getElementById('psCkEmail').textContent = email;
+        const amount = 'NGN ' + (state.total || 0).toLocaleString('en-NG');
+        document.getElementById('psCkAmount').textContent = amount;
+        document.getElementById('psCkPayBtn').textContent = 'Pay ' + amount;
+        closePsPayModal();
+        psCkModal.style.display = 'flex';
+      });
+
+      document.getElementById('psCkClose').addEventListener('click', closePsCheckout);
+      psCkModal.addEventListener('click', e => { if (e.target === psCkModal) closePsCheckout(); });
+
+      document.getElementById('psCkPayBtn').addEventListener('click', () => {
+        const outcome = (psCkModal.querySelector('input[name="psOutcome"]:checked') || {}).value;
+        if (outcome === 'declined') {
+          document.getElementById('psCkError').style.display = 'block';
+          return;
+        }
+        // Success / Bank Authentication → payment done, place the order
+        document.getElementById('psCkError').style.display = 'none';
+        document.getElementById('psCkBody').style.display = 'none';
+        document.getElementById('psCkSuccess').style.display = 'flex';
+        setTimeout(() => {
+          closePsCheckout();
+          placeOrder();
+        }, 1400);
+      });
+
+      document.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        if (psCkModal.style.display !== 'none') closePsCheckout();
+        else if (psPayModal.style.display !== 'none') closePsPayModal();
       });
     }
 

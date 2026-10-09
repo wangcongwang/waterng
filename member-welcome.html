@@ -284,6 +284,81 @@
   <!-- Site footer (rendered by app.js, same as the marketing site) -->
   <div id="app-footer" class="ek-site-footer"></div>
 
+  <!-- ====== Paystack payment modals (shown when Paystack is selected) ====== -->
+  <!-- Step 1: confirm email + amount -->
+  <div class="ps-overlay" id="psPayModal" style="display:none" role="dialog" aria-modal="true" aria-label="Paystack payment">
+    <div class="ps-dialog">
+      <button type="button" class="ps-dialog__close" id="psPayCancel" aria-label="Close">&times;</button>
+      <h3 class="ps-dialog__title">Paystack Payment</h3>
+      <p class="ps-dialog__note">Confirm your email to continue to the Paystack secure checkout.</p>
+      <div class="field-row ek-field">
+        <label for="psPayEmail">Email</label>
+        <input class="ek-input" type="email" id="psPayEmail" placeholder="you@example.com" autocomplete="email" />
+        <small class="field-err-text" id="psPayEmailErr" style="display:none">Please enter a valid email address</small>
+      </div>
+      <div class="ps-amount-row"><span>Amount</span><b id="psPayAmount">NGN 0</b></div>
+      <button type="button" class="ek-btn ek-btn--primary ps-dialog__go" id="psPayConfirm">Continue to Paystack</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Paystack checkout (test) page -->
+  <div class="ps-overlay ps-overlay--ck" id="psCheckoutModal" style="display:none" role="dialog" aria-modal="true" aria-label="Paystack checkout">
+    <div class="ps-ck-wrap">
+      <button type="button" class="ps-ck-close" id="psCkClose" aria-label="Close">&times;</button>
+      <div class="ps-ck">
+        <aside class="ps-ck__side">
+          <div class="ps-ck__side-title">Pay With</div>
+          <label class="ps-ck__channel is-active">
+            <input type="radio" name="psChannel" value="card" checked />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            Card
+          </label>
+          <label class="ps-ck__channel">
+            <input type="radio" name="psChannel" value="bank" />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/></svg>
+            Bank
+          </label>
+          <label class="ps-ck__channel">
+            <input type="radio" name="psChannel" value="ussd" />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>
+            USSD
+          </label>
+        </aside>
+        <div class="ps-ck__main" id="psCkBody">
+          <div class="ps-ck__head">
+            <svg class="ps-ck__logo" width="34" height="34" viewBox="0 0 24 24" fill="var(--ek-aqua)" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="3.4" rx="1.7"/>
+              <rect x="3" y="10.3" width="18" height="3.4" rx="1.7"/>
+              <rect x="3" y="16.6" width="12" height="3.4" rx="1.7"/>
+            </svg>
+            <div class="ps-ck__head-right">
+              <div class="ps-ck__email" id="psCkEmail"></div>
+              <div class="ps-ck__payline">Pay <b id="psCkAmount"></b></div>
+            </div>
+          </div>
+          <div class="ps-ck__testrow"><span class="ps-ck__test">Test</span></div>
+          <p class="ps-ck__hint">Use any of the options below to test the payment flow</p>
+          <div class="ps-ck__options">
+            <label class="ps-ck__option"><input type="radio" name="psOutcome" value="success" checked /><span>Success</span></label>
+            <label class="ps-ck__option"><input type="radio" name="psOutcome" value="bank_auth" /><span>Bank Authentication</span></label>
+            <label class="ps-ck__option"><input type="radio" name="psOutcome" value="declined" /><span>Declined</span></label>
+          </div>
+          <div class="ps-ck__error" id="psCkError" style="display:none">Payment was declined. Please choose another option and try again.</div>
+          <button type="button" class="ps-ck__paybtn" id="psCkPayBtn">Pay</button>
+          <button type="button" class="ps-ck__another">Use another card</button>
+        </div>
+        <div class="ps-ck__main ps-ck__success" id="psCkSuccess" style="display:none">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--ek-success)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.6 2.6L16 9.5"/></svg>
+          <p>Payment successful</p>
+        </div>
+      </div>
+      <div class="ps-ck__secured">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        Secured by <b>paystack</b>
+      </div>
+    </div>
+  </div>
+
   <script src="assets/i18n/strings.js?v=20260909c"></script>
 <script src="assets/js/app.js?v=20260923b"></script>
   <script src="assets/js/website.js?v=20260909c"></script>
@@ -295,7 +370,10 @@
 
       /* ---------- i18n apply ---------- */
       function tr(key) {
-        return (window.T && typeof window.T === 'function') ? window.T.tr(key) : key;
+        // window.T is an object exposing .tr (defined in app.js) — the old
+        // typeof === 'function' check never matched, so every dynamic string
+        // fell back to the raw key.
+        return (window.T && window.T.tr) ? window.T.tr(key) : key;
       }
 
       /* ---------- Error helpers ---------- */
@@ -388,6 +466,9 @@
       function buildPayMethods() {
         payMethods = window.PayMethods.wire('#signupPayGrid', {
           name: 'paymentMethod',
+          // Full catalogue + the opt-in Paystack channel (balance is added
+          // separately via includeBalance below).
+          only: ['card', 'ussd', 'bank', 'paybank', 'visaqr', 'paystack'],
           panelHost: '#signupPayPanels',
           panelClass: 'ek-card ek-card--quiet method-info-card',
           prefix: 'mw',
@@ -623,7 +704,14 @@
         submitBtn.disabled = true;
         submitBtn.textContent = tr('signup.saving') || 'Saving...';
 
-        setTimeout(() => {
+        // Paystack runs its confirm → checkout modal flow first; the
+        // registration order is only created once the payment succeeds.
+        if (payMethods.value() === 'paystack') { openPsPayModal(); return; }
+
+        setTimeout(processWelcomeOrder, 600);
+      });
+
+      function processWelcomeOrder() {
           const memberId = memberIdInput ? memberIdInput.value : '';
 
           // Collect order items — same rich shape as Member Repeat Purchase /
@@ -773,7 +861,90 @@
           // Success card → secure payment step on the order page (1.8s),
           // the exact handoff the other member flow pages use.
           showSuccess(order);
-        }, 600);
+      }
+
+      /* ---------- Paystack modal wiring (mirrors the signup flow) ---------- */
+      const psPayModal = document.getElementById('psPayModal');
+      const psCkModal = document.getElementById('psCheckoutModal');
+
+      function openPsPayModal() {
+        // Prefill with the email the new member already entered
+        const emailEl = document.getElementById('psPayEmail');
+        const regEmail = document.getElementById('regEmail');
+        if (emailEl && !emailEl.value && regEmail) {
+          emailEl.value = regEmail.value.trim();
+        }
+        document.getElementById('psPayAmount').textContent = 'NGN ' + (selectedTotal() || 0).toLocaleString();
+        psPayModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+      function closePsPayModal() {
+        psPayModal.style.display = 'none';
+        document.body.style.overflow = '';
+        submitBtn.disabled = false;
+        submitBtn.textContent = tr('signup.submit_btn') || 'Save';
+      }
+      // Step1 → Step2 handoff: hide the dialog without re-enabling the
+      // submit button (the flow is still in progress).
+      function closePsPayModalWithoutReset() {
+        psPayModal.style.display = 'none';
+      }
+      function closePsCheckout() {
+        psCkModal.style.display = 'none';
+        document.body.style.overflow = '';
+        // Reset to the default test state for a possible retry
+        const first = psCkModal.querySelector('input[name="psOutcome"]');
+        if (first) first.checked = true;
+        document.getElementById('psCkError').style.display = 'none';
+        document.getElementById('psCkSuccess').style.display = 'none';
+        document.getElementById('psCkBody').style.display = '';
+      }
+
+      document.getElementById('psPayCancel').addEventListener('click', closePsPayModal);
+      psPayModal.addEventListener('click', e => { if (e.target === psPayModal) closePsPayModal(); });
+
+      document.getElementById('psPayConfirm').addEventListener('click', () => {
+        const emailInput = document.getElementById('psPayEmail');
+        const email = (emailInput.value || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          emailInput.setAttribute('aria-invalid', 'true');
+          document.getElementById('psPayEmailErr').style.display = 'block';
+          return;
+        }
+        emailInput.removeAttribute('aria-invalid');
+        document.getElementById('psPayEmailErr').style.display = 'none';
+        // Hand the confirmed email + amount to the Paystack checkout modal
+        document.getElementById('psCkEmail').textContent = email;
+        const amount = 'NGN ' + (selectedTotal() || 0).toLocaleString('en-NG');
+        document.getElementById('psCkAmount').textContent = amount;
+        document.getElementById('psCkPayBtn').textContent = 'Pay ' + amount;
+        closePsPayModalWithoutReset();
+        psCkModal.style.display = 'flex';
+      });
+
+      document.getElementById('psCkClose').addEventListener('click', closePsCheckout);
+      psCkModal.addEventListener('click', e => { if (e.target === psCkModal) closePsCheckout(); });
+
+      document.getElementById('psCkPayBtn').addEventListener('click', () => {
+        const outcome = (psCkModal.querySelector('input[name="psOutcome"]:checked') || {}).value;
+        if (outcome === 'declined') {
+          document.getElementById('psCkError').style.display = 'block';
+          return;
+        }
+        // Success / Bank Authentication → payment done, resume registration
+        document.getElementById('psCkError').style.display = 'none';
+        document.getElementById('psCkBody').style.display = 'none';
+        document.getElementById('psCkSuccess').style.display = 'flex';
+        setTimeout(() => {
+          closePsCheckout();
+          processWelcomeOrder();
+        }, 1400);
+      });
+
+      document.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        if (psCkModal.style.display !== 'none') closePsCheckout();
+        else if (psPayModal.style.display !== 'none') closePsPayModal();
       });
 
       /* ---------- Success card (identical pattern to the other member flows) ---------- */
