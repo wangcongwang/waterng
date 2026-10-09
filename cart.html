@@ -62,13 +62,26 @@
         const view = document.getElementById('cartView');
         if (!view) return;
         const cart = (window.ProductCatalog && window.ProductCatalog.getCart) ? window.ProductCatalog.getCart() : [];
+
+        // "Browse products" (empty state) and "Continue shopping" both return
+        // to the product list matching the shopper's state: members →
+        // repeat-purchase.html, guests → the guest copy of that page (also
+        // keeps the compact guest nav).
+        const guestMode = (() => {
+          try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; }
+        })();
+        const loggedIn = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
+        const continueHref = (!loggedIn && guestMode)
+          ? 'guest-repeat-purchase.html?guest=1'
+          : 'repeat-purchase.html';
+
         if (!cart.length) {
           view.innerHTML = `
             <div class="cart-empty">
               <div class="cart-empty-icon">🛒</div>
               <h2>Your cart is empty</h2>
               <p>Add products you love and they will appear here.</p>
-              <a class="ek-btn ek-btn--primary" href="products.html">Browse products</a>
+              <a class="ek-btn ek-btn--primary" href="${continueHref}">Browse products</a>
             </div>`;
           return;
         }
@@ -100,7 +113,6 @@
 
         // BV rewards — members only. Real per-unit `bv` comes from the catalogue
         // (looked up by product id), so the total never drifts from the cards.
-        const loggedIn = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
         let totalBV = 0;
         if (loggedIn && window.ProductCatalog && window.ProductCatalog.allProducts) {
           const catalog = window.ProductCatalog.allProducts;
@@ -110,16 +122,6 @@
             totalBV += bv * (item.qty || 1);
           });
         }
-
-        // "Continue shopping" returns to the product list that matches the
-        // shopper's state: members → repeat-purchase.html, guests → the guest
-        // copy of that page (also keeps the compact guest nav).
-        const guestMode = (() => {
-          try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; }
-        })();
-        const continueHref = (!loggedIn && guestMode)
-          ? 'guest-repeat-purchase.html?guest=1'
-          : 'repeat-purchase.html';
 
         view.innerHTML = `
           <div class="cart-layout">

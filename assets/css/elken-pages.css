@@ -1012,6 +1012,20 @@
   border: 1px solid var(--ek-grey-out); min-height: 52px;
 }
 .ek-field textarea { min-height: 140px; resize: vertical; }
+/* Custom select chevron — the native arrow hugs the right border and cannot be
+   repositioned. Specificity must beat `.ek-field select` above (0-2-1), which
+   resets the background via shorthand. 箭头距右缘 32px（原约 12px，左移 20px）。 */
+.ek-field select.ek-select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235C646A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--ek-20) center;
+  padding-right: var(--ek-48);
+}
+.ek-field select.ek-select:disabled {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A8B0B6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
 /* `outline: none` used to sit here. base.css gives the whole site a
    :focus-visible ring, and a form is the last place to throw it away — a
    1px border change is not a focus indicator for anyone tabbing through.

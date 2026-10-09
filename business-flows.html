@@ -621,7 +621,7 @@ orders:{
   {id:"me",x:640,y:456,w:250,h:74,label:"会员侧：订单列表 / 详情",sub:"我的订单 / 我代下的单",type:"page",detail:"订单分为「我的」与「我替别人下的」（操作者维度）；游客单不在其中。"},
   {id:"rc",x:640,y:574,w:250,h:66,label:"小票下载 / 分享",sub:"Word 兼容 .doc",type:"action",detail:"按登录态决定是否显示 BV 行；游客单显示 BV 归属推荐人。可复制只读分享链接。"},
   {id:"cf",x:640,y:112,w:320,h:120,label:"配置点：订单类型与来源字典、是否需支付、是否计 BV、状态流转与通知模板、超时关闭时长、可否代下单",type:"cfg",detail:"新增一种订单类型不需要前端发版。"},
-  {id:"n",x:640,y:660,w:300,h:80,label:"已知偏差：会员流程成功跳转使用 order.html?id=，而订单页只识别 ?order=，会落到「订单不存在」。",type:"note",detail:"正确写法见账户页与订单确认页；应统一为同一跳转函数。"}
+  {id:"n",x:640,y:660,w:300,h:80,label:"已修复（2026-10-09）：会员流程成功跳转曾用 order.html?id=，与订单页只识别的 ?order= 不一致；四个会员流程页现已统一为 ?order=。",type:"note",detail:"正确写法见账户页与订单确认页；已统一为同一跳转参数。"}
  ],
  edges:[
   {from:"t",to:"s1",label:"类型 / 来源"},
@@ -697,7 +697,7 @@ upgrade:{
   {id:"i",x:310,y:870,w:250,h:60,label:"跳转订单详情",type:"page",detail:"升级完成后进入订单详情页查看明细。"},
   {id:"cfg",x:640,y:340,w:320,h:96,label:"配置点：等级阶梯与 BV 门槛、可升级目标白名单、升级方式与差额规则、是否需要后台审批",type:"cfg",detail:"由外部后台「会员与等级权限」配置；服务端在保存与审批时强制执行。"},
   {id:"n1",x:640,y:460,w:300,h:80,label:"已知偏差：升级写入的等级没有被账户页消费，升级后账户页仍显示旧等级。",type:"note",detail:"需要统一等级数据源，或让账户页读取同一份等级覆盖。"},
-  {id:"n2",x:640,y:560,w:300,h:80,label:"已知偏差：升级成功跳转使用 order.html?id=，订单页只识别 ?order=，会落到「订单不存在」。",type:"note",detail:"与复购、自动维护两页同一问题，建议统一跳转函数。"}
+  {id:"n2",x:640,y:560,w:300,h:80,label:"已修复（2026-10-09）：升级成功跳转曾用 order.html?id=，订单页只识别 ?order=；现已统一为 ?order=。",type:"note",detail:"与复购、自动维护两页同一问题，已一并修复。"}
  ],
  edges:[
   {from:"a",to:"b"},{from:"b",to:"c"},
@@ -1058,7 +1058,7 @@ const PAGE_MAP = [
 
 /* ---- 检查结论：已知偏差（demo 内部需修正，与目标架构无关） ---- */
 const DEVIATIONS = [
- ["高","订单详情跳转参数不一致","member-repurchase / member-auto-maintenance / member-upgrade","成功跳转与「View order」使用 order.html?id=，而订单页只识别 ?order= → 三处必然落到「订单不存在」。","统一封装一个订单详情跳转函数，全部改用 ?order=。"],
+ ["高（已修复 2026-10-09）","订单详情跳转参数不一致","member-repurchase / member-auto-maintenance / member-upgrade / member-welcome","成功跳转与「View order」曾使用 order.html?id=，而订单页只识别 ?order= → 必然落到「订单不存在」。","已全部改用 ?order=，含本次新增的 member-welcome 统一支付流。"],
  ["高","展示页与目录两套价格、两套商品 ID","product-*.html 的 data-price 对比 assets/js/website.js 的 allProducts","展示页走页面价与自己的 ID（如 calmag 30000），目录是另一套（hw2 38000）；Spirulina、Hydromi 价差更大，另有 6 个展示商品不在目录中。→ 从展示页加购的订单用页面价，从复购页加购用目录价。","统一为单一商品数据源：展示页读取目录数据，或至少加一致性校验。"],
  ["高","订单状态口径矛盾","member-welcome.html / signup.html","订单写成「已完成」同时「未支付」；其它流程是「待支付」。报表与对账口径不一致。","统一状态机：创建 → 已支付 → 履约；订单来源用 source 字段区分。"],
  ["中","升级后的等级没有被消费","member-upgrade.html 写 al.memberLevels","全站只有升级页读写该覆盖值，账户页仍显示旧等级 → 用户升级后看不到变化。","统一等级数据源，账户页读取同一份等级数据。"],

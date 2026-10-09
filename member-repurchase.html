@@ -56,7 +56,7 @@
 
             <div class="member-search">
               <input class="ek-input" type="text" id="memberIdInput" placeholder="NG00000000" maxlength="10" autocomplete="off" />
-              <button type="button" class="ek-btn ek-btn--secondary" id="memberSearchBtn">Search</button>
+              <button type="button" class="ek-btn ek-btn--primary" id="memberSearchBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M15.9 15.9 20.5 20.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Search</button>
             </div>
 
             <div class="member-result ek-mt-16" id="memberResult" hidden></div>
@@ -786,12 +786,12 @@
             <p class="sec-hint">Payment: <strong>${order.paymentLabel}</strong></p>
             ${opts.next === 'gateway' ? '<p class="sec-hint">Redirecting to secure payment…</p>' : ''}
             <div class="mrp-actions">
-              <a class="ek-btn ek-btn--primary" href="order.html?id=${order.id}">View order</a>
+              <a class="ek-btn ek-btn--primary" href="order.html?order=${order.id}">View order</a>
               <a class="ek-btn ek-btn--secondary" href="account.html">Back to account</a>
             </div>
           </div>`;
         if (opts.next === 'gateway') {
-          setTimeout(() => { location.href = 'order.html?id=' + order.id; }, 1800);
+          setTimeout(() => { location.href = 'order.html?order=' + order.id; }, 1800);
         }
       }
 

@@ -424,6 +424,20 @@
   transition: border-color var(--ek-fast) var(--ek-ease);
 }
 .ek-textarea { min-height: 120px; resize: vertical; }
+/* Replace the native select arrow (which hugs the right edge and cannot be
+   repositioned) with a custom chevron. Keep it 32px off the right border —
+   the design width for all forms. 以自定义箭头替换原生下拉箭头，距右缘 32px。 */
+.ek-select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235C646A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--ek-20) center;
+  padding-right: var(--ek-48);
+}
+.ek-select:disabled {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A8B0B6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
 .ek-input:hover, .ek-select:hover, .ek-textarea:hover { border-color: var(--ek-steel); }
 .ek-input:focus, .ek-select:focus, .ek-textarea:focus { border-color: var(--ek-aqua); }
 .ek-input:disabled, .ek-select:disabled, .ek-textarea:disabled { background: var(--ek-grey-light); color: var(--ek-muted); cursor: not-allowed; }

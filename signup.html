@@ -411,6 +411,31 @@
     </div>
   </div>
 
+  <!-- ====== Product detail modal (View product on registration cards) ====== -->
+  <div class="pv-overlay" id="prodViewModal" style="display:none" role="dialog" aria-modal="true" aria-label="Product details">
+    <div class="pv-dialog">
+      <div class="pv-dialog__topbar">
+        <span class="pv-dialog__code" id="pvCode"></span>
+        <button type="button" class="pv-dialog__close" id="pvClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="pv-dialog__body">
+        <div class="pv-dialog__media" id="pvMedia"></div>
+        <div class="pv-dialog__info">
+          <h3 class="pv-dialog__name" id="pvName"></h3>
+          <dl class="pv-spec">
+            <div class="pv-spec__row"><dt>Product Code</dt><dd id="pvSku"></dd></div>
+            <div class="pv-spec__row"><dt>Sales Price</dt><dd id="pvPrice"></dd></div>
+            <div class="pv-spec__row"><dt>Market Price</dt><dd id="pvRp"></dd></div>
+            <div class="pv-spec__row"><dt>BV</dt><dd id="pvBv"></dd></div>
+            <div class="pv-spec__row"><dt>Tax Rate</dt><dd id="pvTaxRate"></dd></div>
+            <div class="pv-spec__row"><dt>Tax</dt><dd id="pvTax"></dd></div>
+            <div class="pv-spec__row"><dt>Inventory</dt><dd id="pvStock"></dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="assets/i18n/strings.js?v=20260909c"></script>
 <script src="assets/js/app.js?v=20260923b"></script>
   <script src="assets/js/website.js?v=20260909c"></script>
@@ -537,7 +562,6 @@
             ? ('assets/img/products/' + (p.category || '') + '/' + p.img)
             : '';
           const bvVal = typeof p.bv === 'number' ? p.bv : Math.round((p.price || 0) * 0.001 * 100) / 100;
-          const detailUrl = `product-detail.html?name=${encodeURIComponent(p.name)}&category=${encodeURIComponent(p.category || '')}`;
           const badge = checked ? `<span class="prod-card__badge">✓ Added</span>` : '';
           const bvHtml = bvVal > 0 ? `<span class="rp-product-card__bv">${bvVal} BV</span>` : '';
           const media = imgSrc
@@ -565,7 +589,7 @@
                   <span class="rp-product-card__price">NGN ${(p.price || 0).toLocaleString()}</span>
                   ${bvHtml}
                 </div>
-                <a href="${detailUrl}" class="rp-product-card__view">View product</a>
+                <button type="button" class="rp-product-card__view" data-id="${p.id}">View product</button>
               </div>
               ${foot}
             </article>`;
@@ -610,6 +634,8 @@
 
       // Card interactions — delegated so re-renders don't lose listeners.
       prodList.addEventListener('click', e => {
+        const viewBtn = e.target.closest('.rp-product-card__view');
+        if (viewBtn) { openProductModal(viewBtn.dataset.id); return; }
         const addBtn = e.target.closest('.rp-product-card__add');
         if (addBtn) { setQty(addBtn.dataset.id, 1); return; }
         const remBtn = e.target.closest('.rp-product-card__remove');
@@ -623,6 +649,57 @@
           setQty(pid, v);
         }
       });
+
+      /* ---------- Product detail modal (matches reference layout) ---------- */
+      const TAX_RATE = 0.075; // Nigeria VAT
+      const prodModal = document.getElementById('prodViewModal');
+
+      function ngn(n, dp) {
+        return 'NGN ' + (Number(n) || 0).toLocaleString(undefined, {
+          minimumFractionDigits: dp || 0, maximumFractionDigits: dp || 0
+        });
+      }
+
+      function openProductModal(pid) {
+        const p = products.find(x => x.id === pid);
+        if (!p || !prodModal) return;
+        const imgSrc = p.img ? ('assets/img/products/' + (p.category || '') + '/' + p.img) : '';
+        const media = document.getElementById('pvMedia');
+        media.innerHTML = imgSrc
+          ? `<img src="${imgSrc}" alt="${p.name}" onerror="this.style.display='none'" />`
+          : '';
+
+        const price = p.price || 0;
+        const bvVal = typeof p.bv === 'number' ? p.bv : Math.round(price * 0.001 * 100) / 100;
+        const tax = price * TAX_RATE / (1 + TAX_RATE); // VAT-inclusive
+
+        document.getElementById('pvCode').textContent = p.sku || '—';
+        document.getElementById('pvName').textContent = p.name;
+        document.getElementById('pvSku').textContent = p.sku || '—';
+        document.getElementById('pvPrice').textContent = ngn(price);
+        document.getElementById('pvRp').textContent = ngn(p.rp || price);
+        document.getElementById('pvBv').textContent = String(bvVal);
+        document.getElementById('pvTaxRate').textContent = String(TAX_RATE);
+        document.getElementById('pvTax').textContent = ngn(tax, 2);
+        document.getElementById('pvStock').textContent = String(p.stock ?? 0);
+
+        prodModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeProductModal() {
+        if (!prodModal) return;
+        prodModal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+
+      if (prodModal) {
+        document.getElementById('pvClose').addEventListener('click', closeProductModal);
+        prodModal.addEventListener('click', e => { if (e.target === prodModal) closeProductModal(); });
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape' && prodModal.style.display !== 'none') closeProductModal();
+        });
+      }
 
       // Direct number input — typing a value selects; clearing/0 deselects
       prodList.addEventListener('change', e => {
