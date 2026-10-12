@@ -97,6 +97,57 @@
     saveCart([]);
   }
 
+  /* ---------- Member repeat-purchase cart (independent of the main cart) ----------
+     Items added on member-repurchase.html go into al.memberCart so they never
+     mix with a shopper's own al.cart. The two stores are fully separate. */
+  function getMemberCart() {
+    try { return JSON.parse(localStorage.getItem('al.memberCart') || '[]'); }
+    catch { return []; }
+  }
+  function saveMemberCart(cart) { localStorage.setItem('al.memberCart', JSON.stringify(cart)); window.dispatchEvent(new CustomEvent('al:cartchange')); }
+  // Total number of items (sum of qtys) in the member cart.
+  function getMemberCartCount() {
+    return getMemberCart().reduce((s, c) => s + (c.qty || 0), 0);
+  }
+  // Same merge-by-id semantics as addToCart, but targets the member cart.
+  function addToMemberCart(product, qty) {
+    qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1));
+    if (!product || !product.id) return getMemberCartCount();
+    const cart = getMemberCart();
+    const existing = cart.find(c => c.id === product.id);
+    if (existing) {
+      existing.qty = Math.max(1, Math.min(99, (existing.qty || 1) + qty));
+      if (product.name) existing.name = product.name;
+      if (typeof product.price === 'number') existing.price = product.price;
+      if (product.img) existing.img = product.img;
+      if (product.category) existing.category = product.category;
+    } else {
+      cart.push({
+        id: product.id,
+        name: product.name || 'Product',
+        price: Number(product.price) || 0,
+        img: product.img || '',
+        category: product.category || '',
+        qty: qty,
+      });
+    }
+    saveMemberCart(cart); // dispatches al:cartchange → badge updates
+    return getMemberCartCount();
+  }
+  function updateMemberCartQty(id, qty) {
+    const cart = getMemberCart();
+    const item = cart.find(c => c.id === id);
+    if (!item) return;
+    item.qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1));
+    saveMemberCart(cart);
+  }
+  function removeFromMemberCart(id) {
+    saveMemberCart(getMemberCart().filter(c => c.id !== id));
+  }
+  function clearMemberCart() {
+    saveMemberCart([]);
+  }
+
   /* ---------- Country dial codes ---------- */
   const COUNTRY_CODES = [
     { code: '+234', label: 'Nigeria (+234)' },
@@ -561,8 +612,11 @@
      Visual style: the product image sits inside a framed card, above a white
      body with price (+BV for members) and a full-width bottom action.
   */
-  function renderRepeatPurchaseCards(container, products) {
+  function renderRepeatPurchaseCards(container, products, opts) {
     if (!container) return;
+    // opts.cartMode === 'member' → add to the independent member cart
+    // (al.memberCart) instead of the shopper's main al.cart.
+    const memberMode = !!(opts && opts.cartMode === 'member');
     // Optional category filter from the URL (used by member/guest footer links).
     const params = new URLSearchParams(window.location.search);
     const cat = params.get('category');
@@ -607,14 +661,16 @@
     `;
     }).join('');
 
-    // Wire "Add to Cart" buttons
+    // Wire "Add to Cart" buttons — member mode routes to al.memberCart
     container.querySelectorAll('[data-rp-add]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = btn.dataset.rpAdd;
         const product = allProducts.find(x => x.id === id);
         if (product && window.ProductCatalog) {
-          const n = window.ProductCatalog.addToCart(product, 1);
+          const n = memberMode
+            ? window.ProductCatalog.addToMemberCart(product, 1)
+            : window.ProductCatalog.addToCart(product, 1);
           if (window.toast) window.toast(`${product.name} added to cart · ${n} item${n === 1 ? '' : 's'}`, 'success');
         }
       });
@@ -637,7 +693,10 @@
 
   /* ---------- Cart badge ---------- */
   function updateCartBadge() {
-    const cart = getCart();
+    // On member-repurchase.html (body[data-cart-mode="member"]) the badge
+    // reflects the independent member cart, never the shopper's main cart.
+    const memberMode = (document.body && document.body.getAttribute('data-cart-mode') === 'member');
+    const cart = memberMode ? getMemberCart() : getCart();
     const total = cart.reduce((s, c) => s + c.qty, 0);
     document.querySelectorAll('[id="cartFabBadge"]').forEach(badge => {
       badge.textContent = total || '';
@@ -680,6 +739,13 @@
     updateCartQty,
     removeFromCart,
     clearCart,
+    // Member repeat-purchase cart (independent store)
+    getMemberCart,
+    getMemberCartCount,
+    addToMemberCart,
+    updateMemberCartQty,
+    removeFromMemberCart,
+    clearMemberCart,
     getBV,
     getBVTotal,
     genMemberId,

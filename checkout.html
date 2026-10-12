@@ -25,9 +25,6 @@
 
   <main class="page checkout-shell">
     <div class="container">
-      <div class="crumbs">
-        <a href="index.html">Home</a> <span>›</span> <a href="products.html">Products</a> <span>›</span> <span data-i18n="checkout.title">Confirm your order</span>
-      </div>
       <h1 data-i18n="checkout.title">Confirm your order</h1>
 
       <div class="stepper">
@@ -41,7 +38,7 @@
       <div class="checkout-grid">
         <div>
           <!-- Step 1: Delivery address -->
-          <div class="ek-card checkout-card">
+          <div class="ek-card checkout-card" id="delivCard">
             <h2 data-i18n="checkout.addr">Delivery address</h2>
 
             <!-- Pickup-only flow: Door delivery has been removed — Self-pickup
@@ -109,41 +106,73 @@
             </div>
           </div>
 
-          <!-- Contact person -->
-          <div class="ek-card checkout-card">
-            <h2 data-i18n="checkout.contact">Contact person</h2>
+          <!-- Member repeat-purchase info (member mode only, revealed by JS):
+               mirrors the reference back-office checkout fields — repeat
+               member ID (+ resolved name), reporting center, recipient,
+               phone, address picker, district, city, detailed address. -->
+          <div class="ek-card checkout-card" id="memberInfoCard" hidden>
+            <h2>Member information</h2>
+            <div class="field">
+              <label for="rpMemberId">Repeat-purchase member ID</label>
+              <input class="ek-input" id="rpMemberId" readonly />
+              <span id="rpMemberName" style="display:block;margin-top:6px;color:#5a5f79;font-size:13px;"></span>
+            </div>
+            <div class="field">
+              <label for="rpRcId">Reporting Center ID <span class="req">*</span></label>
+              <input class="ek-input" id="rpRcId" required />
+            </div>
             <div class="row">
               <div class="field">
-                <label data-i18n="checkout.phone">Phone</label>
-                <div class="phone-field" id="contactPhoneField"></div>
+                <label for="rpRecipient">Recipient</label>
+                <input class="ek-input" id="rpRecipient" />
               </div>
               <div class="field">
-                <label data-i18n="checkout.email">Email <span class="req">*</span></label>
-                <input class="ek-input" id="contactEmail" type="email" required />
-                <span class="field-error" id="emailError" hidden data-i18n="checkout.email_invalid">Please enter a valid email address</span>
+                <label for="rpPhone">Phone</label>
+                <div class="phone-field" id="rpPhoneField"></div>
               </div>
             </div>
             <div class="field">
-              <label>Order notes</label>
-              <textarea class="ek-textarea" id="orderNote" rows="2" placeholder="Anything we should know (optional)"></textarea>
+              <label for="rpAddrSelect">Shipping address</label>
+              <select class="ek-select" id="rpAddrSelect">
+                <option value="file">Address on file (member profile)</option>
+                <option value="new">+ Enter a new address</option>
+              </select>
             </div>
-            <div class="consent">
-              <label class="checkbox">
-                <input type="checkbox" id="agreeContact" />
-                <span data-i18n="checkout.agree_contact">I confirm the phone and email above are correct for delivery and support purposes.</span>
-              </label>
+            <div class="row">
+              <div class="field">
+                <label for="rpDistrict">District / LGA</label>
+                <input class="ek-input" id="rpDistrict" />
+              </div>
+              <div class="field">
+                <label for="rpCity">City</label>
+                <input class="ek-input" id="rpCity" />
+              </div>
             </div>
-            <div class="consent">
-              <label class="checkbox">
-                <input type="checkbox" id="agreeTerms" />
-                <span>
-                  <span data-i18n="checkout.agree_terms">I have read and agree to the</span>
-                  <a href="terms.html" target="_blank">Terms of Service</a>
-                  <span> · </span>
-                  <a href="refund.html" target="_blank">Refund Policy</a>
-                </span>
-              </label>
+            <div class="field">
+              <label for="rpAddr">Detailed address</label>
+              <input class="ek-input" id="rpAddr" />
             </div>
+          </div>
+
+          <!-- Member flow specifics (auto-maintenance / upgrade) — shown in
+               member mode only, populated by setupMemberFlow(). -->
+          <div class="ek-card checkout-card" id="memberFlowCard" hidden>
+            <div id="memberFlowBody"></div>
+          </div>
+
+          <!-- Contact person -->
+          <div class="ek-card checkout-card" id="contactCard">
+            <h2 data-i18n="checkout.contact">Contact person</h2>
+            <!-- Repeat purchase flow: the reporting center ID is the only field
+                 the customer fills in. Phone / email / order notes and the
+                 consent checkboxes are auto-satisfied from the signed-in
+                 account (kept hidden below to feed Paystack prefill). -->
+            <div class="field">
+              <label for="rcIdInput">Reporting Center ID <span class="req">*</span></label>
+              <input class="ek-input" id="rcIdInput" type="text" placeholder="Enter reporting center ID" maxlength="10" autocomplete="off" required />
+              <span class="field-error" id="rcIdError" hidden data-i18n="checkout.rc_id_req">Please enter a reporting center ID.</span>
+            </div>
+            <input type="hidden" id="contactEmail" />
           </div>
 
           <!-- Step 2: Payment method -->
@@ -252,7 +281,7 @@
 
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
 <script src="assets/js/app.js?v=20260923b"></script>
-  <script src="assets/js/website.js?v=20260909c-2"></script>
+  <script src="assets/js/website.js?v=20261012b"></script>
   <script src="assets/js/qr.js?v=20260915a"></script>
   <script src="assets/js/payment-methods.js?v=20260915a"></script>
   <script>
@@ -351,6 +380,16 @@
       };
     }
 
+    /* ---------- Member repeat-purchase context ----------
+       When an operator shops on member-repurchase.html and checks out via the
+       cart, the looked-up member is stashed in al.repeatMember so this page can
+       tag the order: customer = searched member, operator = signed-in user. */
+    const REPEAT_MEMBER_KEY = 'al.repeatMember';
+    function getRepeatMemberCtx() {
+      try { return JSON.parse(localStorage.getItem(REPEAT_MEMBER_KEY) || 'null'); } catch (e) { return null; }
+    }
+    function clearRepeatMemberCtx() { try { localStorage.removeItem(REPEAT_MEMBER_KEY); } catch (e) {} }
+
     let state = {
       qty: 1,
       delivMethod: 'pickup', // pickup-only flow (Door delivery removed)
@@ -417,9 +456,14 @@
       const summary = document.getElementById('summary');
       const total = state.total || 0;
       const bv = state.bv || 0;
-      const loggedIn = !!(window.Auth && window.Auth.isLoggedIn());
       const itemRows = items.map((it, idx) => {
         const lineTotal = (it.price || 0) * (it.qty || 1);
+        const unitBV = (typeof it.unitBV === 'number') ? it.unitBV : Math.round((it.price || 0) / 1000);
+        const lineBV = unitBV * (it.qty || 1);
+        // Summary layout is identical across flows (member and shopper):
+        // price(BV) per unit on the meta line, line total(BV) on the right.
+        const meta = `${it.sku ? it.sku + ' · ' : ''}${money(it.price || 0)} (${unitBV} BV) each`;
+        const lineText = `${money(lineTotal)} (${lineBV} BV)`;
         const qtyControl = (!state.cartCheckout)
           ? `<span class="qty-control summary-qty">
                <button type="button" class="qty-btn" data-qty="-1" data-idx="${idx}" aria-label="Decrease quantity">−</button>
@@ -433,22 +477,26 @@
             <div class="summary-item-img"><img src="${imgSrc}" alt="${it.name}" onerror="this.outerHTML=window.__ORDER_PIC_SVG" /></div>
             <div class="summary-item-body">
               <div class="summary-item-name">${it.name}</div>
-              <div class="summary-item-meta">${money(it.price || 0)} each</div>
+              <div class="summary-item-meta">${meta}</div>
             </div>
             <div class="summary-item-right">
               <div class="summary-item-qty">${qtyControl}</div>
-              <div class="summary-item-line">${money(lineTotal)}</div>
+              <div class="summary-item-line">${lineText}</div>
             </div>
           </div>`;
       }).join('');
 
+      // Summary layout is identical across flows (member and shopper): the
+      // total always carries its BV and shipping is free (self-pickup).
+      const totalText = `${money(total)} (${bv} BV)`;
+
       summary.innerHTML = `
         <h3 data-i18n="checkout.summary">Order summary</h3>
         <div class="summary-items">${itemRows}</div>
-        ${items.length > 1 ? `<button type="button" class="link-btn" id="editInCart">Edit quantities in cart</button>` : ''}
-        ${loggedIn ? `<div class="row"><span class="k">BV rewards</span><span class="v" id="sumBV">+${bv} BV</span></div>` : ''}
+        ${items.length > 1 ? `<button type="button" class="link-btn" id="editInCart" data-href="${state.memberMode ? 'cart.html?mode=member' : 'cart.html'}">Edit quantities in cart</button>` : ''}
+        <div class="total"><span class="k">Total</span><span class="v" id="sumTotal">${totalText}</span></div>
+        <div class="row"><span class="k">Shipping</span><span class="v">NGN 0</span></div>
         <div class="row method-row" id="summaryMethodRow"><span class="k">Method</span><span class="v" id="summaryMethod"></span></div>
-        <div class="total"><span class="k">Total</span><span class="v" id="sumTotal">${money(total)}</span></div>
         <button class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" id="payBtn" disabled>
           <span data-label>${window.T.tr('checkout.place_order')}</span>
         </button>
@@ -479,7 +527,7 @@
         state.total = (state.items || []).reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
         state.bv = (state.items || []).reduce((s, i) => s + (Math.round((i.price || 0) / 1000) * (i.qty || 1)), 0);
         const totalEl = document.getElementById('sumTotal');
-        if (totalEl) totalEl.textContent = money(state.total);
+        if (totalEl) totalEl.textContent = `${money(state.total)} (${state.bv} BV)`;
         const bvEl = document.getElementById('sumBV');
         if (bvEl) bvEl.textContent = '+' + state.bv + ' BV';
         const bankEl = document.getElementById('bankAmount');
@@ -506,7 +554,7 @@
         });
       });
       const editBtn = document.getElementById('editInCart');
-      if (editBtn) editBtn.addEventListener('click', () => { location.href = 'cart.html'; });
+      if (editBtn) editBtn.addEventListener('click', () => { location.href = editBtn.dataset.href || 'cart.html'; });
     }
 
     function bindDelivMethod() {
@@ -641,24 +689,38 @@
         emailInput.classList.toggle('invalid', showErr);
         emailError.hidden = !showErr;
       }
-      const ok = document.getElementById('agreeContact').checked
-        && document.getElementById('agreeTerms').checked
-        && state.delivMethod
-        && (state.delivMethod === 'pickup' || (document.getElementById('fullName').value.trim() && phoneInput && phoneInput.value.trim() && document.getElementById('addr').value.trim() && document.getElementById('city').value.trim()))
-        && emailOk
-        && methodOk;
+      let ok;
+      if (state.memberMode) {
+        // Member repeat purchase gates on the reporting center ID only — the
+        // other member fields are optional (prefilled where known).
+        const rc = document.getElementById('rpRcId');
+        ok = !!methodOk
+          && !!(rc && rc.value.trim())
+          && memberFlowGate();
+      } else {
+        // Repeat purchase flow: the reporting center ID is the only field the
+        // customer fills in (phone / email / notes are auto-satisfied).
+        const rcInput = document.getElementById('rcIdInput');
+        const rcVal = rcInput ? rcInput.value.trim() : '';
+        const rcError = document.getElementById('rcIdError');
+        if (rcInput && rcError) rcError.hidden = !!rcVal;
+        ok = !!methodOk
+          && !!rcVal
+          && state.delivMethod
+          && (state.delivMethod === 'pickup' || (document.getElementById('fullName').value.trim() && phoneInput && phoneInput.value.trim() && document.getElementById('addr').value.trim() && document.getElementById('city').value.trim()))
+          && emailOk;
+      }
       payBtn.disabled = !ok;
     }
 
     function bindPay() {
       const payBtn = document.getElementById('payBtn');
-      ['agreeContact', 'agreeTerms'].forEach(id => {
-        document.getElementById(id).addEventListener('change', updatePayBtn);
+      ['fullName', 'addr', 'city', 'rcIdInput'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updatePayBtn);
       });
-      ['fullName', 'addr', 'city'].forEach(id => {
-        document.getElementById(id).addEventListener('input', updatePayBtn);
-      });
-      document.getElementById('contactEmail').addEventListener('input', updatePayBtn);
+      const contactEmailEl = document.getElementById('contactEmail');
+      if (contactEmailEl) contactEmailEl.addEventListener('input', updatePayBtn);
       // phone is a dial+number pair rendered into #phoneField
       document.querySelector('#phoneField .phone-number')?.addEventListener('input', updatePayBtn);
 
@@ -680,8 +742,19 @@
         payBtn.querySelector('[data-label]').innerHTML = `<span class="ek-spinner"></span> ${window.T.tr('common.loading')}`;
         const pc = window.ProductCatalog || {};
         const phone = pc.readPhone ? pc.readPhone(document.getElementById('phoneField'), 'phone') : (document.querySelector('#phoneField .phone-number') || {}).value || '';
-        const contactPhone = pc.readPhone ? pc.readPhone(document.getElementById('contactPhoneField'), 'contactPhone') : '';
-        const customer = {
+        const contactPhone = pc.readPhone && document.getElementById('contactPhoneField')
+          ? pc.readPhone(document.getElementById('contactPhoneField'), 'contactPhone') : '';
+        const customer = state.memberMode ? {
+          name: document.getElementById('rpRecipient').value.trim(),
+          phone: pc.readPhone ? pc.readPhone(document.getElementById('rpPhoneField'), 'rpPhone') : '',
+          contactPhone: contactPhone,
+          email: document.getElementById('contactEmail').value.trim(),
+          city: document.getElementById('rpCity').value.trim(),
+          district: (document.getElementById('rpDistrict') || {}).value ? document.getElementById('rpDistrict').value.trim() : '',
+          address: document.getElementById('rpAddr').value.trim(),
+          state: (state.repeatMember && state.repeatMember.state) || '',
+          note: '',
+        } : {
           name: document.getElementById('fullName').value.trim(),
           phone: phone,
           contactPhone: contactPhone,
@@ -689,10 +762,11 @@
           city: document.getElementById('city').value.trim(),
           address: document.getElementById('addr').value.trim(),
           state: document.getElementById('state').value,
-          note: document.getElementById('orderNote').value.trim(),
+          note: '',
         };
-        // sync: save the address back to My Account if requested
-        saveAddressFromOrder(customer);
+        // sync: save the address back to My Account if requested (skipped in
+        // member mode — the address belongs to the member, not the operator)
+        if (!state.memberMode) saveAddressFromOrder(customer);
         // Build order items from the normalized state.items (single or cart).
         const orderItems = (state.items || []).map(it => ({
           id: it.id,
@@ -724,6 +798,56 @@
           payStatus: 'Unpaid',
           status: 'pending',
         };
+        // Member repeat purchase: the looked-up member is the customer, the
+        // signed-in user is the operator. Tag the order accordingly and credit
+        // the operator's reporting center.
+        if (state.repeatMember) {
+          order.memberId = state.repeatMember.id || order.memberId;
+          order.memberName = state.repeatMember.name || customer.name || null;
+          const subtype = state.repeatMember.subtype || 'repeat-purchase';
+          if (subtype === 'upgrade') {
+            order.source = 'member-upgrade';
+            const fromLevel = state.repeatMember.level || 'Member';
+            const toLevel = state.upgradeTo || fromLevel;
+            const diff = Math.max(0, state.upgradeDiff || 0);
+            order.upgrade = {
+              method: 'Pay the difference',
+              fromLevel: fromLevel,
+              toLevel: toLevel,
+              differentialBv: diff,
+              productBv: order.bv || 0,
+            };
+            // Apply the level change so the rest of the site reflects it.
+            saveLevelOverride(order.memberId, toLevel);
+            try {
+              window.dispatchEvent(new CustomEvent('al:member-level-changed', { detail: { memberId: order.memberId, level: toLevel } }));
+            } catch (e) {}
+            try { localStorage.setItem('al.memberLevels:ping', String(Date.now())); } catch (e) {}
+          } else if (subtype === 'auto-maintenance') {
+            order.source = 'member-auto-maintenance';
+          } else {
+            order.source = 'member-repeat-purchase';
+          }
+          const opMd = (function () { try { return JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) { return {}; } })();
+          // The reporting center is an editable field in member mode — the
+          // operator may correct it before submitting. No default: an empty
+          // field is blocked by the pay gate, so nothing is written either.
+          const rcField = state.memberMode
+            ? (document.getElementById('rpRcId') || {}).value || ''
+            : (document.getElementById('rcIdInput') || {}).value || '';
+          if (rcField.trim()) {
+            order.reportingCenterId = rcField.trim();
+          }
+          order.reportingCenterName = order.reportingCenterName || opMd.memberName || opMd.name || '';
+        }
+        // Repeat purchase (shopper mode): the reporting center ID entered on
+        // the contact card is the only customer-filled field — keep it.
+        if (!state.repeatMember) {
+          const rcInput = document.getElementById('rcIdInput');
+          if (rcInput && rcInput.value.trim()) {
+            order.reportingCenterId = rcInput.value.trim();
+          }
+        }
         // Account balance: deduct Ecoin and mark as paid immediately
         if (state.payMethod === 'balance' && order.memberId && window.ProductCatalog && window.ProductCatalog.debitEcoin) {
           order.payStatus = 'Paid';
@@ -763,8 +887,14 @@
             });
           }
         }
-        // Cart checkout: the order is now placed, so empty the cart.
-        if (state.cartCheckout && pc.clearCart) pc.clearCart();
+        // Cart checkout: the order is now placed, so empty the cart. Member
+        // repeat-purchase clears its own al.memberCart, not the shopper's cart.
+        if (state.cartCheckout) {
+          if (state.memberMode && pc.clearMemberCart) pc.clearMemberCart();
+          else if (pc.clearCart) pc.clearCart();
+        }
+        // Member repeat purchase: the context was consumed for this order.
+        if (state.repeatMember) clearRepeatMemberCtx();
         setTimeout(() => {
           location.href = 'shipping.html?order=' + encodeURIComponent(order.id);
         }, 900);
@@ -847,10 +977,162 @@
       });
     }
 
+    /* ---------- Member flow specifics (auto-maintenance / upgrade) ----------
+       Beyond the shared repeat-purchase checkout, two flows add rules, read
+       from the stashed al.repeatMember.context:
+       - auto-maintenance: the selected products' total BV must be ≥ 90.
+       - upgrade: the operator picks a target level here; the products' total
+         BV must cover the upgrade difference (target BV − current BV). */
+    const LEVELS = ['Silver', 'Gold'];
+    const LEVEL_BV = { Member: 0, Silver: 300, Gold: 900, Platinum: 2700, Diamond: 8100, Corporate: 24300 };
+    function bvOfLevel(l) { const v = LEVEL_BV[l]; return typeof v === 'number' ? v : 0; }
+
+    function getLevelOverrides() {
+      try { return JSON.parse(localStorage.getItem('al.memberLevels') || '{}'); } catch (e) { return {}; }
+    }
+    function saveLevelOverride(id, level) {
+      const all = getLevelOverrides();
+      all[id] = level;
+      try { localStorage.setItem('al.memberLevels', JSON.stringify(all)); } catch (e) {}
+    }
+
+    // Builds the flow-specific card (BV requirement / upgrade target) and seeds
+    // the pay-button gate. Runs after setupMemberInfo() in member mode.
+    function setupMemberFlow() {
+      const card = document.getElementById('memberFlowCard');
+      if (!card) return;
+      const m = state.repeatMember || {};
+      const subtype = m.subtype;
+      if (!subtype || subtype === 'repeat-purchase') { card.hidden = true; return; }
+      card.hidden = false;
+      const body = document.getElementById('memberFlowBody');
+      if (!body) return;
+
+      if (subtype === 'auto-maintenance') {
+        state.subtype = 'auto-maintenance';
+        const MIN_BV = 90;
+        const bv = state.bv || 0;
+        const ok = bv >= MIN_BV;
+        body.innerHTML = `
+          <h2>Auto-Maintenance requirement</h2>
+          <p class="field__hint">Auto-Maintenance requires the selected products' total BV to be at least <strong>90 BV</strong>.</p>
+          <div class="row"><span class="k">Current BV</span><span class="v" id="flowBv">${bv} BV</span></div>
+          <div class="row"><span class="k">Requirement</span><span class="v" id="flowReq" style="color:${ok ? 'var(--ek-success)' : 'var(--ek-error)'}">${ok ? bv + ' / 90 BV ✓' : bv + ' / 90 BV — add more products'}</span></div>`;
+        updatePayBtn();
+      } else if (subtype === 'upgrade') {
+        state.subtype = 'upgrade';
+        const current = m.level || 'Member';
+        const options = LEVELS.filter(l => bvOfLevel(l) > bvOfLevel(current));
+        const opts = options.map(l => `<option value="${l}">${l}</option>`).join('');
+        body.innerHTML = `
+          <h2>Upgrade member</h2>
+          <p class="field__hint">Current level: <strong>${current}</strong>. Choose the level to upgrade to — the products' total BV must cover the difference.</p>
+          <div class="field">
+            <label for="flowUpgradeTo">Upgrade to <span class="req">*</span></label>
+            <select class="ek-select" id="flowUpgradeTo">${opts ? '<option value="">— Select level —</option>' + opts : '<option value="">No higher level available</option>'}</select>
+          </div>
+          <div class="row" id="flowDiffRow" style="display:none"><span class="k">Upgrade difference</span><span class="v" id="flowDiff"></span></div>`;
+        const sel = document.getElementById('flowUpgradeTo');
+        if (sel) {
+          // Pre-select the level the operator already chose in the cart, if any.
+          if (m.targetLevel && options.indexOf(m.targetLevel) !== -1) sel.value = m.targetLevel;
+          sel.addEventListener('change', () => {
+            const target = sel.value;
+            state.upgradeTo = target;
+            const diffRow = document.getElementById('flowDiffRow');
+            const diffEl = document.getElementById('flowDiff');
+            if (target) {
+              const diff = Math.max(0, bvOfLevel(target) - bvOfLevel(current));
+              state.upgradeDiff = diff;
+              if (diffRow) diffRow.style.display = 'flex';
+              if (diffEl) diffEl.textContent = `${target} ${bvOfLevel(target)} BV − ${current} ${bvOfLevel(current)} BV = ${diff} BV`;
+            } else {
+              state.upgradeDiff = 0;
+              if (diffRow) diffRow.style.display = 'none';
+            }
+            updatePayBtn();
+          });
+          // Fire once so the pre-selected level's diff + gate are applied.
+          sel.dispatchEvent(new Event('change'));
+        }
+        updatePayBtn();
+      }
+    }
+
+    // Extra pay-button gate layered on top of the shared member-mode rules.
+    function memberFlowGate() {
+      if (state.subtype === 'auto-maintenance') return (state.bv || 0) >= 90;
+      if (state.subtype === 'upgrade') {
+        if (!state.upgradeTo) return false;
+        return (state.bv || 0) >= (state.upgradeDiff || 0);
+      }
+      return true;
+    }
+
+    /* ---------- Member repeat-purchase info card (member mode only) ----------
+       Replaces the pickup + contact cards with the reference back-office
+       field set: repeat member ID (+ resolved name), reporting center,
+       recipient, phone, address picker, district, city, detailed address. */
+    function setupMemberInfo() {
+      const card = document.getElementById('memberInfoCard');
+      const deliv = document.getElementById('delivCard');
+      const contact = document.getElementById('contactCard');
+      if (card) card.hidden = false;
+      if (deliv) deliv.hidden = true;
+      if (contact) contact.hidden = true;
+      const pc = window.ProductCatalog || {};
+      const m = state.repeatMember || {};
+      let opMd = {};
+      try { opMd = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
+      document.getElementById('rpMemberId').value = m.id || '';
+      document.getElementById('rpMemberName').textContent = m.name ? `【${m.name}】` : '';
+      // Reporting Center ID starts empty and is required — the operator fills
+      // it in (the pay button stays disabled until it's non-empty).
+      document.getElementById('rpRcId').value = '';
+      document.getElementById('rpRecipient').value = m.name || '';
+      const phoneHost = document.getElementById('rpPhoneField');
+      if (phoneHost && pc.phoneFieldHTML) phoneHost.innerHTML = pc.phoneFieldHTML(pc.DEFAULT_DIAL, 'rpPhone');
+      if (pc.fillPhoneFields) pc.fillPhoneFields(phoneHost, m.phone || '');
+      // Hidden contact email feeds the Paystack modal prefill (member mode
+      // has no email field of its own — fall back to the operator's).
+      const emailEl = document.getElementById('contactEmail');
+      if (emailEl && !emailEl.value) {
+        emailEl.value = opMd.email || (m.id ? m.id.toLowerCase() + '@elken.demo' : '');
+      }
+      // Address picker: "on file" re-fills the member's profile address,
+      // "new" clears the three fields for manual entry.
+      const sel = document.getElementById('rpAddrSelect');
+      const fillFromFile = () => {
+        document.getElementById('rpDistrict').value = m.district || '';
+        document.getElementById('rpCity').value = m.city || '';
+        document.getElementById('rpAddr').value = m.address || '';
+      };
+      sel.onchange = () => {
+        if (sel.value === 'file') fillFromFile();
+        else ['rpDistrict', 'rpCity', 'rpAddr'].forEach(id => { document.getElementById(id).value = ''; });
+        updatePayBtn();
+      };
+      fillFromFile();
+      ['rpRcId', 'rpRecipient', 'rpDistrict', 'rpCity', 'rpAddr'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updatePayBtn);
+      });
+      document.querySelector('#rpPhoneField .phone-number')?.addEventListener('input', updatePayBtn);
+      updatePayBtn();
+    }
+
     function applyI18nCheckout() {
       document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = window.T.tr(el.dataset.i18n));
       const pc = window.ProductCatalog || {};
       const defaults = customerDefaults();
+      // Member repeat purchase: pre-fill the shipping recipient with the
+      // looked-up member's profile (the operator is only placing the order).
+      if (state.repeatMember) {
+        if (state.repeatMember.name) defaults.name = state.repeatMember.name;
+        if (state.repeatMember.phone) defaults.phone = state.repeatMember.phone;
+        if (state.repeatMember.address) defaults.address = state.repeatMember.address;
+        if (state.repeatMember.city) defaults.city = state.repeatMember.city;
+        if (state.repeatMember.state) defaults.state = state.repeatMember.state;
+      }
       document.getElementById('fullName').value = defaults.name;
       // phone fields: dial code + number pairs
       const phoneHost = document.getElementById('phoneField');
@@ -861,7 +1143,10 @@
         pc.fillPhoneFields(phoneHost, defaults.phone);
         pc.fillPhoneFields(contactHost, defaults.phone);
       }
-      document.getElementById('contactEmail').value = defaults.email;
+      // Hidden email feeds Paystack prefill / order record. Fall back to a
+      // derived address so the gate never blocks on an empty account email.
+      const emailFallback = ((window.Auth && window.Auth.user && window.Auth.user.memberId) || 'customer').toLowerCase() + '@elken.demo';
+      document.getElementById('contactEmail').value = defaults.email || emailFallback;
       document.getElementById('addr').value = defaults.address;
       document.getElementById('city').value = defaults.city;
       if (defaults.state) {
@@ -869,14 +1154,17 @@
         const opt = Array.from(sel.options).find(o => o.value === defaults.state || o.text === defaults.state);
         if (opt) sel.value = opt.value;
       }
-      document.getElementById('agreeContact').checked = true;
-      document.getElementById('agreeTerms').checked = true;
+      // The reporting center ID is the only field the customer fills in — the
+      // consent checkboxes were auto-satisfied at this point.
       renderSavedAddresses();
       // Guest checkout has no saved addresses / account — hide the account-bound picker.
       if (!(window.Auth && window.Auth.isLoggedIn())) {
         const picker = document.querySelector('.saved-addr-picker');
         if (picker) picker.style.display = 'none';
       }
+      // Member repeat purchase: swap the pickup/contact cards for the
+      // member information field set (prefilled from the looked-up member).
+      if (state.memberMode) setupMemberInfo();
       // Build the shared payment chooser + panels first, then render the summary
       // (renderSummary() rebuilds the Method row, so it re-reads the selection).
       buildPayMethods();
@@ -889,29 +1177,50 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       // Cart checkout: build order items from the cart store (multi-item).
+      // Member repeat-purchase uses its own cart (al.memberCart), never the
+      // shopper's main al.cart, so the two never mix.
       const cartMode = new URLSearchParams(location.search).get('cart') === '1';
+      const memberMode = new URLSearchParams(location.search).get('mode') === 'member';
+      state.memberMode = memberMode;
       if (cartMode) {
-        const cart = (window.ProductCatalog && window.ProductCatalog.getCart) ? window.ProductCatalog.getCart() : [];
+        const pc = window.ProductCatalog || {};
+        const getCartFn = memberMode ? (pc.getMemberCart || pc.getCart) : pc.getCart;
+        const cart = getCartFn ? getCartFn() : [];
         if (!cart.length) {
-          location.replace('cart.html');
+          location.replace(memberMode ? 'cart.html?mode=member' : 'cart.html');
           return;
         }
-        const items = cart.map(c => ({
-          id: c.id,
-          name: c.name,
-          qty: c.qty || 1,
-          price: c.price || 0,
-          img: c.img || '',
-          category: c.category || '',
-          bv: Math.round((c.price || 0) / 1000) * (c.qty || 1),
-          image: _productImagePath(c.img, c.category),
-        }));
+        // Enrich with catalog data: real per-unit BV (not price/1000) and the
+        // product code (SKU) shown on the summary lines.
+        const catalog = pc.allProducts || [];
+        const items = cart.map(c => {
+          const p = catalog.find(x => x.id === c.id) || {};
+          const unitBV = (typeof p.bv === 'number') ? p.bv : Math.round((c.price || 0) / 1000);
+          return {
+            id: c.id,
+            name: c.name,
+            qty: c.qty || 1,
+            price: c.price || 0,
+            img: c.img || '',
+            category: c.category || '',
+            unitBV,
+            bv: unitBV * (c.qty || 1),
+            sku: p.sku || '',
+            image: _productImagePath(c.img, c.category),
+          };
+        });
         state.items = items;
         state.total = items.reduce((s, i) => s + i.price * i.qty, 0);
         state.bv = items.reduce((s, i) => s + (i.bv || 0), 0);
         state.cartCheckout = true;
-        document.title = 'Checkout · Your Cart · Elken';
+        // Carry the member-repeat-purchase context (if this cart came from
+        // member-repurchase.html) so the order is tagged for the right member.
+        state.repeatMember = getRepeatMemberCtx();
+        if (state.repeatMember) document.title = 'Checkout · Member Repeat Purchase · Elken';
         applyI18nCheckout();
+        // Member flow specifics (auto-maintenance ≥ 90 BV / upgrade target)
+        // are layered on top of the shared member checkout.
+        setupMemberFlow();
         return;
       }
 
@@ -923,6 +1232,7 @@
       }
       state.product = product;
       state.qty = getQtyFromUrl();
+      const unitBV = (typeof product.bv === 'number') ? product.bv : Math.round((product.price || 0) / 1000);
       const single = {
         id: product.id,
         name: product.name,
@@ -930,7 +1240,9 @@
         price: product.price,
         img: product.img,
         category: product.category,
-        bv: Math.round((product.price || 0) / 1000) * state.qty,
+        unitBV,
+        bv: unitBV * state.qty,
+        sku: product.sku || '',
         image: product.image || _productImagePath(product.img, product.category),
       };
       state.items = [single];

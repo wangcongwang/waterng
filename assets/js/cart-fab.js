@@ -33,7 +33,16 @@
     var fab = document.createElement('a');
     fab.id = 'cartFab';
     fab.className = 'cart-fab';
-    fab.href = 'cart.html';
+    // On member-* pages (data-cart-mode="member") the fab opens the
+    // independent member cart, and carries the current page name so the cart's
+    // "Continue shopping" link can return to the exact originating page.
+    var memberMode = (document.body && document.body.getAttribute('data-cart-mode') === 'member');
+    if (memberMode) {
+      var fromPage = (location.pathname.split('/').pop() || '').replace(/\.html$/i, '');
+      fab.href = 'cart.html?mode=member&from=' + encodeURIComponent(fromPage || 'member-repurchase');
+    } else {
+      fab.href = 'cart.html';
+    }
     fab.title = 'Cart';
     fab.setAttribute('aria-label', 'Cart');
     fab.innerHTML = SVG_CART + '<span class="cart-fab__badge" id="cartFabBadge" style="display:none"></span>';
