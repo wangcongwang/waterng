@@ -251,9 +251,12 @@
           <button class="ek-btn ek-btn--secondary ek-btn--block" id="drawerLogout" type="button">${T.tr('common.logout')}</button>
         </div>`;
     }
+    /* Sign-in navigates in THIS tab on purpose: opening login.html in a new
+       window crashes embedded preview webviews (WorkBuddy built-in browser).
+       login.html carries ?next= so sign-in still lands on repeat-purchase.html. */
     return `
       <div class="drawer-auth drawer-auth-out">
-        <a href="login.html${ACCOUNT_NEXT}" target="_blank" rel="noopener noreferrer" class="ek-btn ek-btn--block">${T.tr('common.sign_in')}</a>
+        <a href="login.html${ACCOUNT_NEXT}" class="ek-btn ek-btn--block">${T.tr('common.sign_in')}</a>
         <a href="signup.html${nextParam}" class="drawer-auth-alt">${T.tr('common.create_account')}</a>
       </div>`;
   }
@@ -269,9 +272,11 @@
   const ICON_LOGOUT = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const ICON_CART = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="21" r="1.6" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="21" r="1.6" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 3h2l2.2 12.2a1.6 1.6 0 0 0 1.6 1.3h8.7a1.6 1.6 0 0 0 1.6-1.2L21 7H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-  /* 个人中心入口：未登录时点击导航/抽屉的账户图标，登录后回跳到 account.html。
-     用独立常量，避免与其它通用回跳(nextParam=当前页)混淆。 */
-  const ACCOUNT_NEXT = '?next=account.html';
+  /* 登录入口（导航/抽屉的 Sign in）：登录后回跳到 repeat-purchase.html
+     （Repeat Purchase 商品列表页）——从营销页登录的用户直接进入购物流程。
+     用独立常量，避免与其它通用回跳(nextParam=当前页)混淆。
+     注意：account.html 的未登录守卫仍自带 next=account.html，回跳账户页，不受此常量影响。 */
+  const ACCOUNT_NEXT = '?next=repeat-purchase.html';
 
   /* The four ranges, in the order the design settled on. Labels must stay in
      step with the home page range cards and the footer column. */
@@ -367,23 +372,12 @@
     const accountUtil = loggedIn
       ? `<a class="ek-util ek-util--icon" href="account.html" title="My Account" aria-label="My Account">${ICON_USER}</a>
          <button class="ek-util ek-util--icon" type="button" id="headerLogout" title="Sign out" aria-label="Sign out">${ICON_LOGOUT}</button>`
-      : `<a class="ek-util ek-util--icon" href="login.html${ACCOUNT_NEXT}" target="_blank" rel="noopener noreferrer" title="Sign in" aria-label="Sign in">${ICON_USER}</a>`;
+      /* Same-tab sign-in (no target=_blank): a new window crashes embedded
+         preview webviews. ?next=repeat-purchase.html lands on the Repeat
+         Purchase listing after sign-in. */
+      : `<a class="ek-util ek-util--icon" href="login.html${ACCOUNT_NEXT}" title="Sign in" aria-label="Sign in">${ICON_USER}</a>`;
 
-    /* 购物车图标：仅登录态或 guest 下单流程（isGuestEntry）显示。
-       普通未登录（完整菜单）不显示购物车按钮；未登录走 guest 购物车时
-       由 guest 流程保留该入口。购物车页/结算页仍按登录态区分 guest/member 分支。 */
-    const cartUtil = (loggedIn || isGuestEntry)
-      ? `<a class="ek-util ek-util--icon" href="cart.html" id="headerCart" title="Cart" aria-label="Cart">${ICON_CART}<span class="ek-util__badge" id="cartBadge"></span></a>`
-      : '';
     const langUtil = `<button class="ek-lang" type="button" id="headerLang" aria-label="Language">EN ${CHEVRON}</button>`;
-
-    /* 移动端专用购物车入口：桌面隐藏、手机（≤1199px）直接显示在头部栏，
-       不藏进抽屉菜单，方便随时查看/结算。显示逻辑与桌面购物车一致
-       （仅登录态或 guest 下单流程显示）。角标复用 [id="cartBadgeMobile"]，
-       由 updateCartBadge 同步。 */
-    const cartUtilMobile = (loggedIn || isGuestEntry)
-      ? `<a class="ek-util ek-util--icon" href="cart.html" id="headerCartMobile" title="Cart" aria-label="Cart">${ICON_CART}<span class="ek-util__badge" id="cartBadgeMobile"></span></a>`
-      : '';
 
     const productsNavItem = `
             <div class="ek-nav__item ek-nav__item--parent">
@@ -423,12 +417,10 @@
           <button class="ek-burger" type="button" id="openDrawer" aria-expanded="false" aria-label="Menu">
             <span></span><span></span><span></span>
           </button>
-          <div class="ek-header__mobile-actions" id="headerMobileActions">${cartUtilMobile}</div>
           <nav class="ek-nav" data-nav aria-label="Main">
             ${mainNavItems}
             <div class="ek-nav__utils">
               ${accountUtil}
-              ${cartUtil}
               ${langUtil}
             </div>
           </nav>
@@ -966,6 +958,21 @@
   }
   window.renderEnvBanner = renderEnvBanner;
 
+  /* ---------- Embedded / in-app preview detection ----------
+     Spawning a NEW window (target=_blank / window.open) crashes some embedded
+     preview webviews. The WorkBuddy built-in browser is a TOP-LEVEL webview, so
+     the classic `window.self !== window.top` iframe test misses it completely —
+     a target=_blank click there asks the host to create a window it cannot
+     handle and the host app dies. Layer a UA sniff on top so in-app browsers
+     degrade to same-tab navigation. Real desktop/mobile browsers match none of
+     these tokens and keep their normal new-tab behaviour. */
+  function isEmbeddedPreview() {
+    try { if (window.self !== window.top) return true; } catch (e) { return true; }
+    var ua = navigator.userAgent || '';
+    return /\bwv\b|WorkBuddy|Trae|CodeBuddy|Electron/i.test(ua);
+  }
+  window.isEmbeddedPreview = isEmbeddedPreview;
+
   /* ---------- Buy Now gate (unlogged / "Wordpress page" product pages) ----------
      On product pages shown to signed-out visitors (env banner reads "此页面属于Wordpress页面"),
      the "Add to cart" / "Add to Cart" control is hidden and replaced by a "Buy Now" button.
@@ -984,9 +991,7 @@
     // Embedded preview webviews (WorkBuddy built-in browser etc.) handle
     // target=_blank window creation poorly and can crash the host app.
     // Fall back to same-tab navigation there; real browsers keep the new tab.
-    let embedded = false;
-    try { embedded = window.self !== window.top; } catch (e) { embedded = true; }
-    if (embedded) { location.href = url; return; }
+    if (isEmbeddedPreview()) { location.href = url; return; }
     // Open via an anchor with target=_blank so it reliably opens in a NEW tab.
     // window.open(url, '_blank', 'noopener') returns null in some browsers, which wrongly
     // triggered the same-tab fallback (location.href) and navigated the current tab.
@@ -998,14 +1003,14 @@
     a.click();
     a.remove();
   }
-  /* Embedded-preview compatibility: opening a new window from an iframe-based
-     webview can crash the host app. Intercept same-origin target=_blank links
-     (header sign-in icon, footer links, Buy Now gate) and open them in this
-     tab instead. External http(s) links keep native behaviour. */
+  /* Embedded-preview compatibility: opening a new window from an embedded or
+     in-app webview can crash the host app (the WorkBuddy built-in browser is a
+     top-level webview, so `self !== top` alone does not catch it — see
+     isEmbeddedPreview()). Intercept same-origin target=_blank links (header
+     sign-in, footer links, Buy Now gate) and open them in this tab instead.
+     External http(s) links keep native behaviour. */
   (function () {
-    let embedded = false;
-    try { embedded = window.self !== window.top; } catch (e) { embedded = true; }
-    if (!embedded) return;
+    if (!isEmbeddedPreview()) return;
     document.addEventListener('click', function (e) {
       if (e.defaultPrevented || e.button !== 0) return;
       const a = e.target && e.target.closest ? e.target.closest('a[target="_blank"]') : null;

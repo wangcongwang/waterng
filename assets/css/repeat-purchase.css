@@ -233,30 +233,3 @@
     padding: var(--ek-20);
   }
 }
-
-/* Floating cart — guest flow has no top header, so the cart lives here as a FAB
-   just below the env banner (top: env-banner height + gap) on the right. The
-   count badge reuses .ek-util__badge and is updated by updateCartBadge(). */
-.rp-cart-fab {
-  position: fixed;
-  top: calc(var(--ek-env-banner-h) + var(--ek-8));
-  right: var(--ek-12);
-  z-index: 80;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 999px;
-  background: var(--ek-white);
-  color: var(--ek-blue);
-  box-shadow: 0 6px 18px rgba(20, 40, 80, .18);
-  transition: transform .15s ease, box-shadow .15s ease;
-}
-.rp-cart-fab:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(20, 40, 80, .22);
-}
-.rp-cart-fab:active { transform: translateY(0); }
-.rp-cart-fab svg { display: block; }
-.rp-cart-fab .ek-util__badge { background: var(--ek-aqua); color: var(--ek-white); }

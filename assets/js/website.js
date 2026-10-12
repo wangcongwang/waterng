@@ -639,7 +639,7 @@
   function updateCartBadge() {
     const cart = getCart();
     const total = cart.reduce((s, c) => s + c.qty, 0);
-    document.querySelectorAll('[id="cartBadge"], [id="hubCartBadge"], [id="cartBadgeMobile"]').forEach(badge => {
+    document.querySelectorAll('[id="cartFabBadge"]').forEach(badge => {
       badge.textContent = total || '';
       if (badge.classList.contains('hub-badge')) {
         badge.hidden = total === 0;

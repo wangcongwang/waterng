@@ -845,3 +845,46 @@
 .ek-center { text-align: center; }
 .ek-nowrap { white-space: nowrap; }
 [hidden] { display: none !important; }
+
+/* ---------- Floating cart entry (bottom-right · desktop + mobile) ---------- */
+/* Rendered by cart-fab.js on pages with cart functions (product-*, products-*,
+   repeat-purchase, guest-repeat-purchase). Stays pinned bottom-right on every
+   viewport, incl. phones (env() keeps it clear of the iOS home indicator). */
+.cart-fab {
+  position: fixed;
+  right: var(--ek-20);
+  bottom: calc(var(--ek-20) + env(safe-area-inset-bottom, 0px));
+  z-index: var(--ek-z-sticky);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ek-48);
+  height: var(--ek-48);
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-blue);
+  color: var(--ek-white);
+  box-shadow: var(--ek-shadow-lg);
+  text-decoration: none;
+  transition: transform var(--ek-fast) var(--ek-ease), background var(--ek-fast) var(--ek-ease);
+}
+.cart-fab:hover { background: var(--ek-blue-hover); transform: translateY(-2px); }
+.cart-fab:active { transform: translateY(0); }
+.cart-fab svg { width: var(--ek-24); height: var(--ek-24); }
+.cart-fab__badge {
+  position: absolute;
+  top: calc(-1 * var(--ek-4));
+  right: calc(-1 * var(--ek-4));
+  min-width: var(--ek-20);
+  height: var(--ek-20);
+  padding: 0 var(--ek-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-error);
+  color: var(--ek-white);
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  line-height: 1;
+  font-variant-numeric: var(--ek-num);
+}
