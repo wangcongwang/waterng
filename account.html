@@ -2274,8 +2274,8 @@
           </div>
           <div class="ek-modal__body">
             <div class="modal-filter-bar">
-              <input type="date" id="${modalId}-start" lang="en" title="Start date">
-              <input type="date" id="${modalId}-end" lang="en" title="End date">
+              <input type="text" id="${modalId}-start" lang="en" title="Start date" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" autocomplete="off">
+              <input type="text" id="${modalId}-end" lang="en" title="End date" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" autocomplete="off">
               ${columns.find(c => c.key === 'type') ? `<select id="${modalId}-type">
                 <option value="">All Trans Type</option>
                 <option value="credit">Credit</option>
@@ -2764,11 +2764,11 @@
               <div class="modal-filter-bar modal-filter-bar--grid">
                 <div class="mf-field">
                   <label for="rtTransferStart">Start date</label>
-                  <input class="ek-input" type="date" id="rtTransferStart" lang="en">
+                  <input class="ek-input" type="text" id="rtTransferStart" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" autocomplete="off">
                 </div>
                 <div class="mf-field">
                   <label for="rtTransferEnd">End date</label>
-                  <input class="ek-input" type="date" id="rtTransferEnd" lang="en">
+                  <input class="ek-input" type="text" id="rtTransferEnd" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" autocomplete="off">
                 </div>
                 <div class="mf-field">
                   <label for="rtTransferOut">Transfer out of</label>
@@ -2992,7 +2992,7 @@
               </div>
               <div class="ek-field" style="grid-column: 1 / -1">
                 <label for="rechargePaymentDate">Payment Date <span class="req">*</span></label>
-                <input class="ek-input" type="date" id="rechargePaymentDate" name="paymentDate" lang="en" required>
+                <input class="ek-input" type="text" id="rechargePaymentDate" name="paymentDate" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" autocomplete="off" required>
               </div>
               <div class="ek-field" style="grid-column: 1 / -1">
                 <label for="rechargeRemark">Remark <span class="req">*</span></label>
