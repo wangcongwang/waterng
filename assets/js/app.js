@@ -529,31 +529,25 @@
       { label: 'Community',           href: 'about-community.html' },
     ];
 
-    /* Signed-in / guest flows should not drop back to the marketing (logged-out)
-       category pages from the footer. Send them to the repeat-purchase listing
-       instead, and keep the page they are on open in the background. */
     /* Display-only pages read no login state: their footer Products column always
        points at the marketing category pages. */
     const displayOnly = isDisplayOnlyPage();
     const wordpress = isWordPressPage();
     const publicPage = displayOnly || wordpress;
-    const loggedIn = !publicPage && !!(window.Auth && window.Auth.user);
-    let isGuestEntry = false;
-    if (!publicPage) { try { isGuestEntry = sessionStorage.getItem(STORAGE.GUEST) === '1'; } catch (e) {} }
-    const prodBase = loggedIn
-      ? 'repeat-purchase.html'
-      : (isGuestEntry ? 'guest-repeat-purchase.html?guest=1' : null);
+    /* AE-side pages (account / member ops / cart / checkout / order…): every
+       footer link opens the matching WP marketing page in a new tab — the
+       footer never routes back into the AE commerce flow. On WP pages the
+       footer keeps normal same-tab navigation. */
+    const aeSide = !publicPage;
+    const aeAttrs = ' target="_blank" rel="noopener noreferrer"';
 
     function prodHref(cat) {
-      const fallback = {
+      return {
         'health-wellness': 'products-health.html',
         'wellness-devices': 'products-wellness.html',
         'home-appliances': 'products-water-filters.html',
         'beauty-skincare': 'products-beauty.html',
       }[cat] || 'products.html';
-      if (!prodBase) return fallback;
-      const sep = prodBase.includes('?') ? '&' : '?';
-      return `${prodBase}${sep}category=${encodeURIComponent(cat)}`;
     }
 
     const prodLinks = [
@@ -562,7 +556,8 @@
       { label: 'Water',    href: prodHref('home-appliances') },
       { label: 'Beauty',   href: prodHref('beauty-skincare') },
     ];
-    const productLinkAttrs = prodBase ? ' target="_blank" rel="noopener noreferrer"' : '';
+    const productLinkAttrs = aeSide ? aeAttrs : '';
+    const legalLinkAttrs = aeSide ? aeAttrs : '';
 
     const col = (title, links, linkAttrs = '') => `
         <div class="ek-fcol"><h2>${title}</h2><ul>
@@ -573,7 +568,7 @@
         <div class="ek-container--nav">
           <div class="sec-footer__inner">
             <div><img class="sec-footer__logo" src="assets/img/brand/elken-logo-white-v4.svg?v=20260909a" alt="Elken"></div>
-            ${col('Who We Are', whoLinks, ' target="_blank" rel="noopener noreferrer"')}
+            ${col('Who We Are', whoLinks, aeSide ? aeAttrs : '')}
             ${col('Products', prodLinks, productLinkAttrs)}
             <div class="ek-fcol"><h2>Contact Us</h2>
               <address class="ek-faddr"><strong>NIGERIA</strong><br>HEAD OFFICE<br>
@@ -585,7 +580,7 @@
           <div class="sec-footer__bar">
             <p>&copy; 2026 Elken Nigeria. All rights reserved.</p>
             <p>&copy; Copyright 2026, ELKEN SDN. BHD. 199501005790 (334986-W)(AJL 93727) &nbsp;&middot;&nbsp;
-              <a href="privacy.html">Privacy</a> | <a href="terms.html">Terms Of Use</a> | <a href="shipping.html">Policies</a> | <a href="service.html">Support</a></p>
+              <a href="privacy.html"${legalLinkAttrs}>Privacy</a> | <a href="terms.html"${legalLinkAttrs}>Terms Of Use</a> | <a href="shipping.html"${legalLinkAttrs}>Policies</a> | <a href="service.html"${legalLinkAttrs}>Support</a></p>
             <div class="ek-social">
               <a href="https://www.facebook.com/ElkenNigeria/" target="_blank" rel="noopener" aria-label="Elken Nigeria on Facebook"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M8.4 13V7.6h1.8l.3-2.1H8.4V4.2c0-.6.2-1 1-1h1.1V1.3C10.2 1.3 9.6 1.2 9 1.2c-1.7 0-2.9 1-2.9 2.9v1.4H4.3v2.1h1.8V13h2.3z" fill="#F4F5F5"/></svg></a>
               <a href="https://www.instagram.com/elkennigeria/" target="_blank" rel="noopener" aria-label="Elken Nigeria on Instagram"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1.6" y="1.6" width="10.8" height="10.8" rx="3.2" stroke="#F4F5F5" stroke-width="1.2"/><circle cx="7" cy="7" r="2.6" stroke="#F4F5F5" stroke-width="1.2"/><circle cx="10.2" cy="3.8" r=".8" fill="#F4F5F5"/></svg></a>
