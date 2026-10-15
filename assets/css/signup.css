@@ -38,6 +38,14 @@
 .field-row { grid-column: auto; min-width: 0; }
 .field-row--full { grid-column: 1 / -1; }
 
+/* A .field-row is a grid container (water-pages.css) whose height is dictated
+   by the tallest sibling in .reg-grid. With the default align-content, the
+   auto rows stretch to fill that height — so when Referrer ID grows a hint
+   below it, the Actual Referrer ID input beside it stretches too (layout
+   shift). Pack the rows from the top instead: hints/errors take the space
+   they need, inputs keep their natural height. */
+.field-row { align-content: start; }
+
 .field-row > label {
   display: block;
   font-size: var(--ek-small);
@@ -58,6 +66,17 @@
   font-size: var(--ek-caption);
   margin-top: var(--ek-4);
 }
+
+/* Inline field hint — referrer lookup status, country inheritance note */
+.field-hint {
+  display: block;
+  margin-top: var(--ek-4);
+  font-size: var(--ek-small);
+  line-height: var(--ek-small-lh);
+  color: var(--ek-muted);
+}
+.field-hint.is-ok { color: var(--ek-success); }
+.field-hint.is-err { color: var(--ek-error); }
 
 /* ---------- Product grid (official card style) ---------- */
 .prod-grid {

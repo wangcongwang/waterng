@@ -48,15 +48,38 @@
 
         <form id="regForm" novalidate class="auth-form">
 
-          <!-- ====== Section 1: Basic Info ====== -->
+          <!-- ====== Section 1: Network Information ====== -->
           <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_network">Network Information</div>
+            <p class="sec-hint" data-i18n="signup.network_hint">Registration is referral-based. Your country is inherited from your referrer and cannot be changed.</p>
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label><span data-i18n="signup.referrer_id">Referrer ID</span><span class="req-star">*</span></label>
+                <input class="ek-input" type="text" name="referrerId" id="regReferrerId"
+                       placeholder="e.g. NG12345678" autocomplete="off" required />
+                <small class="field-hint" id="regReferrerHint" hidden></small>
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
+                <input class="ek-input" type="text" name="actualReferrerId" id="regActualReferrerId"
+                       placeholder="e.g. NG12345678" autocomplete="off" />
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Section 2: Basic Info ====== -->
+          <div class="ek-card sec-block" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_basic">Basic Information</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
                 <label data-i18n="signup.country">Country</label>
-                <select class="ek-select" name="country" id="regCountry">
-                  <option value="Nigeria" selected>Nigeria</option>
+                <!-- Country is inherited from the referrer (referral-based registration),
+                     never chosen by the user: the select stays disabled and is only ever
+                     filled by the referrer lookup once a valid referrer resolves. -->
+                <select class="ek-select input-locked" name="country" id="regCountry" disabled aria-readonly="true">
+                  <option value="" selected>—</option>
                 </select>
+                <small class="field-hint country-inherited-hint" id="regCountryHint" hidden></small>
               </div>
 
               <div class="field-row ek-field">
@@ -69,7 +92,9 @@
 
               <div class="field-row ek-field">
                 <label data-i18n="signup.member_id">Member ID</label>
-                <input class="ek-input" type="text" id="regMemberId" readonly aria-label="Member ID (auto-generated)" />
+                <!-- Auto-generated and not modifiable — disabled gets the same
+                     grey locked styling as the inherited Country field. -->
+                <input class="ek-input" type="text" id="regMemberId" disabled aria-label="Member ID (auto-generated)" />
               </div>
 
               <div class="field-row ek-field">
@@ -84,14 +109,13 @@
               <div class="field-row ek-field field-row--full">
                 <label><span data-i18n="signup.center_id">Reporting Center ID</span><span class="req-star">*</span></label>
                 <input class="ek-input" type="text" name="centerId" id="regCenterId"
-                       value="NG00000001"
                        data-i18n-ph="signup.center_id_ph" placeholder="Enter reporting center ID" required />
               </div>
             </div>
           </div>
 
-          <!-- ====== Section 2: Product Selection ====== -->
-          <div class="ek-card sec-block">
+          <!-- ====== Section 3: Product Selection ====== -->
+          <div class="ek-card sec-block" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_products">Products</div>
             <p class="sec-hint" data-i18n="signup.products_hint">Tap a product to add it to your starter order, then set the quantity you need.</p>
             <div class="prod-grid" id="prodList" aria-live="polite"></div>
@@ -102,25 +126,8 @@
             </div>
           </div>
 
-          <!-- ====== Section 3: Network Information ====== -->
-          <div class="ek-card sec-block">
-            <div class="sec-title" data-i18n="signup.sec_network">Network Information</div>
-            <div class="reg-grid">
-              <div class="field-row ek-field">
-                <label data-i18n="signup.referrer_id">Referrer ID</label>
-                <input class="ek-input" type="text" name="referrerId" id="regReferrerId"
-                       placeholder="e.g. NG12345678" autocomplete="off" />
-              </div>
-              <div class="field-row ek-field">
-                <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
-                <input class="ek-input" type="text" name="actualReferrerId" id="regActualReferrerId"
-                       placeholder="e.g. NG12345678" autocomplete="off" />
-              </div>
-            </div>
-          </div>
-
           <!-- ====== Section 4: Personal Information ====== -->
-          <div class="ek-card sec-block">
+          <div class="ek-card sec-block" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_personal">Personal Information</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
@@ -162,7 +169,7 @@
           </div>
 
           <!-- ====== Section 5: Delivery Method ====== -->
-          <div class="ek-card sec-block">
+          <div class="ek-card sec-block" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_delivery">Delivery Method</div>
             <div class="field-row ek-field field-row--full">
               <label data-i18n="signup.delivery_method">Delivery Method</label>
@@ -180,7 +187,7 @@
           </div>
 
           <!-- ====== Section 6: Address Details ====== -->
-          <div class="ek-card sec-block" id="addressSection">
+          <div class="ek-card sec-block" id="addressSection" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_address">Address Details</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
@@ -219,7 +226,7 @@
           </div>
 
           <!-- ====== Section 7: Payment Method ====== -->
-          <div class="ek-card sec-block">
+          <div class="ek-card sec-block" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_payment">Payment Method</div>
 
             <div class="pay-method-grid" id="signupPayGrid"></div>
@@ -446,8 +453,11 @@
       'use strict';
 
       /* ---------- i18n apply ---------- */
-      function tr(key) {
-        return (window.T && typeof window.T === 'function') ? window.T.tr(key) : key;
+      function tr(key, params) {
+        // window.T is an object exposing .tr (defined in app.js) — the old
+        // typeof === 'function' check never matched, so every dynamic string
+        // fell back to the raw key.
+        return (window.T && window.T.tr) ? window.T.tr(key, params) : key;
       }
 
       /* ---------- Error helpers ---------- */
@@ -466,22 +476,184 @@
       }
       function clearErr(input) { setErr(input, ''); }
 
-      /* ---------- Generate Member ID on load ---------- */
-      const memberIdInput = document.getElementById('regMemberId');
-      if (memberIdInput && window.ProductCatalog && window.ProductCatalog.genMemberId) {
-        memberIdInput.value = window.ProductCatalog.genMemberId();
-      } else if (memberIdInput) {
-        memberIdInput.value = 'NG' + Math.floor(Math.random() * 90000000 + 10000000).toString();
+      /* ---------- Country: inherited from the referrer (read-only) ----------
+         Registration is referral-based: the country is NEVER chosen by the
+         user. It starts empty (AC5) and is filled only when the referrer
+         lookup resolves a valid member (AC1) — the referrer's country then
+         drives the whole market experience: catalog, currency, regions,
+         dial code and member-ID prefix. */
+      const countrySelect = document.getElementById('regCountry');
+      const countryHint = document.getElementById('regCountryHint');
+      let currentCountry = '';   // empty until a valid referrer resolves it
+      let referrerMember = null; // resolved referrer record { id, name, country, source }
+
+      function CC() {
+        if (!currentCountry) return null;
+        return (window.ProductCatalog && window.ProductCatalog.getCountryConfig)
+          ? window.ProductCatalog.getCountryConfig(currentCountry) : null;
+      }
+      function catalog() {
+        if (!currentCountry) return [];
+        return (window.ProductCatalog && window.ProductCatalog.getProductsByCountry)
+          ? window.ProductCatalog.getProductsByCountry(currentCountry) : [];
+      }
+      function money(n, dp) {
+        if (!currentCountry) return '—';
+        return (window.ProductCatalog && window.ProductCatalog.formatMoney)
+          ? window.ProductCatalog.formatMoney(n, currentCountry, dp)
+          : ('NGN ' + (Number(n) || 0).toLocaleString());
       }
 
-      /* ---------- Auto-fill referrer from URL ?ref= (fallback NG00000001) ---------- */
+      /* The country select is display-only: options mirror COUNTRY_CONFIG and
+         the value is set exclusively by applyCountry() below. */
+      function renderCountryOptions() {
+        if (!countrySelect) return;
+        const keys = (window.ProductCatalog && window.ProductCatalog.COUNTRY_CONFIG)
+          ? Object.keys(window.ProductCatalog.COUNTRY_CONFIG) : ['Nigeria'];
+        countrySelect.innerHTML =
+          '<option value="" selected>—</option>' +
+          keys.map(k => '<option value="' + k + '">' + k + '</option>').join('');
+      }
+
+      // Fill the inherited country and refresh everything market-specific.
+      function applyCountry(name, referrerName) {
+        currentCountry = name;
+        renderCountryOptions();
+        if (countrySelect) {
+          countrySelect.value = name;
+          countrySelect.disabled = true; // never editable — display only
+        }
+        if (countryHint) {
+          countryHint.hidden = false;
+          countryHint.textContent = tr('signup.country_inherited') +
+            (referrerName ? ' — ' + referrerName : '');
+        }
+        syncCountry(); // regions / center / placeholders / member ID / catalog
+      }
+
+      // Back to the empty state: no country, no products, no member ID.
+      function clearCountry() {
+        currentCountry = '';
+        referrerMarketReset();
+        renderCountryOptions();
+        if (countryHint) countryHint.hidden = true;
+        const mid = document.getElementById('regMemberId');
+        if (mid) mid.value = '';
+        Object.keys(selectedProds).forEach(pid => { delete selectedProds[pid]; });
+        renderProducts();
+        updateSummary();
+      }
+
+      // Reset market-specific inputs that were derived from a previous country.
+      function referrerMarketReset() {
+        const regionSel = document.getElementById('regRegion');
+        if (regionSel) {
+          regionSel.innerHTML = '<option value="" disabled selected>' + tr('signup.select_region') + '</option>';
+        }
+      }
+
+      /* ---------- Member ID ----------
+         Generated only once a country is inherited (the market prefix comes
+         from the referrer's country, e.g. NG… / AE…). */
+      const memberIdInput = document.getElementById('regMemberId');
+
+      /* ---------- Referrer lookup & country inheritance ----------
+         Real-time validation of the referrer (推荐人): a valid referrer
+         resolves to { id, name, country } and the country is inherited
+         automatically; an unknown / malformed ID clears the country again. */
       const referrerInput = document.getElementById('regReferrerId');
+      const referrerHint = document.getElementById('regReferrerHint');
+
+      function setReferrerHint(text, state) {
+        if (!referrerHint) return;
+        if (!text) { referrerHint.hidden = true; referrerHint.textContent = ''; return; }
+        referrerHint.hidden = false;
+        referrerHint.textContent = text;
+        referrerHint.classList.toggle('is-ok', state === 'ok');
+        referrerHint.classList.toggle('is-err', state === 'err');
+      }
+
+      // Cheap re-check for submit: the debounced lookup may not have run yet
+      // if the user typed and immediately submitted. When the referrer is
+      // already resolved we must NOT re-run validateReferrer() — it re-applies
+      // the country (syncCountry) and would wipe the product selection.
+      function referrerIsResolved() {
+        const raw = (referrerInput.value || '').trim().toUpperCase();
+        return !!(referrerMember && referrerMember.id === raw && currentCountry);
+      }
+
+      /* ---------- Referrer gate ----------
+         Every module below Network Information stays hidden until the
+         referrer resolves: the country — and with it the whole market
+         experience — is inherited from the referrer, so there is nothing
+         to fill in before that. */
+      function applyReferrerGate() {
+        const resolved = !!(referrerMember && referrerMember.country && currentCountry);
+        document.querySelectorAll('#regForm [data-referrer-gate]').forEach(el => { el.hidden = !resolved; });
+      }
+
+      function validateReferrer(opts) {
+        const silent = !!(opts && opts.silent);
+        const raw = (referrerInput.value || '').trim().toUpperCase();
+        if (!raw) {
+          referrerMember = null;
+          clearCountry();
+          applyReferrerGate();
+          referrerInput.setAttribute('aria-invalid', 'true');
+          if (!silent) setReferrerHint(tr('signup.referrer_required'), 'err');
+          return false;
+        }
+        const m = (window.ProductCatalog && window.ProductCatalog.lookupMember)
+          ? window.ProductCatalog.lookupMember(raw) : null;
+        if (!m || !m.country) {
+          referrerMember = null;
+          clearCountry();
+          applyReferrerGate();
+          referrerInput.setAttribute('aria-invalid', 'true');
+          if (!silent) setReferrerHint(tr('signup.err_referrer_not_found'), 'err');
+          return false;
+        }
+        referrerMember = m;
+        referrerInput.removeAttribute('aria-invalid');
+        setReferrerHint(tr('signup.referrer_valid', { name: m.name || m.id }), 'ok');
+        applyCountry(m.country, m.name);
+        applyReferrerGate();
+        return true;
+      }
+
+      // Real-time validation (debounced) while the user types the referrer ID.
+      let refTimer = null;
+      if (referrerInput) {
+        referrerInput.addEventListener('input', () => {
+          clearTimeout(refTimer);
+          refTimer = setTimeout(() => validateReferrer(), 300);
+        });
+        referrerInput.addEventListener('change', () => {
+          clearTimeout(refTimer);
+          validateReferrer();
+        });
+      }
+
+      /* ---------- Referrer prefill ----------
+         The invitation parameter reaches the registration form two ways:
+         1) this page was opened WITH ?ref= (a shared signup link), or
+         2) the visitor arrived on the site through an invitation link earlier
+            and clicked through to registration — captureReferral() (website.js,
+            runs on every page) already stored that referrer in localStorage.
+         Either way the parameter is copied into BOTH Referrer ID and Actual
+         Referrer ID. Direct visits with no invitation at all leave all three
+         inputs (Referrer / Actual Referrer / Reporting Center) empty. */
       const actualReferrerInput = document.getElementById('regActualReferrerId');
-      let refId = 'NG00000001';
+      let refId = '';
       try {
         const refParam = new URLSearchParams(location.search).get('ref');
-        if (refParam && /^NG\d{8}$/i.test(refParam.trim())) {
+        if (refParam && /^(NG|AE)\d{8}$/i.test(refParam.trim())) {
           refId = refParam.trim().toUpperCase();
+        } else if (window.ProductCatalog && window.ProductCatalog.getReferral) {
+          const stored = window.ProductCatalog.getReferral();
+          if (stored && stored.id && /^(NG|AE)\d{8}$/i.test(String(stored.id).trim())) {
+            refId = String(stored.id).trim().toUpperCase();
+          }
         }
       } catch(e) {}
       if (referrerInput) referrerInput.value = refId;
@@ -506,7 +678,7 @@
       function selectedTotal() {
         let total = 0;
         Object.keys(selectedProds || {}).forEach(pid => {
-          const p = products.find(x => x.id === pid);
+          const p = catalog().find(x => x.id === pid);
           if (p) total += (p.price || 0) * ((selectedProds[pid] || {}).qty || 1);
         });
         return total;
@@ -539,14 +711,21 @@
 
       /* ---------- Render product grid (official card style) ---------- */
       const prodList = document.getElementById('prodList');
-      const products = (window.ProductCatalog && window.ProductCatalog.allProducts)
-        ? window.ProductCatalog.allProducts : [];
 
       // State: selected products { productId: qty }
       const selectedProds = {};
 
       function renderProducts() {
         if (!prodList) return;
+
+        // No country yet (no valid referrer) — prompt instead of an empty grid.
+        if (!currentCountry) {
+          prodList.innerHTML = '<div class="prod-empty">' + tr('signup.products_need_referrer') + '</div>';
+          updateSummary();
+          return;
+        }
+
+        const products = catalog();
 
         if (!products.length) {
           prodList.innerHTML = '<div class="prod-empty">No products available.</div>';
@@ -586,7 +765,7 @@
                 <h3>${p.name}</h3>
                 <p class="rp-product-card__desc">${p.desc || ''}</p>
                 <div class="rp-product-card__price-row">
-                  <span class="rp-product-card__price">NGN ${(p.price || 0).toLocaleString()}</span>
+                  <span class="rp-product-card__price">${money(p.price)}</span>
                   ${bvHtml}
                 </div>
                 <button type="button" class="rp-product-card__view" data-id="${p.id}">View product</button>
@@ -605,16 +784,16 @@
         let total = 0, totalBV = 0;
         Object.keys(selectedProds).forEach(pid => {
           const s = selectedProds[pid];
-          const p = products.find(x => x.id === pid);
+          const p = catalog().find(x => x.id === pid);
           if (p) {
             total += (p.price || 0) * s.qty;
             const bv = typeof p.bv === 'number' ? p.bv : Math.round((p.price || 0) * 0.001 * 100) / 100;
             totalBV += bv * s.qty;
           }
         });
-        if (priceEl) priceEl.textContent = 'NGN ' + total.toLocaleString();
+        if (priceEl) priceEl.textContent = money(total);
         if (bvEl) bvEl.textContent = totalBV.toFixed(totalBV % 1 === 0 ? 0 : 1);
-        if (taxEl) taxEl.textContent = 'NGN 0';
+        if (taxEl) taxEl.textContent = money(0);
         // Keep the open payment panel's amount in sync with the selection
         refreshPayPanels();
       }
@@ -651,17 +830,13 @@
       });
 
       /* ---------- Product detail modal (matches reference layout) ---------- */
-      const TAX_RATE = 0.075; // Nigeria VAT
       const prodModal = document.getElementById('prodViewModal');
 
-      function ngn(n, dp) {
-        return 'NGN ' + (Number(n) || 0).toLocaleString(undefined, {
-          minimumFractionDigits: dp || 0, maximumFractionDigits: dp || 0
-        });
-      }
+      // VAT rate differs by market (Nigeria 7.5%, UAE 5%)
+      function taxRate() { const c = CC(); return c ? c.taxRate : 0.075; }
 
       function openProductModal(pid) {
-        const p = products.find(x => x.id === pid);
+        const p = catalog().find(x => x.id === pid);
         if (!p || !prodModal) return;
         const imgSrc = p.img ? ('assets/img/products/' + (p.category || '') + '/' + p.img) : '';
         const media = document.getElementById('pvMedia');
@@ -671,16 +846,16 @@
 
         const price = p.price || 0;
         const bvVal = typeof p.bv === 'number' ? p.bv : Math.round(price * 0.001 * 100) / 100;
-        const tax = price * TAX_RATE / (1 + TAX_RATE); // VAT-inclusive
+        const tax = price * taxRate() / (1 + taxRate()); // VAT-inclusive
 
         document.getElementById('pvCode').textContent = p.sku || '—';
         document.getElementById('pvName').textContent = p.name;
         document.getElementById('pvSku').textContent = p.sku || '—';
-        document.getElementById('pvPrice').textContent = ngn(price);
-        document.getElementById('pvRp').textContent = ngn(p.rp || price);
+        document.getElementById('pvPrice').textContent = money(price);
+        document.getElementById('pvRp').textContent = money(p.rp || price);
         document.getElementById('pvBv').textContent = String(bvVal);
-        document.getElementById('pvTaxRate').textContent = String(TAX_RATE);
-        document.getElementById('pvTax').textContent = ngn(tax, 2);
+        document.getElementById('pvTaxRate').textContent = (taxRate() * 100) + '%';
+        document.getElementById('pvTax').textContent = money(tax, 2);
         document.getElementById('pvStock').textContent = String(p.stock ?? 0);
 
         prodModal.style.display = 'flex';
@@ -708,8 +883,55 @@
         }
       });
 
-      // Initial render
+      /* ---------- Country sync ----------
+         Called only from applyCountry(): the market swap is driven by the
+         inherited country (never by a user edit — the select is disabled).
+         Address regions, reporting-center default, phone/referrer
+         placeholders, member-ID prefix and the whole product catalog +
+         currency follow the referrer's country. */
+      function syncCountry() {
+        const cfg = CC();
+        if (!cfg) return;
+
+        // Region / State options
+        const regionSel = document.getElementById('regRegion');
+        if (regionSel) {
+          regionSel.innerHTML =
+            '<option value="" disabled selected>' + tr('signup.select_region') + '</option>' +
+            cfg.regions.map(r => '<option value="' + r + '">' + r + '</option>').join('');
+        }
+
+        // Reporting Center ID: no auto-fill — the user enters it (required).
+
+        // Phone placeholders follow the market dial code
+        ['regPhone', 'regRecipientPhone'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.placeholder = cfg.dial + ' ...';
+        });
+
+        // Referrer placeholders follow the market member-ID prefix
+        ['regReferrerId', 'regActualReferrerId'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.placeholder = 'e.g. ' + cfg.memberIdPrefix + '12345678';
+        });
+
+        // Member ID regenerated with the market prefix
+        const mid = document.getElementById('regMemberId');
+        if (mid) mid.value = window.ProductCatalog.genMemberId(currentCountry);
+
+        // Fresh catalog + currency: clear the previous market's selection
+        Object.keys(selectedProds).forEach(pid => { delete selectedProds[pid]; });
+        renderProducts();
+      }
+
+      // NOTE: the country select has no change listener on purpose — the country
+      // is inherited from the referrer and can never be switched by the user.
+
+      // Initial render — with no ?ref= the referrer starts empty and every
+      // gated module below stays hidden until a valid referrer resolves.
+      renderCountryOptions();
       renderProducts();
+      validateReferrer({ silent: true });
       buildPayMethods();
 
       /* ---------- Form validation & submit ---------- */
@@ -726,6 +948,13 @@
         e.preventDefault();
         let ok = true;
         const firstInvalid = () => form.querySelector('[aria-invalid="true"]');
+
+        // Referrer first — it may (re)apply the inherited country, which resets
+        // the product selection, so every later check must see the fresh state.
+        // A referrer typed moments ago resolves here synchronously.
+        let refOk = referrerIsResolved();
+        if (!refOk) refOk = validateReferrer();
+        if (!refOk) ok = false;
 
         // Required fields check
         const requiredMap = [
@@ -763,6 +992,10 @@
         if (levelEl && !levelEl.value) { setErr(levelEl, tr('signup.err_level_required')); ok = false; }
         else if (levelEl) clearErr(levelEl);
 
+        // The referrer must resolve to a known member — the country (and the
+        // whole market experience) is inherited from it. (Validated above so
+        // the market swap happens before the product check.)
+
         // At least one product checked
         const hasProduct = Object.keys(selectedProds).length > 0;
         if (!hasProduct) {
@@ -795,8 +1028,7 @@
         if (emailInput && !emailInput.value.trim()) {
           emailInput.value = (document.getElementById('regEmail') || {}).value || '';
         }
-        document.getElementById('psPayAmount').textContent =
-          'NGN ' + (selectedTotal() || 0).toLocaleString('en-NG');
+        document.getElementById('psPayAmount').textContent = money(selectedTotal());
         document.getElementById('psPayModal').style.display = 'flex';
       }
 
@@ -816,7 +1048,7 @@
           let orderTotal = 0, orderBV = 0;
           Object.keys(selectedProds).forEach(pid => {
             const s = selectedProds[pid];
-            const p = products.find(x => x.id === pid);
+            const p = catalog().find(x => x.id === pid);
             if (p) {
               orderItems.push({
                 id: p.id, name: p.name, price: p.price,
@@ -835,7 +1067,9 @@
             email: form.email.value.trim(),
             phone: form.phone.value.trim(),
             memberId: memberId,
-            country: form.country.value,
+            country: currentCountry,
+            countrySource: 'referrer',
+            countryInheritedFrom: referrerMember ? referrerMember.id : '',
             language: form.language.value,
             orderLevel: form.orderLevel.value,
             centerId: form.centerId.value.trim(),
@@ -865,6 +1099,35 @@
           } else {
             localStorage.setItem('al.memberData', JSON.stringify(userData));
           }
+
+          // Register the new member in the shared directory so later
+          // registrations can resolve them as a referrer (and inherit
+          // their country).
+          if (window.ProductCatalog && window.ProductCatalog.registerMember) {
+            window.ProductCatalog.registerMember({
+              id: memberId, name: userData.name,
+              country: currentCountry, referrerId: userData.referrerId,
+            });
+          }
+
+          // Keep al.memberData in sync with the newly registered member: the
+          // account dashboard reads identity + country from here, and on a
+          // first visit it still holds whatever was seeded before (e.g. the
+          // demo account). The inherited country must land with the member.
+          try {
+            const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+            md.memberId = memberId;
+            md.memberName = userData.name;
+            md.country = currentCountry;
+            md.countrySource = 'referrer';
+            md.countryInheritedFrom = referrerMember ? referrerMember.id : '';
+            md.referrerId = userData.referrerId;
+            md.referrerName = referrerMember ? (referrerMember.name || '') : '';
+            md.email = userData.email;
+            md.phone = userData.phone;
+            md._schemaVersion = 2;
+            localStorage.setItem('al.memberData', JSON.stringify(md));
+          } catch (err) {}
 
           // Save selected products as cart (for checkout flow)
           if (window.ProductCatalog && window.ProductCatalog.clearCart) {
@@ -903,6 +1166,8 @@
             payStatus: 'Unpaid',
             orderLevel: userData.orderLevel,
             centerId: userData.centerId,
+            country: userData.country,
+            currency: CC() ? CC().currency : 'NGN',
           };
 
           // Handle referral BV credit
@@ -966,7 +1231,7 @@
         document.getElementById('psPayEmailErr').style.display = 'none';
         // Hand the confirmed email + amount to the Paystack checkout modal
         document.getElementById('psCkEmail').textContent = email;
-        const amount = 'NGN ' + (selectedTotal() || 0).toLocaleString('en-NG');
+        const amount = money(selectedTotal());
         document.getElementById('psCkAmount').textContent = amount;
         document.getElementById('psCkPayBtn').textContent = 'Pay ' + amount;
         closePayModal();

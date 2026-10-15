@@ -48,15 +48,34 @@
       <div class="ek-container member-container">
 
         <form id="regForm" autocomplete="off" novalidate>
-          <!-- ====== Section 1: Basic Info ====== -->
+          <!-- ====== Section 1: Network Information ====== -->
+          <div class="ek-card sec-block">
+            <div class="sec-title" data-i18n="signup.sec_network">Network Information</div>
+            <div class="reg-grid">
+              <div class="field-row ek-field">
+                <label data-i18n="signup.referrer_id">Referrer ID</label>
+                <input class="ek-input" type="text" name="referrerId" id="regReferrerId"
+                       placeholder="e.g. NG12345678" autocomplete="off" />
+              </div>
+              <div class="field-row ek-field">
+                <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
+                <input class="ek-input" type="text" name="actualReferrerId" id="regActualReferrerId"
+                       placeholder="e.g. NG12345678" autocomplete="off" />
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== Section 2: Basic Info ====== -->
           <div class="ek-card sec-block">
             <div class="sec-title" data-i18n="signup.sec_basic">Basic Information</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
                 <label data-i18n="signup.country">Country</label>
-                <select class="ek-select" name="country" id="regCountry">
-                  <option value="Nigeria" selected>Nigeria</option>
+                <!-- Country follows the signed-in account's market — read-only here. -->
+                <select class="ek-select input-locked" name="country" id="regCountry" disabled aria-readonly="true">
+                  <option value="" selected>—</option>
                 </select>
+                <small class="field-hint country-inherited-hint" id="regCountryHint" hidden></small>
               </div>
 
               <div class="field-row ek-field">
@@ -69,7 +88,9 @@
 
               <div class="field-row ek-field">
                 <label data-i18n="signup.member_id">Member ID</label>
-                <input class="ek-input" type="text" id="regMemberId" readonly aria-label="Member ID (auto-generated)" />
+                <!-- Auto-generated and not modifiable — disabled gets the same
+                     grey locked styling as the inherited Country field. -->
+                <input class="ek-input" type="text" id="regMemberId" disabled aria-label="Member ID (auto-generated)" />
               </div>
 
               <div class="field-row ek-field">
@@ -84,13 +105,12 @@
               <div class="field-row ek-field field-row--full">
                 <label><span data-i18n="signup.center_id">Reporting Center ID</span><span class="req-star">*</span></label>
                 <input class="ek-input" type="text" name="centerId" id="regCenterId"
-                       value="NG00000001"
                        data-i18n-ph="signup.center_id_ph" placeholder="Enter reporting center ID" required />
               </div>
             </div>
           </div>
 
-          <!-- ====== Section 2: Product Selection ====== -->
+          <!-- ====== Section 3: Product Selection ====== -->
           <div class="ek-card sec-block">
             <div class="sec-title" data-i18n="signup.sec_products">Products</div>
             <p class="sec-hint" data-i18n="signup.products_hint">Tap a product to add it to your starter order, then set the quantity you need.</p>
@@ -99,23 +119,6 @@
               <span data-i18n="signup.summary_price">Subtotal:</span> <b id="summaryPrice">NGN 0</b>
               <span>BV:</span> <b id="summaryBV">0</b>
               <span data-i18n="signup.summary_tax">Tax:</span> <b id="summaryTax">NGN 0</b>
-            </div>
-          </div>
-
-          <!-- ====== Section 3: Network Information ====== -->
-          <div class="ek-card sec-block">
-            <div class="sec-title" data-i18n="signup.sec_network">Network Information</div>
-            <div class="reg-grid">
-              <div class="field-row ek-field">
-                <label data-i18n="signup.referrer_id">Referrer ID</label>
-                <input class="ek-input" type="text" name="referrerId" id="regReferrerId"
-                       placeholder="e.g. NG12345678" autocomplete="off" />
-              </div>
-              <div class="field-row ek-field">
-                <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
-                <input class="ek-input" type="text" name="actualReferrerId" id="regActualReferrerId"
-                       placeholder="e.g. NG12345678" autocomplete="off" />
-              </div>
             </div>
           </div>
 
@@ -272,11 +275,6 @@
           </div>
 
         </form>
-
-        <p class="auth-switch-reg">
-          <span data-i18n="login.have_account">Already have an account?</span>
-          <a href="login.html" data-i18n="common.sign_in">Sign in</a>
-        </p>
       </div>
     </section>
   </main>
@@ -392,39 +390,92 @@
       }
       function clearErr(input) { setErr(input, ''); }
 
-      /* ---------- Generate Member ID on load ---------- */
-      const memberIdInput = document.getElementById('regMemberId');
-      if (memberIdInput && window.ProductCatalog && window.ProductCatalog.genMemberId) {
-        memberIdInput.value = window.ProductCatalog.genMemberId();
-      } else if (memberIdInput) {
-        memberIdInput.value = 'NG' + Math.floor(Math.random() * 90000000 + 10000000).toString();
+      /* ---------- Signed-in account drives the whole market ----------
+         The welcome pack is registered under the current member, so the
+         Country comes from the signed-in account (memberData → Auth.user →
+         member-ID prefix fallback) and is read-only. Member ID prefix,
+         product catalogue, currency, address regions and dial code all
+         follow that market — exactly like the referral-inherited country on
+         signup.html. */
+      let md = {};
+      try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch(e) {}
+      const authUser = (window.Auth && window.Auth.user) || {};
+      const currentMemberId = String(md.memberId || authUser.memberId || '').trim().toUpperCase();
+      const pc0 = window.ProductCatalog || {};
+
+      function resolveAccountCountry() {
+        const candidates = [md.country, md._defaultCountry, authUser.country];
+        for (const c of candidates) {
+          const n = pc0.normalizeCountryName ? pc0.normalizeCountryName(c) : '';
+          if (n) return n;
+        }
+        return (pc0.countryFromMemberId ? pc0.countryFromMemberId(currentMemberId) : '') || 'Nigeria';
+      }
+      const accountCountry = resolveAccountCountry();
+      const accountCfg = pc0.getCountryConfig ? pc0.getCountryConfig(accountCountry) : null;
+      function money(n, dp) {
+        return pc0.formatMoney ? pc0.formatMoney(n, accountCountry, dp)
+          : ('NGN ' + (Number(n) || 0).toLocaleString());
       }
 
-      /* ---------- Auto-fill referrer: current member info by default ---------- */
-      // Read current member's referrer data from al.memberData (written by account page on sign-in)
-      let memberReferrerId = null;
-      let memberActualReferrerId = null;
-      let md = {};
-      try {
-        md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
-        memberReferrerId = md.referrerId || null;
-        memberActualReferrerId = md.actualReferrerId || null;
-      } catch(e) {}
+      /* Country: read-only, mirrors the account's market. */
+      const countrySelect = document.getElementById('regCountry');
+      const countryHint = document.getElementById('regCountryHint');
+      if (countrySelect) {
+        const keys = pc0.COUNTRY_CONFIG ? Object.keys(pc0.COUNTRY_CONFIG) : ['Nigeria'];
+        countrySelect.innerHTML =
+          '<option value="" selected>—</option>' +
+          keys.map(k => '<option value="' + k + '">' + k + '</option>').join('');
+        countrySelect.value = accountCountry;
+        countrySelect.disabled = true; // never editable — display only
+      }
+      if (countryHint) {
+        countryHint.hidden = false;
+        countryHint.textContent = tr('signup.country_from_account');
+      }
 
+      /* Member ID: auto-generated with the account's market prefix, not modifiable. */
+      const memberIdInput = document.getElementById('regMemberId');
+      if (memberIdInput && pc0.genMemberId) {
+        memberIdInput.value = pc0.genMemberId(accountCountry);
+      } else if (memberIdInput) {
+        memberIdInput.value = (accountCfg ? accountCfg.memberIdPrefix : 'NG') +
+          Math.floor(Math.random() * 90000000 + 10000000).toString();
+      }
+
+      /* ---------- Referrer defaults: the signed-in account itself ----------
+         Both referrer fields default to the current member's ID. A ?ref=
+         invitation link still overrides — the sharer becomes the referrer. */
       const referrerInput = document.getElementById('regReferrerId');
       const actualReferrerInput = document.getElementById('regActualReferrerId');
-      // URL ?ref= parameter takes priority over stored member data
-      let refId = memberReferrerId || 'NG00000001';
-      let actualRefId = memberActualReferrerId || refId;
+      let refId = currentMemberId;
+      let actualRefId = currentMemberId;
       try {
         const refParam = new URLSearchParams(location.search).get('ref');
-        if (refParam && /^NG\d{8}$/i.test(refParam.trim())) {
+        if (refParam && /^(NG|AE)\d{8}$/i.test(refParam.trim())) {
           refId = refParam.trim().toUpperCase();
           actualRefId = refId;
         }
       } catch(e) {}
       if (referrerInput) referrerInput.value = refId;
       if (actualReferrerInput) actualReferrerInput.value = actualRefId;
+
+      // Market-flavoured placeholders (dial code / member-ID prefix)
+      ['regPhone', 'regRecipientPhone'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && accountCfg) el.placeholder = accountCfg.dial + ' ...';
+      });
+      [referrerInput, actualReferrerInput].forEach(el => {
+        if (el && accountCfg) el.placeholder = 'e.g. ' + accountCfg.memberIdPrefix + '12345678';
+      });
+
+      // Address regions follow the account's market
+      const regionSel = document.getElementById('regRegion');
+      if (regionSel && accountCfg) {
+        regionSel.innerHTML =
+          '<option value="" disabled selected>' + tr('signup.select_region') + '</option>' +
+          accountCfg.regions.map(r => '<option value="' + r + '">' + r + '</option>').join('');
+      }
 
       /* ---------- Prefill the current member's own profile (editable defaults) ----------
          Keeps the welcome-pack form from looking empty; every field stays editable. */
@@ -496,8 +547,8 @@
 
       /* ---------- Render product grid (official card style) ---------- */
       const prodList = document.getElementById('prodList');
-      const products = (window.ProductCatalog && window.ProductCatalog.allProducts)
-        ? window.ProductCatalog.allProducts : [];
+      // Catalogue + currency follow the signed-in account's market.
+      const products = (pc0.getProductsByCountry ? pc0.getProductsByCountry(accountCountry) : []) || [];
 
       // Same image-path helper as Member Repeat Purchase: only prepend the
       // category folder when img is a bare filename.
@@ -527,7 +578,6 @@
             ? ('assets/img/products/' + (p.category || '') + '/' + p.img)
             : '';
           const bvVal = typeof p.bv === 'number' ? p.bv : Math.round((p.price || 0) * 0.001 * 100) / 100;
-          const rpVal = Number(p.rp || 0).toFixed(2);
           const stock = Number(p.stock) || 0;
           const stockCls = stock <= 0 ? ' is-out' : (stock < 5 ? ' is-low' : ' is-ok');
           const detailUrl = `product-detail.html?name=${encodeURIComponent(p.name)}&category=${encodeURIComponent(p.category || '')}`;
@@ -555,10 +605,10 @@
                 <h3>${p.name}</h3>
                 <p class="rp-product-card__desc">${p.desc || ''}</p>
                 <div class="rp-product-card__price-row">
-                  <span class="rp-product-card__price">NGN ${(p.price || 0).toLocaleString()}</span>
+                  <span class="rp-product-card__price">${money(p.price)}</span>
                   ${bvHtml}
                 </div>
-                <span class="prod-card__rp">RP: NGN ${rpVal}</span>
+                <span class="prod-card__rp">RP: ${money(p.rp || p.price)}</span>
                 <span class="prod-card__stock${stockCls}">Stock: ${stock}</span>
                 <a href="${detailUrl}" class="rp-product-card__view">View product</a>
               </div>
@@ -583,9 +633,9 @@
             totalBV += bv * s.qty;
           }
         });
-        if (priceEl) priceEl.textContent = 'NGN ' + total.toLocaleString();
+        if (priceEl) priceEl.textContent = money(total);
         if (bvEl) bvEl.textContent = totalBV.toFixed(totalBV % 1 === 0 ? 0 : 1);
-        if (taxEl) taxEl.textContent = 'NGN 0';
+        if (taxEl) taxEl.textContent = money(0);
         // Keep the open payment panel's amount in sync with the selection
         refreshPayPanels();
       }
@@ -795,8 +845,8 @@
             bv: orderBV,
             memberId: memberId || null,
             memberName: userData.name || null,
-            country: 'Nigeria',
-            currency: 'NGN',
+            country: accountCountry,
+            currency: accountCfg ? accountCfg.currency : 'NGN',
             customer: {
               name: userData.recipient || userData.name || '',
               phone: userData.recipientPhone || userData.phone || '',
@@ -874,7 +924,7 @@
         if (emailEl && !emailEl.value && regEmail) {
           emailEl.value = regEmail.value.trim();
         }
-        document.getElementById('psPayAmount').textContent = 'NGN ' + (selectedTotal() || 0).toLocaleString();
+        document.getElementById('psPayAmount').textContent = money(selectedTotal());
         psPayModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
       }
@@ -915,7 +965,7 @@
         document.getElementById('psPayEmailErr').style.display = 'none';
         // Hand the confirmed email + amount to the Paystack checkout modal
         document.getElementById('psCkEmail').textContent = email;
-        const amount = 'NGN ' + (selectedTotal() || 0).toLocaleString('en-NG');
+        const amount = money(selectedTotal());
         document.getElementById('psCkAmount').textContent = amount;
         document.getElementById('psCkPayBtn').textContent = 'Pay ' + amount;
         closePsPayModalWithoutReset();
@@ -958,7 +1008,7 @@
               <span class="ek-avatar" aria-hidden="true">✓</span>
               <span class="ek-small">
                 <span class="ek-identity__name">${order.id}</span><br>
-                <span class="ek-identity__meta">NGN ${(order.total || 0).toLocaleString()} · Pending</span>
+                <span class="ek-identity__meta">${money(order.total || 0)} · Pending</span>
               </span>
             </div>
             <p class="sec-hint">New member: <strong>${order.memberId || ''}</strong>${order.memberName ? ' · ' + order.memberName : ''}</p>

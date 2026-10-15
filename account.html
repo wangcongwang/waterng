@@ -670,6 +670,7 @@
     /* ---------- Country list for Personal info select (i18n + stable codes) ---------- */
     const PROFILE_COUNTRIES = [
       { code: 'NG', key: 'account.profile_country_ng' },
+      { code: 'AE', key: 'account.profile_country_ae' },
       { code: 'GH', key: 'account.profile_country_gh' },
       { code: 'KE', key: 'account.profile_country_ke' },
       { code: 'ZA', key: 'account.profile_country_za' },
@@ -681,6 +682,34 @@
       { code: 'US', key: 'account.profile_country_us' },
       { code: 'OTHER', key: 'account.profile_country_other' },
     ];
+    // Country is inherited from the referrer at registration and is permanently
+    // read-only. Any stored value (name or code) resolves to a stable code here;
+    // unknown values fall back to OTHER. Nothing in the profile UI may WRITE it.
+    const COUNTRY_ALIASES = {
+      'nigeria': 'NG', 'najeriya': 'NG', 'nàìjíríà': 'NG', 'naịjirịa': 'NG', '奈及利亚': 'NG', '尼日利亚': 'NG',
+      'uae': 'AE', 'united arab emirates': 'AE', '阿联酋': 'AE',
+      'ghana': 'GH', 'gana': 'GH', '加纳': 'GH',
+      'kenya': 'KE', 'kẹ́ńyà': 'KE', '肯尼亚': 'KE',
+      'south africa': 'ZA', 'afirka ta kudu': 'ZA', 'gúúsù áfíríkà': 'ZA', '南非': 'ZA',
+      'uganda': 'UG', 'yuganda': 'UG', 'ùgándà': 'UG', '乌干达': 'UG',
+      'tanzania': 'TZ', 'tanzaniya': 'TZ', 'tànzáníà': 'TZ', '坦桑尼亚': 'TZ',
+      'china': 'CN', 'caina': 'CN', 'cháínà': 'CN', '中国': 'CN',
+      'malaysia': 'MY', 'málẹ̀shíà': 'MY', '马来西亚': 'MY',
+      'united kingdom': 'GB', 'biritaniya': 'GB', 'ilẹ̀ gẹ̀ẹ́sì': 'GB', '英国': 'GB',
+      'united states': 'US', 'amurka': 'US', 'amẹ́ríkà': 'US', '美国': 'US',
+    };
+    function resolveCountryCode(value) {
+      const s = String(value == null ? '' : value).trim();
+      if (!s) return '';
+      if (PROFILE_COUNTRIES.some(c => c.code === s)) return s;
+      const lo = s.toLowerCase();
+      if (COUNTRY_ALIASES[lo]) return COUNTRY_ALIASES[lo];
+      const matched = PROFILE_COUNTRIES.find(c => {
+        const label = (window.T.tr(c.key) || c.code).toLowerCase();
+        return label.includes(lo) || lo.includes(c.code.toLowerCase());
+      });
+      return matched ? matched.code : 'OTHER';
+    }
     function renderProfileCountries(selected) {
       const sel = document.getElementById('pfCountry');
       if (!sel) return;
@@ -704,39 +733,14 @@
       const memberId = healMemberId() || (window.ProductCatalog?.genMemberId?.()) || '';
       // Member name: prefer md.memberName (the authoritative field used by overview/syncHeader); then Auth.name; then profile.name.
       const memberName = md.memberName || u.name || u.firstName || p.name || '';
-      // Country: memberData.country code. If stored as name instead of code, best-match to a code.
-      // Seed default for md.country = Nigeria (matches memberData seed) when missing.
-      let country = md.country || md._defaultCountry || '';
-      if (!country) {
-        country = 'NG';
+      // Country: inherited from the referrer at registration — read-only here.
+      // Stored as a name ("Nigeria") or code ("NG"); both resolve to a code.
+      // Legacy records without a country derive it once from the member ID
+      // prefix (NG → Nigeria, AE → UAE); the form never supplies it.
+      let country = resolveCountryCode(md.country) || (/^AE/i.test(memberId || '') ? 'AE' : 'NG');
+      if (!md.country) {
         md.country = country;
         localStorage.setItem('al.memberData', JSON.stringify(md));
-      }
-      if (country && !PROFILE_COUNTRIES.some(c => c.code === country)) {
-        const nameLo = String(country).toLowerCase();
-        // 1) 常用英文/本地名称别名映射
-        const aliasMap = {
-          'nigeria': 'NG', 'najeriya': 'NG', 'nàìjíríà': 'NG', 'naịjirịa': 'NG', '奈及利亚': 'NG', '尼日利亚': 'NG',
-          'ghana': 'GH', 'gana': 'GH', '加纳': 'GH',
-          'kenya': 'KE', 'kẹ́ńyà': 'KE', '肯尼亚': 'KE',
-          'south africa': 'ZA', 'afirka ta kudu': 'ZA', 'gúúsù áfíríkà': 'ZA', 'south africa': 'ZA', '南非': 'ZA',
-          'uganda': 'UG', 'yuganda': 'UG', 'ùgándà': 'UG', '乌干达': 'UG',
-          'tanzania': 'TZ', 'tanzaniya': 'TZ', 'tànzáníà': 'TZ', '坦桑尼亚': 'TZ',
-          'china': 'CN', 'caina': 'CN', 'cháínà': 'CN', '中国': 'CN',
-          'malaysia': 'MY', 'málẹ̀shíà': 'MY', '马来西亚': 'MY',
-          'united kingdom': 'GB', 'biritaniya': 'GB', 'ilẹ̀ gẹ̀ẹ́sì': 'GB', '英国': 'GB',
-          'united states': 'US', 'amurka': 'US', 'amẹ́ríkà': 'US', '美国': 'US',
-        };
-        const m = aliasMap[nameLo];
-        if (m) {
-          country = m;
-        } else {
-          const matched = PROFILE_COUNTRIES.find(c => {
-            const label = (window.T.tr(c.key) || c.code).toLowerCase();
-            return label.includes(nameLo) || nameLo.includes(c.code.toLowerCase());
-          });
-          country = matched ? matched.code : 'OTHER';
-        }
       }
       // Render country select first (so we can set the value)
       renderProfileCountries(country);
@@ -1571,11 +1575,7 @@
       } catch (e) {}
     }
 
-    /* ---------- Country & Bank constants ---------- */
-    const COUNTRIES = [
-      'Nigeria', 'Malaysia', 'Singapore', 'Indonesia', 'Thailand',
-      'Philippines', 'China', 'India', 'United States', 'United Kingdom',
-    ];
+    /* ---------- Bank constants ---------- */
     const NIGERIA_BANKS = [
       'Access Bank Nigeria Plc', 'First Bank of Nigeria', 'Zenith Bank Plc',
       'GTBank (Guarantee Trust Bank)', 'UBA (United Bank for Africa)',
@@ -1661,7 +1661,9 @@
         fieldEditable('Member Name', memberData.memberName || u.name || '—', 'memberName'),
         field('Login Status', memberData.loginStatus || 'Allowed', memberData.loginStatus === 'Allowed' ? 'ok' : 'info'),
         field('Status', memberData.status || 'Active', memberData.status === 'Active' ? 'ok' : 'info'),
-        fieldSelect('Country', memberData.country || 'Nigeria', 'country', COUNTRIES),
+        // Country is read-only (inherited from the referrer at registration) —
+        // display only, never an editable select.
+        field('Country', memberData.country || '—'),
         field('Join Date', fmtDateTime(memberData.joinDate)),
         field('Join Period', memberData.joinPeriod ? `#${memberData.joinPeriod}` : '—'),
       ].join('');
@@ -1679,12 +1681,16 @@
       ].join('');
       document.getElementById('memberLevelFields').innerHTML = levelHtml;
 
-      // Referral Network
+      // Referral Network — referrer names are inherited data; blank out junk
+      // values (e.g. a numeric string stored before the name sanity check)
+      // through the shared helper so they never surface as a person's name.
+      const pcName = window.ProductCatalog || {};
+      const saneName = v => (pcName.saneMemberName ? pcName.saneMemberName(v) : (v || ''));
       const referralHtml = [
         field('Referrer ID', memberData.referrerId || '—'),
-        field('Referrer Name', memberData.referrerName || '—'),
+        field('Referrer Name', saneName(memberData.referrerName) || '—'),
         field('Actual Referrer ID', memberData.actualReferrerId || '—'),
-        field('Actual Referrer Name', memberData.actualReferrerName || '—'),
+        field('Actual Referrer Name', saneName(memberData.actualReferrerName) || '—'),
       ].join('');
       document.getElementById('memberReferralFields').innerHTML = referralHtml;
 
@@ -1813,6 +1819,10 @@
 
     /* ---------- Save a single member field & sync ---------- */
     function saveMemberField(key, value) {
+      // Read-only fields can never be written through the member-info editor.
+      // Country is inherited from the referrer at registration (see the profile
+      // form); Member ID is locked to the NG+8 format.
+      if (key === 'country' || key === 'memberId') return;
       const memberData = JSON.parse(localStorage.getItem('al.memberData') || '{}');
       memberData[key] = value;
       localStorage.setItem('al.memberData', JSON.stringify(memberData));
@@ -2042,18 +2052,15 @@
           window.toast((msg && msg !== 'account.profile_member_id_invalid') ? msg : 'Member ID must be NG + 8 digits (e.g. NG12345678).', 'danger');
           return;
         }
-        // Country is a permanently locked field (see setProfileMode): the stored value wins.
-        // The select is only pre-filled from storage and can never be picked by the user, so
-        // this also protects against a stale cached page whose select was still editable.
+        // Country is inherited from the referrer at registration and is permanently
+        // read-only. This update interface must NOT accept a client-supplied country:
+        // the stored value always wins, so even a stale/crafted page cannot smuggle
+        // one in. Legacy records without a country derive it once from the member
+        // ID prefix (NG → Nigeria, AE → UAE).
         const countryEl = document.getElementById('pfCountry');
         if (countryEl) countryEl.disabled = true;
         const storedCountry = (JSON.parse(localStorage.getItem('al.memberData') || '{}').country || '').trim();
-        const lockedCountry = PROFILE_COUNTRIES.some(c => c.code === storedCountry) ? storedCountry : '';
-        const countryCode = (lockedCountry || (form.country ? form.country.value : (countryEl ? countryEl.value : '')) || '').trim();
-        if (!countryCode) {
-          window.toast(window.T.tr('account.profile_country_ph') || 'Please select a country.', 'danger');
-          return;
-        }
+        const countryCode = resolveCountryCode(storedCountry) || (/^AE/i.test(memberId) ? 'AE' : 'NG');
         const memberName = (form.memberName ? form.memberName.value.trim() : (document.getElementById('pfMemberName').value || '')).trim();
         const email = (form.email ? form.email.value : '').trim();
         const phone = (pc.readPhone ? pc.readPhone(form, 'phone') : (form.querySelector('[name="phone"]') || {}).value || '').trim();
@@ -2988,11 +2995,37 @@
                 <label for="rechargeType">Type <span class="req">*</span></label>
                 <select class="ek-select" id="rechargeType" name="type" required>
                   <option value="Cash" selected>Cash</option>
+                  <option value="Credit Card">Credit Card</option>
+                  <option value="Direct Banking">Direct Banking</option>
                 </select>
               </div>
-              <div class="ek-field" style="grid-column: 1 / -1">
+              <div class="ek-field">
                 <label for="rechargePaymentDate">Payment Date <span class="req">*</span></label>
                 <input class="ek-input" type="text" id="rechargePaymentDate" name="paymentDate" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" autocomplete="off" required>
+              </div>
+              <div class="ek-field">
+                <label for="rechargePaymentRef">Payment Reference <span class="req">*</span></label>
+                <input class="ek-input" type="text" id="rechargePaymentRef" name="paymentRef" placeholder="" autocomplete="off" required>
+              </div>
+              <div class="ek-field" style="grid-column: 1 / -1">
+                <label for="rechargeBankName">Bank Name <span class="req">*</span></label>
+                <select class="ek-select" id="rechargeBankName" name="bankName" required>
+                  <option value="" selected disabled>Select</option>
+                  <option>Access Bank</option>
+                  <option>Ecobank Nigeria</option>
+                  <option>Fidelity Bank</option>
+                  <option>First Bank</option>
+                  <option>FCMB</option>
+                  <option>GTBank</option>
+                  <option>Keystone Bank</option>
+                  <option>Polaris Bank</option>
+                  <option>Stanbic IBTC</option>
+                  <option>Sterling Bank</option>
+                  <option>Union Bank</option>
+                  <option>UBA</option>
+                  <option>Wema Bank</option>
+                  <option>Zenith Bank</option>
+                </select>
               </div>
               <div class="ek-field" style="grid-column: 1 / -1">
                 <label for="rechargeRemark">Remark <span class="req">*</span></label>
@@ -3038,8 +3071,8 @@
           amount: amount,
           type: fd.get('type') || 'Cash',
           paymentDate: fd.get('paymentDate') || '',
-          bankName: '—',
-          paymentRef: rtId('REF-'),
+          bankName: fd.get('bankName') || '',
+          paymentRef: (fd.get('paymentRef') || '').trim(),
           voucher: '',
           remark: fd.get('remark') || '',
           status: 'pending',
