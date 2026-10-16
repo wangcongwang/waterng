@@ -782,6 +782,29 @@
     signedInAt: Date.UTC(2026, 5, 3, 8, 52, 21), // 2026-06-03T08:52:21Z = join date
   };
 
+  /* ---------- Demo quick-state switch (?demo=member / ?demo=guest) ----------
+     演示辅助：URL 带 ?demo= 参数时一键切换演示人格，免手动清 localStorage。
+     member：清登录态+订单 → 走 seedDemoIfEmpty 完整播种（恒 NG09246375 Adaeze Okonkwo）。
+     guest ：清登录态 + 打 sessionStorage 游客标记，并跳过播种。
+     只影响当次加载；页面内后续导航（无参数）状态自然延续。
+     display-only / WordPress 页不参与（不写登录态、恒未登录营销版）。 */
+  function applyDemoParam() {
+    if (isDisplayOnlyPage() || isWordPressPage()) return null;
+    let demo = null;
+    try { demo = new URLSearchParams(location.search).get('demo'); } catch (e) {}
+    if (demo !== 'member' && demo !== 'guest') return null;
+    try {
+      localStorage.removeItem(STORAGE.AUTH);
+      if (demo === 'member') {
+        localStorage.removeItem('al.orders');
+        sessionStorage.removeItem(STORAGE.GUEST);
+      } else {
+        sessionStorage.setItem(STORAGE.GUEST, '1');
+      }
+    } catch (e) {}
+    return demo;
+  }
+
   function seedDemoIfEmpty() {
     try {
       const hasAuth = !!localStorage.getItem(STORAGE.AUTH);
@@ -1064,7 +1087,9 @@
     // Seed demo account + sample order BEFORE rendering the header so it shows the signed-in state.
     // This guarantees identical first-load content on both http://127.0.0.1:XXXX and file:// protocol.
     // Display-only pages (index.html) never write login state, so they skip seeding.
-    if (!isDisplayOnlyPage() && !isWordPressPage()) seedDemoIfEmpty();
+    // ?demo=guest also skips seeding (visitor persona); ?demo=member forces a fresh demo seed.
+    const demoMode = applyDemoParam();
+    if (demoMode !== 'guest' && !isDisplayOnlyPage() && !isWordPressPage()) seedDemoIfEmpty();
     renderHeader(document.body.dataset.page);
     renderFooter();
     renderCookieBanner();

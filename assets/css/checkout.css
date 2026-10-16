@@ -355,16 +355,6 @@
 }
 .orderQty:focus-visible { box-shadow: var(--ek-focus-ring); border-color: var(--ek-aqua); }
 
-/* ---------- Link button (edit in cart) ---------- */
-.link-btn {
-  display: inline-block;
-  margin: var(--ek-4) 0 var(--ek-12);
-  background: none; border: 0; padding: 0;
-  color: var(--ek-aqua); font-size: var(--ek-small); font-weight: var(--ek-w-medium);
-  cursor: pointer; text-decoration: underline;
-}
-.link-btn:hover { color: var(--ek-blue); }
-
 /* ---------- Primary button (kit omits --primary modifier) ---------- */
 .ek-btn--primary {
   --btn-bg: var(--ek-blue);

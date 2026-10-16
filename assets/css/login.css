@@ -201,22 +201,50 @@ button.auth-guest__link {
   text-underline-offset: 2px;
 }
 
-/* Guest market chooser — flag + country name buttons */
-.guest-market-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--ek-12);
-  padding: var(--ek-16) var(--ek-12);
-  font-weight: var(--ek-w-bold);
+/* Guest market chooser — market cards (flag + country + currency + arrow).
+   Scoped here; the kit .ek-modal shell stays untouched. */
+.ek-modal--market { width: min(460px, calc(100vw - var(--ek-32))); }
+.ek-modal--market .ek-modal__head { align-items: center; }
+.ek-modal--market .ek-modal__head .modal-close { margin-left: auto; }
+.guest-market-head-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--ek-40); height: var(--ek-40); flex: none;
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-surface-sunken); color: var(--ek-aqua);
 }
+.guest-market-list { display: grid; gap: var(--ek-12); }
+.guest-market-btn {
+  display: flex; align-items: center; gap: var(--ek-16);
+  width: 100%; padding: var(--ek-16) var(--ek-20);
+  background: var(--ek-white);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  cursor: pointer; text-align: left;
+  transition: border-color var(--ek-fast) var(--ek-ease), box-shadow var(--ek-fast) var(--ek-ease);
+}
+.guest-market-btn:hover {
+  border-color: var(--ek-aqua);
+  box-shadow: var(--ek-shadow-sm);
+}
+.guest-market-btn:focus-visible { box-shadow: var(--ek-focus-ring); }
 .guest-market-flag {
-  height: var(--ek-32);
+  height: var(--ek-40);
   width: auto;
   flex: none;
   border: 1px solid var(--ek-border-strong);
   border-radius: var(--ek-radius-sm);
 }
+.guest-market-text { display: flex; flex-direction: column; gap: var(--ek-4); min-width: 0; }
+.guest-market-name {
+  font-size: var(--ek-body, var(--ek-small)); font-weight: var(--ek-w-bold);
+  color: var(--ek-body-ink); line-height: 1.3;
+}
+.guest-market-sub { font-size: var(--ek-caption); color: var(--ek-muted); line-height: 1.3; }
+.guest-market-arrow {
+  margin-left: auto; flex: none; color: var(--ek-muted);
+  transition: color var(--ek-fast) var(--ek-ease);
+}
+.guest-market-btn:hover .guest-market-arrow { color: var(--ek-aqua); }
 
 /* ---------- Cookie banner (ported, token-only, NDPR) ----------------------- */
 .cookie-banner {

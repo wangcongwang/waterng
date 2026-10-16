@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
-  <link rel="stylesheet" href="assets/css/login.css?v=20260909c">
+  <link rel="stylesheet" href="assets/css/login.css?v=20261016a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 
@@ -186,21 +186,28 @@
 
   <!-- Guest market chooser — the ordering country is picked BEFORE shopping;
        it decides the catalogue, currency and which house account owns the order -->
-  <dialog class="ek-modal" id="guestCountryModal" aria-labelledby="guestCountryTitle">
+  <dialog class="ek-modal ek-modal--market" id="guestCountryModal" aria-labelledby="guestCountryTitle">
     <div class="ek-modal__head">
+      <span class="guest-market-head-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>
+          <path d="M12 3a14.5 14.5 0 0 1 0 18"/><path d="M12 3a14.5 14.5 0 0 0 0 18"/>
+        </svg>
+      </span>
       <h3 class="ek-modal__title" id="guestCountryTitle">Choose your market</h3>
       <button type="button" class="modal-close" id="guestCountryClose" aria-label="Close">&times;</button>
     </div>
     <div class="ek-modal__body">
       <p class="ek-text">Select the country you are shopping from. Products, prices and your order's home market all follow this choice.</p>
-      <div class="reg-grid" id="guestCountryOptions">
-        <!-- option buttons injected from COUNTRY_CONFIG -->
+      <div class="guest-market-list" id="guestCountryOptions">
+        <!-- market cards injected from COUNTRY_CONFIG -->
       </div>
     </div>
   </dialog>
 
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-  <script src="assets/js/app.js?v=20261013a"></script>
+  <script src="assets/js/app.js?v=20261016b"></script>
   <script src="assets/js/website.js?v=20260909c-2"></script>
   <script>
     /* ---------- i18n apply ---------- */
@@ -326,21 +333,38 @@
       const guestOptions = document.getElementById('guestCountryOptions');
       if (guestBtn && guestModal && guestOptions) {
         // National flags as inline SVG (simple geometric designs — render
-        // identically everywhere, no emoji/font dependency).
+        // identically everywhere, no emoji/font dependency). Both flags are
+        // 1:2 (height:width) in reality, so both use a 60x30 canvas and
+        // render the same size in the card.
         const MARKET_FLAGS = {
-          Nigeria: '<svg class="guest-market-flag" viewBox="0 0 60 40" aria-hidden="true" focusable="false">' +
-            '<rect width="20" height="40" fill="#008751"/><rect x="20" width="20" height="40" fill="#ffffff"/>' +
-            '<rect x="40" width="20" height="40" fill="#008751"/></svg>',
-          UAE: '<svg class="guest-market-flag" viewBox="0 0 40 60" aria-hidden="true" focusable="false">' +
-            '<rect width="10" height="60" fill="#ff0000"/><rect x="10" width="30" height="20" fill="#00732f"/>' +
-            '<rect x="10" y="20" width="30" height="20" fill="#ffffff"/><rect x="10" y="40" width="30" height="20" fill="#000000"/></svg>',
+          Nigeria: '<svg class="guest-market-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false">' +
+            '<rect width="20" height="30" fill="#008751"/><rect x="20" width="20" height="30" fill="#ffffff"/>' +
+            '<rect x="40" width="20" height="30" fill="#008751"/></svg>',
+          UAE: '<svg class="guest-market-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false">' +
+            '<rect width="15" height="30" fill="#ff0000"/>' +
+            '<rect x="15" width="45" height="10" fill="#00732f"/>' +
+            '<rect x="15" y="10" width="45" height="10" fill="#ffffff"/>' +
+            '<rect x="15" y="20" width="45" height="10" fill="#000000"/></svg>',
         };
         const markets = (window.ProductCatalog && window.ProductCatalog.COUNTRY_CONFIG)
           ? Object.keys(window.ProductCatalog.COUNTRY_CONFIG) : ['Nigeria'];
-        guestOptions.innerHTML = markets.map(k =>
-          '<button type="button" class="ek-btn ek-btn--secondary guest-market-btn" data-guest-country="' + k + '">' +
-          (MARKET_FLAGS[k] || '') + '<span>' + k + '</span></button>'
-        ).join('');
+        // Currency names for the card sub-label (code is always shown too).
+        const CURRENCY_NAMES = { NGN: 'Nigerian Naira', AED: 'UAE Dirham' };
+        guestOptions.innerHTML = markets.map(k => {
+          const cfg = (window.ProductCatalog && window.ProductCatalog.COUNTRY_CONFIG || {})[k] || {};
+          const cur = cfg.currency || '';
+          const sub = cur ? cur + ' · ' + (CURRENCY_NAMES[cur] || cur) : '';
+          return '<button type="button" class="guest-market-btn" data-guest-country="' + k + '">' +
+            (MARKET_FLAGS[k] || '') +
+            '<span class="guest-market-text">' +
+              '<span class="guest-market-name">' + k + '</span>' +
+              (sub ? '<span class="guest-market-sub">' + sub + '</span>' : '') +
+            '</span>' +
+            '<svg class="guest-market-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" '
+              + 'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" '
+              + 'aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>' +
+          '</button>';
+        }).join('');
         guestBtn.addEventListener('click', () => guestModal.showModal());
         const closeGuestModal = () => guestModal.close();
         document.getElementById('guestCountryClose').addEventListener('click', closeGuestModal);
