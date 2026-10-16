@@ -27,6 +27,9 @@
     login(user) {
       this.user = user;
       try { sessionStorage.removeItem(STORAGE.GUEST); } catch (e) {}
+      // A real session takes over the market: drop the guest market choice
+      // (kept beside the guest flag by the login page's "Shop now" chooser).
+      try { sessionStorage.removeItem('al.guestCountry'); } catch (e) {}
       window.dispatchEvent(new CustomEvent('al:authchange', { detail: { user } }));
     },
     logout() {
@@ -34,6 +37,7 @@
       // also clear any order/payment/agreement draft that belongs to this session
       // (keeps the logged-out state consistent for next visitor)
       try { sessionStorage.removeItem(STORAGE.GUEST); } catch (e) {}
+      try { sessionStorage.removeItem('al.guestCountry'); } catch (e) {}
       window.dispatchEvent(new CustomEvent('al:authchange', { detail: { user: null } }));
     },
   };

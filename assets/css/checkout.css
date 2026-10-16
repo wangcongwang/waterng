@@ -308,8 +308,6 @@
 .summary .qty-btn { background: var(--ek-stat-3); border-color: var(--ek-stat-2); color: var(--ek-white); }
 .summary .qty-btn:hover { background: var(--ek-stat-2); border-color: var(--ek-aqua); }
 .summary .orderQty { background: var(--ek-stat-3); border-color: var(--ek-stat-2); color: var(--ek-white); }
-.summary .link-btn { color: var(--ek-aqua); }
-.summary .link-btn:hover { color: var(--ek-white); }
 
 /* ---------- Place order button ---------- */
 /* .summary is a dark card (see the light-on-dark overrides above/below), but

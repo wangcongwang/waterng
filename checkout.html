@@ -283,7 +283,7 @@
 <script src="assets/js/app.js?v=20261013a"></script>
   <script src="assets/js/website.js?v=20261012b"></script>
   <script src="assets/js/qr.js?v=20260915a"></script>
-  <script src="assets/js/payment-methods.js?v=20260915a"></script>
+  <script src="assets/js/payment-methods.js?v=20261016a"></script>
   <script>
     /* ============================================================
        Elken checkout — direct purchase
@@ -315,7 +315,46 @@
       return Math.max(1, Math.min(99, q || 1));
     }
 
-    function money(n) { return 'N' + (Number(n) || 0).toLocaleString(); }
+    /* ---------- Order market ----------
+       Guest flow (login page's "Shop now") → the market picked in the chooser
+       (sessionStorage al.guestCountry, URL param as fallback) — it wins over
+       any seeded/signed-in session, because the tab explicitly chose to shop
+       without an account. Otherwise: signed-in member → their own market
+       (memberData → Auth.user → ID prefix). Drives the order's country /
+       currency; addOrder() attributes a memberless (guest) order to that
+       market's house account (NG00000001 / AE00000001). */
+    const pc0 = window.ProductCatalog || {};
+    function isGuestFlow() {
+      try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; }
+    }
+    function resolveOrderCountry() {
+      if (isGuestFlow()) {
+        try {
+          const g = sessionStorage.getItem('al.guestCountry');
+          if (g) return g;
+        } catch (e) {}
+        const p = new URLSearchParams(location.search).get('country');
+        if (p) return p;
+      }
+      const u = (window.Auth && window.Auth.user) || {};
+      let md = {};
+      try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
+      if (u.memberId || md.memberId) {
+        for (const c of [md.country, md._defaultCountry, u.country]) {
+          const n = pc0.normalizeCountryName ? pc0.normalizeCountryName(c) : '';
+          if (n) return n;
+        }
+        const mid = u.memberId || md.memberId || '';
+        const fromId = pc0.countryFromMemberId ? pc0.countryFromMemberId(mid) : '';
+        if (fromId) return fromId;
+      }
+      return 'Nigeria';
+    }
+    const orderCountry = resolveOrderCountry();
+
+    function money(n) {
+      return pc0.formatMoney ? pc0.formatMoney(n, orderCountry) : ('N' + (Number(n) || 0).toLocaleString());
+    }
 
     // SVG placeholder icon used when a product image is missing / path is wrong.
     // Mirrors account.html so the whole site degrades consistently.
@@ -493,7 +532,6 @@
       summary.innerHTML = `
         <h3 data-i18n="checkout.summary">Order summary</h3>
         <div class="summary-items">${itemRows}</div>
-        ${items.length > 1 ? `<button type="button" class="link-btn" id="editInCart" data-href="${state.memberMode ? 'cart.html?mode=member' : 'cart.html'}">Edit quantities in cart</button>` : ''}
         <div class="total"><span class="k">Total</span><span class="v" id="sumTotal">${totalText}</span></div>
         <div class="row"><span class="k">Shipping</span><span class="v">NGN 0</span></div>
         <div class="row method-row" id="summaryMethodRow"><span class="k">Method</span><span class="v" id="summaryMethod"></span></div>
@@ -553,8 +591,6 @@
           recalc();
         });
       });
-      const editBtn = document.getElementById('editInCart');
-      if (editBtn) editBtn.addEventListener('click', () => { location.href = editBtn.dataset.href || 'cart.html'; });
     }
 
     function bindDelivMethod() {
@@ -583,7 +619,10 @@
       payMethods = window.PayMethods.wire('#payMethodGrid', {
         name: 'payMethod',
         // Full catalogue + the opt-in Paystack channel (balance is added
-        // separately via includeBalance below).
+        // separately via includeBalance below). Phase 1: the shared layer's
+        // gate hides every channel except Paystack (+ Account Balance when
+        // logged in); the declarations stay so phase 2 is a one-flag flip
+        // in payment-methods.js — no page edits needed.
         only: ['card', 'ussd', 'bank', 'paybank', 'visaqr', 'paystack'],
         panelHost: '#payPanels',
         panelClass: 'ek-card checkout-card method-info-card',
@@ -648,7 +687,7 @@
       return Math.max(0, Number(pc.getEcoinTotal(mid)) || 0);
     }
 
-    function formatMoney(n) { return 'N' + (Number(n) || 0).toLocaleString(); }
+    function formatMoney(n) { return money(n); }
 
     function updateAccountBalanceDisplay() {
       const balance = getAccountBalance();
@@ -778,17 +817,24 @@
           bv: Math.round((it.price || 0) / 1000) * (it.qty || 1),
           image: it.image || _productImagePath(it.img, it.category),
         }));
+        // Guest flow (login page's "Shop now"): the order belongs to the
+        // market's house account — never to whatever session happens to be
+        // seeded or signed in — so addOrder() attributes it to NG00000001 /
+        // AE00000001 by country. Signing in mid-flow clears the guest flags,
+        // so a real member session takes over naturally.
+        const guestFlow = pc0.isGuestFlow ? pc0.isGuestFlow() : false;
+        const authMemberId = (!guestFlow && window.Auth && window.Auth.user && window.Auth.user.memberId) || null;
         const order = {
           id: (pc.genOrderId ? pc.genOrderId() : 'AQ-' + Math.random().toString(36).slice(2, 8).toUpperCase()),
           date: Date.now(),
           items: orderItems,
           total: state.total || 0,
           bv: state.bv || 0,
-          memberId: (window.Auth && window.Auth.user && window.Auth.user.memberId) || null,
-          operatorId: (window.Auth && window.Auth.user && window.Auth.user.memberId) || null,
+          memberId: authMemberId,
+          operatorId: authMemberId,
           memberName: customer.name || null,
-          country: 'Nigeria',
-          currency: 'NGN',
+          country: orderCountry,
+          currency: pc0.getCountryConfig ? pc0.getCountryConfig(orderCountry).currency : 'NGN',
           addressId: state.savedAddressId || null,
           customer,
           delivery: { method: state.delivMethod, pickupLoc: state.delivMethod === 'pickup' ? state.pickupLoc : null },
@@ -910,7 +956,7 @@
         if (emailEl && !emailEl.value) {
           emailEl.value = document.getElementById('contactEmail').value.trim();
         }
-        document.getElementById('psPayAmount').textContent = 'NGN ' + (state.total || 0).toLocaleString();
+        document.getElementById('psPayAmount').textContent = money(state.total || 0);
         psPayModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
       }
@@ -944,7 +990,7 @@
         document.getElementById('psPayEmailErr').style.display = 'none';
         // Hand the confirmed email + amount to the Paystack checkout modal
         document.getElementById('psCkEmail').textContent = email;
-        const amount = 'NGN ' + (state.total || 0).toLocaleString('en-NG');
+        const amount = money(state.total || 0);
         document.getElementById('psCkAmount').textContent = amount;
         document.getElementById('psCkPayBtn').textContent = 'Pay ' + amount;
         closePsPayModal();
@@ -1191,8 +1237,11 @@
           return;
         }
         // Enrich with catalog data: real per-unit BV (not price/1000) and the
-        // product code (SKU) shown on the summary lines.
-        const catalog = pc.allProducts || [];
+        // product code (SKU) shown on the summary lines. Look the items up in
+        // the order market's catalogue first (a UAE cart holds ae-* ids the
+        // global Nigeria catalogue doesn't know).
+        const marketCatalog = (pc.getProductsByCountry ? pc.getProductsByCountry(orderCountry) : []) || [];
+        const catalog = marketCatalog.length ? marketCatalog : (pc.allProducts || []);
         const items = cart.map(c => {
           const p = catalog.find(x => x.id === c.id) || {};
           const unitBV = (typeof p.bv === 'number') ? p.bv : Math.round((c.price || 0) / 1000);

@@ -188,11 +188,34 @@
   font-size: var(--ek-caption); color: var(--ek-muted);
   text-decoration: none;
 }
+/* The guest entry is a button now (it opens the market chooser first) —
+   keep the faint text-link look. */
+button.auth-guest__link {
+  background: none; border: 0; padding: 0; margin: 0;
+  font: inherit; cursor: pointer;
+}
 .auth-guest__link:hover {
   color: var(--ek-charcoal);
   text-decoration: underline;
   text-decoration-color: var(--ek-border-strong);
   text-underline-offset: 2px;
+}
+
+/* Guest market chooser — flag + country name buttons */
+.guest-market-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ek-12);
+  padding: var(--ek-16) var(--ek-12);
+  font-weight: var(--ek-w-bold);
+}
+.guest-market-flag {
+  height: var(--ek-32);
+  width: auto;
+  flex: none;
+  border: 1px solid var(--ek-border-strong);
+  border-radius: var(--ek-radius-sm);
 }
 
 /* ---------- Cookie banner (ported, token-only, NDPR) ----------------------- */

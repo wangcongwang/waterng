@@ -44,7 +44,37 @@
   <script>
     (function() {
       'use strict';
-      const N = n => 'N' + Number(n || 0).toLocaleString();
+      // Cart money follows the order market. Guest flow (login page's
+      // "Shop now") wins — the tab explicitly chose to shop without an
+      // account, so the market picked in the chooser applies (sessionStorage
+      // al.guestCountry, URL param as fallback). Otherwise the signed-in
+      // member's own market.
+      const cartCountry = (function () {
+        const pc = window.ProductCatalog || {};
+        try {
+          if (sessionStorage.getItem('al.guestMode') === '1') {
+            const g = sessionStorage.getItem('al.guestCountry');
+            if (g) return g;
+            const gp = new URLSearchParams(location.search).get('country');
+            if (gp) return gp;
+          }
+        } catch (e) {}
+        const u = (window.Auth && window.Auth.user) || {};
+        let md = {};
+        try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
+        if (u.memberId || md.memberId) {
+          for (const c of [md.country, md._defaultCountry, u.country]) {
+            const n = pc.normalizeCountryName ? pc.normalizeCountryName(c) : '';
+            if (n) return n;
+          }
+          const fromId = pc.countryFromMemberId ? pc.countryFromMemberId(u.memberId || md.memberId || '') : '';
+          if (fromId) return fromId;
+        }
+        return 'Nigeria';
+      })();
+      const N = n => (window.ProductCatalog && window.ProductCatalog.formatMoney)
+        ? window.ProductCatalog.formatMoney(n, cartCountry)
+        : ('N' + Number(n || 0).toLocaleString());
 
       function imgOf(item) {
         if (item.img) {

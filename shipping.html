@@ -126,6 +126,13 @@
       return all[0] || null;
     }
 
+    // Currency prefix for an order (same map as order.html; AED added for the
+    // UAE guest market).
+    function _currencySymbol(c) {
+      const m = { NGN: 'N', AED: 'AED ', USD: '$', EUR: '€', GBP: '£', CNY: '¥', KES: 'KSh', GHS: 'GH₵' };
+      return m[c] || 'N';
+    }
+
     // Build an absolute, shareable link to the order detail page.
     function orderDetailLink(orderId) {
       try {
@@ -154,7 +161,7 @@
         'Thank you for your order with Elken.\n\n' +
         'Order: ' + order.id + '\n' +
         'Product: ' + (item.name || '—') + ' × ' + qty + '\n' +
-        'Total: N' + (order.total || 0).toLocaleString() + '\n' +
+        'Total: ' + _currencySymbol(order.currency || 'NGN') + (order.total || 0).toLocaleString() + '\n' +
         'Delivery: ' + methodLabel + '\n' +
         'Payment: ' + payLabel + '\n\n' +
         'View your full order details here:\n' + link + '\n\n' +
@@ -218,7 +225,7 @@
         <div class="row"><span>Payment</span><b>${payLabel}</b></div>
         ${order.bv && showBV ? `<div class="row"><span>BV earned</span><b>+${order.bv} BV</b></div>` : ''}
         ${order.referrerId && !showBV ? `<div class="row"><span>BV credited to</span><b>${order.referrerId}</b></div>` : ''}
-        <div class="row"><span>Total</span><b>N${(order.total || 0).toLocaleString()}</b></div>
+        <div class="row"><span>Total</span><b>${_currencySymbol(order.currency || 'NGN')}${(order.total || 0).toLocaleString()}</b></div>
         ${order.customer ? `<div class="row"><span>Recipient</span><b>${order.customer.name || ''} · ${order.customer.phone || ''}</b></div>` : ''}
       `;
       if (metaHost) metaHost.innerHTML = rows;

@@ -78,7 +78,7 @@
         'Thank you for your order with Elken.\n\n' +
         'Order: ' + order.id + '\n' +
         'Product: ' + (item.name || 'Unnamed product') + ' × ' + qty + '\n' +
-        'Total: N' + (order.total || 0).toLocaleString() + '\n' +
+        'Total: ' + _currencySymbol(order.currency || 'NGN') + (order.total || 0).toLocaleString() + '\n' +
         'Delivery: ' + methodLabel + '\n' +
         'Payment: ' + payLabel + '\n\n' +
         'View your full order details here:\n' + link + '\n\n' +
@@ -99,7 +99,7 @@
       return 0;
     }
     function _currencySymbol(c) {
-      const m = { NGN: 'N', USD: '$', EUR: '€', GBP: '£', CNY: '¥', KES: 'KSh', GHS: 'GH₵' };
+      const m = { NGN: 'N', AED: 'AED ', USD: '$', EUR: '€', GBP: '£', CNY: '¥', KES: 'KSh', GHS: 'GH₵' };
       return m[c] || 'N';
     }
     function _resolveOrderItemImage(it) {

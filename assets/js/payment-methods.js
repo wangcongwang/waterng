@@ -5,6 +5,11 @@
      Debit Card · USSD · Bank Transfer · Pay with Bank · Pay with Visa QR
      (+ Account Balance, retained from the existing member wallet)
 
+   Phase 1 gate: only Paystack (+ Account Balance where a page opts in via
+   `includeBalance`) is offered. The remaining guide channels stay fully
+   coded below and return automatically once PHASE2_ENABLED flips to true
+   (phase 2) — pages keep declaring them in `only`, the gate hides them.
+
    Used by: checkout.html, signup.html, member-welcome.html,
             member-repurchase.html, member-auto-maintenance.html
 
@@ -212,6 +217,15 @@
     } catch (e) { /* clipboard unavailable — the value stays visible/selectable */ }
   }
 
+  /* --- Phase-1 channel gate --------------------------------------------
+     Phase 1 offers only Paystack (+ Account Balance via includeBalance).
+     The remaining Nigeria-guide channels — Debit Card, USSD, Bank Transfer,
+     Pay with Bank, Pay with Visa QR — stay coded here and come back the
+     day PHASE2_ENABLED flips to true. Pages keep listing them in `only`;
+     the gate simply hides them, so phase 2 is a one-line change. */
+  const PHASE2_CHANNELS = ['card', 'ussd', 'bank', 'paybank', 'visaqr'];
+  const PHASE2_ENABLED = false;
+
   /* --- Method chooser --------------------------------------------------- */
   function methods(opts) {
     const o = opts || {};
@@ -222,6 +236,12 @@
       if (o.only.indexOf('paystack') !== -1) list.push(PAYSTACK_METHOD);
     } else {
       list = CATALOGUE.slice();
+    }
+    if (!PHASE2_ENABLED) {
+      list = list.filter(m => PHASE2_CHANNELS.indexOf(m.value) === -1);
+      // A page that asked only for gated channels still gets a usable
+      // chooser — Paystack is the phase-1 default.
+      if (!list.length) list.push(PAYSTACK_METHOD);
     }
     if (o.includeBalance) {
       list.push(Object.assign({}, BALANCE_METHOD, {

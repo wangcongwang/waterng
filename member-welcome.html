@@ -361,7 +361,7 @@
 <script src="assets/js/app.js?v=20261013a"></script>
   <script src="assets/js/website.js?v=20260909c"></script>
   <script src="assets/js/qr.js?v=20260915a"></script>
-  <script src="assets/js/payment-methods.js?v=20260915a"></script>
+  <script src="assets/js/payment-methods.js?v=20261016a"></script>
   <script>
     (function() {
       'use strict';
@@ -517,14 +517,16 @@
       function buildPayMethods() {
         payMethods = window.PayMethods.wire('#signupPayGrid', {
           name: 'paymentMethod',
-          // Full catalogue + the opt-in Paystack channel (balance is added
-          // separately via includeBalance below).
+          // Phase 1: the shared layer's gate hides every channel except
+          // Paystack (+ Account Balance via includeBalance below). The full
+          // catalogue stays declared here so phase 2 is a one-flag flip in
+          // payment-methods.js — no page edits needed.
           only: ['card', 'ussd', 'bank', 'paybank', 'visaqr', 'paystack'],
           panelHost: '#signupPayPanels',
           panelClass: 'ek-card ek-card--quiet method-info-card',
           prefix: 'mw',
           amount: selectedTotal,
-          selected: 'card',
+          selected: 'paystack',
           includeBalance: true,
           balanceMemberId: () => {
             const el = document.getElementById('regMemberId');

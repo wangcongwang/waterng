@@ -122,11 +122,52 @@
   };
 
   /* ---------- Cart & Order (web checkout) ---------- */
+  /* ---------- Market-aware shopper cart ----------
+     The two markets keep INDEPENDENT carts: Nigeria → al.cart (legacy key),
+     UAE → al.cart.ae. Their catalogues are different, so items must never
+     mix. The active market comes from the guest chooser (sessionStorage
+     al.guestCountry) or the signed-in member's own market. */
+  const CART_KEY = 'al.cart';
+  const CART_KEY_AE = 'al.cart.ae';
+  function currentMarket() {
+    try {
+      const g = normalizeCountryName(sessionStorage.getItem('al.guestCountry'));
+      if (g) return g;
+    } catch (e) {}
+    const u = (window.Auth && window.Auth.user) || {};
+    let md = {};
+    try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
+    const mid = (u && u.memberId) || md.memberId || '';
+    if (mid) {
+      for (const c of [md.country, md._defaultCountry, u && u.country]) {
+        const n = normalizeCountryName(c);
+        if (n) return n;
+      }
+      const fromId = countryFromMemberId(mid);
+      if (fromId) return fromId;
+    }
+    return DEFAULT_COUNTRY;
+  }
+  function cartKey() {
+    const cfg = getCountryConfig(currentMarket());
+    return (cfg && cfg.code === 'AE') ? CART_KEY_AE : CART_KEY;
+  }
+  // Which market's catalogue a product id belongs to ('' = unknown / custom).
+  function productMarket(id) {
+    if (!id) return '';
+    const s = String(id);
+    if (getProductsByCountry('UAE').some(p => p.id === s)) return 'UAE';
+    if (getProductsByCountry('Nigeria').some(p => p.id === s)) return 'Nigeria';
+    return '';
+  }
   function getCart() {
-    try { return JSON.parse(localStorage.getItem('al.cart') || '[]'); }
+    try { return JSON.parse(localStorage.getItem(cartKey()) || '[]'); }
     catch { return []; }
   }
-  function saveCart(cart) { localStorage.setItem('al.cart', JSON.stringify(cart)); window.dispatchEvent(new CustomEvent('al:cartchange')); }
+  function saveCart(cart) {
+    localStorage.setItem(cartKey(), JSON.stringify(cart));
+    window.dispatchEvent(new CustomEvent('al:cartchange'));
+  }
   // Total number of items (sum of qtys) in the cart.
   function getCartCount() {
     return getCart().reduce((s, c) => s + (c.qty || 0), 0);
@@ -136,6 +177,13 @@
   function addToCart(product, qty) {
     qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1));
     if (!product || !product.id) return getCartCount();
+    // Market guard: the two markets' carts are separate stores — a product
+    // from the other market can never be added (their catalogues differ).
+    const pm = productMarket(product.id);
+    if (pm && pm !== currentMarket()) {
+      if (window.toast) window.toast(product.name + ' belongs to the ' + pm + ' store — switch your market to add it.', 'error');
+      return getCartCount();
+    }
     const cart = getCart();
     const existing = cart.find(c => c.id === product.id);
     if (existing) {
@@ -562,19 +610,33 @@
     localStorage.setItem('al.orders', JSON.stringify(orders));
     window.dispatchEvent(new CustomEvent('al:orderschange'));
   }
-  // House account that owns guest (signed-out) orders.
-  const GUEST_MEMBER_ID = 'NG00000001';
+  // House account that owns guest (signed-out) orders, per market:
+  // Nigeria → NG00000001, UAE → AE00000001 (the market's centerId).
+  function guestHouseMemberId(country) {
+    return getCountryConfig(country || DEFAULT_COUNTRY).centerId;
+  }
+  // Is this tab in the guest ordering flow (login page's "Shop now")? The
+  // market choice itself also implies guest intent (direct ?country= links).
+  function isGuestFlow() {
+    try {
+      return sessionStorage.getItem('al.guestMode') === '1' || !!sessionStorage.getItem('al.guestCountry');
+    } catch (e) { return false; }
+  }
   function addOrder(order) {
     const orders = getOrders();
-    const me = getCurrentMemberId();
     // memberId = the TARGET member (whose account "owns" the order benefits — BV, etc.)
     // operatorId = the ACCOUNT that actually placed the order (may differ from memberId
     //              when a member uses the Member Repeat Purchase / Auto-Maintenance flow
     //              to place an order on behalf of another member).
-    // Signed-out (guest) orders are attributed to the house account GUEST_MEMBER_ID.
-    order.memberId = order.memberId || me || GUEST_MEMBER_ID;
-    order.operatorId = order.operatorId || me || GUEST_MEMBER_ID;
+    // Guest flow: the order belongs to the market's house account — never to the
+    // seeded/signed-in session (the demo seed would otherwise hijack it).
+    const me = isGuestFlow() ? null : getCurrentMemberId();
+    // Signed-out (guest) orders are attributed to the market's house account —
+    // the country picked on the login page's guest-market chooser.
     order.country = order.country || DEFAULT_COUNTRY;
+    const houseId = guestHouseMemberId(order.country);
+    order.memberId = order.memberId || me || houseId;
+    order.operatorId = order.operatorId || me || houseId;
     order.currency = order.currency || getCountryConfig(order.country).currency;
     orders.unshift(order);
     localStorage.setItem('al.orders', JSON.stringify(orders));
@@ -697,6 +759,12 @@
     // opts.cartMode === 'member' → add to the independent member cart
     // (al.memberCart) instead of the shopper's main al.cart.
     const memberMode = !!(opts && opts.cartMode === 'member');
+    // opts.country → format prices in that market's currency (guest flow picks
+    // the market on the login page). Defaults to the legacy "N" prefix.
+    const priceCountry = (opts && opts.country) || '';
+    const money = n => (priceCountry && formatMoney)
+      ? formatMoney(n, priceCountry)
+      : ('N' + Number(n || 0).toLocaleString());
     // Optional category filter from the URL (used by member/guest footer links).
     const params = new URLSearchParams(window.location.search);
     const cat = params.get('category');
@@ -729,7 +797,7 @@
           <h3>${p.name}</h3>
           <p class="rp-product-card__desc">${p.desc}</p>
           <div class="rp-product-card__price-row">
-            <span class="rp-product-card__price">N${p.price.toLocaleString()}</span>
+            <span class="rp-product-card__price">${money(p.price)}</span>
             ${loggedIn && bv > 0 ? `<span class="rp-product-card__bv" title="Bonus volume earned with this purchase">${bv} BV</span>` : ''}
           </div>
           <a href="${detailUrl}" class="rp-product-card__view">View product</a>
@@ -746,7 +814,10 @@
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = btn.dataset.rpAdd;
-        const product = allProducts.find(x => x.id === id);
+        // Look the product up in the list actually rendered (the passed-in
+        // catalogue), not the global allProducts — a market-specific list
+        // (e.g. the UAE catalogue) contains IDs the global one doesn't.
+        const product = list.find(x => x.id === id);
         if (product && window.ProductCatalog) {
           const n = memberMode
             ? window.ProductCatalog.addToMemberCart(product, 1)
@@ -929,13 +1000,16 @@
     getOrderById,
     pruneOrphanOrders,
     addOrder,
-    // Cart
+    // Cart (market-aware: Nigeria → al.cart, UAE → al.cart.ae)
     getCart,
     getCartCount,
     addToCart,
     updateCartQty,
     removeFromCart,
     clearCart,
+    currentMarket,
+    cartKey,
+    productMarket,
     // Member repeat-purchase cart (independent store)
     getMemberCart,
     getMemberCartCount,
@@ -979,6 +1053,8 @@
     saneMemberName,
     normalizeCountryName,
     countryFromMemberId,
+    guestHouseMemberId,
+    isGuestFlow,
   };
 
   /* ---------- Init on DOM ready ---------- */

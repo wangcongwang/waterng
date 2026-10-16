@@ -89,8 +89,22 @@
     (function () {
       document.addEventListener('DOMContentLoaded', function () {
         const grid = document.getElementById('rpProductGrid');
-        if (window.ProductCatalog && window.ProductCatalog.renderRepeatCards) {
-          window.ProductCatalog.renderRepeatCards(grid, window.ProductCatalog.allProducts);
+        // Guest market: picked in the login page's chooser (sessionStorage),
+        // with the URL param as the fallback for direct links. Drives the
+        // catalogue, the currency on every card, and — via the order record —
+        // which house account owns the order (NG00000001 / AE00000001).
+        const guestCountry = (function () {
+          try {
+            const s = sessionStorage.getItem('al.guestCountry');
+            if (s) return s;
+          } catch (e) {}
+          const p = new URLSearchParams(window.location.search).get('country');
+          return p || 'Nigeria';
+        })();
+        const pc = window.ProductCatalog || {};
+        const catalog = pc.getProductsByCountry ? pc.getProductsByCountry(guestCountry) : (pc.allProducts || []);
+        if (pc.renderRepeatCards) {
+          pc.renderRepeatCards(grid, catalog, { country: guestCountry });
         }
 
         // Wire register-interest modal
