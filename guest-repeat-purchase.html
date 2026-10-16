@@ -27,7 +27,8 @@
       <div class="sec-banner__inner">
         <div class="sec-banner__crumb"><nav class="ek-breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">Shop</span></nav></div>
         <div class="sec-banner__copy">
-          <h1 class="ek-h1">Shop <span class="t-accent">Elken.</span></h1>
+          <!-- Market name injected by the inline script below ("UAE"/"Nigeria") -->
+          <h1 class="ek-h1">Shop <span class="t-accent">Elken <span id="rpMarketName"></span>.</span></h1>
           <p class="sec-banner__sub">No account needed — browse, add to cart and check out as a guest.</p>
         </div>
       </div>
@@ -102,6 +103,13 @@
           return p || 'Nigeria';
         })();
         const pc = window.ProductCatalog || {};
+        // Annotate the banner heading (and tab title) with the chosen market —
+        // "Shop Elken UAE." / "Shop Elken Nigeria." — so the guest always sees
+        // which market's catalogue and currency they are browsing.
+        const marketDisplay = (pc.normalizeCountryName ? pc.normalizeCountryName(guestCountry) : guestCountry) || guestCountry;
+        const marketEl = document.getElementById('rpMarketName');
+        if (marketEl) marketEl.textContent = marketDisplay;
+        document.title = 'Shop Elken ' + marketDisplay + ' Products · Elken';
         const catalog = pc.getProductsByCountry ? pc.getProductsByCountry(guestCountry) : (pc.allProducts || []);
         if (pc.renderRepeatCards) {
           pc.renderRepeatCards(grid, catalog, { country: guestCountry });
