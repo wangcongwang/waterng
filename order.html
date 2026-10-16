@@ -223,8 +223,12 @@
       const orderTypeLabel = isMemberOrder ? 'Member order' : 'My order';
       const payStatusLabel = order.payStatus || statusLabel;
 
-      // BV only for signed-in members (visitor orders credit the referrer's ID)
-      const showBV = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
+      // BV only for signed-in members; never for guest (visitor) orders.
+      // A guest order is also detectable from the order itself: it is
+      // attributed to the market house account (NG/AE00000001).
+      const isGuestViewer = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
+      const isGuestOrder = isGuestViewer || /00000001$/.test(String(order.memberId || ''));
+      const showBV = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn()) && !isGuestOrder;
 
       const TAX_RATE = (typeof order.taxRate === 'number') ? order.taxRate
         : (typeof (items[0] && items[0].taxRate) === 'number' ? items[0].taxRate : 0.075);
@@ -339,7 +343,8 @@
                     : ''}
                 </section>
 
-                <!-- ---------- Member ---------- -->
+                <!-- ---------- Member (hidden entirely for guest / no-account orders) ---------- -->
+                ${isGuestOrder ? '' : `
                 <section class="ek-card odet-card">
                   <h3 class="odet-card-title">Member</h3>
                   <dl class="odet-rows">
@@ -349,7 +354,7 @@
                     <div class="odet-row"><dt>Paid</dt><dd>${esc(paidStr)}</dd></div>
                     <div class="odet-row"><dt>Currency</dt><dd>${esc(currency)}</dd></div>
                   </dl>
-                </section>
+                </section>`}
               </div>
             </div>
 

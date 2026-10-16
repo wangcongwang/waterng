@@ -414,9 +414,10 @@ function localizedDetail(detail) { return detail; }
       // Show BV rewards — gated by login state per project convention
       const bvRow = document.getElementById('detailBV');
       if (bvRow) {
+        const isGuest = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
         const isMember = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
         const bv = window.ProductCatalog.getBV ? window.ProductCatalog.getBV(catalogProduct) : 0;
-        if (isMember && bv > 0) {
+        if (isMember && !isGuest && bv > 0) {
           bvRow.hidden = false;
           bvRow.innerHTML = `<span class="bv-badge" title="Bonus volume earned with this purchase">Earn <b>${bv} BV</b> with this purchase</span>`;
         } else {

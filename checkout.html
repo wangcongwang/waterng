@@ -37,16 +37,27 @@
 
       <div class="checkout-grid">
         <div>
-          <!-- Step 1: Delivery address -->
+          <!-- Step 1: Delivery method + address details -->
           <div class="ek-card checkout-card" id="delivCard">
-            <h2 data-i18n="checkout.addr">Delivery address</h2>
-
-            <!-- Pickup-only flow: Door delivery has been removed — Self-pickup
-                 is the only (and default) method. The address form and the
-                 pickup-location list stay out of the flow entirely. -->
+            <h2 data-i18n="checkout.addr_method">Delivery method</h2>
             <div class="deliv-method-grid" id="delivMethodGrid">
               <label class="deliv-method">
-                <input type="radio" name="delivMethod" value="pickup" checked />
+                <input type="radio" name="delivMethod" value="delivery" checked />
+                <div class="deliv-method-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <path d="M1 8h13v9H1zM14 11h4l3 3v3h-7z"/><circle cx="6" cy="18.5" r="1.6"/><circle cx="17.5" cy="18.5" r="1.6"/>
+                  </svg>
+                </div>
+                <div class="deliv-method-body">
+                  <div class="deliv-method-name" data-i18n="checkout.addr_delivery">Door delivery</div>
+                  <div class="deliv-method-sub" data-i18n="checkout.addr_delivery_sub">We deliver to your address</div>
+                </div>
+                <div class="deliv-method-check" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>
+                </div>
+              </label>
+              <label class="deliv-method">
+                <input type="radio" name="delivMethod" value="pickup" />
                 <div class="deliv-method-icon" aria-hidden="true">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                     <path d="M3 9l1.5-5h15L21 9M3 9v11h18V9M3 9h18M9 13h6"/>
@@ -61,47 +72,43 @@
                 </div>
               </label>
             </div>
+          </div>
 
-            <!-- Delivery address form — kept in the DOM for validation/id
-                 lookups but never shown in the pickup-only flow. -->
-            <div id="deliveryForm" style="display:none;">
-              <!-- Saved address picker (synced with My Account addresses) -->
-              <div class="saved-addr-picker">
-                <label for="savedAddrSelect">Use a saved address</label>
-                <select class="ek-select" id="savedAddrSelect">
-                  <option value="">+ Use a new address</option>
+          <!-- Address details (door delivery): market-driven region list +
+               full shipping address. Hidden while Self-pickup is selected. -->
+          <div class="ek-card checkout-card" id="addrCard">
+            <h2 data-i18n="checkout.addr_details">Address details</h2>
+            <!-- Saved address picker (synced with My Account addresses) -->
+            <div class="saved-addr-picker">
+              <label for="savedAddrSelect">Use a saved address</label>
+              <select class="ek-select" id="savedAddrSelect">
+                <option value="">+ Use a new address</option>
+              </select>
+              <label class="ek-check">
+                <input type="checkbox" id="saveAddrNew" checked />
+                <span>Save this address to my account</span>
+              </label>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label data-i18n="checkout.addr_region">Region / State</label>
+                <select class="ek-select" id="state">
+                  <!-- Options filled per order market by setupAddressRegions() -->
                 </select>
-                <label class="ek-check">
-                  <input type="checkbox" id="saveAddrNew" checked />
-                  <span>Save this address to my account</span>
-                </label>
-              </div>
-
-              <div class="row">
-                <div class="field">
-                  <label data-i18n="checkout.addr_full_name">Full name</label>
-                  <input class="ek-input" id="fullName" required />
-                </div>
-                <div class="field">
-                  <label data-i18n="checkout.addr_phone">Phone</label>
-                  <div class="phone-field" id="phoneField"></div>
-                </div>
               </div>
               <div class="field">
-                <label data-i18n="checkout.addr_street">Street address</label>
-                <input class="ek-input" id="addr" required />
+                <label data-i18n="checkout.addr_city">City</label>
+                <input class="ek-input" id="city" required placeholder="City" />
               </div>
-              <div class="row">
-                <div class="field">
-                  <label data-i18n="checkout.addr_city">City</label>
-                  <input class="ek-input" id="city" required />
-                </div>
-                <div class="field">
-                  <label data-i18n="checkout.addr_state">State</label>
-                  <select class="ek-select" id="state">
-                    <option>Lagos</option><option>FCT Abuja</option><option>Rivers</option><option>Oyo</option><option>Kano</option><option>Other</option>
-                  </select>
-                </div>
+            </div>
+            <div class="field">
+              <label data-i18n="checkout.addr_detailed">Detailed address</label>
+              <textarea class="ek-input" id="addr" rows="3" required placeholder="Street address, building, landmark..."></textarea>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label data-i18n="checkout.addr_district">Area / District</label>
+                <input class="ek-input" id="district" placeholder="Area or district" />
               </div>
             </div>
           </div>
@@ -163,14 +170,18 @@
           <!-- Contact person -->
           <div class="ek-card checkout-card" id="contactCard">
             <h2 data-i18n="checkout.contact">Contact person</h2>
-            <!-- Repeat purchase flow: the reporting center ID is the only field
-                 the customer fills in. Phone / email / order notes and the
-                 consent checkboxes are auto-satisfied from the signed-in
-                 account (kept hidden below to feed Paystack prefill). -->
-            <div class="field">
-              <label for="rcIdInput">Reporting Center ID <span class="req">*</span></label>
-              <input class="ek-input" id="rcIdInput" type="text" placeholder="Enter reporting center ID" maxlength="10" autocomplete="off" required />
-              <span class="field-error" id="rcIdError" hidden data-i18n="checkout.rc_id_req">Please enter a reporting center ID.</span>
+            <!-- Recipient name + phone for the delivery; the email is kept
+                 hidden and auto-filled (profile / derived fallback) to feed
+                 the Paystack modal prefill and the order record. -->
+            <div class="row">
+              <div class="field">
+                <label data-i18n="checkout.addr_full_name">Full name</label>
+                <input class="ek-input" id="fullName" required />
+              </div>
+              <div class="field">
+                <label data-i18n="checkout.addr_phone">Phone</label>
+                <div class="phone-field" id="phoneField"></div>
+              </div>
             </div>
             <input type="hidden" id="contactEmail" />
           </div>
@@ -431,7 +442,7 @@
 
     let state = {
       qty: 1,
-      delivMethod: 'pickup', // pickup-only flow (Door delivery removed)
+      delivMethod: 'delivery', // Door delivery default; Self-pickup opt-in
       pickupLoc: 'lagos',
       payMethod: null,
       savedAddressId: null,
@@ -495,14 +506,16 @@
       const summary = document.getElementById('summary');
       const total = state.total || 0;
       const bv = state.bv || 0;
+      const isGuest = isGuestFlow();
       const itemRows = items.map((it, idx) => {
         const lineTotal = (it.price || 0) * (it.qty || 1);
         const unitBV = (typeof it.unitBV === 'number') ? it.unitBV : Math.round((it.price || 0) / 1000);
         const lineBV = unitBV * (it.qty || 1);
         // Summary layout is identical across flows (member and shopper):
         // price(BV) per unit on the meta line, line total(BV) on the right.
-        const meta = `${it.sku ? it.sku + ' · ' : ''}${money(it.price || 0)} (${unitBV} BV) each`;
-        const lineText = `${money(lineTotal)} (${lineBV} BV)`;
+        // BV is a member concept — hide it for guest (no-account) checkout.
+        const meta = `${it.sku ? it.sku + ' · ' : ''}${money(it.price || 0)}${isGuest ? ' each' : ` (${unitBV} BV) each`}`;
+        const lineText = `${money(lineTotal)}${isGuest ? '' : ` (${lineBV} BV)`}`;
         const qtyControl = (!state.cartCheckout)
           ? `<span class="qty-control summary-qty">
                <button type="button" class="qty-btn" data-qty="-1" data-idx="${idx}" aria-label="Decrease quantity">−</button>
@@ -527,7 +540,8 @@
 
       // Summary layout is identical across flows (member and shopper): the
       // total always carries its BV and shipping is free (self-pickup).
-      const totalText = `${money(total)} (${bv} BV)`;
+      // Hide BV for guest checkout.
+      const totalText = `${money(total)}${isGuest ? '' : ` (${bv} BV)`}`;
 
       summary.innerHTML = `
         <h3 data-i18n="checkout.summary">Order summary</h3>
@@ -562,12 +576,13 @@
       const summary = document.getElementById('summary');
       if (!summary) return;
       const recalc = () => {
+        const isGuest = isGuestFlow();
         state.total = (state.items || []).reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
         state.bv = (state.items || []).reduce((s, i) => s + (Math.round((i.price || 0) / 1000) * (i.qty || 1)), 0);
         const totalEl = document.getElementById('sumTotal');
-        if (totalEl) totalEl.textContent = `${money(state.total)} (${state.bv} BV)`;
+        if (totalEl) totalEl.textContent = `${money(state.total)}${isGuest ? '' : ` (${state.bv} BV)`}`;
         const bvEl = document.getElementById('sumBV');
-        if (bvEl) bvEl.textContent = '+' + state.bv + ' BV';
+        if (bvEl && !isGuest) bvEl.textContent = '+' + state.bv + ' BV';
         const bankEl = document.getElementById('bankAmount');
         if (bankEl) bankEl.textContent = money(state.total);
         updateAccountBalanceDisplay();
@@ -594,19 +609,34 @@
     }
 
     function bindDelivMethod() {
-      // Pickup-only flow: a single always-checked radio. The change listener
-      // stays for safety; the address form and pickup list are never shown.
+      // Door delivery ⇄ Self-pickup: the address details only apply to door
+      // delivery, so the card is shown/hidden with the choice.
       const radios = document.querySelectorAll('input[name="delivMethod"]');
-      const deliveryForm = document.getElementById('deliveryForm');
-      const pickupPanel = document.getElementById('pickupPanel');
+      const addrCard = document.getElementById('addrCard');
+      const sync = () => {
+        // Member mode replaces the whole step-1 block with its own card.
+        if (addrCard) addrCard.hidden = state.memberMode || state.delivMethod !== 'delivery';
+        updatePayBtn();
+      };
       radios.forEach(r => {
         r.addEventListener('change', () => {
           state.delivMethod = r.value;
-          if (deliveryForm) deliveryForm.style.display = r.value === 'delivery' ? 'block' : 'none';
-          if (pickupPanel) pickupPanel.style.display = r.value === 'pickup' ? 'block' : 'none';
-          updatePayBtn();
+          sync();
         });
       });
+      sync();
+    }
+
+    // Fill the Region / State select from the order market's config
+    // (Nigeria → Lagos/Abuja FCT/…, UAE → Dubai/Abu Dhabi/…).
+    function setupAddressRegions() {
+      const sel = document.getElementById('state');
+      if (!sel) return;
+      const cfg = pc0.getCountryConfig ? pc0.getCountryConfig(orderCountry) : null;
+      const regions = (cfg && cfg.regions) || [];
+      const placeholder = window.T ? window.T.tr('checkout.addr_region_select') : 'Select region';
+      sel.innerHTML = '<option value="">' + placeholder + '</option>' +
+        regions.map(r => '<option value="' + r + '">' + r + '</option>').join('');
     }
 
     /* ---------- Shared payment layer (assets/js/payment-methods.js) ----------
@@ -628,7 +658,7 @@
         panelClass: 'ek-card checkout-card method-info-card',
         prefix: 'co',
         amount: () => state.total || 0,
-        includeBalance: loggedIn,
+        includeBalance: !isGuestFlow(),
         balanceAmountId: 'payBalanceAmount',
         balanceSubId: 'payBalanceSub',
         extraPanels: { balance: '#balancePanel' },
@@ -737,16 +767,17 @@
           && !!(rc && rc.value.trim())
           && memberFlowGate();
       } else {
-        // Repeat purchase flow: the reporting center ID is the only field the
-        // customer fills in (phone / email / notes are auto-satisfied).
-        const rcInput = document.getElementById('rcIdInput');
-        const rcVal = rcInput ? rcInput.value.trim() : '';
-        const rcError = document.getElementById('rcIdError');
-        if (rcInput && rcError) rcError.hidden = !!rcVal;
+        // Guest / shopper flow: recipient name + phone are always required;
+        // door delivery additionally requires the full address details.
+        const stateSel = document.getElementById('state');
+        const doorAddrOk = state.delivMethod !== 'delivery' || (
+          document.getElementById('addr').value.trim()
+          && document.getElementById('city').value.trim()
+          && !!(stateSel && stateSel.value));
         ok = !!methodOk
-          && !!rcVal
-          && state.delivMethod
-          && (state.delivMethod === 'pickup' || (document.getElementById('fullName').value.trim() && phoneInput && phoneInput.value.trim() && document.getElementById('addr').value.trim() && document.getElementById('city').value.trim()))
+          && !!document.getElementById('fullName').value.trim()
+          && !!(phoneInput && phoneInput.value.trim())
+          && doorAddrOk
           && emailOk;
       }
       payBtn.disabled = !ok;
@@ -754,10 +785,12 @@
 
     function bindPay() {
       const payBtn = document.getElementById('payBtn');
-      ['fullName', 'addr', 'city', 'rcIdInput'].forEach(id => {
+      ['fullName', 'addr', 'city', 'district'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', updatePayBtn);
       });
+      const stateSel = document.getElementById('state');
+      if (stateSel) stateSel.addEventListener('change', updatePayBtn);
       const contactEmailEl = document.getElementById('contactEmail');
       if (contactEmailEl) contactEmailEl.addEventListener('input', updatePayBtn);
       // phone is a dial+number pair rendered into #phoneField
@@ -801,6 +834,7 @@
           city: document.getElementById('city').value.trim(),
           address: document.getElementById('addr').value.trim(),
           state: document.getElementById('state').value,
+          district: ((document.getElementById('district') || {}).value || '').trim(),
           note: '',
         };
         // sync: save the address back to My Account if requested (skipped in
@@ -878,20 +912,19 @@
           // The reporting center is an editable field in member mode — the
           // operator may correct it before submitting. No default: an empty
           // field is blocked by the pay gate, so nothing is written either.
-          const rcField = state.memberMode
-            ? (document.getElementById('rpRcId') || {}).value || ''
-            : (document.getElementById('rcIdInput') || {}).value || '';
+          const rcField = (document.getElementById('rpRcId') || {}).value || '';
           if (rcField.trim()) {
             order.reportingCenterId = rcField.trim();
           }
           order.reportingCenterName = order.reportingCenterName || opMd.memberName || opMd.name || '';
         }
-        // Repeat purchase (shopper mode): the reporting center ID entered on
-        // the contact card is the only customer-filled field — keep it.
+        // Guest / shopper orders: no Reporting Center ID field any more — the
+        // order defaults to the market's house reporting center
+        // (Nigeria → NG00000001, UAE → AE00000001).
         if (!state.repeatMember) {
-          const rcInput = document.getElementById('rcIdInput');
-          if (rcInput && rcInput.value.trim()) {
-            order.reportingCenterId = rcInput.value.trim();
+          const cfg = pc0.getCountryConfig ? pc0.getCountryConfig(orderCountry) : null;
+          if (cfg && cfg.centerId) {
+            order.reportingCenterId = cfg.centerId;
           }
         }
         // Account balance: deduct Ecoin and mark as paid immediately
@@ -1046,7 +1079,8 @@
     // the pay-button gate. Runs after setupMemberInfo() in member mode.
     function setupMemberFlow() {
       const card = document.getElementById('memberFlowCard');
-      if (!card) return;
+      // Flow cards are member-mode only, full stop — never on guest checkout.
+      if (!card || !state.memberMode) { if (card) card.hidden = true; return; }
       const m = state.repeatMember || {};
       const subtype = m.subtype;
       if (!subtype || subtype === 'repeat-purchase') { card.hidden = true; return; }
@@ -1122,9 +1156,11 @@
     function setupMemberInfo() {
       const card = document.getElementById('memberInfoCard');
       const deliv = document.getElementById('delivCard');
+      const addr = document.getElementById('addrCard');
       const contact = document.getElementById('contactCard');
       if (card) card.hidden = false;
       if (deliv) deliv.hidden = true;
+      if (addr) addr.hidden = true;
       if (contact) contact.hidden = true;
       const pc = window.ProductCatalog || {};
       const m = state.repeatMember || {};
@@ -1168,6 +1204,9 @@
 
     function applyI18nCheckout() {
       document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = window.T.tr(el.dataset.i18n));
+      // Region options depend on the order market — fill before the saved
+      // profile address (below) tries to pre-select one.
+      setupAddressRegions();
       const pc = window.ProductCatalog || {};
       const defaults = customerDefaults();
       // Member repeat purchase: pre-fill the shipping recipient with the
@@ -1179,15 +1218,16 @@
         if (state.repeatMember.city) defaults.city = state.repeatMember.city;
         if (state.repeatMember.state) defaults.state = state.repeatMember.state;
       }
-      document.getElementById('fullName').value = defaults.name;
-      // phone fields: dial code + number pairs
+      document.getElementById('fullName').value = isGuestFlow() ? '' : defaults.name;
+      // phone fields: dial code + number pairs (no prefill for guest checkout)
       const phoneHost = document.getElementById('phoneField');
       const contactHost = document.getElementById('contactPhoneField');
       if (phoneHost && pc.phoneFieldHTML) phoneHost.innerHTML = pc.phoneFieldHTML(pc.DEFAULT_DIAL, 'phone');
       if (contactHost && pc.phoneFieldHTML) contactHost.innerHTML = pc.phoneFieldHTML(pc.DEFAULT_DIAL, 'contactPhone');
       if (pc.fillPhoneFields) {
-        pc.fillPhoneFields(phoneHost, defaults.phone);
-        pc.fillPhoneFields(contactHost, defaults.phone);
+        const phoneDefault = isGuestFlow() ? '' : defaults.phone;
+        pc.fillPhoneFields(phoneHost, phoneDefault);
+        pc.fillPhoneFields(contactHost, phoneDefault);
       }
       // Hidden email feeds Paystack prefill / order record. Fall back to a
       // derived address so the gate never blocks on an empty account email.
@@ -1204,7 +1244,7 @@
       // consent checkboxes were auto-satisfied at this point.
       renderSavedAddresses();
       // Guest checkout has no saved addresses / account — hide the account-bound picker.
-      if (!(window.Auth && window.Auth.isLoggedIn())) {
+      if (isGuestFlow()) {
         const picker = document.querySelector('.saved-addr-picker');
         if (picker) picker.style.display = 'none';
       }
@@ -1264,7 +1304,10 @@
         state.cartCheckout = true;
         // Carry the member-repeat-purchase context (if this cart came from
         // member-repurchase.html) so the order is tagged for the right member.
-        state.repeatMember = getRepeatMemberCtx();
+        // Member mode ONLY — a stale context from an abandoned member session
+        // must never leak into a guest checkout (it would show the
+        // Auto-Maintenance/upgrade card and tag the guest order).
+        state.repeatMember = memberMode ? getRepeatMemberCtx() : null;
         if (state.repeatMember) document.title = 'Checkout · Member Repeat Purchase · Elken';
         applyI18nCheckout();
         // Member flow specifics (auto-maintenance ≥ 90 BV / upgrade target)

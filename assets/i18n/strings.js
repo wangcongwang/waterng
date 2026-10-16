@@ -260,6 +260,11 @@ window.I18N = {
       addr_street: 'Street address',
       addr_city: 'City',
       addr_state: 'State',
+      addr_details: 'Address details',
+      addr_region: 'Region / State',
+      addr_detailed: 'Detailed address',
+      addr_district: 'Area / District',
+      addr_region_select: 'Select region',
       email_invalid: 'Please enter a valid email address',
     },
     payment: {

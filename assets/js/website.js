@@ -692,6 +692,7 @@
   function renderProductCards(container, products) {
     if (!container) return;
     const loggedIn = !!(window.Auth && window.Auth.isLoggedIn());
+    const isGuest = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
     container.innerHTML = products.map(p => {
       const detailUrl = `product-detail.html?name=${encodeURIComponent(p.name)}&category=${p.category}`;
       return `
@@ -705,7 +706,7 @@
           <p class="desc">${p.desc}</p>
           <div class="price-row">
             <span class="price">N${p.price.toLocaleString()}</span>
-            ${loggedIn ? `<span class="bv-chip" title="Rewards you earn with this purchase">${getBV(p)} BV</span>` : ''}
+            ${(!isGuest && loggedIn) ? `<span class="bv-chip" title="Rewards you earn with this purchase">${getBV(p)} BV</span>` : ''}
           </div>
           <div class="card-actions">
             ${loggedIn
@@ -783,8 +784,9 @@
         }
       }
     }
-    // BV is a member benefit — only surface it when signed in.
+    // BV is a member benefit — only surface it when signed in (and never for guests).
     const loggedIn = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
+    const isGuest = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
     container.innerHTML = list.map(p => {
       const detailUrl = `product-detail.html?name=${encodeURIComponent(p.name)}&category=${p.category}`;
       const bv = getBV(p);
@@ -798,7 +800,7 @@
           <p class="rp-product-card__desc">${p.desc}</p>
           <div class="rp-product-card__price-row">
             <span class="rp-product-card__price">${money(p.price)}</span>
-            ${loggedIn && bv > 0 ? `<span class="rp-product-card__bv" title="Bonus volume earned with this purchase">${bv} BV</span>` : ''}
+            ${!isGuest && bv > 0 ? `<span class="rp-product-card__bv" title="Bonus volume earned with this purchase">${bv} BV</span>` : ''}
           </div>
           <a href="${detailUrl}" class="rp-product-card__view">View product</a>
         </div>

@@ -19,6 +19,13 @@
 /* ---------- Alert spacing (ek-alert base comes from elken-ui.css) ---------- */
 .shipping-alert { margin-bottom: var(--ek-24); }
 
+/* ---------- Stacked card rhythm ----------
+   checkout.html gets its card spacing from `.checkout-shell .checkout-card`
+   (checkout.css) — this page uses .shipping-shell, so that rule never matched
+   and the pickup / summary / link cards sat flush against each other. */
+.shipping-shell .checkout-card { margin-bottom: var(--ek-20); }
+.shipping-shell .checkout-card:last-child { margin-bottom: 0; }
+
 /* ---------- Active pickup item (complement water-pages.css border/background) ---------- */
 .pickup-item.is-active .pickup-radio { border-color: var(--ek-blue); }
 .pickup-item.is-active .pickup-radio::after { transform: scale(1); }

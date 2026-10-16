@@ -23,7 +23,8 @@
       if (v == null) localStorage.removeItem(STORAGE.AUTH);
       else localStorage.setItem(STORAGE.AUTH, JSON.stringify(v));
     },
-    isLoggedIn() { return !!this.user; },
+    // demo mode: treat every visitor as signed-in so no login gate / redirect ever fires
+    isLoggedIn() { return true; },
     login(user) {
       this.user = user;
       try { sessionStorage.removeItem(STORAGE.GUEST); } catch (e) {}
@@ -806,6 +807,7 @@
   }
 
   function seedDemoIfEmpty() {
+    return; // demo mode: no seeding of demo account / orders / addresses
     try {
       const hasAuth = !!localStorage.getItem(STORAGE.AUTH);
       const hasOrdersRaw = localStorage.getItem('al.orders');

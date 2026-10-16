@@ -175,6 +175,11 @@
 
     function renderOrder() {
       const order = getOrder();
+      const isGuest = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
+      // Guest (no-account) flow: the Home / My Account breadcrumb is member
+      // navigation — hide it so the page opens straight on the title.
+      const crumbs = document.querySelector('.crumbs');
+      if (crumbs) crumbs.style.display = isGuest ? 'none' : '';
       const metaHost = document.getElementById('orderMeta');
       const pickupCard = document.getElementById('pickupCard');
       const emailWrap = document.getElementById('orderEmailWrap');
@@ -214,10 +219,9 @@
       };
       const payLabel = payLabels[order.payment] || order.payment || '—';
 
-      // Show BV only when logged in (visitor orders credit BV to referrer).
-      // NOTE: previously `!!(window.Auth && window.Auth.isLoggedIn)` — that is a
-      // function reference, always truthy, so guests were shown "BV earned".
-      const showBV = !!(window.Auth && typeof window.Auth.isLoggedIn === 'function' && window.Auth.isLoggedIn());
+      // Show BV only for members. Guest (no-account) orders credit BV to the
+      // referrer, so the guest never "earns" BV — hide it for guest flow.
+      const showBV = !isGuest;
       const rows = `
         <div class="row"><span>Order</span><b>${order.id}</b></div>
         <div class="row"><span>Product</span><b>${item.name || '—'} × ${qty}</b></div>
@@ -246,8 +250,13 @@
         pickupCard.style.display = 'none';
       }
 
-      // Order detail link + email-to-self UI
-      if (emailWrap) {
+      // Order detail link + email-to-self UI — member flow only. For a guest
+      // the card is pure noise (a dev-URL link box + a mailto that auto-opens
+      // the email app with the house-account address).
+      if (emailWrap && isGuest) {
+        emailWrap.style.display = 'none';
+      }
+      if (emailWrap && !isGuest) {
         const link = orderDetailLink(order.id);
         const email = (order.customer && order.customer.email) || '';
         emailWrap.style.display = 'block';
