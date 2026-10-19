@@ -406,7 +406,7 @@ window.I18N = {
       profile_new_pwd: 'New password',
       profile_confirm_pwd: 'Confirm new password',
       profile_member_id: 'Member ID',
-      profile_member_id_ph: 'e.g. NG12345678',
+      profile_member_id_ph: 'e.g. NG123456789',
       profile_member_id_locked: 'This ID is fixed and cannot be changed.',
       profile_member_name: 'Member name',
       profile_country: 'Country',
@@ -424,7 +424,7 @@ window.I18N = {
       profile_country_us: 'United States',
       profile_country_other: 'Other',
       profile_country_locked: 'Country is fixed and cannot be changed.',
-      profile_member_id_invalid: 'Member ID must be NG followed by 8 digits (e.g. NG12345678).',
+      profile_member_id_invalid: 'Member ID must be NG followed by 9 digits (e.g. NG123456789).',
       /* Profile image area / member identity card */
       profile_image_title: 'Member card',
       profile_verified: 'Verified',

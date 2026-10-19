@@ -253,8 +253,8 @@
               <div class="row">
                 <div class="field">
                   <label data-i18n="account.profile_member_id">Member ID</label>
-                  <input class="ek-input input-locked" name="memberId" id="pfMemberId" maxlength="10" autocomplete="off"
-                         data-i18n-ph="account.profile_member_id_ph" placeholder="NG12345678" disabled />
+                  <input class="ek-input input-locked" name="memberId" id="pfMemberId" maxlength="11" autocomplete="off"
+                         data-i18n-ph="account.profile_member_id_ph" placeholder="NG123456789" disabled />
                   <span class="hint member-id-locked-hint" data-i18n="account.profile_member_id_locked">This ID is fixed and cannot be changed.</span>
                 </div>
                 <div class="field">
@@ -557,8 +557,8 @@
       const v = window.T?.tr ? window.T.tr(key) : fb;
       return (v && v !== key) ? v : fb;
     }
-    /* Member IDs must be exactly "NG" + 8 digits. If a stored value is
-       non-conforming (e.g. legacy 12-digit), normalize to the first 8 digits
+    /* Member IDs must be exactly "NG" + 9 digits. If a stored value is
+       non-conforming (e.g. legacy 12-digit), normalize to the first 9 digits
        after NG so the displayed/persisted value conforms and the identity
        prefix is preserved (orders stay linkable). Returns null for empty. */
     function normalizeMemberId(id) {
@@ -567,8 +567,8 @@
       const m = s.match(/^NG(\d+)$/);
       if (!m) return null;
       const d = m[1];
-      if (d.length === 8) return s;
-      return 'NG' + d.slice(0, 8).padStart(8, '0');
+      if (d.length === 9) return s;
+      return 'NG' + d.slice(0, 9).padStart(9, '0');
     }
     function healMemberId() {
       const u = window.Auth.user || {};
@@ -590,7 +590,7 @@
       if (!card) return;
       const u = window.Auth.user || {};
       const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
-      // Name & Member ID (normalized to NG + 8 digits; self-heals stale 12-digit data)
+      // Name & Member ID (normalized to NG + 9 digits; self-heals stale legacy data)
       const memberId = healMemberId() || '—';
       const memberName = md.memberName || u.name || u.firstName || '—';
       // Country code
@@ -728,8 +728,8 @@
       const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
       const u = window.Auth.user || {};
       // Member ID: Auth.user.memberId > memberData.memberId > stable gen (stored into Auth.user & md).
-      // healMemberId() also normalizes any non-conforming value (e.g. legacy NG+12digits) to NG+8digits
-      // and persists the corrected value back, so all downstream reads (drawer, checkout, etc.) see 8 digits.
+      // healMemberId() also normalizes any non-conforming value (e.g. legacy NG+12digits) to NG+9digits
+      // and persists the corrected value back, so all downstream reads (drawer, checkout, etc.) see 9 digits.
       const memberId = healMemberId() || (window.ProductCatalog?.genMemberId?.()) || '';
       // Member name: prefer md.memberName (the authoritative field used by overview/syncHeader); then Auth.name; then profile.name.
       const memberName = md.memberName || u.name || u.firstName || p.name || '';
@@ -959,7 +959,7 @@
       const pc = window.ProductCatalog || {};
       const DAY = 86400000;
       const now = Date.now();
-      const me = mid || 'NG48655323';
+      const me = mid || 'NG486553230';
       const mk = (o) => Object.assign({
         id: (pc.genOrderId ? pc.genOrderId() : 'AQ-' + Math.random().toString(36).slice(2, 8).toUpperCase()),
         date: now, memberId: me, operatorId: me, country: 'Nigeria', currency: 'NGN',
@@ -993,7 +993,7 @@
         mk({
           date: now - 5 * DAY, paidAt: now - 5 * DAY + 7200000,
           status: 'paid', payStatus: 'Paid', payment: 'bank', paymentLabel: 'Bank Transfer',
-          memberId: 'NG27187710', memberName: 'Chinedu Eze', operatorId: me,
+          memberId: 'NG271877100', memberName: 'Chinedu Eze', operatorId: me,
           customer: { name: 'Chinedu Eze', phone: '+234 805 987 6543', address: '7 Marina Street', city: 'Lagos', state: 'Lagos' },
           items: [
             { id: 'wd1', name: 'Bes Massage Device', category: 'wellness-devices', img: 'bes-massage-device.webp', price: 95000, qty: 1, bv: 78 },
@@ -1003,7 +1003,7 @@
         mk({
           date: now - 2 * DAY, paidAt: null,
           status: 'pending', payStatus: 'Unpaid', payment: 'visaqr', paymentLabel: 'Pay with Visa QR',
-          memberId: 'NG66051653', memberName: 'Reporting Center', operatorId: me,
+          memberId: 'NG660516530', memberName: 'Reporting Center', operatorId: me,
           customer: { name: 'Reporting Center', phone: '+234 809 222 3344', address: '22 Broad Street', city: 'Lagos', state: 'Lagos' },
           items: [
             { id: 'fb1', name: 'Elcafe', category: 'food-beverage', img: 'elcafe.webp', price: 25000, qty: 3, bv: 22 },
@@ -1019,7 +1019,7 @@
     }
 
     function seedDemoEcoin(mid) {
-      const me = mid || 'NG48655323';
+      const me = mid || 'NG486553230';
       const DAY = 86400000;
       const now = Date.now();
       let existing = [];
@@ -1866,11 +1866,11 @@
           latestMgmtStar: 'None',
           highestElite: 'N/A',
           latestElite: 'N/A',
-          referrerId: 'NG27187710',
+          referrerId: 'NG271877100',
           referrerName: 'S2',
-          actualReferrerId: 'NG27187710',
+          actualReferrerId: 'NG271877100',
           actualReferrerName: 'S2',
-          reportingCenterId: 'NG66051653',
+          reportingCenterId: 'NG660516530',
           isReportingCenter: 'No',
           showChart: 'Yes',
           showRecharge: 'Yes',
@@ -2045,11 +2045,11 @@
         e.preventDefault();
         const form = e.currentTarget;
         const pc = window.ProductCatalog || {};
-        // Member ID: 会员编号格式 NG+8 位数字
+        // Member ID: 会员编号格式 AE/NG+9 位数字
         const memberId = (form.memberId ? form.memberId.value.trim() : (document.getElementById('pfMemberId').value || '')).trim().toUpperCase();
-        if (!/^NG\d{8}$/.test(memberId)) {
+        if (!/^NG\d{9}$/.test(memberId)) {
           const msg = window.T.tr('account.profile_member_id_invalid');
-          window.toast((msg && msg !== 'account.profile_member_id_invalid') ? msg : 'Member ID must be NG + 8 digits (e.g. NG12345678).', 'danger');
+          window.toast((msg && msg !== 'account.profile_member_id_invalid') ? msg : 'Member ID must be NG + 9 digits (e.g. NG123456789).', 'danger');
           return;
         }
         // Country is inherited from the referrer at registration and is permanently
@@ -2244,9 +2244,9 @@
       const entries = [
         { date: new Date(now - 5 * day), amount: 30, type: 'credit', remark: `Order ORD-${mid.slice(-4)}A — Calmag×2` },
         { date: new Date(now - 4 * day), amount: 20, type: 'credit', remark: `Order ORD-${mid.slice(-4)}B — Bio Pure N200` },
-        { date: new Date(now - 3 * day), amount: 40, type: 'credit', remark: `Referral bonus — Fauzia Yunus Shehu (NG23374876)` },
+        { date: new Date(now - 3 * day), amount: 40, type: 'credit', remark: `Referral bonus — Fauzia Yunus Shehu (NG233748760)` },
         { date: new Date(now - 2 * day), amount: 15, type: 'credit', remark: `Order ORD-${mid.slice(-4)}C — Elcafe×3` },
-        { date: new Date(now - 1 * day), amount: 25, type: 'credit', remark: `Referral bonus — Amara Okafor (NG09246375)` },
+        { date: new Date(now - 1 * day), amount: 25, type: 'credit', remark: `Referral bonus — Amara Okafor (NG092463750)` },
       ];
       let bal = 0;
       return entries.map(e => { bal += e.amount; return { ...e, preBalance: bal - e.amount, postBalance: bal }; });
@@ -2514,7 +2514,7 @@
     function openPeriodBonusDetail(cycle) {
       const mid = (window.ProductCatalog && window.ProductCatalog.getCurrentMemberId)
         ? window.ProductCatalog.getCurrentMemberId() : null;
-      const records = seedPeriodBonusDemoRecords(mid ? mid.trim() : 'NG00000000');
+      const records = seedPeriodBonusDemoRecords(mid ? mid.trim() : 'NG000000000');
       const rec = records.find(r => r.cycle === cycle);
       if (!rec) return;
 
@@ -2547,35 +2547,35 @@
     function seedPeriodBonusDemoRecords(mid) {
       return [
         {
-          cycle: 165, memberId: 'NG57670642', level: 'Gold',
+          cycle: 165, memberId: 'NG576706420', level: 'Gold',
           highestDirector: 'No Rank', eliteLevel: 'NA',
           elite: 0, proElite: 0.00, superElite: 0.00, stockist: 0.00,
           leadership: 0.00, welcome: 0.00, car: 0.00, performance: 0.00, builder: 0.00,
           total: 0.00
         },
         {
-          cycle: 164, memberId: mid || 'NG09246375', level: 'Silver',
+          cycle: 164, memberId: mid || 'NG092463750', level: 'Silver',
           highestDirector: 'Director A', eliteLevel: 'Elite 2',
           elite: 150.00, proElite: 50.00, superElite: 0.00, stockist: 25.00,
           leadership: 75.00, welcome: 0.00, car: 0.00, performance: 100.00, builder: 30.00,
           total: 430.00
         },
         {
-          cycle: 163, memberId: mid || 'NG09246375', level: 'Bronze',
+          cycle: 163, memberId: mid || 'NG092463750', level: 'Bronze',
           highestDirector: 'No Rank', eliteLevel: 'NA',
           elite: 80.00, proElite: 0.00, superElite: 0.00, stockist: 10.00,
           leadership: 0.00, welcome: 0.00, car: 0.00, performance: 45.00, builder: 15.00,
           total: 150.00
         },
         {
-          cycle: 162, memberId: mid || 'NG09246375', level: 'Silver',
+          cycle: 162, memberId: mid || 'NG092463750', level: 'Silver',
           highestDirector: 'Director B', eliteLevel: 'Elite 1',
           elite: 200.00, proElite: 75.00, superElite: 25.00, stockist: 50.00,
           leadership: 100.00, welcome: 0.00, car: 0.00, performance: 150.00, builder: 40.00,
           total: 640.00
         },
         {
-          cycle: 161, memberId: mid || 'NG09246375', level: 'Gold',
+          cycle: 161, memberId: mid || 'NG092463750', level: 'Gold',
           highestDirector: 'Director A', eliteLevel: 'Elite 3',
           elite: 300.00, proElite: 120.00, superElite: 60.00, stockist: 80.00,
           leadership: 200.00, welcome: 0.00, car: 0.00, performance: 250.00, builder: 60.00,
@@ -2725,8 +2725,8 @@
       const now = Date.now();
       const day = 86400000;
       const list = [
-        { id: rtId('TR-'), memberId: mid, transferType: 'Bonus To Ecoin', fromAccount: 'Bonus', toAccount: 'Ecoin', receivingMemberCode: 'NG27187710', receivingMemberName: 'Amara Eze', amount: 200, remark: 'Convert to Ecoin', transferTime: now - 3 * day },
-        { id: rtId('TR-'), memberId: mid, transferType: 'Bonus To Ecoin', fromAccount: 'Bonus', toAccount: 'Ecoin', receivingMemberCode: 'NG48655323', receivingMemberName: 'Fatima Yusuf', amount: 150, remark: 'Convert to Ecoin', transferTime: now - 6 * day },
+        { id: rtId('TR-'), memberId: mid, transferType: 'Bonus To Ecoin', fromAccount: 'Bonus', toAccount: 'Ecoin', receivingMemberCode: 'NG271877100', receivingMemberName: 'Amara Eze', amount: 200, remark: 'Convert to Ecoin', transferTime: now - 3 * day },
+        { id: rtId('TR-'), memberId: mid, transferType: 'Bonus To Ecoin', fromAccount: 'Bonus', toAccount: 'Ecoin', receivingMemberCode: 'NG486553230', receivingMemberName: 'Fatima Yusuf', amount: 150, remark: 'Convert to Ecoin', transferTime: now - 6 * day },
       ];
       saveTransferRecords(list);
       return list;
@@ -3169,7 +3169,7 @@
         const amount = Number(fd.get('amount')) || 0;
         if (amount <= 0) { window.toast('Amount must be greater than 0.', 'danger'); return; }
         const code = (fd.get('receivingMemberCode') || '').trim().toUpperCase();
-        if (!/^NG\d{8}$/.test(code)) { window.toast('Member Code must be NG + 8 digits.', 'danger'); return; }
+        if (!/^NG\d{9}$/.test(code)) { window.toast('Member Code must be NG + 9 digits.', 'danger'); return; }
         const transferType = fd.get('transferType') || 'Bonus To Ecoin';
 
         // Validate balance based on transfer type
@@ -3260,7 +3260,7 @@
       // 根节点 = 当前登录账户：member id 与真实姓名均取自 Auth.user
       const authUser = (window.Auth && window.Auth.user) || {};
       const rootName = authUser.name || authUser.firstName || 'You';
-      const rootId = mid || authUser.memberId || 'NG00000000';
+      const rootId = mid || authUser.memberId || 'NG000000000';
       const root = {
         id: rootId,
         code: rootId,
@@ -3270,28 +3270,28 @@
         pcv: 173,
         children: [
           {
-            code: 'NG39626765', name: 'MR. WEST', level: 'Silver', highest: 'Silver', pcv: 164,
+            code: 'NG396267650', name: 'MR. WEST', level: 'Silver', highest: 'Silver', pcv: 164,
             children: [
-              { code: 'NG11223344', name: 'Adaobi Nwosu', level: 'Silver', highest: 'Silver', pcv: 120 },
-              { code: 'NG22334455', name: 'Emeka Obi', level: 'Gold', highest: 'Gold', pcv: 98 },
+              { code: 'NG112233440', name: 'Adaobi Nwosu', level: 'Silver', highest: 'Silver', pcv: 120 },
+              { code: 'NG223344550', name: 'Emeka Obi', level: 'Gold', highest: 'Gold', pcv: 98 },
             ]
           },
           {
-            code: 'NG27187710', name: 'Amara Eze', level: 'Gold', highest: 'Gold', pcv: 150,
+            code: 'NG271877100', name: 'Amara Eze', level: 'Gold', highest: 'Gold', pcv: 150,
             children: [
-              { code: 'NG33445566', name: 'Chioma Okonkwo', level: 'Silver', highest: 'Silver', pcv: 140 },
+              { code: 'NG334455660', name: 'Chioma Okonkwo', level: 'Silver', highest: 'Silver', pcv: 140 },
               {
-                code: 'NG44556677', name: 'Obinna Kalu', level: 'Gold', highest: 'Gold', pcv: 118,
+                code: 'NG445566770', name: 'Obinna Kalu', level: 'Gold', highest: 'Gold', pcv: 118,
                 children: [
-                  { code: 'NG55667788', name: 'Nkechi Udo', level: 'Silver', highest: 'Silver', pcv: 76 },
+                  { code: 'NG556677880', name: 'Nkechi Udo', level: 'Silver', highest: 'Silver', pcv: 76 },
                 ]
               },
             ]
           },
           {
-            code: 'NG66051653', name: 'Chinedu Bello', level: 'Silver', highest: 'Silver', pcv: 88,
+            code: 'NG660516530', name: 'Chinedu Bello', level: 'Silver', highest: 'Silver', pcv: 88,
             children: [
-              { code: 'NG66778899', name: 'Tunde Adeyemi', level: 'Gold', highest: 'Gold', pcv: 73 },
+              { code: 'NG667788990', name: 'Tunde Adeyemi', level: 'Gold', highest: 'Gold', pcv: 73 },
             ]
           },
         ]
@@ -3309,7 +3309,7 @@
     function seedSponsorNetworkEx(mid) {
       const authUser = (window.Auth && window.Auth.user) || {};
       const rootName = authUser.name || authUser.firstName || 'You';
-      const rootId = mid || authUser.memberId || 'NG00000000';
+      const rootId = mid || authUser.memberId || 'NG000000000';
       const root = {
         id: rootId,
         code: rootId,
@@ -3319,28 +3319,28 @@
         pcv: 173,
         children: [
           {
-            code: 'NG91234567', name: 'Ifeoma Balogun', level: 'Gold', highest: 'Gold', pcv: 165,
+            code: 'NG912345670', name: 'Ifeoma Balogun', level: 'Gold', highest: 'Gold', pcv: 165,
             children: [
-              { code: 'NG81239876', name: 'Kunle Ade', level: 'Silver', highest: 'Silver', pcv: 142 },
-              { code: 'NG72345678', name: 'Zainab Bello', level: 'Gold', highest: 'Gold', pcv: 121 },
+              { code: 'NG812398760', name: 'Kunle Ade', level: 'Silver', highest: 'Silver', pcv: 142 },
+              { code: 'NG723456780', name: 'Zainab Bello', level: 'Gold', highest: 'Gold', pcv: 121 },
             ]
           },
           {
-            code: 'NG83456789', name: 'Folake Ojo', level: 'Silver', highest: 'Silver', pcv: 158,
+            code: 'NG834567890', name: 'Folake Ojo', level: 'Silver', highest: 'Silver', pcv: 158,
             children: [
-              { code: 'NG74567890', name: 'Peter Ekwueme', level: 'Gold', highest: 'Gold', pcv: 133 },
+              { code: 'NG745678900', name: 'Peter Ekwueme', level: 'Gold', highest: 'Gold', pcv: 133 },
               {
-                code: 'NG65678901', name: 'Grace Ibe', level: 'Silver', highest: 'Silver', pcv: 109,
+                code: 'NG656789010', name: 'Grace Ibe', level: 'Silver', highest: 'Silver', pcv: 109,
                 children: [
-                  { code: 'NG56789012', name: 'Sade Okeke', level: 'Silver', highest: 'Silver', pcv: 84 },
+                  { code: 'NG567890120', name: 'Sade Okeke', level: 'Silver', highest: 'Silver', pcv: 84 },
                 ]
               },
             ]
           },
           {
-            code: 'NG57890123', name: 'Chidi Okoro', level: 'Gold', highest: 'Gold', pcv: 147,
+            code: 'NG578901230', name: 'Chidi Okoro', level: 'Gold', highest: 'Gold', pcv: 147,
             children: [
-              { code: 'NG48901234', name: 'Bisi Fashola', level: 'Silver', highest: 'Silver', pcv: 95 },
+              { code: 'NG489012340', name: 'Bisi Fashola', level: 'Silver', highest: 'Silver', pcv: 95 },
             ]
           },
         ]

@@ -411,7 +411,7 @@
 .ocard__spacer { flex: 1 1 auto; }
 .ocard__meta { display: flex; flex-wrap: wrap; gap: var(--ek-8) var(--ek-20); margin-bottom: var(--ek-12); }
 /* Each chip is `<span><b>Label</b><span>Value</span></span>`; as plain inline
-   content the label and the value run together ("Member IDNG09246375"), so lay
+   content the label and the value run together ("Member IDNG092463750"), so lay
    each chip out as a baseline-aligned row with a 4px gap. */
 .ocard__meta > span { display: inline-flex; align-items: baseline; gap: var(--ek-4); }
 .ocard__meta span { font-size: var(--ek-caption); color: var(--ek-muted); }

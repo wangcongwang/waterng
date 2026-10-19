@@ -398,7 +398,7 @@ overview:{ fit:true,
   {id:"sv1",x:860,y:60,w:250,h:80,label:"外部服务端",sub:"订单·支付·库存·BV佣金·权限",type:"store",detail:"业务规则的唯一执行与校验方；前端与 WordPress 都不作为规则来源。"},
   {id:"sv2",x:860,y:166,w:250,h:60,label:"外部数据库",sub:"会员·订单·账本·权限",type:"store",detail:"交易与账户主数据；会员号与订单号由服务端生成并加唯一约束。"},
 
-  {id:"cf",x:20,y:382,w:1090,h:78,label:"关键边界：① WordPress 只展示、不交易 —— 展示价仅供展示，结算价与 BV 一律以外部系统为准；② 登录与账户数据只在外部系统，WordPress 不持有交易登录态；③ 游客可免注册下单，订单归入 house 账户（NG00000001）且不计 BV；④ 两侧后台各自维护各自数据。",type:"note",
+  {id:"cf",x:20,y:382,w:1090,h:78,label:"关键边界：① WordPress 只展示、不交易 —— 展示价仅供展示，结算价与 BV 一律以外部系统为准；② 登录与账户数据只在外部系统，WordPress 不持有交易登录态；③ 游客可免注册下单，订单归入 house 账户（NG000000001）且不计 BV；④ 两侧后台各自维护各自数据。",type:"note",
    detail:"这条边界决定了后续所有模块的归属：凡涉及金额、库存、会员权益、订单状态，都必须在外部系统实现；WordPress 侧只负责内容、展示与跳转入口。"}
  ],
  edges:[
@@ -506,7 +506,7 @@ auth:{
   {id:"c1",x:20,y:264,w:210,h:66,label:"登录",sub:"账号 + 密码",type:"action",detail:"支持会员号 / 手机 / 邮箱登录；连续失败锁定与验证码。"},
   {id:"c2",x:250,y:264,w:230,h:74,label:"注册（开户）",sub:"资料 + 推荐人 + Order Level",type:"action",detail:"国家/币种、Order Level 档位、上报中心列表均由后台配置；推荐人须校验存在且有效。"},
   {id:"d",x:310,y:380,w:250,h:66,label:"服务端校验 + 风控",sub:"唯一性·密码策略·推荐关系",type:"store",detail:"手机/邮箱唯一、密码慢哈希校验、推荐关系合法性校验；风控拦截异常来源。"},
-  {id:"e",x:310,y:476,w:250,h:66,label:"生成会员号 / 建立档案",sub:"NG+8 位 · 唯一约束",type:"store",detail:"注册时建档并生成会员号，绑定归属推荐关系与上报中心（reportingCenter）。"},
+  {id:"e",x:310,y:476,w:250,h:66,label:"生成会员号 / 建立档案",sub:"AE/NG+9 位 · 唯一约束",type:"store",detail:"注册时建档并生成会员号，绑定归属推荐关系与上报中心（reportingCenter）。"},
   {id:"f",x:310,y:574,w:250,h:60,label:"颁发访问 / 刷新令牌",type:"store",detail:"会话有效期由后台配置；登录时清除游客标记（登录即退出游客流程）。"},
   {id:"g",x:310,y:664,w:250,h:60,label:"按 return 落到目标页",sub:"购物车 / 结算 / 我的账户",type:"page",detail:"登录后回到跳转前意图，而不是一律回首页。"},
   {id:"h",x:640,y:380,w:250,h:66,label:"忘记密码 / 重置",type:"action",detail:"短信或邮箱验证码校验后重置；重置后旧令牌全部失效。"},
@@ -556,7 +556,7 @@ guest:{
   {id:"e",x:440,y:290,w:220,h:60,label:"加购（共享购物车）",type:"action",detail:"与会员共用同一购物车结构，便于登录后合并。"},
   {id:"f",x:310,y:382,w:240,h:60,label:"购物车 cart.html",type:"page",detail:"游客态下不显示 BV 汇总。"},
   {id:"g",x:310,y:474,w:250,h:66,label:"结算 checkout.html?cart=1",type:"page",detail:"空车 → 回购物车；缺少 ?cart=1 → 走单品模式，取不到商品则回商品页。"},
-  {id:"h",x:310,y:566,w:250,h:74,label:"创建游客订单",sub:"memberId = operatorId = house 账户",type:"store",detail:"游客单归入 house 账户（NG00000001），因此会员的「我的订单」看不到它；订单详情按单号仍可打开。"},
+  {id:"h",x:310,y:566,w:250,h:74,label:"创建游客订单",sub:"memberId = operatorId = house 账户",type:"store",detail:"游客单归入 house 账户（NG000000001），因此会员的「我的订单」看不到它；订单详情按单号仍可打开。"},
   {id:"i",x:310,y:660,w:250,h:60,label:"订单确认 → 订单详情",sub:"shipping.html → order.html",type:"page",detail:"结算后进入订单确认页，再进订单详情；可下载小票（游客不显示 BV 行）。"},
   {id:"j",x:640,y:474,w:250,h:74,label:"引导注册为会员",sub:"Create an account",type:"page",detail:"游客页与订单页引导注册；注册后回跳复购页，可享会员价与 BV。"},
   {id:"n1",x:640,y:192,w:250,h:80,label:"游客不计 BV",type:"note",detail:"游客订单不产生本人 BV；若此前带 ?ref= 进站，该单 BV 归属推荐人，游客自己不留。"},

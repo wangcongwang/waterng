@@ -207,8 +207,8 @@
   window.fmtDate = fmtDate; window.fmtDateUp = fmtDateUp; window.fmtDT = fmtDT; window.fmtNum = fmtNum;
 
   /* ---------- Member ID normalization (shared by drawer & any other header surface) ----------
-     Project rule: Member ID must be exactly "NG" + 8 digits. Legacy/stale 12-digit
-     values get normalized to the first 8 digits (keeps the identity prefix so
+     Project rule: Member ID must be exactly "NG" + 9 digits. Legacy/stale values
+     get normalized to the first 9 digits (keeps the identity prefix so
      orders stay linkable). The corrected value is persisted back into Auth.user
      and localStorage so subsequent reads are clean. */
   function normalizeMemberId(id) {
@@ -217,7 +217,7 @@
     const m = s.match(/^NG(\d+)$/);
     if (!m) return '';
     const d = m[1];
-    return 'NG' + d.slice(0, 8).padStart(8, '0');
+    return 'NG' + d.slice(0, 9).padStart(9, '0');
   }
   function healMemberIdForDrawer() {
     const u = Auth.user;
@@ -775,7 +775,7 @@
 
   /* ---------- Deterministic demo seed — guarantees identical first-load content on http:// and file:// ---------- */
   const DEMO_MEMBER = {
-    memberId: 'NG09246375',
+    memberId: 'NG092463750',
     firstName: 'Adaeze',
     name: 'Adaeze Okonkwo',
     email: 'adaeze@elkenafrica.com',
@@ -785,7 +785,7 @@
 
   /* ---------- Demo quick-state switch (?demo=member / ?demo=guest) ----------
      演示辅助：URL 带 ?demo= 参数时一键切换演示人格，免手动清 localStorage。
-     member：清登录态+订单 → 走 seedDemoIfEmpty 完整播种（恒 NG09246375 Adaeze Okonkwo）。
+     member：清登录态+订单 → 走 seedDemoIfEmpty 完整播种（恒 NG092463750 Adaeze Okonkwo）。
      guest ：清登录态 + 打 sessionStorage 游客标记，并跳过播种。
      只影响当次加载；页面内后续导航（无参数）状态自然延续。
      display-only / WordPress 页不参与（不写登录态、恒未登录营销版）。 */
@@ -815,7 +815,7 @@
       // Only seed on a truly empty / brand-new profile (not touched by real user yet)
       if (hasAuth || hasOrders) return;
 
-      // 1) Demo account: fixed NG09246375 Adaeze Okonkwo — same on every protocol
+      // 1) Demo account: fixed NG092463750 Adaeze Okonkwo — same on every protocol
       localStorage.setItem(STORAGE.AUTH, JSON.stringify({
         memberId: DEMO_MEMBER.memberId,
         firstName: DEMO_MEMBER.firstName,
@@ -872,11 +872,11 @@
         latestMgmtStar: 'None',
         highestElite: 'N/A',
         latestElite: 'N/A',
-        referrerId: 'NG27187710',
+        referrerId: 'NG271877100',
         referrerName: 'S2',
-        actualReferrerId: 'NG27187710',
+        actualReferrerId: 'NG271877100',
         actualReferrerName: 'S2',
-        reportingCenterId: 'NG66051653',
+        reportingCenterId: 'NG660516530',
         isReportingCenter: 'No',
         showChart: 'Yes',
         showRecharge: 'Yes',

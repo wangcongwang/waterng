@@ -225,9 +225,9 @@
 
       // BV only for signed-in members; never for guest (visitor) orders.
       // A guest order is also detectable from the order itself: it is
-      // attributed to the market house account (NG/AE00000001).
+      // attributed to the market house account (NG/AE000000001).
       const isGuestViewer = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
-      const isGuestOrder = isGuestViewer || /00000001$/.test(String(order.memberId || ''));
+      const isGuestOrder = isGuestViewer || /000000001$/.test(String(order.memberId || ''));
       const showBV = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn()) && !isGuestOrder;
 
       const TAX_RATE = (typeof order.taxRate === 'number') ? order.taxRate

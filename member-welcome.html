@@ -55,12 +55,12 @@
               <div class="field-row ek-field">
                 <label data-i18n="signup.referrer_id">Referrer ID</label>
                 <input class="ek-input" type="text" name="referrerId" id="regReferrerId"
-                       placeholder="e.g. NG12345678" autocomplete="off" />
+                       placeholder="e.g. NG123456789" autocomplete="off" />
               </div>
               <div class="field-row ek-field">
                 <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
                 <input class="ek-input" type="text" name="actualReferrerId" id="regActualReferrerId"
-                       placeholder="e.g. NG12345678" autocomplete="off" />
+                       placeholder="e.g. NG123456789" autocomplete="off" />
               </div>
             </div>
           </div>
@@ -440,7 +440,7 @@
         memberIdInput.value = pc0.genMemberId(accountCountry);
       } else if (memberIdInput) {
         memberIdInput.value = (accountCfg ? accountCfg.memberIdPrefix : 'NG') +
-          Math.floor(Math.random() * 90000000 + 10000000).toString();
+          Math.floor(Math.random() * 900000000 + 100000000).toString();
       }
 
       /* ---------- Referrer defaults: the signed-in account itself ----------
@@ -452,7 +452,7 @@
       let actualRefId = currentMemberId;
       try {
         const refParam = new URLSearchParams(location.search).get('ref');
-        if (refParam && /^(NG|AE)\d{8}$/i.test(refParam.trim())) {
+        if (refParam && /^(NG|AE)\d{9}$/i.test(refParam.trim())) {
           refId = refParam.trim().toUpperCase();
           actualRefId = refId;
         }
@@ -466,7 +466,7 @@
         if (el && accountCfg) el.placeholder = accountCfg.dial + ' ...';
       });
       [referrerInput, actualReferrerInput].forEach(el => {
-        if (el && accountCfg) el.placeholder = 'e.g. ' + accountCfg.memberIdPrefix + '12345678';
+        if (el && accountCfg) el.placeholder = 'e.g. ' + accountCfg.memberIdPrefix + '123456789';
       });
 
       // Address regions follow the account's market

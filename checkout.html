@@ -333,7 +333,7 @@
        without an account. Otherwise: signed-in member → their own market
        (memberData → Auth.user → ID prefix). Drives the order's country /
        currency; addOrder() attributes a memberless (guest) order to that
-       market's house account (NG00000001 / AE00000001). */
+       market's house account (NG000000001 / AE000000001). */
     const pc0 = window.ProductCatalog || {};
     function isGuestFlow() {
       try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; }
@@ -853,8 +853,8 @@
         }));
         // Guest flow (login page's "Shop now"): the order belongs to the
         // market's house account — never to whatever session happens to be
-        // seeded or signed in — so addOrder() attributes it to NG00000001 /
-        // AE00000001 by country. Signing in mid-flow clears the guest flags,
+        // seeded or signed in — so addOrder() attributes it to NG000000001 /
+        // AE000000001 by country. Signing in mid-flow clears the guest flags,
         // so a real member session takes over naturally.
         const guestFlow = pc0.isGuestFlow ? pc0.isGuestFlow() : false;
         const authMemberId = (!guestFlow && window.Auth && window.Auth.user && window.Auth.user.memberId) || null;
@@ -920,7 +920,7 @@
         }
         // Guest / shopper orders: no Reporting Center ID field any more — the
         // order defaults to the market's house reporting center
-        // (Nigeria → NG00000001, UAE → AE00000001).
+        // (Nigeria → NG000000001, UAE → AE000000001).
         if (!state.repeatMember) {
           const cfg = pc0.getCountryConfig ? pc0.getCountryConfig(orderCountry) : null;
           if (cfg && cfg.centerId) {

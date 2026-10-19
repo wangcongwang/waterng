@@ -229,8 +229,8 @@
       if (err) err.textContent = msg || '';
       if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
     }
-    // Member ID must be exactly "NG" + 8 digits, e.g. NG12345678
-    function isMemberId(v) { return /^NG\d{8}$/.test(v.trim().toUpperCase()); }
+    // Member ID must be exactly "NG" + 9 digits, e.g. NG123456789
+    function isMemberId(v) { return /^NG\d{9}$/.test(v.trim().toUpperCase()); }
 
     /* ---------- Loading button ---------- */
     function startLoading(btn, loadingLabel) {
@@ -292,7 +292,7 @@
 
     /* ---------- Demo account for deterministic previews ---------- */
     const DEMO_ACCOUNT = {
-      memberId: 'NG09246375',
+      memberId: 'NG092463750',
       firstName: 'Adaeze',
       name: 'Amara Okafor',
       email: 'adaeze@elkenafrica.com',
@@ -326,7 +326,7 @@
          "Shop now" opens a chooser (Nigeria / UAE). The pick is kept in
          sessionStorage (al.guestCountry) so the whole guest journey — product
          page, cart, checkout — stays in that market, and the order is
-         attributed to that market's house account (NG00000001 / AE00000001).
+         attributed to that market's house account (NG000000001 / AE000000001).
          Each market keeps its OWN cart (al.cart / al.cart.ae). */
       const guestBtn = document.getElementById('guestShopNow');
       const guestModal = document.getElementById('guestCountryModal');
