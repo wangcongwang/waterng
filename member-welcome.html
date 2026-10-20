@@ -53,9 +53,10 @@
             <div class="sec-title" data-i18n="signup.sec_network">Network Information</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
-                <label data-i18n="signup.referrer_id">Referrer ID</label>
+                <label><span data-i18n="signup.referrer_id">Referrer ID</span><span class="req-star">*</span></label>
                 <input class="ek-input" type="text" name="referrerId" id="regReferrerId"
-                       placeholder="e.g. NG123456789" autocomplete="off" />
+                       placeholder="e.g. NG123456789" autocomplete="off" required />
+                <small class="field-hint" id="regReferrerHint" hidden></small>
               </div>
               <div class="field-row ek-field">
                 <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
@@ -66,7 +67,7 @@
           </div>
 
           <!-- ====== Section 2: Basic Info ====== -->
-          <div class="ek-card sec-block">
+          <div class="ek-card sec-block" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_basic">Basic Information</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
@@ -111,7 +112,7 @@
           </div>
 
           <!-- ====== Section 3: Product Selection ====== -->
-          <div class="ek-card sec-block">
+          <div class="ek-card sec-block" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_products">Products</div>
             <p class="sec-hint" data-i18n="signup.products_hint">Tap a product to add it to your starter order, then set the quantity you need.</p>
             <div class="prod-grid" id="prodList" aria-live="polite"></div>
@@ -123,7 +124,7 @@
           </div>
 
           <!-- ====== Section 4: Personal Information ====== -->
-          <div class="ek-card sec-block">
+          <div class="ek-card sec-block" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_personal">Personal Information</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
@@ -165,7 +166,7 @@
           </div>
 
           <!-- ====== Section 5: Delivery Method ====== -->
-          <div class="ek-card sec-block">
+          <div class="ek-card sec-block" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_delivery">Delivery Method</div>
             <div class="field-row ek-field field-row--full">
               <label data-i18n="signup.delivery_method">Delivery Method</label>
@@ -183,7 +184,7 @@
           </div>
 
           <!-- ====== Section 6: Address Details ====== -->
-          <div class="ek-card sec-block" id="addressSection">
+          <div class="ek-card sec-block" id="addressSection" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_address">Address Details</div>
             <div class="reg-grid">
               <div class="field-row ek-field">
@@ -222,7 +223,7 @@
           </div>
 
           <!-- ====== Section 7: Payment Method ====== -->
-          <div class="ek-card sec-block">
+          <div class="ek-card sec-block" data-referrer-gate>
             <div class="sec-title" data-i18n="signup.sec_payment">Payment Method</div>
 
             <div class="pay-method-grid" id="signupPayGrid"></div>
@@ -367,11 +368,12 @@
       'use strict';
 
       /* ---------- i18n apply ---------- */
-      function tr(key) {
+      function tr(key, params) {
         // window.T is an object exposing .tr (defined in app.js) — the old
         // typeof === 'function' check never matched, so every dynamic string
-        // fell back to the raw key.
-        return (window.T && window.T.tr) ? window.T.tr(key) : key;
+        // fell back to the raw key. params is forwarded so placeholder
+        // strings (e.g. '✓ Valid referrer: {name}') interpolate correctly.
+        return (window.T && window.T.tr) ? window.T.tr(key, params) : key;
       }
 
       /* ---------- Error helpers ---------- */
@@ -459,6 +461,82 @@
       } catch(e) {}
       if (referrerInput) referrerInput.value = refId;
       if (actualReferrerInput) actualReferrerInput.value = actualRefId;
+
+      /* ---------- Referrer lookup & gate (same rule as signup) ----------
+         The welcome-pack form is referral-based too: clearing the referrer
+         (or typing an unknown member ID) hides every module below Network
+         Information until a valid referrer resolves. Unlike signup the
+         country is NOT inherited here — it stays locked to the account's
+         market; only the gate + hint mirror the signup behaviour. */
+      const referrerHint = document.getElementById('regReferrerHint');
+      let referrerMember = null; // resolved referrer record { id, name, country, source }
+
+      function setReferrerHint(text, state) {
+        if (!referrerHint) return;
+        if (!text) { referrerHint.hidden = true; referrerHint.textContent = ''; return; }
+        referrerHint.hidden = false;
+        referrerHint.textContent = text;
+        referrerHint.classList.toggle('is-ok', state === 'ok');
+        referrerHint.classList.toggle('is-err', state === 'err');
+      }
+
+      // Every module below Network Information stays hidden until the
+      // referrer resolves to a known member.
+      function applyReferrerGate() {
+        const resolved = !!referrerMember;
+        document.querySelectorAll('#regForm [data-referrer-gate]').forEach(el => { el.hidden = !resolved; });
+      }
+
+      // Cheap re-check for submit: the debounced lookup may not have run yet
+      // if the user typed and immediately submitted.
+      function referrerIsResolved() {
+        const raw = (referrerInput.value || '').trim().toUpperCase();
+        return !!(referrerMember && referrerMember.id === raw);
+      }
+
+      function validateReferrer(opts) {
+        const silent = !!(opts && opts.silent);
+        const raw = (referrerInput.value || '').trim().toUpperCase();
+        if (!raw) {
+          referrerMember = null;
+          applyReferrerGate();
+          referrerInput.setAttribute('aria-invalid', 'true');
+          if (!silent) setReferrerHint(tr('signup.referrer_required'), 'err');
+          return false;
+        }
+        // Format-first rule (same as Member Repeat Purchase / Upgrade):
+        // any well-formed member ID (NG/AE + 9 digits) resolves and opens
+        // the gated modules — the ID does not have to exist in the
+        // directory. When it does exist we use its real name; otherwise
+        // we fall back to a synthetic "Member + tail" record.
+        if (!/^(NG|AE)\d{9}$/.test(raw)) {
+          referrerMember = null;
+          applyReferrerGate();
+          referrerInput.setAttribute('aria-invalid', 'true');
+          if (!silent) setReferrerHint(tr('signup.err_referrer_not_found'), 'err');
+          return false;
+        }
+        const m = (window.ProductCatalog && window.ProductCatalog.lookupMember)
+          ? window.ProductCatalog.lookupMember(raw) : null;
+        referrerMember = m || { id: raw, name: 'Member ' + raw.slice(-6), country: 'Nigeria', source: 'unknown' };
+        referrerInput.removeAttribute('aria-invalid');
+        setReferrerHint(tr('signup.referrer_valid', { name: referrerMember.name || referrerMember.id }), 'ok');
+        applyReferrerGate();
+        return true;
+      }
+
+      // Real-time validation (debounced) while the user types the referrer ID.
+      let refTimer = null;
+      if (referrerInput) {
+        referrerInput.addEventListener('input', () => {
+          clearTimeout(refTimer);
+          refTimer = setTimeout(() => validateReferrer(), 300);
+        });
+        referrerInput.addEventListener('change', () => {
+          clearTimeout(refTimer);
+          validateReferrer();
+        });
+      }
 
       // Market-flavoured placeholders (dial code / member-ID prefix)
       ['regPhone', 'regRecipientPhone'].forEach(id => {
@@ -678,8 +756,10 @@
         }
       });
 
-      // Initial render
+      // Initial render — validate the prefilled referrer silently so the
+      // gate below Network Information starts in the correct state.
       renderProducts();
+      validateReferrer({ silent: true });
       buildPayMethods();
 
       /* ---------- Form validation & submit ---------- */
@@ -696,6 +776,12 @@
         e.preventDefault();
         let ok = true;
         const firstInvalid = () => form.querySelector('[aria-invalid="true"]');
+
+        // Referrer first — same rule as signup: the form cannot go through
+        // until the referrer resolves (the gated modules are hidden otherwise).
+        let refOk = referrerIsResolved();
+        if (!refOk) refOk = validateReferrer();
+        if (!refOk) ok = false;
 
         // Required fields check
         const requiredMap = [
