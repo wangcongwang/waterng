@@ -104,6 +104,14 @@
 
       const REPEAT_MEMBER_KEY = 'al.repeatMember';
 
+      /* Upgradeable targets live on the checkout page (LEVELS = Silver, Gold),
+         so Gold is the cap: a member already at Gold or above has nothing
+         left to upgrade to and must be stopped right at the search step. */
+      const UPGRADE_CAP = 'Gold';
+      const LEVEL_ORDER = ['Member', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Corporate'];
+      function levelRank(l) { const i = LEVEL_ORDER.indexOf(l); return i < 0 ? 0 : i; }
+      function memberCanUpgrade(level) { return levelRank(level) < levelRank(UPGRADE_CAP); }
+
       /* ---------- Reference data ---------- */
       const DEMO_DIRECTORY = {
         'NG092463750': {
@@ -232,6 +240,22 @@
             return;
           }
           const m = lookupMember(raw);
+          // Members already at Gold (or above) cannot upgrade — show a
+          // notice and stop here: no product step, no stashed repeat-member,
+          // and any previously revealed step-2 / member cart is cleaned up.
+          if (!memberCanUpgrade(m.level)) {
+            state.member = null;
+            clearRepeatMember();
+            if (window.ProductCatalog && window.ProductCatalog.clearMemberCart) {
+              window.ProductCatalog.clearMemberCart();
+            }
+            const section = document.getElementById('mrpProducts');
+            if (section) section.hidden = true;
+            showMemberResult(null,
+              `${m.name} (${m.id}) is already ${m.level} — the highest upgradeable level is Gold, so no upgrade is available.`,
+              'ek-alert--warning');
+            return;
+          }
           // Switching to a different member — discard the previous member's
           // cart so items never carry over between two members.
           if (state.member && state.member.id !== raw) {
@@ -249,11 +273,11 @@
         input.addEventListener('input', () => { input.value = input.value.toUpperCase(); });
       }
 
-      function showMemberResult(member, error) {
+      function showMemberResult(member, error, alertClass) {
         const box = document.getElementById('memberResult');
         if (error) {
           box.className = 'member-result ek-mt-16';
-          box.innerHTML = `<div class="ek-alert ek-alert--error" role="alert"><p class="ek-alert__body">${error}</p></div>`;
+          box.innerHTML = `<div class="ek-alert ${alertClass || 'ek-alert--error'}" role="alert"><p class="ek-alert__body">${error}</p></div>`;
           box.hidden = false;
           return;
         }
@@ -299,7 +323,16 @@
         } catch (e) {}
 
         if (restored && restored.id) {
-          state.member = fillMemberDefaults(restored);
+          if (!memberCanUpgrade(restored.level)) {
+            // A stashed member at/above the Gold cap cannot upgrade — drop
+            // the stale context and start clean instead of restoring step 2.
+            clearRepeatMember();
+            if (window.ProductCatalog && window.ProductCatalog.clearMemberCart) {
+              window.ProductCatalog.clearMemberCart();
+            }
+          } else {
+            state.member = fillMemberDefaults(restored);
+          }
         } else {
           // Start each visit clean — a leftover context must not leak into a
           // later, unrelated checkout.
