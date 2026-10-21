@@ -1142,23 +1142,23 @@
       catch { return null; }
     },
     saveAddresses(arr) { localStorage.setItem(STORAGE.ADDRESSES, JSON.stringify(arr)); },
-    /** Returns a non-empty addresses list, seeded from auth/profile on first use. */
+    /** Returns the address book, seeded from auth/profile on first use.
+     *  The seed carries the profile address (Home · default) plus the two
+     *  alternates kept on file — mirroring the member repeat-purchase preset
+     *  list — so checkout always offers several preset addresses to pick. */
     getAddresses() {
       let arr = this.loadAddresses();
       if (arr) return arr;
       const u = Auth.user;
       if (!u) return [];
-      const seed = {
-        id: 'a_default',
-        label: 'Home',
-        recipient: u.name || '',
-        phone: u.phone || '',
-        street: u.address || '',
-        city: u.city || '',
-        state: u.state || '',
-        isDefault: true,
-      };
-      arr = [seed];
+      const city = u.city || 'Lagos';
+      const st = u.state || 'Lagos';
+      const phone = u.phone || '+234 803 123 4567';
+      arr = [
+        { id: 'a_default', label: 'Home', recipient: u.name || '', phone: phone, street: u.address || '1 Elken Way, Alausa', city: city, state: st, isDefault: true },
+        { id: 'a_office', label: 'Office', recipient: u.name || '', phone: phone, street: 'Plot 12, Central Business District', city: city, state: st },
+        { id: 'a_alt', label: 'Alternate address', recipient: u.name || '', phone: phone, street: '45 Airport Road', city: city, state: st },
+      ];
       this.saveAddresses(arr);
       return arr;
     },
