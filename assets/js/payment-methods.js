@@ -240,8 +240,9 @@
     if (!PHASE2_ENABLED) {
       list = list.filter(m => PHASE2_CHANNELS.indexOf(m.value) === -1);
       // A page that asked only for gated channels still gets a usable
-      // chooser — Paystack is the phase-1 default.
-      if (!list.length) list.push(PAYSTACK_METHOD);
+      // chooser — Paystack is the phase-1 default — unless it opts out
+      // via noPaystack (a flow that must not offer Paystack at all).
+      if (!list.length && !o.noPaystack) list.push(PAYSTACK_METHOD);
     }
     if (o.includeBalance) {
       list.push(Object.assign({}, BALANCE_METHOD, {
@@ -776,6 +777,9 @@
        prefix          id prefix handed to the mounters
        amount()        current order total
        includeBalance  add the Account Balance option to the chooser
+       noPaystack      never offer Paystack — also skips the phase-1
+                       fallback that re-adds it when every other channel
+                       is gated (leaves e.g. Account Balance alone)
        balanceAmountId / balanceSubId / balanceLabelId
        extraPanels     { value: element|selector }  page-rendered panels
        extraComplete   { value: () => bool }        completeness for those
@@ -803,6 +807,7 @@
       name,
       selected: o.selected,
       only: o.only,
+      noPaystack: !!o.noPaystack,
       includeBalance: !!o.includeBalance,
       balanceName: o.balanceName,
       balanceSub: o.balanceSub,
