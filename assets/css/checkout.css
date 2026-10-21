@@ -218,6 +218,12 @@
 }
 .pickup-item:has(input:checked) .pickup-check { opacity: 1; }
 
+/* ---------- Member preset address / pickup lists ----------
+   The member repeat-purchase card reuses .pickup-list / .pickup-item for its
+   read-only preset lists (saved addresses / pickup points). Inside a .field
+   the list only needs a small gap before the hint that closes the block. */
+.checkout-card .pickup-list { margin-bottom: var(--ek-8); }
+
 /* ---------- Payment method selector ---------- */
 .pay-method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--ek-12); }
 .pay-method {
