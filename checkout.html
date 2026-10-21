@@ -37,6 +37,14 @@
 
       <div class="checkout-grid">
         <div>
+          <!-- Reporting Center ID: required on every shopper order, kept as
+               its own top section above the delivery choice (member mode has
+               its own field inside the member card). -->
+          <div class="ek-card checkout-card" id="shopRcCard" hidden>
+            <h2>Reporting Center ID <span class="req">*</span></h2>
+            <input class="ek-input" id="shopRcId" required placeholder="e.g. NG660516530" aria-label="Reporting Center ID" />
+          </div>
+
           <!-- Step 1: Delivery method + address details -->
           <div class="ek-card checkout-card" id="delivCard">
             <h2 data-i18n="checkout.addr_method">Delivery method</h2>
@@ -71,14 +79,6 @@
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>
                 </div>
               </label>
-            </div>
-            <!-- Reporting Center ID: required for every shopper order
-                 (member mode has its own field in the member card). Lives on
-                 the delivery card so it stays visible for both door delivery
-                 and self-pickup. -->
-            <div class="field" id="shopRcWrap" hidden>
-              <label for="shopRcId">Reporting Center ID <span class="req">*</span></label>
-              <input class="ek-input" id="shopRcId" required placeholder="e.g. NG660516530" />
             </div>
           </div>
 
@@ -630,7 +630,7 @@
       const rpPickupWrap = document.getElementById('rpPickupListWrap');
       const shopAddrWrap = document.getElementById('shopAddrListWrap');
       const shopForm = document.getElementById('shopAddrForm');
-      const shopRcWrap = document.getElementById('shopRcWrap');
+      const shopRcCard = document.getElementById('shopRcCard');
       const sync = () => {
         if (addrCard) addrCard.hidden = state.memberMode || state.delivMethod !== 'delivery';
         // Member mode swaps the editable address form for the member's
@@ -639,13 +639,13 @@
         if (rpAddrWrap) rpAddrWrap.hidden = !state.memberMode || state.delivMethod !== 'delivery';
         if (rpPickupWrap) rpPickupWrap.hidden = !state.memberMode || state.delivMethod !== 'pickup';
         // Shopper mode: preset saved-address list when signed in (read-only),
-        // editable form for guests. The Reporting Center ID lives on the
-        // delivery card and shows for every shopper order (member mode has
-        // its own field inside the member card).
+        // editable form for guests. The Reporting Center ID is its own top
+        // card and shows for every shopper order (member mode has its own
+        // field inside the member card).
         const shopListMode = !!state.shopListMode;
         if (shopAddrWrap) shopAddrWrap.hidden = state.memberMode || !shopListMode;
         if (shopForm) shopForm.hidden = state.memberMode || shopListMode;
-        if (shopRcWrap) shopRcWrap.hidden = state.memberMode;
+        if (shopRcCard) shopRcCard.hidden = state.memberMode;
         updatePayBtn();
       };
       radios.forEach(r => {
