@@ -984,9 +984,13 @@
       const psCkModal = document.getElementById('psCheckoutModal');
 
       function openPsPayModal() {
-        // Prefill with the contact email the customer already entered
+        // Prefill with the contact email the customer already entered — except
+        // in the guest flow, where the hidden field only holds the derived
+        // fallback (customer@elken.demo). Opening empty there makes the guest
+        // enter the real address, which the order record then carries (and the
+        // order page's "send link by email" action uses).
         const emailEl = document.getElementById('psPayEmail');
-        if (emailEl && !emailEl.value) {
+        if (emailEl && !emailEl.value && !isGuestFlow()) {
           emailEl.value = document.getElementById('contactEmail').value.trim();
         }
         document.getElementById('psPayAmount').textContent = money(state.total || 0);
@@ -1021,6 +1025,10 @@
         }
         emailInput.removeAttribute('aria-invalid');
         document.getElementById('psPayEmailErr').style.display = 'none';
+        // Persist the confirmed address onto the order record — without this
+        // the order keeps the auto-filled fallback (customer@elken.demo) and
+        // the "send order link by email" action would mail a dead address.
+        document.getElementById('contactEmail').value = email;
         // Hand the confirmed email + amount to the Paystack checkout modal
         document.getElementById('psCkEmail').textContent = email;
         const amount = money(state.total || 0);

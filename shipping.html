@@ -6,123 +6,38 @@
   <meta http-equiv="Expires" content="0" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Awaiting delivery · Elken Nigeria</title>
+  <title>Order Details · Elken</title>
+  <meta name="description" content="View your Elken order details." />
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
   <link rel="stylesheet" href="assets/css/elken-tokens.css">
   <link rel="stylesheet" href="assets/css/elken-base.css">
   <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
-  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
-  <link rel="stylesheet" href="assets/css/checkout.css?v=20260915a">
-  <link rel="stylesheet" href="assets/css/shipping.css?v=20260909b">
+  <link rel="stylesheet" href="assets/css/water-pages.css?v=20260919d">
+  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260919i">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
-<body data-page="shipping">
+<body data-page="shipping" data-guest-no-nav="true">
   <div id="offline-banner" class="offline-banner">Connection status</div>
   <div id="app-header" class="ek-site-header"></div>
 
-  <main class="page shipping-shell">
+  <!-- Order detail — same receipt-style layout as order.html (the shareable
+       link target). Guest checkout lands here right after payment, so the two
+       surfaces must read identically; only the live status differs. -->
+  <main class="page order-shell">
     <div class="container">
       <div class="crumbs">
-        <a href="index.html">Home</a> <span>›</span> <a href="account.html" data-i18n="account.title"></a> <span>›</span> <span data-i18n="shipping.title"></span>
+        <a href="index.html">Home</a> <span>›</span> <span>Order details</span>
       </div>
-      <h1 id="shippingH1" data-i18n="shipping.shipping_title">Awaiting shipping</h1>
-      <p data-i18n="shipping.shipping_desc">Your purchased products are being prepared for delivery…</p>
+      <h1>Order details</h1>
+      <p>Reference for your Elken purchase. Shareable via the link below.</p>
 
-      <div class="stepper">
-        <div class="step done"><span class="n">1</span><span data-i18n="checkout.title">Confirm your order</span></div>
-        <div class="sep"></div>
-        <div class="step done"><span class="n">2</span><span data-i18n="checkout.step2">Payment method</span></div>
-        <div class="sep"></div>
-        <div class="step active"><span class="n">3</span><span data-i18n="checkout.step6">Shipping / pickup</span></div>
-      </div>
-
-      <div class="shipping-grid">
-        <div>
-          <!-- Status alert -->
-          <div class="ek-alert shipping-alert" role="status">
-            <svg class="ek-alert__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-            </svg>
-            <div>
-              <h3 class="ek-alert__title" id="shippingAlertTitle" data-i18n="shipping.shipping_title">Awaiting shipping</h3>
-              <p class="ek-alert__body" data-i18n="shipping.shipping_desc" id="shippingAlertDesc">Your purchased products are being prepared for delivery.</p>
-            </div>
-          </div>
-
-          <!-- Pickup location card (only for self-pickup) -->
-          <div class="ek-card checkout-card" id="pickupCard">
-            <h2 data-i18n="shipping.pickup_at">Pickup location</h2>
-            <div class="pickup-list">
-              <div class="pickup-item is-active">
-                <div class="pickup-radio" aria-hidden="true"></div>
-                <div class="pickup-body">
-                  <div class="pickup-head">
-                    <span class="pickup-name" id="pickupName" data-i18n="checkout.pickup_hq_name">Lagos HQ</span>
-                    <span class="pickup-tag" id="pickupTag">HQ</span>
-                  </div>
-                  <div class="pickup-addr" id="pickupAddr" data-i18n="checkout.pickup_hq_addr">12B Admiralty Way, Lekki Phase 1</div>
-                  <div class="pickup-hours"><span data-i18n="shipping.pickup_hours_label">Opening hours</span>: <span id="pickupHours" data-i18n="checkout.pickup_hq_hours">Mon–Sat · 8:00 – 18:00</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Order summary -->
-          <div class="ek-card checkout-card">
-            <h2>Order summary</h2>
-            <div class="sign-side">
-              <div class="terms-meta" id="orderMeta"></div>
-            </div>
-            <button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="downloadReceipt">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-                <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/>
-              </svg>
-              <span>Download receipt</span>
-            </button>
-          </div>
-
-          <!-- Order detail link + email -->
-          <div id="orderEmailWrap" class="ek-card checkout-card"></div>
-        </div>
-
-        <aside class="shipping-side">
-          <div class="ek-card checkout-card">
-            <h2 data-i18n="shipping.help">Need help?</h2>
-            <p id="helpDesc">Our support team is here for you.</p>
-            <a class="ek-btn ek-btn--secondary ek-btn--block" id="contactBtn" href="https://wa.me/2349131178401" target="_blank" rel="noopener" data-i18n="shipping.help_action">Contact support</a>
-            <hr />
-            <a class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" id="accountBtn" href="account.html" data-i18n="shipping.cta_account">Go to my account</a>
-            <a href="index.html" class="ek-btn btn-link ek-btn--block" data-i18n="shipping.cta_home">Back to home</a>
-          </div>
-        </aside>
-      </div>
+      <div id="orderHost"></div>
     </div>
   </main>
 
   <div id="app-footer" class="ek-site-footer"></div>
-
-  <!-- Send order link by email — collect the recipient address first, then
-       pre-fill the user's email app (static demo: no server-side email). -->
-  <dialog class="ek-modal" id="orderEmailModal" aria-labelledby="orderEmailModalTitle">
-    <div class="ek-modal__head">
-      <h3 class="ek-modal__title" id="orderEmailModalTitle">Send order link by email</h3>
-      <button type="button" class="modal-close" id="orderEmailModalClose" aria-label="Close">&times;</button>
-    </div>
-    <div class="ek-modal__body">
-      <p class="ek-text">Enter the email address that should receive the link to order <b id="orderEmailModalOrderId"></b>. Your email app will open with the message pre-filled.</p>
-      <label class="ek-field">
-        <span>Email address</span>
-        <input class="ek-input" type="email" id="orderEmailInput" placeholder="you@example.com" autocomplete="email" />
-      </label>
-      <p class="field-error" id="orderEmailErr" hidden>Please enter a valid email address</p>
-    </div>
-    <div class="ek-modal__foot">
-      <button type="button" class="ek-btn ek-btn--ghost" id="orderEmailCancel">Cancel</button>
-      <button type="button" class="ek-btn ek-btn--primary" id="orderEmailSend">Send</button>
-    </div>
-  </dialog>
 
   <script src="assets/i18n/strings.js?v=20260909c-2"></script>
 <script src="assets/js/app.js?v=20261016b"></script>
@@ -130,9 +45,17 @@
   <script src="assets/js/order-receipt.js?v=20260915a"></script>
   <script>
     const PICKUP_LOCATIONS = {
-      lagos: { nameKey: 'checkout.pickup_hq_name', addrKey: 'checkout.pickup_hq_addr', hoursKey: 'checkout.pickup_hq_hours', tag: 'HQ' },
-      abuja: { nameKey: 'checkout.pickup_2_name',   addrKey: 'checkout.pickup_2_addr',   hoursKey: 'checkout.pickup_2_hours',   tag: '' },
-      ph:    { nameKey: 'checkout.pickup_3_name',   addrKey: 'checkout.pickup_3_addr',   hoursKey: 'checkout.pickup_3_hours',   tag: '' },
+      lagos: { name: 'Lagos HQ', addr: '12B Admiralty Way, Lekki Phase 1', hours: 'Mon–Sat · 8:00 – 18:00' },
+      abuja: { name: 'Abuja branch', addr: 'Plot 24, Wuse Zone 5', hours: 'Mon–Fri · 9:00 – 17:00' },
+      ph:    { name: 'Port Harcourt branch', addr: '5 Aba Road, GRA Phase 2', hours: 'Mon–Fri · 9:00 – 17:00' },
+    };
+    // Literal fallback for stored orders (this page does not load the shared
+    // payment layer, so the Nigeria channels are spelled out here too).
+    const PAY_LABELS = {
+      card: 'Debit Card', ussd: 'USSD', bank: 'Bank Transfer',
+      paybank: 'Pay with Bank', visaqr: 'Pay with Visa QR', balance: 'Account Balance',
+      // legacy values still readable on older stored orders
+      cod: 'Cash on delivery', transfer: 'Bank Transfer', cash: 'Cash', account: 'Account Balance'
     };
 
     function getOrder() {
@@ -146,222 +69,375 @@
       const all = window.ProductCatalog.getOrders();
       return all[0] || null;
     }
-
-    // Currency prefix for an order (same map as order.html; AED added for the
-    // UAE guest market).
-    function _currencySymbol(c) {
-      const m = { NGN: 'N', AED: 'AED ', USD: '$', EUR: '€', GBP: '£', CNY: '¥', KES: 'KSh', GHS: 'GH₵' };
-      return m[c] || 'N';
-    }
-
-    // Build an absolute, shareable link to the order detail page.
     function orderDetailLink(orderId) {
-      try {
-        return new URL('order.html?order=' + encodeURIComponent(orderId), location.href).href;
-      } catch (e) {
-        return 'order.html?order=' + encodeURIComponent(orderId);
-      }
+      try { return new URL('order.html?order=' + encodeURIComponent(orderId), location.href).href; }
+      catch (e) { return 'order.html?order=' + encodeURIComponent(orderId); }
     }
-
-    // Compose a pre-filled mailto to the given address (falls back to the
-    // order's stored contact email) with the order detail link + summary.
     function buildOrderMailto(order, toEmail) {
       const item = (order.items && order.items[0]) || {};
       const qty = item.qty || 1;
       const isPickup = order.delivery && order.delivery.method === 'pickup';
       const methodLabel = isPickup ? 'Self-pickup' : 'Door delivery';
-      const payLabels = {
-        card: 'Debit Card', ussd: 'USSD', bank: 'Bank Transfer',
-        paybank: 'Pay with Bank', visaqr: 'Pay with Visa QR', balance: 'Account Balance',
-        cod: 'Cash on delivery', transfer: 'Bank Transfer', cash: 'Cash', account: 'Account Balance',
-      };
-      const payLabel = payLabels[order.payment] || order.payment || '—';
+      const payLabel = PAY_LABELS[order.payment] || order.payment || 'Not specified';
       const link = orderDetailLink(order.id);
-      const subject = 'Elken Order ' + order.id + ' — Your order details';
+      const subject = 'Elken Order ' + order.id + ': Your order details';
       const body =
         'Hello ' + (order.customer && order.customer.name ? order.customer.name : 'there') + ',\n\n' +
         'Thank you for your order with Elken.\n\n' +
         'Order: ' + order.id + '\n' +
-        'Product: ' + (item.name || '—') + ' × ' + qty + '\n' +
+        'Product: ' + (item.name || 'Unnamed product') + ' × ' + qty + '\n' +
         'Total: ' + _currencySymbol(order.currency || 'NGN') + (order.total || 0).toLocaleString() + '\n' +
         'Delivery: ' + methodLabel + '\n' +
         'Payment: ' + payLabel + '\n\n' +
         'View your full order details here:\n' + link + '\n\n' +
         'If you have any questions, reply to this email or contact hello@elkenafrica.com.\n\n' +
-        '— Elken Nigeria';
+        'Best regards,\nElken Nigeria';
       const email = toEmail || (order.customer && order.customer.email) || '';
       return 'mailto:' + encodeURIComponent(email) +
         '?subject=' + encodeURIComponent(subject) +
         '&body=' + encodeURIComponent(body);
     }
 
-    /* ---------- Send-link-by-email modal ----------
-       No proactive mailto: the user clicks "Send order link by email", the
-       modal asks for the recipient address (pre-filled with the order's
-       contact email), and on confirm the email app opens with the message
-       pre-filled. Static demo — nothing is sent server-side. */
-    let currentOrder = null;
-
-    function wireOrderEmailModal() {
-      const dlg = document.getElementById('orderEmailModal');
-      if (!dlg || dlg.dataset.wired) return;
-      dlg.dataset.wired = '1';
-      const inp = document.getElementById('orderEmailInput');
-      const err = document.getElementById('orderEmailErr');
-      const clearErr = () => { inp.classList.remove('invalid'); if (err) err.hidden = true; };
-      document.getElementById('orderEmailModalClose').addEventListener('click', () => dlg.close());
-      document.getElementById('orderEmailCancel').addEventListener('click', () => dlg.close());
-      inp.addEventListener('input', clearErr);
-      inp.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); sendOrderEmail(); }
-      });
-      document.getElementById('orderEmailSend').addEventListener('click', sendOrderEmail);
+    // --- order-item helpers (shared with order.html / the account Orders tab) ---
+    window.__ORDER_PIC_SVG = '<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z"/><path d="M5 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/></svg>';
+    function _getBV(item) {
+      if (typeof item.bv === 'number') return item.bv;
+      if (item.bvString !== undefined) return item.bvString;
+      if (typeof item.price === 'number') return Math.round(item.price / 1000) * (item.qty || 1);
+      return 0;
     }
-
-    function openOrderEmailModal() {
-      const dlg = document.getElementById('orderEmailModal');
-      const inp = document.getElementById('orderEmailInput');
-      if (!dlg || !inp) return;
-      inp.value = (currentOrder && currentOrder.customer && currentOrder.customer.email) || '';
-      inp.classList.remove('invalid');
-      const err = document.getElementById('orderEmailErr');
-      if (err) err.hidden = true;
-      const idEl = document.getElementById('orderEmailModalOrderId');
-      if (idEl) idEl.textContent = (currentOrder && currentOrder.id) || '';
-      dlg.showModal();
-      inp.focus();
-      inp.select();
+    function _currencySymbol(c) {
+      const m = { NGN: 'N', AED: 'AED ', USD: '$', EUR: '€', GBP: '£', CNY: '¥', KES: 'KSh', GHS: 'GH₵' };
+      return m[c] || 'N';
     }
-
-    function sendOrderEmail() {
-      const dlg = document.getElementById('orderEmailModal');
-      const inp = document.getElementById('orderEmailInput');
-      const err = document.getElementById('orderEmailErr');
-      if (!dlg || !inp) return;
-      const val = (inp.value || '').trim();
-      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
-      inp.classList.toggle('invalid', !ok);
-      if (err) err.hidden = ok;
-      if (!ok) { inp.focus(); return; }
-      location.href = buildOrderMailto(currentOrder, val);
-      dlg.close();
-      if (window.toast) window.toast('Email app opened with the order link pre-filled', 'success');
-    }
-
-    function renderOrder() {
-      const order = getOrder();
-      currentOrder = order;
-      const isGuest = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
-      // Guest (no-account) flow: the Home / My Account breadcrumb is member
-      // navigation — hide it so the page opens straight on the title.
-      const crumbs = document.querySelector('.crumbs');
-      if (crumbs) crumbs.style.display = isGuest ? 'none' : '';
-      const metaHost = document.getElementById('orderMeta');
-      const pickupCard = document.getElementById('pickupCard');
-      const emailWrap = document.getElementById('orderEmailWrap');
-      const receiptBtn = document.getElementById('downloadReceipt');
-      // Download receipt — same shared document as order.html / the account list,
-      // and it works for guest orders too (no member data required).
-      if (receiptBtn) {
-        receiptBtn.hidden = !order;
-        receiptBtn.onclick = order ? () => {
-          try {
-            if (!window.OrderReceipt) throw new Error('Receipt module unavailable');
-            window.OrderReceipt.download(order);
-          } catch (err) {
-            console.error(err);
-            if (window.toast) window.toast(String(err.message || err), 'danger');
-          }
-        } : null;
+    function _resolveOrderItemImage(it) {
+      if (!it) return null;
+      // Orders placed before the double-prefix bug (below) was fixed have
+      // that mangled path baked into their stored it.image forever — fixing
+      // the builder doesn't repair data already written. Detect and discard
+      // it here too (two "assets/" segments is the telltale sign) so old
+      // orders self-heal instead of showing the placeholder icon forever.
+      if (it.image && !/assets\/.*assets\//i.test(it.image)) return it.image;
+      // it.img may already be a full path (some marketing pages' "Add to
+      // cart" buttons set it that way) — prepending the category folder to
+      // that mangles it into a nonexistent nested path.
+      if (it.img && /^(assets\/|https?:)/i.test(it.img)) return it.img;
+      if (it.category && it.img) return 'assets/img/products/' + it.category + '/' + it.img;
+      const pc = window.ProductCatalog;
+      // ProductCatalog.allProducts is exposed as an ARRAY (not a function) in
+      // website.js — handle both shapes so the catalog lookup actually runs.
+      let list = [];
+      if (pc) {
+        if (typeof pc.allProducts === 'function') list = pc.allProducts();
+        else if (Array.isArray(pc.allProducts)) list = pc.allProducts;
+        else if (pc.PRODUCTS) {
+          Object.keys(pc.PRODUCTS).forEach(k => {
+            const arr = pc.PRODUCTS[k];
+            if (Array.isArray(arr)) for (let j = 0; j < arr.length; j++) list.push(arr[j]);
+          });
+        }
       }
+      if (list.length) {
+        const iid = String(it.id || '').trim();
+        const iname = String(it.name || '').trim().toLowerCase();
+        const isku = String(it.sku || it.code || it.productCode || '').trim().toLowerCase();
+        const match = list.find(p => {
+          if (!p) return false;
+          if (iid && String(p.id || '').trim() === iid) return true;
+          const pn = String(p.name || '').trim().toLowerCase();
+          if (iname && (pn === iname || pn.includes(iname) || iname.includes(pn))) return true;
+          if (isku && String(p.sku || p.code || '').trim().toLowerCase() === isku) return true;
+          return false;
+        });
+        if (match) {
+          if (match.image) return match.image;
+          if (match.category && match.img) return 'assets/img/products/' + match.category + '/' + match.img;
+        }
+      }
+      if (it.pic) return it.pic;
+      if (it.img) return it.img;
+      return null;
+    }
+    function _resolveOrderItemCode(it) {
+      if (!it) return null;
+      if (it.sku || it.code || it.id) return it.sku || it.code || it.id;
+      const pc = window.ProductCatalog;
+      const iname = String(it.name || '').trim();
+      if (pc && typeof pc.allProducts === 'function' && iname) {
+        const match = pc.allProducts().find(p => p && String(p.name).trim() === iname);
+        if (match) return match.sku || match.code || match.id || null;
+      }
+      return null;
+    }
+    function fmtDateTime(ts, fb) {
+      if (!ts) return (fb != null ? fb : '—');
+      const d = new Date(ts);
+      if (isNaN(d.getTime())) return (fb != null ? fb : '—');
+      const pad = n => String(n).padStart(2, '0');
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+             ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+    // Return `fb` (friendly text) instead of a dash when value is empty.
+    function orFallback(v, fb) {
+      if (v === null || v === undefined || v === '' || v === '—') return fb;
+      return v;
+    }
+
+    function render() {
+      const host = document.getElementById('orderHost');
+      const order = getOrder();
       if (!order) {
-        if (metaHost) metaHost.innerHTML = '<p>No order found.</p>';
-        if (emailWrap) emailWrap.style.display = 'none';
+        host.innerHTML = `
+          <div class="ek-card checkout-card">
+            <h2>Order not found</h2>
+            <p>
+              We couldn't find this order on this device. Orders are stored locally in your browser,
+              so a link opened on a different phone or computer won't show the details.
+              Please open the link on the device where you placed the order, or contact
+              <a href="mailto:hello@elkenafrica.com">hello@elkenafrica.com</a> with your order ID.
+            </p>
+            <a href="index.html" class="ek-btn ek-btn--primary ek-btn--sm">Back to home</a>
+          </div>`;
         return;
       }
 
-      const item = (order.items && order.items[0]) || {};
-      const qty = item.qty || 1;
+      const items = order.items || [];
       const isPickup = order.delivery && order.delivery.method === 'pickup';
-      const methodLabel = isPickup ? window.T.tr('account.orders_method_pickup') : window.T.tr('account.orders_method_delivery');
-      const payLabels = {
-        card: 'Debit Card',
-        ussd: 'USSD',
-        bank: 'Bank Transfer',
-        paybank: 'Pay with Bank',
-        visaqr: 'Pay with Visa QR',
-        balance: 'Account Balance',
-        cod: 'Cash on delivery',
+      const link = orderDetailLink(order.id);
+      const statusLabel = (order.status || 'pending').toUpperCase();
+
+      // ---- Member / order meta (mirrors the member data shown on the Orders list) ----
+      const authUser = (window.Auth && window.Auth.user) || {};
+      const authMemberId = authUser.memberId || null;
+      const authName = authUser.name || authUser.fullName || null;
+
+      const memberId = orFallback(order.memberId || authMemberId, 'Not registered');
+      const memberName = orFallback(order.memberName || (order.customer && order.customer.name) || authName, 'Guest');
+      const recipient = orFallback(order.customer && order.customer.name, memberName);
+      const phone = orFallback(order.customer && order.customer.phone, 'No phone on file');
+      const pickupLoc = (order.delivery && order.delivery.pickupLoc) || 'lagos';
+      const pickup = PICKUP_LOCATIONS[pickupLoc] || PICKUP_LOCATIONS.lagos;
+      const addressParts = [order.customer && order.customer.address, order.customer && order.customer.city, order.customer && order.customer.state].filter(Boolean);
+      const addressStr = isPickup
+        ? (pickup.name + ' · ' + pickup.addr)
+        : (addressParts.join(', ') || 'No address provided');
+      const country = order.country || 'Nigeria';
+      const currency = order.currency || 'NGN';
+      const payMethod = order.paymentLabel || PAY_LABELS[order.payment] || order.payment || 'Not specified';
+      const placedStr = fmtDateTime(order.date || order.createdAt || order.placeTime || null, 'Unknown date');
+      const paidStr = fmtDateTime(order.paidAt || null, 'Not yet paid');
+      const isMemberOrder = !!(order.operatorId && order.memberId && order.operatorId !== order.memberId);
+      const orderTypeLabel = isMemberOrder ? 'Member order' : 'My order';
+      const payStatusLabel = order.payStatus || statusLabel;
+
+      // BV only for signed-in members; never for guest (visitor) orders.
+      // A guest order is also detectable from the order itself: it is
+      // attributed to the market house account (NG/AE000000001).
+      const isGuestViewer = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
+      const isGuestOrder = isGuestViewer || /000000001$/.test(String(order.memberId || ''));
+      const showBV = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn()) && !isGuestOrder;
+
+      const TAX_RATE = (typeof order.taxRate === 'number') ? order.taxRate
+        : (typeof (items[0] && items[0].taxRate) === 'number' ? items[0].taxRate : 0.075);
+      const sym = _currencySymbol(currency);
+      const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+      // Items read as product rows (image · name · qty × unit price · line total).
+      // The per-line tax / BV columns move into one summary block underneath, so
+      // the page no longer looks like a spreadsheet.
+      const itemRows = (items.length ? items : [{}]).map((it) => {
+        const qty = Number(it.qty) || 1;
+        const price = Number(it.price) || 0;
+        const lineTotal = qty * price;
+        const code = _resolveOrderItemCode(it) || '';
+        const img = _resolveOrderItemImage(it);
+        const picInner = img
+          ? `<img src="${img}" alt="" loading="lazy" onerror="this.outerHTML=window.__ORDER_PIC_SVG">`
+          : window.__ORDER_PIC_SVG;
+        return `
+          <li class="odet-item">
+            <span class="odet-item-img">${picInner}</span>
+            <span class="odet-item-body">
+              <span class="odet-item-name">${esc(it.name || 'Unnamed product')}</span>
+              <span class="odet-item-meta">${code ? esc(code) + ' · ' : ''}${sym}${fmtNum(price)} each</span>
+            </span>
+            <span class="odet-item-qty">×${qty}</span>
+            <span class="odet-item-line">${sym}${fmtNum(lineTotal)}</span>
+          </li>`;
+      }).join('');
+
+      const subtotal = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number(it.price) || 0), 0);
+      const sumBV = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number((typeof it.bv === 'number' ? it.bv : _getBV(it))) || 0), 0);
+      const sumTax = subtotal * TAX_RATE;
+      const grand = subtotal + sumTax;
+      const totalQty = items.reduce((s, it) => s + (Number(it.qty) || 1), 0);
+
+      const taxPct = Math.round(TAX_RATE * 1000) / 10;
+
+      const totalsHtml = `
+        <div class="odet-money">
+          <div class="odet-money-row"><span>Subtotal</span><b>${sym}${fmtNum(subtotal)}</b></div>
+          <div class="odet-money-row"><span>Tax (${taxPct}%)</span><b>${sym}${fmtNum(sumTax)}</b></div>
+          ${showBV ? `<div class="odet-money-row"><span>BV earned</span><b class="odet-bv">+${order.bv != null ? order.bv : sumBV} BV</b></div>` : ''}
+          <div class="odet-money-total"><span>Total</span><b>${sym}${fmtNum(grand)}</b></div>
+        </div>`;
+
+      // ---- Status badge tone (paid / pending / failed / neutral) ----
+      // Order matters: "unpaid" contains the substring "paid", so the
+      // paid/success check must run after the pending/unpaid check or every
+      // unpaid order gets misclassified (and colored) as paid.
+      const badgeClass = (v) => {
+        const s = String(v || '').toLowerCase();
+        if (/pending|unpaid|process|await/.test(s)) return 'ek-chip--warning';
+        if (/fail|cancel|refund|reject/.test(s)) return 'ek-chip--error';
+        if (/paid|complete|success|deliver/.test(s)) return 'ek-chip--success';
+        return '';
       };
-      const payLabel = payLabels[order.payment] || order.payment || '—';
+      const noteText = (order.customer && order.customer.note) ? order.customer.note : '';
+      const email = (order.customer && order.customer.email) || '';
 
-      // Show BV only for members. Guest (no-account) orders credit BV to the
-      // referrer, so the guest never "earns" BV — hide it for guest flow.
-      const showBV = !isGuest;
-      const rows = `
-        <div class="row"><span>Order</span><b>${order.id}</b></div>
-        <div class="row"><span>Product</span><b>${item.name || '—'} × ${qty}</b></div>
-        <div class="row"><span>Delivery</span><b>${methodLabel}</b></div>
-        <div class="row"><span>Payment</span><b>${payLabel}</b></div>
-        ${order.bv && showBV ? `<div class="row"><span>BV earned</span><b>+${order.bv} BV</b></div>` : ''}
-        ${order.referrerId && !showBV ? `<div class="row"><span>BV credited to</span><b>${order.referrerId}</b></div>` : ''}
-        <div class="row"><span>Total</span><b>${_currencySymbol(order.currency || 'NGN')}${(order.total || 0).toLocaleString()}</b></div>
-        ${order.customer ? `<div class="row"><span>Recipient</span><b>${order.customer.name || ''} · ${order.customer.phone || ''}</b></div>` : ''}
-      `;
-      if (metaHost) metaHost.innerHTML = rows;
-
-      // Pickup card
-      if (pickupCard && isPickup) {
-        const loc = PICKUP_LOCATIONS[order.delivery.pickupLoc] || PICKUP_LOCATIONS.lagos;
-        pickupCard.style.display = 'block';
-        const nameEl = document.getElementById('pickupName');
-        const addrEl = document.getElementById('pickupAddr');
-        const hoursEl = document.getElementById('pickupHours');
-        const tagEl = document.getElementById('pickupTag');
-        if (nameEl) nameEl.textContent = window.T.tr(loc.nameKey);
-        if (addrEl) addrEl.textContent = window.T.tr(loc.addrKey);
-        if (hoursEl) hoursEl.textContent = window.T.tr(loc.hoursKey);
-        if (tagEl) { tagEl.style.display = loc.tag ? '' : 'none'; tagEl.textContent = loc.tag; }
-      } else if (pickupCard) {
-        pickupCard.style.display = 'none';
-      }
-
-      // Order detail link + email-to-self UI — available in BOTH flows. Guest
-      // (no-account) checkout collects a contact email precisely so the order
-      // link can be mailed back, so hiding the card there left guests with no
-      // way to keep a copy of the link (order.html shows it for guests too).
-      if (emailWrap) {
-        const link = orderDetailLink(order.id);
-        emailWrap.style.display = 'block';
-        emailWrap.innerHTML = `
-          <div class="order-link-box">
-            <label>Order details link</label>
-            <div class="order-link-row">
-              <input class="ek-input" id="orderLinkInput" readonly value="${link.replace(/"/g, '&quot;')}" />
-              <button type="button" class="ek-btn ek-btn--secondary ek-btn--sm" id="copyOrderLink">Copy</button>
+      host.innerHTML = `
+        <div class="odet">
+          <!-- ---------- Hero: reference + state + amount ---------- -->
+          <header class="ek-card odet-hero">
+            <div class="odet-hero-main">
+              <span class="ek-chip odet-badge ${badgeClass(order.status)}">${esc(statusLabel)}</span>
+              <h2 class="odet-ref">Order ${esc(order.id)}</h2>
+              <p class="odet-hero-sub">
+                Placed ${esc(placedStr)} · ${totalQty} item${totalQty === 1 ? '' : 's'} · ${esc(orderTypeLabel)}
+              </p>
             </div>
-            <button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="emailOrderLink">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l9 6 9-6M3 7v10h18V7H3z"/></svg>
-              <span>Send order link by email</span>
-            </button>
-            <p>Enter an email address and your email app opens with the order link pre-filled. (Static demo: no server-side email is sent.)</p>
+            <div class="odet-hero-total">
+              <span class="odet-k">Order total</span>
+              <b class="odet-amount">${sym}${fmtNum(grand)}</b>
+              <span class="ek-chip odet-badge ${badgeClass(payStatusLabel)}">${esc(payStatusLabel)}</span>
+            </div>
+          </header>
+
+          <div class="odet-grid">
+            <div class="odet-main">
+              <!-- ---------- Items + money ---------- -->
+              <section class="ek-card odet-card">
+                <div class="odet-card-head">
+                  <h3 class="odet-card-title">Items</h3>
+                  <span class="odet-pill">${items.length}</span>
+                </div>
+                <ul class="odet-items">${itemRows}</ul>
+                ${totalsHtml}
+              </section>
+
+              <!-- ---------- Delivery · Payment · Member ----------
+                   Kept in the left (wide) column, under the items, so the order
+                   facts read as one block and the narrow right column is left for
+                   the keep-a-copy actions. -->
+              <div class="odet-info">
+                <!-- ---------- Delivery ---------- -->
+                <section class="ek-card odet-card">
+                  <h3 class="odet-card-title">${isPickup ? 'Pickup' : 'Delivery'}</h3>
+                  <p class="odet-person">${esc(recipient)}</p>
+                  <p class="odet-lines">${esc(phone)}<br>${esc(addressStr)}<br>${esc(country)}</p>
+                  ${noteText ? `<p class="odet-note">${esc(noteText)}</p>` : ''}
+                </section>
+
+                <!-- ---------- Payment ---------- -->
+                <section class="ek-card odet-card">
+                  <h3 class="odet-card-title">Payment</h3>
+                  <div class="odet-pay-row">
+                    <b class="odet-pay-name">${esc(payMethod)}</b>
+                    <span class="ek-chip odet-badge ${badgeClass(payStatusLabel)}">${esc(payStatusLabel)}</span>
+                  </div>
+                  ${order.paymentReference
+                    ? `<p class="odet-ref-line">Reference <b class="odet-mono">${esc(order.paymentReference)}</b></p>`
+                    : ''}
+                </section>
+
+                <!-- ---------- Member (hidden entirely for guest / no-account orders) ---------- -->
+                ${isGuestOrder ? '' : `
+                <section class="ek-card odet-card">
+                  <h3 class="odet-card-title">Member</h3>
+                  <dl class="odet-rows">
+                    <div class="odet-row"><dt>Member ID</dt><dd>${esc(memberId)}</dd></div>
+                    <div class="odet-row"><dt>Name</dt><dd>${esc(memberName)}</dd></div>
+                    <div class="odet-row"><dt>Placed</dt><dd>${esc(placedStr)}</dd></div>
+                    <div class="odet-row"><dt>Paid</dt><dd>${esc(paidStr)}</dd></div>
+                    <div class="odet-row"><dt>Currency</dt><dd>${esc(currency)}</dd></div>
+                  </dl>
+                </section>`}
+              </div>
+            </div>
+
+            <aside class="odet-side">
+              <!-- ---------- Receipt (works signed in AND as a guest) ---------- -->
+              <section class="ek-card odet-card">
+                <h3 class="odet-card-title">Receipt</h3>
+                <p class="odet-lines">Download a copy of this order receipt to keep for warranty or bonus enquiries.</p>
+                <button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="downloadReceipt">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                    <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/>
+                  </svg>
+                  <span>Download receipt</span>
+                </button>
+              </section>
+
+              <!-- ---------- Shareable link ---------- -->
+              <section class="ek-card odet-card">
+                <h3 class="odet-card-title">Order details link</h3>
+                <div class="order-link-box">
+                  <div class="order-link-row">
+                    <input class="ek-input" id="orderLinkInput" readonly value="${link.replace(/"/g, '&quot;')}" />
+                    <button type="button" class="ek-btn ek-btn--secondary ek-btn--sm" id="copyOrderLink">Copy</button>
+                  </div>
+                  <button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="emailOrderLink">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l9 6 9-6M3 7v10h18V7H3z"/></svg>
+                    <span>Send order link by email</span>
+                  </button>
+                  <p>
+                    This link is stored in your browser, so it only opens on this device.
+                    Send it to your email to keep a copy — your email app opens with the message pre-filled. (Static demo: no server-side email is sent.)
+                  </p>
+                </div>
+                <a href="index.html" class="odet-back">← Back to home</a>
+              </section>
+            </aside>
           </div>
-        `;
-        const copyBtn = document.getElementById('copyOrderLink');
-        if (copyBtn) copyBtn.addEventListener('click', () => {
-          const inp = document.getElementById('orderLinkInput');
-          inp.select();
-          try { navigator.clipboard.writeText(inp.value); } catch (e) { document.execCommand('copy'); }
-          copyBtn.textContent = 'Copied';
-          setTimeout(() => copyBtn.textContent = 'Copy', 1500);
-        });
-        const emailBtn = document.getElementById('emailOrderLink');
-        if (emailBtn) emailBtn.addEventListener('click', () => openOrderEmailModal());
-      }
+        </div>
+      `;
+
+      const copyBtn = document.getElementById('copyOrderLink');
+      if (copyBtn) copyBtn.addEventListener('click', () => {
+        const inp = document.getElementById('orderLinkInput');
+        inp.select();
+        try { navigator.clipboard.writeText(inp.value); } catch (e) { document.execCommand('copy'); }
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1500);
+      });
+      const emailBtn = document.getElementById('emailOrderLink');
+      if (emailBtn) emailBtn.addEventListener('click', () => {
+        // One click, no modal: the link goes straight to the order's contact
+        // email. Static demo — the user's own mail client does the sending.
+        if (!email) {
+          if (window.toast) window.toast('No email address on file for this order', 'danger');
+          return;
+        }
+        location.href = buildOrderMailto(order, email);
+        if (window.toast) window.toast('Order link sent to ' + email, 'success');
+      });
+
+      // Download receipt — delegated to the shared module so the signed-in and
+      // guest (share-link) cases produce the identical document.
+      const receiptBtn = document.getElementById('downloadReceipt');
+      if (receiptBtn) receiptBtn.addEventListener('click', () => {
+        try {
+          if (!window.OrderReceipt) throw new Error('Receipt module unavailable');
+          window.OrderReceipt.download(order, { showBV });
+        } catch (err) {
+          console.error(err);
+          if (window.toast) window.toast(String(err.message || err), 'danger');
+        }
+      });
     }
 
-    document.addEventListener('DOMContentLoaded', () => { wireOrderEmailModal(); renderOrder(); });
-    window.addEventListener('al:langchange', renderOrder);
+    document.addEventListener('DOMContentLoaded', render);
   </script>
 </body>
 </html>
