@@ -206,9 +206,9 @@
     </div>
   </dialog>
 
-  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-  <script src="assets/js/app.js?v=20261016b"></script>
-  <script src="assets/js/website.js?v=20260909c-2"></script>
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+  <script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
   <script>
     /* ---------- i18n apply ---------- */
     function applyI18n() {
@@ -229,8 +229,8 @@
       if (err) err.textContent = msg || '';
       if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
     }
-    // Member ID must be exactly "NG" + 9 digits, e.g. NG123456789
-    function isMemberId(v) { return /^NG\d{9}$/.test(v.trim().toUpperCase()); }
+    // Member ID: NG/AE + 8 digits (e.g. NG12345678), or house account NG000000001 / AE000000001
+    function isMemberId(v) { return /^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/.test(v.trim().toUpperCase()); }
 
     /* ---------- Loading button ---------- */
     function startLoading(btn, loadingLabel) {
@@ -292,7 +292,7 @@
 
     /* ---------- Demo account for deterministic previews ---------- */
     const DEMO_ACCOUNT = {
-      memberId: 'NG092463750',
+      memberId: 'NG09246375',
       firstName: 'Adaeze',
       name: 'Amara Okafor',
       email: 'adaeze@elkenafrica.com',

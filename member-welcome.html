@@ -55,13 +55,13 @@
               <div class="field-row ek-field">
                 <label><span data-i18n="signup.referrer_id">Referrer ID</span><span class="req-star">*</span></label>
                 <input class="ek-input" type="text" name="referrerId" id="regReferrerId"
-                       placeholder="e.g. NG123456789" autocomplete="off" required />
+                       placeholder="e.g. NG12345678" autocomplete="off" required />
                 <small class="field-hint" id="regReferrerHint" hidden></small>
               </div>
               <div class="field-row ek-field">
                 <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
                 <input class="ek-input" type="text" name="actualReferrerId" id="regActualReferrerId"
-                       placeholder="e.g. NG123456789" autocomplete="off" />
+                       placeholder="e.g. NG12345678" autocomplete="off" />
               </div>
             </div>
           </div>
@@ -283,9 +283,9 @@
   <!-- Site footer (rendered by app.js, same as the marketing site) -->
   <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js?v=20261021a"></script>
-<script src="assets/js/app.js?v=20261016b"></script>
-  <script src="assets/js/website.js?v=20260909c"></script>
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+<script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
   <script src="assets/js/qr.js?v=20260915a"></script>
   <script src="assets/js/payment-methods.js?v=20261021c"></script>
   <script>
@@ -367,7 +367,7 @@
         memberIdInput.value = pc0.genMemberId(accountCountry);
       } else if (memberIdInput) {
         memberIdInput.value = (accountCfg ? accountCfg.memberIdPrefix : 'NG') +
-          Math.floor(Math.random() * 900000000 + 100000000).toString();
+          Math.floor(Math.random() * 90000000 + 10000000).toString();
       }
 
       /* ---------- Demo wallet: welcome Ecoin credit ----------
@@ -397,7 +397,7 @@
       let actualRefId = currentMemberId;
       try {
         const refParam = new URLSearchParams(location.search).get('ref');
-        if (refParam && /^(NG|AE)\d{9}$/i.test(refParam.trim())) {
+        if (refParam && /^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/i.test(refParam.trim())) {
           refId = refParam.trim().toUpperCase();
           actualRefId = refId;
         }
@@ -448,11 +448,11 @@
           return false;
         }
         // Format-first rule (same as Member Repeat Purchase / Upgrade):
-        // any well-formed member ID (NG/AE + 9 digits) resolves and opens
+        // any well-formed member ID (NG/AE + 8 digits; house accounts NG000000001 / AE000000001) resolves and opens
         // the gated modules — the ID does not have to exist in the
         // directory. When it does exist we use its real name; otherwise
         // we fall back to a synthetic "Member + tail" record.
-        if (!/^(NG|AE)\d{9}$/.test(raw)) {
+        if (!/^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/.test(raw)) {
           referrerMember = null;
           applyReferrerGate();
           referrerInput.setAttribute('aria-invalid', 'true');

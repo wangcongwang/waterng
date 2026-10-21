@@ -51,10 +51,10 @@
         <!-- Step 1: Member info -->
         <div class="ek-card sec-block">
           <div class="sec-title">Member information</div>
-          <p class="sec-hint">Enter the repeat-purchase member's ID (NG + 9 digits) to look up their profile. The product list below appears once the member is found.</p>
+          <p class="sec-hint">Enter the repeat-purchase member's ID (NG/AE + 8 digits) to look up their profile. The product list below appears once the member is found.</p>
 
           <div class="member-search">
-            <input class="ek-input" type="text" id="memberIdInput" placeholder="NG000000000" maxlength="11" autocomplete="off" />
+            <input class="ek-input" type="text" id="memberIdInput" placeholder="NG00000000" maxlength="11" autocomplete="off" />
             <button type="button" class="ek-btn ek-btn--primary" id="memberSearchBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M15.9 15.9 20.5 20.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Search</button>
           </div>
 
@@ -81,9 +81,9 @@
   <!-- Site footer (rendered by app.js, same as the marketing site) -->
   <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js?v=20260909c"></script>
-  <script src="assets/js/app.js?v=20261016b"></script>
-  <script src="assets/js/website.js?v=20261012b"></script>
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+  <script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
   <script src="assets/js/qr.js?v=20260915a"></script>
   <script src="assets/js/payment-methods.js?v=20261021c"></script>
   <script src="assets/js/cart-fab.js?v=20261012c" defer></script>
@@ -108,35 +108,35 @@
       // Tiny directory of known member IDs (for demo). In a real deployment
       // this would come from the network / API.
       const DEMO_DIRECTORY = {
-        'NG092463750': {
+        'NG09246375': {
           name: 'Amara Okafor', phone: '08031234567', level: 'Silver',
           state: 'Lagos', city: 'Lekki', district: 'Eti-Osa', address: '14 Admiralty Way, Lekki Phase 1',
-          reportingCenterId: 'NG660516530', joinDate: '2023-06-18',
+          reportingCenterId: 'NG66051653', joinDate: '2023-06-18',
         },
-        'NG233748760': {
+        'NG23374876': {
           name: 'Fauzia Yunus Shehu', phone: '07028912345', level: 'Gold',
           state: 'FCT Abuja', city: 'Abuja', district: 'Garki', address: '8 Julius Nyerere Crescent, Garki II',
-          reportingCenterId: 'NG660516530', joinDate: '2022-11-02',
+          reportingCenterId: 'NG66051653', joinDate: '2022-11-02',
         },
-        'NG271877100': {
+        'NG27187710': {
           name: 'S2 (Referrer)', phone: '08155550199', level: 'Platinum',
           state: 'Rivers', city: 'Port Harcourt', district: 'Obio-Akpor', address: '21 Trans-Amadi Industrial Layout',
-          reportingCenterId: 'NG660516530', joinDate: '2021-04-15',
+          reportingCenterId: 'NG66051653', joinDate: '2021-04-15',
         },
-        'NG660516530': {
+        'NG66051653': {
           name: 'Reporting Center', phone: '09080001122', level: 'Diamond',
           state: 'Oyo', city: 'Ibadan', district: 'Ibadan North', address: '3 Ring Road, Dugbe',
-          reportingCenterId: 'NG660516530', joinDate: '2020-01-10',
+          reportingCenterId: 'NG66051653', joinDate: '2020-01-10',
         },
-        'NG486553230': {
+        'NG48655323': {
           name: 'Default Order Demo', phone: '08019998877', level: 'Silver',
           state: 'Kano', city: 'Kano', district: 'Fagge', address: '27 Bello Road',
-          reportingCenterId: 'NG660516530', joinDate: '2023-09-30',
+          reportingCenterId: 'NG66051653', joinDate: '2023-09-30',
         },
         'NG000000001': {
           name: 'Elken HQ', phone: '07000000001', level: 'Corporate',
           state: 'Lagos', city: 'Ikeja', district: 'Ikeja', address: '1 Elken Way, Alausa',
-          reportingCenterId: 'NG660516530', joinDate: '2019-08-01',
+          reportingCenterId: 'NG66051653', joinDate: '2019-08-01',
         },
       };
 
@@ -223,8 +223,8 @@
         const btn = document.getElementById('memberSearchBtn');
         const doSearch = () => {
           const raw = (input.value || '').trim().toUpperCase();
-          if (!/^NG\d{9}$/.test(raw)) {
-            showMemberResult(null, 'Invalid member ID. Format must be NG + 9 digits (e.g. NG233748760).');
+          if (!/^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/.test(raw)) {
+            showMemberResult(null, 'Invalid member ID. Format must be NG/AE + 8 digits (e.g. NG23374876).');
             return;
           }
           const m = lookupMember(raw);

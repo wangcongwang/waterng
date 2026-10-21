@@ -36,10 +36,10 @@
 
   <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-<script src="assets/js/app.js?v=20261016b"></script>
-  <script src="assets/js/website.js?v=20260909c-2"></script>
-  <script src="assets/js/order-receipt.js?v=20260915a"></script>
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+<script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
+  <script src="assets/js/order-receipt.js?v=20261021id"></script>
   <script>
     const PICKUP_LOCATIONS = {
       lagos: { name: 'Lagos HQ', addr: '12B Admiralty Way, Lekki Phase 1', hours: 'Mon–Sat · 8:00 – 18:00' },
@@ -227,7 +227,7 @@
       // A guest order is also detectable from the order itself: it is
       // attributed to the market house account (NG/AE000000001).
       const isGuestViewer = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
-      const isGuestOrder = isGuestViewer || /000000001$/.test(String(order.memberId || ''));
+      const isGuestOrder = isGuestViewer || /^(NG|AE)000000001$/.test(String(order.memberId || ''));
       const showBV = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn()) && !isGuestOrder;
 
       const TAX_RATE = (typeof order.taxRate === 'number') ? order.taxRate
