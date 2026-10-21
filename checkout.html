@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260919d">
-  <link rel="stylesheet" href="assets/css/checkout.css?v=20261021b">
+  <link rel="stylesheet" href="assets/css/checkout.css?v=20261021c">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
@@ -45,7 +45,57 @@
             <input class="ek-input" id="shopRcId" required placeholder="e.g. NG660516530" aria-label="Reporting Center ID" />
           </div>
 
-          <!-- Step 1: Delivery method + address details -->
+          <!-- Member repeat-purchase info (member mode only, revealed by JS):
+               repeat member ID (+ resolved name, read-only) and reporting
+               center. The shipping address is typed into #rpShipCard below. Sits at the top (like the shopper's Reporting Center
+               card); the member's saved addresses live in the shared
+               "Address details" card below Delivery method, exactly like the
+               shopper flow. -->
+          <div class="ek-card checkout-card" id="memberInfoCard" hidden>
+            <h2>Member information</h2>
+            <div class="field">
+              <label for="rpMemberId">Repeat-purchase member ID</label>
+              <input class="ek-input is-locked" id="rpMemberId" readonly tabindex="-1" aria-readonly="true" />
+              <span id="rpMemberName" style="display:block;margin-top:6px;color:#5a5f79;font-size:13px;"></span>
+            </div>
+            <div class="field">
+              <label for="rpRcId">Reporting Center ID <span class="req">*</span></label>
+              <input class="ek-input" id="rpRcId" required />
+            </div>
+          </div>
+
+          <!-- Member mode only: a one-off (temporary) shipping address typed
+               in for this order — no delivery-method choice, no saved-address
+               list, nothing written back to any address book. -->
+          <div class="ek-card checkout-card" id="rpShipCard" hidden>
+            <h2>Shipping address</h2>
+            <div class="field">
+              <label for="rpRecipient">Recipient</label>
+              <input class="ek-input" id="rpRecipient" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="rpPhone">Phone</label>
+              <div class="phone-field" id="rpPhoneField"></div>
+            </div>
+            <div class="field">
+              <label for="rpState">Region / State</label>
+              <select class="ek-select" id="rpState"></select>
+            </div>
+            <div class="field">
+              <label for="rpDistrict">Area / District</label>
+              <input class="ek-input" id="rpDistrict" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="rpCity">City</label>
+              <input class="ek-input" id="rpCity" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="rpAddr">Detailed address</label>
+              <input class="ek-input" id="rpAddr" autocomplete="off" />
+            </div>
+          </div>
+
+          <!-- Step 1: Delivery method + address details (shopper flow only) -->
           <div class="ek-card checkout-card" id="delivCard">
             <h2 data-i18n="checkout.addr_method">Delivery method</h2>
             <div class="deliv-method-grid" id="delivMethodGrid">
@@ -129,49 +179,6 @@
                   <input class="ek-input" id="district" placeholder="Area or district" />
                 </div>
               </div>
-            </div>
-          </div>
-
-          <!-- Member repeat-purchase info (member mode only, revealed by JS):
-               repeat member ID (+ resolved name), reporting center, recipient,
-               phone, and the delivery choice — express (the member's saved
-               addresses) or self-pickup (the company's preset pickup points).
-               Both lists are read-only: the first entry is selected by default
-               and the details are managed on the member's profile / by the
-               company, never typed into this form. -->
-          <div class="ek-card checkout-card" id="memberInfoCard" hidden>
-            <h2>Member information</h2>
-            <div class="field">
-              <label for="rpMemberId">Repeat-purchase member ID</label>
-              <input class="ek-input" id="rpMemberId" readonly />
-              <span id="rpMemberName" style="display:block;margin-top:6px;color:#5a5f79;font-size:13px;"></span>
-            </div>
-            <div class="field">
-              <label for="rpRcId">Reporting Center ID <span class="req">*</span></label>
-              <input class="ek-input" id="rpRcId" required />
-            </div>
-            <div class="row">
-              <div class="field">
-                <label for="rpRecipient">Recipient</label>
-                <input class="ek-input" id="rpRecipient" />
-              </div>
-              <div class="field">
-                <label for="rpPhone">Phone</label>
-                <div class="phone-field" id="rpPhoneField"></div>
-              </div>
-            </div>
-            <!-- Express delivery: the member's saved addresses (first = default).
-                 Details are read-only — managed on the member's profile. -->
-            <div class="field" id="rpAddrListWrap">
-              <label>Saved addresses</label>
-              <div class="pickup-list" id="rpAddrList"></div>
-              <p class="ek-field__hint">Choose one of the addresses saved on the member's profile. Address details can't be edited here.</p>
-            </div>
-            <!-- Self-pickup: the company's preset pickup points (first = default). -->
-            <div class="field" id="rpPickupListWrap" hidden>
-              <label>Pickup points</label>
-              <div class="pickup-list" id="rpPickupList"></div>
-              <p class="ek-field__hint">Pickup points are preset by the company and can't be edited.</p>
             </div>
           </div>
 
@@ -467,10 +474,7 @@
       pickupLoc: 'lagos',
       payMethod: null,
       savedAddressId: null,
-      // Member mode: the read-only preset lists (see setupMemberInfo).
-      rpAddresses: [],
-      rpAddrId: null,
-      rpPickupId: 'lagos',
+      // Member mode: the read-only preset address list (see setupMemberInfo).
     };
 
     /* ---------- Shopper saved addresses & pickup points (read-only) ----------
@@ -636,25 +640,25 @@
     }
 
     function bindDelivMethod() {
-      // Door delivery ⇄ Self-pickup: the shopper address card only applies
-      // to door delivery (signed-in: preset saved-address list; guest:
-      // editable form). Self-pickup shows no address list at all. Member
-      // mode replaces the whole step-1 block with its own card instead.
+      // Door delivery ⇄ Self-pickup: the address area only applies to door
+      // delivery (shopper: preset saved-address list / guest editable form;
+      // member: the member's preset saved addresses). Self-pickup shows no
+      // address or pickup list at all — identical logic in both flows.
       const radios = document.querySelectorAll('input[name="delivMethod"]');
       const addrCard = document.getElementById('addrCard');
-      const rpAddrWrap = document.getElementById('rpAddrListWrap');
-      const rpPickupWrap = document.getElementById('rpPickupListWrap');
+      const delivCard = document.getElementById('delivCard');
       const shopAddrWrap = document.getElementById('shopAddrListWrap');
       const shopEmptyWrap = document.getElementById('shopAddrEmptyWrap');
       const shopForm = document.getElementById('shopAddrForm');
       const shopRcCard = document.getElementById('shopRcCard');
       const sync = () => {
+        // Member mode has no delivery-method choice and no saved-address card:
+        // it ships to the temporary address typed into #rpShipCard.
+        if (delivCard) delivCard.hidden = !!state.memberMode;
         if (addrCard) addrCard.hidden = state.memberMode || state.delivMethod !== 'delivery';
         // Member mode swaps the editable address form for the member's
-        // read-only preset lists: saved addresses for express delivery,
-        // preset pickup points for self-pickup.
-        if (rpAddrWrap) rpAddrWrap.hidden = !state.memberMode || state.delivMethod !== 'delivery';
-        if (rpPickupWrap) rpPickupWrap.hidden = !state.memberMode || state.delivMethod !== 'pickup';
+        // read-only preset saved addresses (express delivery only) —
+        // self-pickup shows nothing, exactly like the shopper flow.
         // Shopper mode: preset saved-address list when signed in (read-only),
         // editable form for guests. The Reporting Center ID is its own top
         // card and shows for every shopper order (member mode has its own
@@ -808,11 +812,16 @@
       }
       let ok;
       if (state.memberMode) {
-        // Member repeat purchase gates on the reporting center ID only — the
-        // other member fields are optional (prefilled where known).
+        // Member repeat purchase: reporting center ID + the temporary
+        // shipping address (district optional).
         const rc = document.getElementById('rpRcId');
+        const v = id => ((document.getElementById(id) || {}).value || '').trim();
+        const rpPhoneEl = document.querySelector('#rpPhoneField .phone-number');
+        const shipOk = !!v('rpRecipient') && !!(rpPhoneEl && rpPhoneEl.value.trim())
+          && !!v('rpState') && !!v('rpCity') && !!v('rpAddr');
         ok = !!methodOk
           && !!(rc && rc.value.trim())
+          && shipOk
           && memberFlowGate();
       } else {
         // Shopper flow: the Reporting Center ID is always required. Signed-in
@@ -876,18 +885,19 @@
         // Member repeat purchase ships to one of the member's preset saved
         // addresses (or a preset pickup point) — both read-only here. The
         // signed-in shopper flow likewise picks a preset saved address.
-        const selAddr = state.memberMode ? getSelectedMemberAddress() : null;
+        const rpVal = id => ((document.getElementById(id) || {}).value || '').trim();
         const shopAddr = (!state.memberMode && state.shopListMode)
           ? (state.shopAddresses || []).find(a => a.id === state.shopAddrId) || null : null;
         const customer = state.memberMode ? {
-          name: document.getElementById('rpRecipient').value.trim() || (selAddr && selAddr.recipient) || '',
+          // Temporary shipping address typed in for this order only.
+          name: rpVal('rpRecipient'),
           phone: pc.readPhone ? pc.readPhone(document.getElementById('rpPhoneField'), 'rpPhone') : '',
           contactPhone: contactPhone,
           email: document.getElementById('contactEmail').value.trim(),
-          city: (selAddr && selAddr.city) || '',
-          district: (selAddr && selAddr.district) || '',
-          address: (selAddr && selAddr.street) || '',
-          state: (selAddr && selAddr.state) || '',
+          city: rpVal('rpCity'),
+          district: rpVal('rpDistrict'),
+          address: rpVal('rpAddr'),
+          state: rpVal('rpState'),
           note: '',
         } : {
           // Signed-in shoppers: the selected preset address carries the
@@ -934,17 +944,17 @@
           memberName: customer.name || null,
           country: orderCountry,
           currency: pc0.getCountryConfig ? pc0.getCountryConfig(orderCountry).currency : 'NGN',
-          // Both modes point at the selected preset address / pickup point;
-          // guests keep their typed address (no saved-address id).
+          // Both modes point at the selected preset address; guests keep
+          // their typed address (no saved-address id).
           addressId: state.memberMode
-            ? (state.delivMethod === 'delivery' ? (state.rpAddrId || null) : null)
+            ? null // temporary address — not from any address book
             : (state.shopAddrId || state.savedAddressId || null),
           customer,
           delivery: {
             method: state.delivMethod,
-            pickupLoc: state.delivMethod === 'pickup'
-              ? ((state.memberMode ? state.rpPickupId : state.pickupLoc) || 'lagos')
-              : null,
+            // Self-pickup resolves to the default pickup point (lagos) in
+            // both flows — the checkout shows no pickup list.
+            pickupLoc: state.delivMethod === 'pickup' ? (state.pickupLoc || 'lagos') : null,
           },
           payment: state.payMethod,
           paymentLabel: (window.PayMethods && window.PayMethods.label(state.payMethod)) || state.payMethod || null,
@@ -1237,120 +1247,18 @@
       return true;
     }
 
-    /* ---------- Member preset addresses & pickup points ----------
-       Both lists are "already set up" data — the member's saved addresses
-       (express delivery) and the company's pickup points (self-pickup).
-       The first entry is selected by default and the details are read-only
-       here: they are managed on the member's profile / by the company,
-       never typed into the checkout form. Pickup ids (lagos/abuja/ph) match
-       the shared PICKUP_LOCATIONS map used by shipping.html / order-receipt.js
-       so the placed order resolves to the right point on the receipt. */
-    const PICKUP_POINTS = [
-      { id: 'lagos', name: 'Lagos HQ', addr: '12B Admiralty Way, Lekki Phase 1', hours: 'Mon–Sat · 8:00 – 18:00' },
-      { id: 'abuja', name: 'Abuja branch', addr: 'Plot 24, Wuse Zone 5', hours: 'Mon–Fri · 9:00 – 17:00' },
-      { id: 'ph', name: 'Port Harcourt branch', addr: '5 Aba Road, GRA Phase 2', hours: 'Mon–Fri · 9:00 – 17:00' },
-    ];
-
-    // The member's saved addresses: the profile address first (default), plus
-    // the two alternates kept on file. In a real deployment these come from
-    // the member's address book; the profile address anchors the list.
-    function memberPresetAddresses(m) {
-      const city = m.city || 'Lagos';
-      const st = m.state || 'Lagos';
-      const district = m.district || '';
-      const recipient = m.name || '';
-      const phone = m.phone || '';
-      return [
-        { id: 'home', label: 'Home', street: m.address || '1 Elken Way, Alausa', city: city, state: st, district: district, recipient: recipient, phone: phone, isDefault: true },
-        { id: 'office', label: 'Office', street: 'Plot 12, Central Business District', city: city, state: st, district: district, recipient: recipient, phone: phone },
-        { id: 'alt', label: 'Alternate address', street: '45 Airport Road', city: city, state: st, district: district, recipient: recipient, phone: phone },
-      ];
-    }
-
-    function renderMemberAddressList(m) {
-      const host = document.getElementById('rpAddrList');
-      if (!host) return;
-      const list = memberPresetAddresses(m);
-      state.rpAddresses = list;
-      state.rpAddrId = list[0].id; // first address selected by default
-      host.innerHTML = list.map((a, i) => `
-        <label class="pickup-item">
-          <input type="radio" name="rpAddr" value="${esc(a.id)}" ${i === 0 ? 'checked' : ''} />
-          <span class="pickup-radio" aria-hidden="true"></span>
-          <div class="pickup-body">
-            <div class="pickup-head">
-              <div class="pickup-name">${esc(a.label)}</div>
-              ${a.isDefault ? '<div class="pickup-tag">Default</div>' : ''}
-            </div>
-            <div class="pickup-addr">${esc(a.street)}<br>${esc([a.district, a.city, a.state].filter(Boolean).join(' · '))}</div>
-            <div class="pickup-hours"><span>Recipient</span> ${esc(a.recipient)}${a.phone ? ' · ' + esc(a.phone) : ''}</div>
-          </div>
-          <div class="pickup-check" aria-hidden="true">Selected</div>
-        </label>`).join('');
-      host.querySelectorAll('input[name="rpAddr"]').forEach(r => {
-        r.addEventListener('change', () => {
-          state.rpAddrId = r.value;
-          syncMemberContactFromAddress();
-          updatePayBtn();
-        });
-      });
-    }
-
-    function renderMemberPickupList() {
-      const host = document.getElementById('rpPickupList');
-      if (!host) return;
-      state.rpPickupId = PICKUP_POINTS[0].id; // first pickup point selected by default
-      host.innerHTML = PICKUP_POINTS.map((p, i) => `
-        <label class="pickup-item">
-          <input type="radio" name="rpPickup" value="${esc(p.id)}" ${i === 0 ? 'checked' : ''} />
-          <span class="pickup-radio" aria-hidden="true"></span>
-          <div class="pickup-body">
-            <div class="pickup-head">
-              <div class="pickup-name">${esc(p.name)}</div>
-            </div>
-            <div class="pickup-addr">${esc(p.addr)}</div>
-            <div class="pickup-hours"><span>Hours</span> ${esc(p.hours)}</div>
-          </div>
-          <div class="pickup-check" aria-hidden="true">Selected</div>
-        </label>`).join('');
-      host.querySelectorAll('input[name="rpPickup"]').forEach(r => {
-        r.addEventListener('change', () => {
-          state.rpPickupId = r.value;
-          updatePayBtn();
-        });
-      });
-    }
-
-    function getSelectedMemberAddress() {
-      const list = state.rpAddresses || [];
-      return list.find(x => x.id === state.rpAddrId) || list[0] || null;
-    }
-
-    // Picking a saved address carries its own recipient + phone — keep the
-    // contact fields in sync (still editable if the operator must correct them).
-    function syncMemberContactFromAddress() {
-      const a = getSelectedMemberAddress();
-      if (!a) return;
-      const rec = document.getElementById('rpRecipient');
-      if (rec) rec.value = a.recipient || '';
-      const phoneHost = document.getElementById('rpPhoneField');
-      if (phoneHost && window.ProductCatalog && window.ProductCatalog.fillPhoneFields) {
-        window.ProductCatalog.fillPhoneFields(phoneHost, a.phone || '');
-      }
-    }
-
     /* ---------- Member repeat-purchase info card (member mode only) ----------
        Replaces the pickup + contact cards with the reference back-office
-       field set: repeat member ID (+ resolved name), reporting center,
-       recipient, phone, and the read-only preset address / pickup lists. */
+       field set: read-only repeat member ID (+ resolved name) and the
+       reporting center, plus the temporary shipping-address form. */
     function setupMemberInfo() {
       const card = document.getElementById('memberInfoCard');
-      const addr = document.getElementById('addrCard');
       const contact = document.getElementById('contactCard');
       if (card) card.hidden = false;
-      // Member mode keeps the delivery-method chooser (express ⇄ self-pickup)
-      // but swaps the address form for the member's read-only preset lists.
-      if (addr) addr.hidden = true;
+      // Member mode keeps the same delivery-method chooser and the same
+      // "Address details" card as the shopper flow — bindDelivMethod() shows
+      // it for door delivery (member's preset list inside) and hides it for
+      // self-pickup.
       if (contact) contact.hidden = true;
       const pc = window.ProductCatalog || {};
       const m = state.repeatMember || {};
@@ -1361,23 +1269,28 @@
       // Reporting Center ID starts empty and is required — the operator fills
       // it in (the pay button stays disabled until it's non-empty).
       document.getElementById('rpRcId').value = '';
-      document.getElementById('rpRecipient').value = m.name || '';
-      const phoneHost = document.getElementById('rpPhoneField');
-      if (phoneHost && pc.phoneFieldHTML) phoneHost.innerHTML = pc.phoneFieldHTML(pc.DEFAULT_DIAL, 'rpPhone');
-      if (pc.fillPhoneFields) pc.fillPhoneFields(phoneHost, m.phone || '');
       // Hidden contact email feeds the Paystack modal prefill (member mode
       // has no email field of its own — fall back to the operator's).
       const emailEl = document.getElementById('contactEmail');
       if (emailEl && !emailEl.value) {
         emailEl.value = opMd.email || (m.id ? m.id.toLowerCase() + '@elken.demo' : '');
       }
-      // Preset lists: saved addresses (express) + pickup points (self-pickup),
-      // first entry selected, details read-only. bindDelivMethod()'s initial
-      // sync then shows the list matching the default "delivery" method.
-      renderMemberAddressList(m);
-      renderMemberPickupList();
-      syncMemberContactFromAddress();
-      ['rpRcId', 'rpRecipient'].forEach(id => {
+      // Temporary shipping address: blank form, door delivery only (no
+      // delivery-method choice in member mode).
+      state.delivMethod = 'delivery';
+      const ship = document.getElementById('rpShipCard');
+      if (ship) ship.hidden = false;
+      const phoneHost = document.getElementById('rpPhoneField');
+      if (phoneHost && pc.phoneFieldHTML) phoneHost.innerHTML = pc.phoneFieldHTML(pc.DEFAULT_DIAL, 'rpPhone');
+      const rpState = document.getElementById('rpState');
+      if (rpState) {
+        const cfg = pc0.getCountryConfig ? pc0.getCountryConfig(orderCountry) : null;
+        const regions = (cfg && cfg.regions) || [];
+        rpState.innerHTML = '<option value="">Select region</option>' +
+          regions.map(r => '<option value="' + esc(r) + '">' + esc(r) + '</option>').join('');
+        rpState.addEventListener('change', updatePayBtn);
+      }
+      ['rpRcId', 'rpRecipient', 'rpDistrict', 'rpCity', 'rpAddr'].forEach(id => {
         document.getElementById(id).addEventListener('input', updatePayBtn);
       });
       document.querySelector('#rpPhoneField .phone-number')?.addEventListener('input', updatePayBtn);

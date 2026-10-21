@@ -523,3 +523,15 @@
 }
 .addr-empty p { margin: 0; }
 .addr-empty .ek-btn { margin-top: var(--ek-4); }
+
+/* Read-only, system-filled fields (e.g. member checkout's Repeat-purchase
+   member ID): greyed, no focus ring, clearly not editable. */
+.ek-input.is-locked,
+.ek-input.is-locked:focus {
+  background: var(--ek-grey-light);
+  color: var(--ek-muted);
+  border-color: var(--ek-border, #e3e5ee);
+  box-shadow: none;
+  cursor: not-allowed;
+  pointer-events: none;
+}
