@@ -1915,9 +1915,23 @@
 
     function currentView() {
       const hash = (location.hash || '#overview').replace(/^#/, '').replace(/[?#].*$/, '');
+      // 'add-address' deep-links straight to the delivery-address editor
+      // (used by checkout when the shopper has no saved address yet).
+      if (hash === 'add-address') return 'profile';
       // 'sponsor' is no longer a view — it lives inside Overview as a module, so
       // stale #sponsor bookmarks fall back to the default view.
       return ['overview', 'orders', 'profile'].includes(hash) ? hash : 'overview';
+    }
+
+    // Deep link: open the add-address editor automatically (checkout's "no
+    // address → go add" button). Clears the marker afterwards so a refresh
+    // doesn't re-pop the editor.
+    function maybeAutoOpenAddressEditor() {
+      const hash = (location.hash || '').replace(/^#/, '').replace(/[?#].*$/, '');
+      if (hash !== 'add-address') return;
+      showView('profile');
+      openAddressEditor(null);
+      history.replaceState(null, '', '#profile');
     }
 
     /* ---------- Header sync ---------- */
@@ -1968,6 +1982,7 @@
       // populated on the first paint too (not only when the Profile tab opens).
       renderProfileBasicBar();
       showView(currentView());
+      maybeAutoOpenAddressEditor();
       // Sponsor Network is a permanent Overview module now, so its tree has to be
       // painted on the first load rather than on a tab click.
       renderSponsorNetwork();
@@ -2029,7 +2044,7 @@
         showView(v);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
-      window.addEventListener('hashchange', () => showView(currentView()));
+      window.addEventListener('hashchange', () => { showView(currentView()); maybeAutoOpenAddressEditor(); });
 
       // Logout
       document.getElementById('accountLogout')?.addEventListener('click', () => {

@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260919d">
-  <link rel="stylesheet" href="assets/css/checkout.css?v=20261021a">
+  <link rel="stylesheet" href="assets/css/checkout.css?v=20261021b">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
@@ -95,6 +95,15 @@
               <label>Saved addresses</label>
               <div class="pickup-list" id="shopAddrList"></div>
               <p class="ek-field__hint">Addresses are managed in My Account and can't be edited here.</p>
+            </div>
+            <!-- No saved address yet (signed-in): send the shopper to add
+                 one in their account — no manual entry on this page. -->
+            <div class="field" id="shopAddrEmptyWrap" hidden>
+              <label>Saved addresses</label>
+              <div class="addr-empty">
+                <p class="ek-field__hint">You don't have a delivery address yet. Add one in your account to place this order.</p>
+                <a class="ek-btn" href="account.html#add-address">Go add address</a>
+              </div>
             </div>
             <!-- Guest fallback: the original editable address form. -->
             <div id="shopAddrForm">
@@ -474,15 +483,22 @@
     function renderShopAddressList() {
       const host = document.getElementById('shopAddrList');
       const wrap = document.getElementById('shopAddrListWrap');
+      const emptyWrap = document.getElementById('shopAddrEmptyWrap');
       const legacy = document.getElementById('shopAddrForm');
       if (!host || !wrap) return;
       const list = (window.AL && window.AL.getAddresses) ? window.AL.getAddresses() : [];
       const loggedIn = !!(window.Auth && window.Auth.isLoggedIn());
+      // Signed-in with addresses → preset list; signed-in without any →
+      // "go add one in your account" prompt (no manual entry); signed out
+      // (guest) → editable form fallback.
       const listMode = loggedIn && list.length > 0;
+      const emptyMode = loggedIn && list.length === 0;
       state.shopListMode = listMode;
+      state.shopAddrEmpty = emptyMode;
       state.shopAddresses = list;
       wrap.hidden = !listMode;
-      if (legacy) legacy.hidden = listMode;
+      if (emptyWrap) emptyWrap.hidden = !emptyMode;
+      if (legacy) legacy.hidden = listMode || emptyMode;
       if (!listMode) { state.shopAddrId = null; return; }
       state.shopAddrId = list[0].id; // first saved address selected by default
       host.innerHTML = list.map((a, i) => `
@@ -491,7 +507,7 @@
           <span class="pickup-radio" aria-hidden="true"></span>
           <div class="pickup-body">
             <div class="pickup-head">
-              <div class="pickup-name">${esc(a.label || 'Address')}</div>
+              <div class="pickup-name">${esc(a.label || 'Delivery address')}</div>
               ${a.isDefault ? '<div class="pickup-tag">Default</div>' : ''}
             </div>
             <div class="pickup-addr">${esc(a.street || '')}<br>${esc([a.district, a.city, a.state].filter(Boolean).join(' · '))}</div>
@@ -629,6 +645,7 @@
       const rpAddrWrap = document.getElementById('rpAddrListWrap');
       const rpPickupWrap = document.getElementById('rpPickupListWrap');
       const shopAddrWrap = document.getElementById('shopAddrListWrap');
+      const shopEmptyWrap = document.getElementById('shopAddrEmptyWrap');
       const shopForm = document.getElementById('shopAddrForm');
       const shopRcCard = document.getElementById('shopRcCard');
       const sync = () => {
@@ -644,7 +661,8 @@
         // field inside the member card).
         const shopListMode = !!state.shopListMode;
         if (shopAddrWrap) shopAddrWrap.hidden = state.memberMode || !shopListMode;
-        if (shopForm) shopForm.hidden = state.memberMode || shopListMode;
+        if (shopEmptyWrap) shopEmptyWrap.hidden = state.memberMode || !state.shopAddrEmpty;
+        if (shopForm) shopForm.hidden = state.memberMode || shopListMode || !!state.shopAddrEmpty;
         if (shopRcCard) shopRcCard.hidden = state.memberMode;
         updatePayBtn();
       };
@@ -804,10 +822,10 @@
         const rc = document.getElementById('shopRcId');
         const rcOk = !!(rc && rc.value.trim());
         const stateSel = document.getElementById('state');
-        const doorAddrOk = state.delivMethod !== 'delivery' || state.shopListMode || (
+        const doorAddrOk = state.delivMethod !== 'delivery' || state.shopListMode || (!state.shopAddrEmpty && (
           document.getElementById('addr').value.trim()
           && document.getElementById('city').value.trim()
-          && !!(stateSel && stateSel.value));
+          && !!(stateSel && stateSel.value)));
         const contactOk = state.shopListMode || (
           !!document.getElementById('fullName').value.trim()
           && !!(phoneInput && phoneInput.value.trim()));
@@ -1408,10 +1426,11 @@
       // consent checkboxes were auto-satisfied at this point.
       renderSavedAddresses();
       // Contact person card: only guests typing their own address keep it —
-      // signed-in shoppers take recipient + phone from the selected preset
-      // address, and member mode has its own contact fields.
+      // signed-in shoppers take recipient + phone from their saved address
+      // (or are sent off to add one), and member mode has its own contact
+      // fields.
       const contactCardEl = document.getElementById('contactCard');
-      if (contactCardEl && !state.memberMode) contactCardEl.hidden = !!state.shopListMode;
+      if (contactCardEl && !state.memberMode) contactCardEl.hidden = !!state.shopListMode || !!state.shopAddrEmpty;
       // Member repeat purchase: swap the pickup/contact cards for the
       // member information field set (prefilled from the looked-up member).
       if (state.memberMode) setupMemberInfo();

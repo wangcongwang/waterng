@@ -514,3 +514,12 @@
   .ps-ck__side { flex: none; border-right: none; border-bottom: 1px solid var(--ek-border); }
   .ps-ck-close { top: calc(-1 * var(--ek-40)); right: 0; }
 }
+
+/* No-address empty state (signed-in shopper, door delivery): a short prompt
+   plus a button that jumps to the account's add-address editor. */
+.addr-empty {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: var(--ek-12); margin-top: var(--ek-8);
+}
+.addr-empty p { margin: 0; }
+.addr-empty .ek-btn { margin-top: var(--ek-4); }
