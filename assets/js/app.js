@@ -13,6 +13,34 @@
     GUEST: 'al.guestMode',   // 按标签页的 guest 下单标记（sessionStorage）
   };
 
+  /* ---------- Member ID format migration (9 → 8 digits) ----------
+     Regular member IDs are now NG/AE + 8 digits; only the house accounts
+     NG000000001 / AE000000001 keep 9 digits. Demo data saved in this browser
+     under the old 9-digit format is rewritten once (drop the last digit — the
+     same mapping used for the hard-coded demo IDs) so lookups stay linked. */
+  (function migrateMemberIds() {
+    try {
+      if (localStorage.getItem('al.idFormat') === '8') return;
+      const re = /\b(NG|AE)(\d{8})\d\b/g;
+      const fix = v => v.replace(re, (all, p, d) => (all === 'NG000000001' || all === 'AE000000001') ? all : p + d);
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k || k.indexOf('al.') !== 0) continue;
+        const v = localStorage.getItem(k);
+        if (v) { const nv = fix(v); if (nv !== v) localStorage.setItem(k, nv); }
+      }
+      try {
+        for (let i = 0; i < sessionStorage.length; i++) {
+          const k = sessionStorage.key(i);
+          if (!k || k.indexOf('al.') !== 0) continue;
+          const v = sessionStorage.getItem(k);
+          if (v) { const nv = fix(v); if (nv !== v) sessionStorage.setItem(k, nv); }
+        }
+      } catch (e) {}
+      localStorage.setItem('al.idFormat', '8');
+    } catch (e) {}
+  })();
+
   /* ---------- Auth state ---------- */
   const Auth = {
     get user() {
@@ -207,17 +235,18 @@
   window.fmtDate = fmtDate; window.fmtDateUp = fmtDateUp; window.fmtDT = fmtDT; window.fmtNum = fmtNum;
 
   /* ---------- Member ID normalization (shared by drawer & any other header surface) ----------
-     Project rule: Member ID must be exactly "NG" + 9 digits. Legacy/stale values
-     get normalized to the first 9 digits (keeps the identity prefix so
+     Project rule: Member ID = "NG"/"AE" + 8 digits; the house accounts
+     NG000000001 / AE000000001 are the only (special) 9-digit IDs. Legacy/stale
+     values get normalized to the first 8 digits (keeps the identity prefix so
      orders stay linkable). The corrected value is persisted back into Auth.user
      and localStorage so subsequent reads are clean. */
   function normalizeMemberId(id) {
     if (!id) return '';
     const s = String(id).trim().toUpperCase();
-    const m = s.match(/^NG(\d+)$/);
+    if (s === 'NG000000001' || s === 'AE000000001') return s;
+    const m = s.match(/^(NG|AE)(\d+)$/);
     if (!m) return '';
-    const d = m[1];
-    return 'NG' + d.slice(0, 9).padStart(9, '0');
+    return m[1] + m[2].slice(0, 8).padStart(8, '0');
   }
   function healMemberIdForDrawer() {
     const u = Auth.user;
@@ -775,7 +804,7 @@
 
   /* ---------- Deterministic demo seed — guarantees identical first-load content on http:// and file:// ---------- */
   const DEMO_MEMBER = {
-    memberId: 'NG092463750',
+    memberId: 'NG09246375',
     firstName: 'Adaeze',
     name: 'Adaeze Okonkwo',
     email: 'adaeze@elkenafrica.com',
@@ -785,7 +814,7 @@
 
   /* ---------- Demo quick-state switch (?demo=member / ?demo=guest) ----------
      演示辅助：URL 带 ?demo= 参数时一键切换演示人格，免手动清 localStorage。
-     member：清登录态+订单 → 走 seedDemoIfEmpty 完整播种（恒 NG092463750 Adaeze Okonkwo）。
+     member：清登录态+订单 → 走 seedDemoIfEmpty 完整播种（恒 NG09246375 Adaeze Okonkwo）。
      guest ：清登录态 + 打 sessionStorage 游客标记，并跳过播种。
      只影响当次加载；页面内后续导航（无参数）状态自然延续。
      display-only / WordPress 页不参与（不写登录态、恒未登录营销版）。 */
@@ -815,7 +844,7 @@
       // Only seed on a truly empty / brand-new profile (not touched by real user yet)
       if (hasAuth || hasOrders) return;
 
-      // 1) Demo account: fixed NG092463750 Adaeze Okonkwo — same on every protocol
+      // 1) Demo account: fixed NG09246375 Adaeze Okonkwo — same on every protocol
       localStorage.setItem(STORAGE.AUTH, JSON.stringify({
         memberId: DEMO_MEMBER.memberId,
         firstName: DEMO_MEMBER.firstName,
@@ -872,11 +901,11 @@
         latestMgmtStar: 'None',
         highestElite: 'N/A',
         latestElite: 'N/A',
-        referrerId: 'NG271877100',
+        referrerId: 'NG27187710',
         referrerName: 'S2',
-        actualReferrerId: 'NG271877100',
+        actualReferrerId: 'NG27187710',
         actualReferrerName: 'S2',
-        reportingCenterId: 'NG660516530',
+        reportingCenterId: 'NG66051653',
         isReportingCenter: 'No',
         showChart: 'Yes',
         showRecharge: 'Yes',

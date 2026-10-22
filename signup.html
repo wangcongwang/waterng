@@ -56,13 +56,13 @@
               <div class="field-row ek-field">
                 <label><span data-i18n="signup.referrer_id">Referrer ID</span><span class="req-star">*</span></label>
                 <input class="ek-input" type="text" name="referrerId" id="regReferrerId"
-                       placeholder="e.g. NG123456789" autocomplete="off" required />
+                       placeholder="e.g. NG12345678" autocomplete="off" required />
                 <small class="field-hint" id="regReferrerHint" hidden></small>
               </div>
               <div class="field-row ek-field">
                 <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
                 <input class="ek-input" type="text" name="actualReferrerId" id="regActualReferrerId"
-                       placeholder="e.g. NG123456789" autocomplete="off" />
+                       placeholder="e.g. NG12345678" autocomplete="off" />
               </div>
             </div>
           </div>
@@ -443,9 +443,9 @@
     </div>
   </div>
 
-  <script src="assets/i18n/strings.js?v=20260909c"></script>
-<script src="assets/js/app.js?v=20261016b"></script>
-  <script src="assets/js/website.js?v=20260909c"></script>
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+<script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
   <script src="assets/js/qr.js?v=20260915a"></script>
   <script src="assets/js/payment-methods.js?v=20261021c"></script>
   <script>
@@ -647,11 +647,11 @@
       let refId = '';
       try {
         const refParam = new URLSearchParams(location.search).get('ref');
-        if (refParam && /^(NG|AE)\d{9}$/i.test(refParam.trim())) {
+        if (refParam && /^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/i.test(refParam.trim())) {
           refId = refParam.trim().toUpperCase();
         } else if (window.ProductCatalog && window.ProductCatalog.getReferral) {
           const stored = window.ProductCatalog.getReferral();
-          if (stored && stored.id && /^(NG|AE)\d{9}$/i.test(String(stored.id).trim())) {
+          if (stored && stored.id && /^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/i.test(String(stored.id).trim())) {
             refId = String(stored.id).trim().toUpperCase();
           }
         }

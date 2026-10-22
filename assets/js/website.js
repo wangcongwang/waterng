@@ -348,7 +348,7 @@
       // (it exists to heal legacy 12-digit drawer IDs) and would silently
       // drop every UAE referrer.
       const id = String(raw).trim().toUpperCase();
-      if (!id || !/^(NG|AE)\d{9}$/.test(id)) return; // only valid NG/AE + 9-digit member IDs
+      if (!id || !/^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/.test(id)) return; // only valid NG/AE + 8-digit member IDs (or a house account)
       // First-touch attribution: keep the earliest bound referrer.
       if (getReferral()) return;
       localStorage.setItem(REFERRAL_KEY, JSON.stringify({ id, name: '', ts: Date.now() }));
@@ -559,11 +559,12 @@
   }
 
   /* ---------- Member ID & account-bound orders ---------- */
-  // Member ID: "<market prefix>" + 9 random digits, e.g. NG123456789 / AE123456789
+  // Member ID: "<market prefix>" + 8 random digits, e.g. NG12345678 / AE12345678
+  // (house accounts NG000000001 / AE000000001 are the only 9-digit IDs)
   function genMemberId(country) {
     const prefix = getCountryConfig(country).memberIdPrefix;
     let digits = '';
-    for (let i = 0; i < 9; i++) digits += Math.floor(Math.random() * 10);
+    for (let i = 0; i < 8; i++) digits += Math.floor(Math.random() * 10);
     return prefix + digits;
   }
   function getCurrentMemberId() {
@@ -881,17 +882,17 @@
        4. al.orders      —— 下过单的客户快照
      真实部署时这里对应 GET /members/{id}；查不到即推荐人无效。 */
   const MEMBERS_KEY = 'al.members';
-  const MEMBER_ID_RE = /^(NG|AE)\d{9}$/;
+  const MEMBER_ID_RE = /^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/;
   const HOUSE_ACCOUNTS = {
     'NG000000001': { name: 'Elken HQ', country: 'Nigeria' },
     'AE000000001': { name: 'Elken HQ (UAE)', country: 'UAE' },
   };
   const DEMO_MEMBERS = {
-    'NG092463750': { name: 'Amara Okafor', country: 'Nigeria' },
-    'NG233748760': { name: 'Fauzia Yunus Shehu', country: 'Nigeria' },
-    'NG271877100': { name: 'S2 (Referrer)', country: 'Nigeria' },
-    'NG660516530': { name: 'Reporting Center', country: 'Nigeria' },
-    'NG486553230': { name: 'Default Order Demo', country: 'Nigeria' },
+    'NG09246375': { name: 'Amara Okafor', country: 'Nigeria' },
+    'NG23374876': { name: 'Fauzia Yunus Shehu', country: 'Nigeria' },
+    'NG27187710': { name: 'S2 (Referrer)', country: 'Nigeria' },
+    'NG66051653': { name: 'Reporting Center', country: 'Nigeria' },
+    'NG48655323': { name: 'Default Order Demo', country: 'Nigeria' },
   };
   function getMemberRegistry() {
     let list = [];

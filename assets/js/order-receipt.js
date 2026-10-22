@@ -135,7 +135,7 @@
     // (NG000000001 / AE000000001). That internal ID must never appear on the
     // customer-facing receipt — treat those orders as unregistered.
     var rawMemberId = order.memberId || user.memberId || memberData.memberId || '';
-    var memberId = /000000001$/.test(String(rawMemberId)) ? '' : rawMemberId;
+    var memberId = /^(NG|AE)000000001$/.test(String(rawMemberId)) ? '' : rawMemberId;
     var memberName = order.memberName || cust.name || user.name || user.fullName ||
       memberData.memberName || profile.name || '';
 
