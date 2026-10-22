@@ -654,8 +654,9 @@
       const sync = () => {
         // Member mode has no delivery-method choice and no saved-address card:
         // it ships to the temporary address typed into #rpShipCard.
-        if (delivCard) delivCard.hidden = !!state.memberMode;
-        if (addrCard) addrCard.hidden = state.memberMode || state.delivMethod !== 'delivery';
+        const tempShip = !!(state.memberMode || state.guestShip);
+        if (delivCard) delivCard.hidden = tempShip;
+        if (addrCard) addrCard.hidden = tempShip || state.delivMethod !== 'delivery';
         // Member mode swaps the editable address form for the member's
         // read-only preset saved addresses (express delivery only) —
         // self-pickup shows nothing, exactly like the shopper flow.
@@ -667,7 +668,7 @@
         if (shopAddrWrap) shopAddrWrap.hidden = state.memberMode || !shopListMode;
         if (shopEmptyWrap) shopEmptyWrap.hidden = state.memberMode || !state.shopAddrEmpty;
         if (shopForm) shopForm.hidden = state.memberMode || shopListMode || !!state.shopAddrEmpty;
-        if (shopRcCard) shopRcCard.hidden = state.memberMode;
+        if (shopRcCard) shopRcCard.hidden = !!(state.memberMode || state.guestShip);
         updatePayBtn();
       };
       radios.forEach(r => {
@@ -811,14 +812,18 @@
         emailError.hidden = !showErr;
       }
       let ok;
-      if (state.memberMode) {
+      const v = id => ((document.getElementById(id) || {}).value || '').trim();
+      const rpPhoneEl = document.querySelector('#rpPhoneField .phone-number');
+      const tempShipOk = !!v('rpRecipient') && !!(rpPhoneEl && rpPhoneEl.value.trim())
+        && !!v('rpState') && !!v('rpCity') && !!v('rpAddr');
+      if (state.guestShip) {
+        // 无账户下单：只校验本单收货地址 + 支付方式，报单中心自动分配。
+        ok = !!methodOk && tempShipOk && emailOk;
+      } else if (state.memberMode) {
         // Member repeat purchase: reporting center ID + the temporary
         // shipping address (district optional).
         const rc = document.getElementById('rpRcId');
-        const v = id => ((document.getElementById(id) || {}).value || '').trim();
-        const rpPhoneEl = document.querySelector('#rpPhoneField .phone-number');
-        const shipOk = !!v('rpRecipient') && !!(rpPhoneEl && rpPhoneEl.value.trim())
-          && !!v('rpState') && !!v('rpCity') && !!v('rpAddr');
+        const shipOk = tempShipOk;
         ok = !!methodOk
           && !!(rc && rc.value.trim())
           && shipOk
@@ -888,7 +893,7 @@
         const rpVal = id => ((document.getElementById(id) || {}).value || '').trim();
         const shopAddr = (!state.memberMode && state.shopListMode)
           ? (state.shopAddresses || []).find(a => a.id === state.shopAddrId) || null : null;
-        const customer = state.memberMode ? {
+        const customer = (state.memberMode || state.guestShip) ? {
           // Temporary shipping address typed in for this order only.
           name: rpVal('rpRecipient'),
           phone: pc.readPhone ? pc.readPhone(document.getElementById('rpPhoneField'), 'rpPhone') : '',
@@ -946,7 +951,7 @@
           currency: pc0.getCountryConfig ? pc0.getCountryConfig(orderCountry).currency : 'NGN',
           // Both modes point at the selected preset address; guests keep
           // their typed address (no saved-address id).
-          addressId: state.memberMode
+          addressId: (state.memberMode || state.guestShip)
             ? null // temporary address — not from any address book
             : (state.shopAddrId || state.savedAddressId || null),
           customer,
@@ -1275,8 +1280,15 @@
       if (emailEl && !emailEl.value) {
         emailEl.value = opMd.email || (m.id ? m.id.toLowerCase() + '@elken.demo' : '');
       }
-      // Temporary shipping address: blank form, door delivery only (no
-      // delivery-method choice in member mode).
+      setupTempShipCard();
+      document.getElementById('rpRcId').addEventListener('input', updatePayBtn);
+      updatePayBtn();
+    }
+
+    /* 本单临时收货地址卡（#rpShipCard）：Member Repeat Purchase 与
+       无账户下单共用。只送货上门，不选配送方式，不写回任何地址簿。 */
+    function setupTempShipCard() {
+      const pc = window.ProductCatalog || {};
       state.delivMethod = 'delivery';
       const ship = document.getElementById('rpShipCard');
       if (ship) ship.hidden = false;
@@ -1290,11 +1302,10 @@
           regions.map(r => '<option value="' + esc(r) + '">' + esc(r) + '</option>').join('');
         rpState.addEventListener('change', updatePayBtn);
       }
-      ['rpRcId', 'rpRecipient', 'rpDistrict', 'rpCity', 'rpAddr'].forEach(id => {
+      ['rpRecipient', 'rpDistrict', 'rpCity', 'rpAddr'].forEach(id => {
         document.getElementById(id).addEventListener('input', updatePayBtn);
       });
       document.querySelector('#rpPhoneField .phone-number')?.addEventListener('input', updatePayBtn);
-      updatePayBtn();
     }
 
     function applyI18nCheckout() {
@@ -1347,6 +1358,11 @@
       // Member repeat purchase: swap the pickup/contact cards for the
       // member information field set (prefilled from the looked-up member).
       if (state.memberMode) setupMemberInfo();
+      // 无账户下单：与会员复购同样的收货地址卡，隐藏联系人卡（收件人 + 电话已在地址卡里）。
+      if (state.guestShip) {
+        if (contactCardEl) contactCardEl.hidden = true;
+        setupTempShipCard();
+      }
       // Build the shared payment chooser + panels first, then render the summary
       // (renderSummary() rebuilds the Method row, so it re-reads the selection).
       buildPayMethods();
@@ -1364,6 +1380,10 @@
       const cartMode = new URLSearchParams(location.search).get('cart') === '1';
       const memberMode = new URLSearchParams(location.search).get('mode') === 'member';
       state.memberMode = memberMode;
+      // 无账户下单（登录页「Shop now」进入）：结算页与 Member Repeat Purchase
+      // 一致——直接填写本单收货地址，不选配送方式、不手填报单中心
+      // （下单时自动归到该市场的默认报单中心），支付方式只有 Paystack。
+      state.guestShip = !memberMode && isGuestFlow();
       if (cartMode) {
         const pc = window.ProductCatalog || {};
         const getCartFn = memberMode ? (pc.getMemberCart || pc.getCart) : pc.getCart;
