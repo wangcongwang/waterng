@@ -44,7 +44,7 @@
                 </Text>
                 <Box style={{ flexDirection: 'column', gap: 8, marginTop: 16 }}>
                     {[
-                        '会员 ID 非空，且符合 NG 加 8 位数字',
+                        '会员 ID 非空，且符合 AE/NG 加 9 位数字',
                         '密码非空，且长度不少于 6 位',
                         '不比对任何已保存的账号或密码',
                         '成功后跳 ?next= 指定页，否则回首页',
@@ -74,7 +74,7 @@
                 </Box>
                 <Box style={{ marginTop: 12, padding: '10px 12px', background: '#FFFFFF', borderRadius: 6 }}>
                     <Text style={{ fontSize: 15, color: '#5C646A', lineHeight: 1.45 }}>
-                        演示账号已预填：会员 ID 为 <span style={{ fontFamily: 'Menlo, ui-monospace, monospace', color: '#7A2F5C' }}>NG09246375</span>，密码六位。
+                        演示账号已预填：会员 ID 为 <span style={{ fontFamily: 'Menlo, ui-monospace, monospace', color: '#7A2F5C' }}>NG092463750</span>，密码六位。
                     </Text>
                 </Box>
             </Box>

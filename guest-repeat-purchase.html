@@ -25,9 +25,10 @@
     <section class="sec-banner sec-banner--gradient sec-banner--short">
       <div class="sec-banner__glow" aria-hidden="true"></div>
       <div class="sec-banner__inner">
-        <div class="sec-banner__crumb"><nav class="ek-breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">Shop</span></nav></div>
+        <div class="sec-banner__crumb"><nav class="ek-breadcrumb" aria-label="Breadcrumb"><a href="login.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">Shop</span></nav></div>
         <div class="sec-banner__copy">
-          <h1 class="ek-h1">Shop <span class="t-accent">Elken.</span></h1>
+          <!-- Market name injected by the inline script below ("UAE"/"Nigeria") -->
+          <h1 class="ek-h1">Shop <span class="t-accent">Elken <span id="rpMarketName"></span>.</span></h1>
           <p class="sec-banner__sub">No account needed — browse, add to cart and check out as a guest.</p>
         </div>
       </div>
@@ -49,12 +50,6 @@
       </div>
     </section>
   </main>
-
-  <!-- Floating cart — the guest flow drops the top header, so surface the cart here -->
-  <a class="rp-cart-fab" href="cart.html" title="Cart" aria-label="Cart">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="21" r="1.6" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="21" r="1.6" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 3h2l2.2 12.2a1.6 1.6 0 0 0 1.6 1.3h8.7a1.6 1.6 0 0 0 1.6-1.2L21 7H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="ek-util__badge" id="cartBadge"></span>
-  </a>
 
   <div id="app-footer" class="ek-site-footer"></div>
 
@@ -87,15 +82,37 @@
     </div>
   </dialog>
 
-  <script src="assets/i18n/strings.js?v=20260909c"></script>
-  <script src="assets/js/app.js?v=20260923b"></script>
-  <script src="assets/js/website.js?v=20260909c"></script>
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+  <script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
+<script src="assets/js/cart-fab.js?v=20261012a" defer></script>
   <script>
     (function () {
       document.addEventListener('DOMContentLoaded', function () {
         const grid = document.getElementById('rpProductGrid');
-        if (window.ProductCatalog && window.ProductCatalog.renderRepeatCards) {
-          window.ProductCatalog.renderRepeatCards(grid, window.ProductCatalog.allProducts);
+        // Guest market: picked in the login page's chooser (sessionStorage),
+        // with the URL param as the fallback for direct links. Drives the
+        // catalogue, the currency on every card, and — via the order record —
+        // which house account owns the order (NG000000001 / AE000000001).
+        const guestCountry = (function () {
+          try {
+            const s = sessionStorage.getItem('al.guestCountry');
+            if (s) return s;
+          } catch (e) {}
+          const p = new URLSearchParams(window.location.search).get('country');
+          return p || 'Nigeria';
+        })();
+        const pc = window.ProductCatalog || {};
+        // Annotate the banner heading (and tab title) with the chosen market —
+        // "Shop Elken UAE." / "Shop Elken Nigeria." — so the guest always sees
+        // which market's catalogue and currency they are browsing.
+        const marketDisplay = (pc.normalizeCountryName ? pc.normalizeCountryName(guestCountry) : guestCountry) || guestCountry;
+        const marketEl = document.getElementById('rpMarketName');
+        if (marketEl) marketEl.textContent = marketDisplay;
+        document.title = 'Shop Elken ' + marketDisplay + ' Products · Elken';
+        const catalog = pc.getProductsByCountry ? pc.getProductsByCountry(guestCountry) : (pc.allProducts || []);
+        if (pc.renderRepeatCards) {
+          pc.renderRepeatCards(grid, catalog, { country: guestCountry });
         }
 
         // Wire register-interest modal
@@ -141,15 +158,6 @@
           localStorage.setItem(key, JSON.stringify(list));
           if (window.toast) window.toast(`Interest registered for ${currentProduct.name}.`, 'success');
           closeModal();
-        });
-
-        // Delegate register-interest clicks (cards rendered after DOMContentLoaded)
-        grid.addEventListener('click', (e) => {
-          const btn = e.target.closest('[data-interest]');
-          if (!btn) return;
-          const id = btn.dataset.interest;
-          const product = (window.ProductCatalog.allProducts || []).find(p => p.id === id);
-          if (product) openModal(product);
         });
       });
     })();

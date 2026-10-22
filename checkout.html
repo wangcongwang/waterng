@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260919d">
-  <link rel="stylesheet" href="assets/css/checkout.css?v=20260918a">
+  <link rel="stylesheet" href="assets/css/checkout.css?v=20261021c">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
@@ -25,9 +25,6 @@
 
   <main class="page checkout-shell">
     <div class="container">
-      <div class="crumbs">
-        <a href="index.html">Home</a> <span>›</span> <a href="products.html">Products</a> <span>›</span> <span data-i18n="checkout.title">Confirm your order</span>
-      </div>
       <h1 data-i18n="checkout.title">Confirm your order</h1>
 
       <div class="stepper">
@@ -40,16 +37,73 @@
 
       <div class="checkout-grid">
         <div>
-          <!-- Step 1: Delivery address -->
-          <div class="ek-card checkout-card">
-            <h2 data-i18n="checkout.addr">Delivery address</h2>
+          <!-- Reporting Center ID: required on every shopper order, kept as
+               its own top section above the delivery choice (member mode has
+               its own field inside the member card). -->
+          <div class="ek-card checkout-card" id="shopRcCard" hidden>
+            <h2>Reporting Center ID <span class="req">*</span></h2>
+            <input class="ek-input" id="shopRcId" required placeholder="e.g. NG66051653" aria-label="Reporting Center ID" />
+          </div>
 
+          <!-- Member repeat-purchase info (member mode only, revealed by JS):
+               repeat member ID (+ resolved name, read-only) and reporting
+               center. The shipping address is typed into #rpShipCard below. Sits at the top (like the shopper's Reporting Center
+               card); the member's saved addresses live in the shared
+               "Address details" card below Delivery method, exactly like the
+               shopper flow. -->
+          <div class="ek-card checkout-card" id="memberInfoCard" hidden>
+            <h2>Member information</h2>
+            <div class="field">
+              <label for="rpMemberId">Repeat-purchase member ID</label>
+              <input class="ek-input is-locked" id="rpMemberId" readonly tabindex="-1" aria-readonly="true" />
+              <span id="rpMemberName" style="display:block;margin-top:6px;color:#5a5f79;font-size:13px;"></span>
+            </div>
+            <div class="field">
+              <label for="rpRcId">Reporting Center ID <span class="req">*</span></label>
+              <input class="ek-input" id="rpRcId" required />
+            </div>
+          </div>
+
+          <!-- Member mode only: a one-off (temporary) shipping address typed
+               in for this order — no delivery-method choice, no saved-address
+               list, nothing written back to any address book. -->
+          <div class="ek-card checkout-card" id="rpShipCard" hidden>
+            <h2>Shipping address</h2>
+            <div class="field">
+              <label for="rpRecipient">Recipient</label>
+              <input class="ek-input" id="rpRecipient" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="rpPhone">Phone</label>
+              <div class="phone-field" id="rpPhoneField"></div>
+            </div>
+            <div class="field">
+              <label for="rpState">Region / State</label>
+              <select class="ek-select" id="rpState"></select>
+            </div>
+            <div class="field">
+              <label for="rpDistrict">Area / District</label>
+              <input class="ek-input" id="rpDistrict" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="rpCity">City</label>
+              <input class="ek-input" id="rpCity" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="rpAddr">Detailed address</label>
+              <input class="ek-input" id="rpAddr" autocomplete="off" />
+            </div>
+          </div>
+
+          <!-- Step 1: Delivery method + address details (shopper flow only) -->
+          <div class="ek-card checkout-card" id="delivCard">
+            <h2 data-i18n="checkout.addr_method">Delivery method</h2>
             <div class="deliv-method-grid" id="delivMethodGrid">
               <label class="deliv-method">
                 <input type="radio" name="delivMethod" value="delivery" checked />
                 <div class="deliv-method-icon" aria-hidden="true">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                    <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                    <path d="M1 8h13v9H1zM14 11h4l3 3v3h-7z"/><circle cx="6" cy="18.5" r="1.6"/><circle cx="17.5" cy="18.5" r="1.6"/>
                   </svg>
                 </div>
                 <div class="deliv-method-body">
@@ -76,129 +130,85 @@
                 </div>
               </label>
             </div>
+          </div>
 
-            <!-- Delivery form -->
-            <div id="deliveryForm">
-              <!-- Saved address picker (synced with My Account addresses) -->
-              <div class="saved-addr-picker">
-                <label for="savedAddrSelect">Use a saved address</label>
-                <select class="ek-select" id="savedAddrSelect">
-                  <option value="">+ Use a new address</option>
-                </select>
-                <label class="ek-check">
-                  <input type="checkbox" id="saveAddrNew" checked />
-                  <span>Save this address to my account</span>
-                </label>
+          <!-- Address details (shopper flow, door delivery only). Signed-in
+               users pick one of their preset saved addresses (read-only,
+               first = default, each showing recipient + phone); guests fall
+               back to the editable form. Self-pickup hides the whole card —
+               no address list is shown for pickup. -->
+          <div class="ek-card checkout-card" id="addrCard">
+            <h2 data-i18n="checkout.addr_details">Address details</h2>
+            <!-- Saved address list (signed-in): managed in My Account,
+                 read-only here, first entry selected by default. -->
+            <div class="field" id="shopAddrListWrap" hidden>
+              <label>Saved addresses</label>
+              <div class="pickup-list" id="shopAddrList"></div>
+              <p class="ek-field__hint">Addresses are managed in My Account and can't be edited here.</p>
+            </div>
+            <!-- No saved address yet (signed-in): send the shopper to add
+                 one in their account — no manual entry on this page. -->
+            <div class="field" id="shopAddrEmptyWrap" hidden>
+              <label>Saved addresses</label>
+              <div class="addr-empty">
+                <p class="ek-field__hint">You don't have a delivery address yet. Add one in your account to place this order.</p>
+                <a class="ek-btn" href="account.html#add-address">Go add address</a>
               </div>
-
+            </div>
+            <!-- Guest fallback: the original editable address form. -->
+            <div id="shopAddrForm">
               <div class="row">
                 <div class="field">
-                  <label data-i18n="checkout.addr_full_name">Full name</label>
-                  <input class="ek-input" id="fullName" required />
+                  <label data-i18n="checkout.addr_region">Region / State</label>
+                  <select class="ek-select" id="state">
+                    <!-- Options filled per order market by setupAddressRegions() -->
+                  </select>
                 </div>
                 <div class="field">
-                  <label data-i18n="checkout.addr_phone">Phone</label>
-                  <div class="phone-field" id="phoneField"></div>
+                  <label data-i18n="checkout.addr_city">City</label>
+                  <input class="ek-input" id="city" required placeholder="City" />
                 </div>
               </div>
               <div class="field">
-                <label data-i18n="checkout.addr_street">Street address</label>
-                <input class="ek-input" id="addr" required />
+                <label data-i18n="checkout.addr_detailed">Detailed address</label>
+                <textarea class="ek-input" id="addr" rows="3" required placeholder="Street address, building, landmark..."></textarea>
               </div>
               <div class="row">
                 <div class="field">
-                  <label data-i18n="checkout.addr_city">City</label>
-                  <input class="ek-input" id="city" required />
+                  <label data-i18n="checkout.addr_district">Area / District</label>
+                  <input class="ek-input" id="district" placeholder="Area or district" />
                 </div>
-                <div class="field">
-                  <label data-i18n="checkout.addr_state">State</label>
-                  <select class="ek-select" id="state">
-                    <option>Lagos</option><option>FCT Abuja</option><option>Rivers</option><option>Oyo</option><option>Kano</option><option>Other</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <!-- Pickup panel: starts hidden since "Door delivery" is the default
-                 checked radio above; bindDelivMethod() toggles it on change. -->
-            <div id="pickupPanel" style="display: none;">
-              <div class="pickup-list" id="pickupList">
-                <label class="pickup-item">
-                  <input type="radio" name="pickupLoc" value="lagos" checked />
-                  <div class="pickup-radio" aria-hidden="true"></div>
-                  <div class="pickup-body">
-                    <div class="pickup-head">
-                      <span class="pickup-name" data-i18n="checkout.pickup_hq_name">Lagos HQ</span>
-                      <span class="pickup-tag">HQ</span>
-                    </div>
-                    <div class="pickup-addr" data-i18n="checkout.pickup_hq_addr">12B Admiralty Way, Lekki Phase 1</div>
-                    <div class="pickup-hours"><span data-i18n="checkout.pickup_hours">Opening hours</span>: <span data-i18n="checkout.pickup_hq_hours">Mon–Sat · 8:00 – 18:00</span></div>
-                  </div>
-                  <div class="pickup-check"><span data-i18n="checkout.pickup_select">Selected</span></div>
-                </label>
-                <label class="pickup-item">
-                  <input type="radio" name="pickupLoc" value="abuja" />
-                  <div class="pickup-radio" aria-hidden="true"></div>
-                  <div class="pickup-body">
-                    <div class="pickup-head">
-                      <span class="pickup-name" data-i18n="checkout.pickup_2_name">Abuja branch</span>
-                    </div>
-                    <div class="pickup-addr" data-i18n="checkout.pickup_2_addr">Plot 24, Wuse Zone 5</div>
-                    <div class="pickup-hours"><span data-i18n="checkout.pickup_hours">Opening hours</span>: <span data-i18n="checkout.pickup_2_hours">Mon–Fri · 9:00 – 17:00</span></div>
-                  </div>
-                  <div class="pickup-check"><span data-i18n="checkout.pickup_select">Selected</span></div>
-                </label>
-                <label class="pickup-item">
-                  <input type="radio" name="pickupLoc" value="ph" />
-                  <div class="pickup-radio" aria-hidden="true"></div>
-                  <div class="pickup-body">
-                    <div class="pickup-head">
-                      <span class="pickup-name" data-i18n="checkout.pickup_3_name">Port Harcourt branch</span>
-                    </div>
-                    <div class="pickup-addr" data-i18n="checkout.pickup_3_addr">5 Aba Road, GRA Phase 2</div>
-                    <div class="pickup-hours"><span data-i18n="checkout.pickup_hours">Opening hours</span>: <span data-i18n="checkout.pickup_3_hours">Mon–Fri · 9:00 – 17:00</span></div>
-                  </div>
-                  <div class="pickup-check"><span data-i18n="checkout.pickup_select">Selected</span></div>
-                </label>
               </div>
             </div>
           </div>
 
-          <!-- Contact person -->
-          <div class="ek-card checkout-card">
+          <!-- Member flow specifics (auto-maintenance / upgrade) — shown in
+               member mode only, populated by setupMemberFlow(). -->
+          <div class="ek-card checkout-card" id="memberFlowCard" hidden>
+            <div id="memberFlowBody"></div>
+          </div>
+
+          <!-- Contact person — hidden for signed-in shoppers (recipient +
+               phone come from the selected saved address) and in member mode
+               (the member card carries its own contact). Only guests typing
+               their own address still see and fill this card. The hidden
+               email input stays in the DOM for Paystack prefill / orders. -->
+          <div class="ek-card checkout-card" id="contactCard">
             <h2 data-i18n="checkout.contact">Contact person</h2>
+            <!-- Recipient name + phone for the delivery; the email is kept
+                 hidden and auto-filled (profile / derived fallback) to feed
+                 the Paystack modal prefill and the order record. -->
             <div class="row">
               <div class="field">
-                <label data-i18n="checkout.phone">Phone</label>
-                <div class="phone-field" id="contactPhoneField"></div>
+                <label data-i18n="checkout.addr_full_name">Full name</label>
+                <input class="ek-input" id="fullName" required />
               </div>
               <div class="field">
-                <label data-i18n="checkout.email">Email <span class="req">*</span></label>
-                <input class="ek-input" id="contactEmail" type="email" required />
-                <span class="field-error" id="emailError" hidden data-i18n="checkout.email_invalid">Please enter a valid email address</span>
+                <label data-i18n="checkout.addr_phone">Phone</label>
+                <div class="phone-field" id="phoneField"></div>
               </div>
             </div>
-            <div class="field">
-              <label>Order notes</label>
-              <textarea class="ek-textarea" id="orderNote" rows="2" placeholder="Anything we should know (optional)"></textarea>
-            </div>
-            <div class="consent">
-              <label class="checkbox">
-                <input type="checkbox" id="agreeContact" />
-                <span data-i18n="checkout.agree_contact">I confirm the phone and email above are correct for delivery and support purposes.</span>
-              </label>
-            </div>
-            <div class="consent">
-              <label class="checkbox">
-                <input type="checkbox" id="agreeTerms" />
-                <span>
-                  <span data-i18n="checkout.agree_terms">I have read and agree to the</span>
-                  <a href="terms.html" target="_blank">Terms of Service</a>
-                  <span> · </span>
-                  <a href="refund.html" target="_blank">Refund Policy</a>
-                </span>
-              </label>
-            </div>
+            <input type="hidden" id="contactEmail" />
           </div>
 
           <!-- Step 2: Payment method -->
@@ -230,11 +240,86 @@
 
   <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-<script src="assets/js/app.js?v=20260923b"></script>
-  <script src="assets/js/website.js?v=20260909c-2"></script>
+  <!-- ====== Paystack payment modals (shown when Paystack is selected) ====== -->
+  <!-- Step 1: confirm email + amount -->
+  <div class="ps-overlay" id="psPayModal" style="display:none" role="dialog" aria-modal="true" aria-label="Paystack payment">
+    <div class="ps-dialog">
+      <button type="button" class="ps-dialog__close" id="psPayCancel" aria-label="Close">&times;</button>
+      <h3 class="ps-dialog__title">Paystack Payment</h3>
+      <p class="ps-dialog__note">Confirm your email to continue to the Paystack secure checkout.</p>
+      <div class="field">
+        <label for="psPayEmail">Email</label>
+        <input class="ek-input" type="email" id="psPayEmail" placeholder="you@example.com" autocomplete="email" />
+        <span class="field-error" id="psPayEmailErr" style="display:none">Please enter a valid email address</span>
+      </div>
+      <div class="ps-amount-row"><span>Amount</span><b id="psPayAmount">NGN 0</b></div>
+      <button type="button" class="ek-btn ek-btn--primary ps-dialog__go" id="psPayConfirm">Continue to Paystack</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Paystack checkout (test) page -->
+  <div class="ps-overlay ps-overlay--ck" id="psCheckoutModal" style="display:none" role="dialog" aria-modal="true" aria-label="Paystack checkout">
+    <div class="ps-ck-wrap">
+      <button type="button" class="ps-ck-close" id="psCkClose" aria-label="Close">&times;</button>
+      <div class="ps-ck">
+        <aside class="ps-ck__side">
+          <div class="ps-ck__side-title">Pay With</div>
+          <label class="ps-ck__channel is-active">
+            <input type="radio" name="psChannel" value="card" checked />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            Card
+          </label>
+          <label class="ps-ck__channel">
+            <input type="radio" name="psChannel" value="bank" />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/></svg>
+            Bank
+          </label>
+          <label class="ps-ck__channel">
+            <input type="radio" name="psChannel" value="ussd" />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>
+            USSD
+          </label>
+        </aside>
+        <div class="ps-ck__main" id="psCkBody">
+          <div class="ps-ck__head">
+            <svg class="ps-ck__logo" width="34" height="34" viewBox="0 0 24 24" fill="var(--ek-aqua)" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="3.4" rx="1.7"/>
+              <rect x="3" y="10.3" width="18" height="3.4" rx="1.7"/>
+              <rect x="3" y="16.6" width="12" height="3.4" rx="1.7"/>
+            </svg>
+            <div class="ps-ck__head-right">
+              <div class="ps-ck__email" id="psCkEmail"></div>
+              <div class="ps-ck__payline">Pay <b id="psCkAmount"></b></div>
+            </div>
+          </div>
+          <div class="ps-ck__testrow"><span class="ps-ck__test">Test</span></div>
+          <p class="ps-ck__hint">Use any of the options below to test the payment flow</p>
+          <div class="ps-ck__options">
+            <label class="ps-ck__option"><input type="radio" name="psOutcome" value="success" checked /><span>Success</span></label>
+            <label class="ps-ck__option"><input type="radio" name="psOutcome" value="bank_auth" /><span>Bank Authentication</span></label>
+            <label class="ps-ck__option"><input type="radio" name="psOutcome" value="declined" /><span>Declined</span></label>
+          </div>
+          <div class="ps-ck__error" id="psCkError" style="display:none">Payment was declined. Please choose another option and try again.</div>
+          <button type="button" class="ps-ck__paybtn" id="psCkPayBtn">Pay</button>
+          <button type="button" class="ps-ck__another">Use another card</button>
+        </div>
+        <div class="ps-ck__main ps-ck__success" id="psCkSuccess" style="display:none">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--ek-success)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.6 2.6L16 9.5"/></svg>
+          <p>Payment successful</p>
+        </div>
+      </div>
+      <div class="ps-ck__secured">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        Secured by <b>paystack</b>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+<script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
   <script src="assets/js/qr.js?v=20260915a"></script>
-  <script src="assets/js/payment-methods.js?v=20260915a"></script>
+  <script src="assets/js/payment-methods.js?v=20261021c"></script>
   <script>
     /* ============================================================
        Elken checkout — direct purchase
@@ -266,7 +351,46 @@
       return Math.max(1, Math.min(99, q || 1));
     }
 
-    function money(n) { return 'N' + (Number(n) || 0).toLocaleString(); }
+    /* ---------- Order market ----------
+       Guest flow (login page's "Shop now") → the market picked in the chooser
+       (sessionStorage al.guestCountry, URL param as fallback) — it wins over
+       any seeded/signed-in session, because the tab explicitly chose to shop
+       without an account. Otherwise: signed-in member → their own market
+       (memberData → Auth.user → ID prefix). Drives the order's country /
+       currency; addOrder() attributes a memberless (guest) order to that
+       market's house account (NG000000001 / AE000000001). */
+    const pc0 = window.ProductCatalog || {};
+    function isGuestFlow() {
+      try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; }
+    }
+    function resolveOrderCountry() {
+      if (isGuestFlow()) {
+        try {
+          const g = sessionStorage.getItem('al.guestCountry');
+          if (g) return g;
+        } catch (e) {}
+        const p = new URLSearchParams(location.search).get('country');
+        if (p) return p;
+      }
+      const u = (window.Auth && window.Auth.user) || {};
+      let md = {};
+      try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
+      if (u.memberId || md.memberId) {
+        for (const c of [md.country, md._defaultCountry, u.country]) {
+          const n = pc0.normalizeCountryName ? pc0.normalizeCountryName(c) : '';
+          if (n) return n;
+        }
+        const mid = u.memberId || md.memberId || '';
+        const fromId = pc0.countryFromMemberId ? pc0.countryFromMemberId(mid) : '';
+        if (fromId) return fromId;
+      }
+      return 'Nigeria';
+    }
+    const orderCountry = resolveOrderCountry();
+
+    function money(n) {
+      return pc0.formatMoney ? pc0.formatMoney(n, orderCountry) : ('N' + (Number(n) || 0).toLocaleString());
+    }
 
     // SVG placeholder icon used when a product image is missing / path is wrong.
     // Mirrors account.html so the whole site degrades consistently.
@@ -331,65 +455,81 @@
       };
     }
 
+    /* ---------- Member repeat-purchase context ----------
+       When an operator shops on member-repurchase.html and checks out via the
+       cart, the looked-up member is stashed in al.repeatMember so this page can
+       tag the order: customer = searched member, operator = signed-in user. */
+    const REPEAT_MEMBER_KEY = 'al.repeatMember';
+    function getRepeatMemberCtx() {
+      try { return JSON.parse(localStorage.getItem(REPEAT_MEMBER_KEY) || 'null'); } catch (e) { return null; }
+    }
+    function clearRepeatMemberCtx() { try { localStorage.removeItem(REPEAT_MEMBER_KEY); } catch (e) {} }
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
     let state = {
       qty: 1,
-      delivMethod: 'delivery',
+      delivMethod: 'delivery', // Door delivery default; Self-pickup opt-in
       pickupLoc: 'lagos',
       payMethod: null,
       savedAddressId: null,
+      // Member mode: the read-only preset address list (see setupMemberInfo).
     };
 
-    /* ---------- Saved address picker (synced with My Account) ---------- */
-    function renderSavedAddresses() {
-      const select = document.getElementById('savedAddrSelect');
-      if (!select) return;
+    /* ---------- Shopper saved addresses & pickup points (read-only) ----------
+       Signed-in shoppers see their preset saved addresses (door delivery)
+       or the company's pickup points (self-pickup) as radio lists: the first
+       entry is selected by default and nothing is editable here — addresses
+       are managed in My Account, pickup points are set by the company.
+       Guests (no account) keep the editable address form. Pickup ids match
+       the shared PICKUP_LOCATIONS map used by shipping.html / order pages. */
+    function renderShopAddressList() {
+      const host = document.getElementById('shopAddrList');
+      const wrap = document.getElementById('shopAddrListWrap');
+      const emptyWrap = document.getElementById('shopAddrEmptyWrap');
+      const legacy = document.getElementById('shopAddrForm');
+      if (!host || !wrap) return;
       const list = (window.AL && window.AL.getAddresses) ? window.AL.getAddresses() : [];
-      select.innerHTML = '<option value="">+ Use a new address</option>' +
-        list.map(a => {
-          const label = (a.label || 'Address') + ' — ' + [a.street, a.city].filter(Boolean).join(', ');
-          return `<option value="${a.id}">${label.replace(/</g, '&lt;')}</option>`;
-        }).join('');
-      state.savedAddressId = null;
-      select.onchange = () => {
-        const a = list.find(x => x.id === select.value);
-        state.savedAddressId = a ? a.id : null;
-        const phoneHost = document.getElementById('phoneField');
-        if (a) {
-          document.getElementById('fullName').value = a.recipient || '';
-          if (window.ProductCatalog && window.ProductCatalog.fillPhoneFields) {
-            window.ProductCatalog.fillPhoneFields(phoneHost, a.phone || '');
-          }
-          document.getElementById('addr').value = a.street || '';
-          document.getElementById('city').value = a.city || '';
-          const sel = document.getElementById('state');
-          const opt = Array.from(sel.options).find(o => o.text === a.state);
-          if (opt) sel.value = opt.value;
-          document.getElementById('saveAddrNew').checked = false;
-        } else {
-          // new address → keep typed values, default to saving
-          document.getElementById('saveAddrNew').checked = true;
-        }
-        updatePayBtn();
-      };
+      const loggedIn = !!(window.Auth && window.Auth.isLoggedIn());
+      // Signed-in with addresses → preset list; signed-in without any →
+      // "go add one in your account" prompt (no manual entry); signed out
+      // (guest) → editable form fallback.
+      const listMode = loggedIn && list.length > 0;
+      const emptyMode = loggedIn && list.length === 0;
+      state.shopListMode = listMode;
+      state.shopAddrEmpty = emptyMode;
+      state.shopAddresses = list;
+      wrap.hidden = !listMode;
+      if (emptyWrap) emptyWrap.hidden = !emptyMode;
+      if (legacy) legacy.hidden = listMode || emptyMode;
+      if (!listMode) { state.shopAddrId = null; return; }
+      state.shopAddrId = list[0].id; // first saved address selected by default
+      host.innerHTML = list.map((a, i) => `
+        <label class="pickup-item">
+          <input type="radio" name="shopAddr" value="${esc(a.id)}" ${i === 0 ? 'checked' : ''} />
+          <span class="pickup-radio" aria-hidden="true"></span>
+          <div class="pickup-body">
+            <div class="pickup-head">
+              <div class="pickup-name">${esc(a.label || 'Delivery address')}</div>
+              ${a.isDefault ? '<div class="pickup-tag">Default</div>' : ''}
+            </div>
+            <div class="pickup-addr">${esc(a.street || '')}<br>${esc([a.district, a.city, a.state].filter(Boolean).join(' · '))}</div>
+            <div class="pickup-hours"><span>Recipient</span> ${esc(a.recipient || '—')}</div>
+            <div class="pickup-hours"><span>Phone</span> ${esc(a.phone || '—')}</div>
+          </div>
+          <div class="pickup-check" aria-hidden="true">Selected</div>
+        </label>`).join('');
+      host.querySelectorAll('input[name="shopAddr"]').forEach(r => {
+        r.addEventListener('change', () => {
+          state.shopAddrId = r.value;
+          updatePayBtn();
+        });
+      });
     }
 
-    function saveAddressFromOrder(customer) {
-      // Only persist to "My Account" when actually signed in (guest checkout has no account)
-      if (!(window.Auth && window.Auth.isLoggedIn())) return;
-      if (!(window.AL && window.AL.upsertAddress)) return;
-      const saveNew = document.getElementById('saveAddrNew');
-      if (saveNew && saveNew.checked) {
-        window.AL.upsertAddress({
-          id: state.savedAddressId || undefined,
-          label: 'Order address',
-          recipient: customer.name,
-          phone: customer.phone,
-          street: customer.address,
-          city: customer.city,
-          state: customer.state,
-          isDefault: false,
-        });
-      }
+    function renderSavedAddresses() {
+      renderShopAddressList();
     }
 
     function renderSummary() {
@@ -397,9 +537,16 @@
       const summary = document.getElementById('summary');
       const total = state.total || 0;
       const bv = state.bv || 0;
-      const loggedIn = !!(window.Auth && window.Auth.isLoggedIn());
+      const isGuest = isGuestFlow();
       const itemRows = items.map((it, idx) => {
         const lineTotal = (it.price || 0) * (it.qty || 1);
+        const unitBV = (typeof it.unitBV === 'number') ? it.unitBV : Math.round((it.price || 0) / 1000);
+        const lineBV = unitBV * (it.qty || 1);
+        // Summary layout is identical across flows (member and shopper):
+        // price(BV) per unit on the meta line, line total(BV) on the right.
+        // BV is a member concept — hide it for guest (no-account) checkout.
+        const meta = `${it.sku ? it.sku + ' · ' : ''}${money(it.price || 0)}${isGuest ? ' each' : ` (${unitBV} BV) each`}`;
+        const lineText = `${money(lineTotal)}${isGuest ? '' : ` (${lineBV} BV)`}`;
         const qtyControl = (!state.cartCheckout)
           ? `<span class="qty-control summary-qty">
                <button type="button" class="qty-btn" data-qty="-1" data-idx="${idx}" aria-label="Decrease quantity">−</button>
@@ -413,22 +560,26 @@
             <div class="summary-item-img"><img src="${imgSrc}" alt="${it.name}" onerror="this.outerHTML=window.__ORDER_PIC_SVG" /></div>
             <div class="summary-item-body">
               <div class="summary-item-name">${it.name}</div>
-              <div class="summary-item-meta">${money(it.price || 0)} each</div>
+              <div class="summary-item-meta">${meta}</div>
             </div>
             <div class="summary-item-right">
               <div class="summary-item-qty">${qtyControl}</div>
-              <div class="summary-item-line">${money(lineTotal)}</div>
+              <div class="summary-item-line">${lineText}</div>
             </div>
           </div>`;
       }).join('');
 
+      // Summary layout is identical across flows (member and shopper): the
+      // total always carries its BV and shipping is free (self-pickup).
+      // Hide BV for guest checkout.
+      const totalText = `${money(total)}${isGuest ? '' : ` (${bv} BV)`}`;
+
       summary.innerHTML = `
         <h3 data-i18n="checkout.summary">Order summary</h3>
         <div class="summary-items">${itemRows}</div>
-        ${items.length > 1 ? `<button type="button" class="link-btn" id="editInCart">Edit quantities in cart</button>` : ''}
-        ${loggedIn ? `<div class="row"><span class="k">BV rewards</span><span class="v" id="sumBV">+${bv} BV</span></div>` : ''}
+        <div class="total"><span class="k">Total</span><span class="v" id="sumTotal">${totalText}</span></div>
+        <div class="row"><span class="k">Shipping</span><span class="v">NGN 0</span></div>
         <div class="row method-row" id="summaryMethodRow"><span class="k">Method</span><span class="v" id="summaryMethod"></span></div>
-        <div class="total"><span class="k">Total</span><span class="v" id="sumTotal">${money(total)}</span></div>
         <button class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" id="payBtn" disabled>
           <span data-label>${window.T.tr('checkout.place_order')}</span>
         </button>
@@ -456,12 +607,13 @@
       const summary = document.getElementById('summary');
       if (!summary) return;
       const recalc = () => {
+        const isGuest = isGuestFlow();
         state.total = (state.items || []).reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
         state.bv = (state.items || []).reduce((s, i) => s + (Math.round((i.price || 0) / 1000) * (i.qty || 1)), 0);
         const totalEl = document.getElementById('sumTotal');
-        if (totalEl) totalEl.textContent = money(state.total);
+        if (totalEl) totalEl.textContent = `${money(state.total)}${isGuest ? '' : ` (${state.bv} BV)`}`;
         const bvEl = document.getElementById('sumBV');
-        if (bvEl) bvEl.textContent = '+' + state.bv + ' BV';
+        if (bvEl && !isGuest) bvEl.textContent = '+' + state.bv + ' BV';
         const bankEl = document.getElementById('bankAmount');
         if (bankEl) bankEl.textContent = money(state.total);
         updateAccountBalanceDisplay();
@@ -485,25 +637,58 @@
           recalc();
         });
       });
-      const editBtn = document.getElementById('editInCart');
-      if (editBtn) editBtn.addEventListener('click', () => { location.href = 'cart.html'; });
     }
 
     function bindDelivMethod() {
+      // Door delivery ⇄ Self-pickup: the address area only applies to door
+      // delivery (shopper: preset saved-address list / guest editable form;
+      // member: the member's preset saved addresses). Self-pickup shows no
+      // address or pickup list at all — identical logic in both flows.
       const radios = document.querySelectorAll('input[name="delivMethod"]');
-      const deliveryForm = document.getElementById('deliveryForm');
-      const pickupPanel = document.getElementById('pickupPanel');
+      const addrCard = document.getElementById('addrCard');
+      const delivCard = document.getElementById('delivCard');
+      const shopAddrWrap = document.getElementById('shopAddrListWrap');
+      const shopEmptyWrap = document.getElementById('shopAddrEmptyWrap');
+      const shopForm = document.getElementById('shopAddrForm');
+      const shopRcCard = document.getElementById('shopRcCard');
+      const sync = () => {
+        // Member mode has no delivery-method choice and no saved-address card:
+        // it ships to the temporary address typed into #rpShipCard.
+        if (delivCard) delivCard.hidden = !!state.memberMode;
+        if (addrCard) addrCard.hidden = state.memberMode || state.delivMethod !== 'delivery';
+        // Member mode swaps the editable address form for the member's
+        // read-only preset saved addresses (express delivery only) —
+        // self-pickup shows nothing, exactly like the shopper flow.
+        // Shopper mode: preset saved-address list when signed in (read-only),
+        // editable form for guests. The Reporting Center ID is its own top
+        // card and shows for every shopper order (member mode has its own
+        // field inside the member card).
+        const shopListMode = !!state.shopListMode;
+        if (shopAddrWrap) shopAddrWrap.hidden = state.memberMode || !shopListMode;
+        if (shopEmptyWrap) shopEmptyWrap.hidden = state.memberMode || !state.shopAddrEmpty;
+        if (shopForm) shopForm.hidden = state.memberMode || shopListMode || !!state.shopAddrEmpty;
+        if (shopRcCard) shopRcCard.hidden = state.memberMode;
+        updatePayBtn();
+      };
       radios.forEach(r => {
         r.addEventListener('change', () => {
           state.delivMethod = r.value;
-          deliveryForm.style.display = r.value === 'delivery' ? 'block' : 'none';
-          pickupPanel.style.display = r.value === 'pickup' ? 'block' : 'none';
-          updatePayBtn();
+          sync();
         });
       });
-      document.querySelectorAll('input[name="pickupLoc"]').forEach(r => {
-        r.addEventListener('change', () => { state.pickupLoc = r.value; });
-      });
+      sync();
+    }
+
+    // Fill the Region / State select from the order market's config
+    // (Nigeria → Lagos/Abuja FCT/…, UAE → Dubai/Abu Dhabi/…).
+    function setupAddressRegions() {
+      const sel = document.getElementById('state');
+      if (!sel) return;
+      const cfg = pc0.getCountryConfig ? pc0.getCountryConfig(orderCountry) : null;
+      const regions = (cfg && cfg.regions) || [];
+      const placeholder = window.T ? window.T.tr('checkout.addr_region_select') : 'Select region';
+      sel.innerHTML = '<option value="">' + placeholder + '</option>' +
+        regions.map(r => '<option value="' + r + '">' + r + '</option>').join('');
     }
 
     /* ---------- Shared payment layer (assets/js/payment-methods.js) ----------
@@ -515,11 +700,17 @@
       const loggedIn = !!(window.Auth && window.Auth.isLoggedIn());
       payMethods = window.PayMethods.wire('#payMethodGrid', {
         name: 'payMethod',
+        // Full catalogue + the opt-in Paystack channel (balance is added
+        // separately via includeBalance below). Phase 1: the shared layer's
+        // gate hides every channel except Paystack (+ Account Balance when
+        // logged in); the declarations stay so phase 2 is a one-flag flip
+        // in payment-methods.js — no page edits needed.
+        only: ['card', 'ussd', 'bank', 'paybank', 'visaqr', 'paystack'],
         panelHost: '#payPanels',
         panelClass: 'ek-card checkout-card method-info-card',
         prefix: 'co',
         amount: () => state.total || 0,
-        includeBalance: loggedIn,
+        includeBalance: !isGuestFlow(),
         balanceAmountId: 'payBalanceAmount',
         balanceSubId: 'payBalanceSub',
         extraPanels: { balance: '#balancePanel' },
@@ -578,7 +769,7 @@
       return Math.max(0, Number(pc.getEcoinTotal(mid)) || 0);
     }
 
-    function formatMoney(n) { return 'N' + (Number(n) || 0).toLocaleString(); }
+    function formatMoney(n) { return money(n); }
 
     function updateAccountBalanceDisplay() {
       const balance = getAccountBalance();
@@ -619,24 +810,55 @@
         emailInput.classList.toggle('invalid', showErr);
         emailError.hidden = !showErr;
       }
-      const ok = document.getElementById('agreeContact').checked
-        && document.getElementById('agreeTerms').checked
-        && state.delivMethod
-        && (state.delivMethod === 'pickup' || (document.getElementById('fullName').value.trim() && phoneInput && phoneInput.value.trim() && document.getElementById('addr').value.trim() && document.getElementById('city').value.trim()))
-        && emailOk
-        && methodOk;
+      let ok;
+      if (state.memberMode) {
+        // Member repeat purchase: reporting center ID + the temporary
+        // shipping address (district optional).
+        const rc = document.getElementById('rpRcId');
+        const v = id => ((document.getElementById(id) || {}).value || '').trim();
+        const rpPhoneEl = document.querySelector('#rpPhoneField .phone-number');
+        const shipOk = !!v('rpRecipient') && !!(rpPhoneEl && rpPhoneEl.value.trim())
+          && !!v('rpState') && !!v('rpCity') && !!v('rpAddr');
+        ok = !!methodOk
+          && !!(rc && rc.value.trim())
+          && shipOk
+          && memberFlowGate();
+      } else {
+        // Shopper flow: the Reporting Center ID is always required. Signed-in
+        // users ship to a preset saved address whose recipient + phone act as
+        // the order contact (no contact card); guests type both themselves
+        // and their full address details.
+        const rc = document.getElementById('shopRcId');
+        const rcOk = !!(rc && rc.value.trim());
+        const stateSel = document.getElementById('state');
+        const doorAddrOk = state.delivMethod !== 'delivery' || state.shopListMode || (!state.shopAddrEmpty && (
+          document.getElementById('addr').value.trim()
+          && document.getElementById('city').value.trim()
+          && !!(stateSel && stateSel.value)));
+        const contactOk = state.shopListMode || (
+          !!document.getElementById('fullName').value.trim()
+          && !!(phoneInput && phoneInput.value.trim()));
+        ok = !!methodOk
+          && contactOk
+          && doorAddrOk
+          && rcOk
+          && emailOk;
+      }
       payBtn.disabled = !ok;
     }
 
     function bindPay() {
       const payBtn = document.getElementById('payBtn');
-      ['agreeContact', 'agreeTerms'].forEach(id => {
-        document.getElementById(id).addEventListener('change', updatePayBtn);
+      ['fullName', 'addr', 'city', 'district'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updatePayBtn);
       });
-      ['fullName', 'addr', 'city'].forEach(id => {
-        document.getElementById(id).addEventListener('input', updatePayBtn);
-      });
-      document.getElementById('contactEmail').addEventListener('input', updatePayBtn);
+      const stateSel = document.getElementById('state');
+      if (stateSel) stateSel.addEventListener('change', updatePayBtn);
+      const shopRcEl = document.getElementById('shopRcId');
+      if (shopRcEl) shopRcEl.addEventListener('input', updatePayBtn);
+      const contactEmailEl = document.getElementById('contactEmail');
+      if (contactEmailEl) contactEmailEl.addEventListener('input', updatePayBtn);
       // phone is a dial+number pair rendered into #phoneField
       document.querySelector('#phoneField .phone-number')?.addEventListener('input', updatePayBtn);
 
@@ -647,23 +869,52 @@
           if (window.toast) window.toast(window.T.tr('payment.err_incomplete'), 'error');
           return;
         }
+        // Paystack runs its own confirm → checkout modal flow first; the
+        // order is only created once the payment succeeds.
+        if (state.payMethod === 'paystack') { openPsPayModal(); return; }
+        placeOrder();
+      });
+
+      function placeOrder() {
         payBtn.setAttribute('aria-busy', 'true');
         payBtn.querySelector('[data-label]').innerHTML = `<span class="ek-spinner"></span> ${window.T.tr('common.loading')}`;
         const pc = window.ProductCatalog || {};
         const phone = pc.readPhone ? pc.readPhone(document.getElementById('phoneField'), 'phone') : (document.querySelector('#phoneField .phone-number') || {}).value || '';
-        const contactPhone = pc.readPhone ? pc.readPhone(document.getElementById('contactPhoneField'), 'contactPhone') : '';
-        const customer = {
-          name: document.getElementById('fullName').value.trim(),
-          phone: phone,
+        const contactPhone = pc.readPhone && document.getElementById('contactPhoneField')
+          ? pc.readPhone(document.getElementById('contactPhoneField'), 'contactPhone') : '';
+        // Member repeat purchase ships to one of the member's preset saved
+        // addresses (or a preset pickup point) — both read-only here. The
+        // signed-in shopper flow likewise picks a preset saved address.
+        const rpVal = id => ((document.getElementById(id) || {}).value || '').trim();
+        const shopAddr = (!state.memberMode && state.shopListMode)
+          ? (state.shopAddresses || []).find(a => a.id === state.shopAddrId) || null : null;
+        const customer = state.memberMode ? {
+          // Temporary shipping address typed in for this order only.
+          name: rpVal('rpRecipient'),
+          phone: pc.readPhone ? pc.readPhone(document.getElementById('rpPhoneField'), 'rpPhone') : '',
           contactPhone: contactPhone,
           email: document.getElementById('contactEmail').value.trim(),
-          city: document.getElementById('city').value.trim(),
-          address: document.getElementById('addr').value.trim(),
-          state: document.getElementById('state').value,
-          note: document.getElementById('orderNote').value.trim(),
+          city: rpVal('rpCity'),
+          district: rpVal('rpDistrict'),
+          address: rpVal('rpAddr'),
+          state: rpVal('rpState'),
+          note: '',
+        } : {
+          // Signed-in shoppers: the selected preset address carries the
+          // recipient + phone (no contact card on the page). Guests type
+          // their own contact into the (still visible) contact card.
+          name: (shopAddr && shopAddr.recipient) || document.getElementById('fullName').value.trim(),
+          phone: (shopAddr && shopAddr.phone) || phone,
+          contactPhone: contactPhone,
+          email: document.getElementById('contactEmail').value.trim(),
+          city: shopAddr ? (shopAddr.city || '') : document.getElementById('city').value.trim(),
+          address: shopAddr ? (shopAddr.street || '') : document.getElementById('addr').value.trim(),
+          state: shopAddr ? (shopAddr.state || '') : document.getElementById('state').value,
+          district: shopAddr ? (shopAddr.district || '') : ((document.getElementById('district') || {}).value || '').trim(),
+          note: '',
         };
-        // sync: save the address back to My Account if requested
-        saveAddressFromOrder(customer);
+        // Signed-in shoppers ship to a preset saved address (read-only list);
+        // guests type their own — nothing new is saved to My Account here.
         // Build order items from the normalized state.items (single or cart).
         const orderItems = (state.items || []).map(it => ({
           id: it.id,
@@ -675,26 +926,97 @@
           bv: Math.round((it.price || 0) / 1000) * (it.qty || 1),
           image: it.image || _productImagePath(it.img, it.category),
         }));
+        // Guest flow (login page's "Shop now"): the order belongs to the
+        // market's house account — never to whatever session happens to be
+        // seeded or signed in — so addOrder() attributes it to NG000000001 /
+        // AE000000001 by country. Signing in mid-flow clears the guest flags,
+        // so a real member session takes over naturally.
+        const guestFlow = pc0.isGuestFlow ? pc0.isGuestFlow() : false;
+        const authMemberId = (!guestFlow && window.Auth && window.Auth.user && window.Auth.user.memberId) || null;
         const order = {
           id: (pc.genOrderId ? pc.genOrderId() : 'AQ-' + Math.random().toString(36).slice(2, 8).toUpperCase()),
           date: Date.now(),
           items: orderItems,
           total: state.total || 0,
           bv: state.bv || 0,
-          memberId: (window.Auth && window.Auth.user && window.Auth.user.memberId) || null,
-          operatorId: (window.Auth && window.Auth.user && window.Auth.user.memberId) || null,
+          memberId: authMemberId,
+          operatorId: authMemberId,
           memberName: customer.name || null,
-          country: 'Nigeria',
-          currency: 'NGN',
-          addressId: state.savedAddressId || null,
+          country: orderCountry,
+          currency: pc0.getCountryConfig ? pc0.getCountryConfig(orderCountry).currency : 'NGN',
+          // Both modes point at the selected preset address; guests keep
+          // their typed address (no saved-address id).
+          addressId: state.memberMode
+            ? null // temporary address — not from any address book
+            : (state.shopAddrId || state.savedAddressId || null),
           customer,
-          delivery: { method: state.delivMethod, pickupLoc: state.delivMethod === 'pickup' ? state.pickupLoc : null },
+          delivery: {
+            method: state.delivMethod,
+            // Self-pickup resolves to the default pickup point (lagos) in
+            // both flows — the checkout shows no pickup list.
+            pickupLoc: state.delivMethod === 'pickup' ? (state.pickupLoc || 'lagos') : null,
+          },
           payment: state.payMethod,
           paymentLabel: (window.PayMethods && window.PayMethods.label(state.payMethod)) || state.payMethod || null,
           paymentReference: paymentReference(),
           payStatus: 'Unpaid',
           status: 'pending',
         };
+        // Member repeat purchase: the looked-up member is the customer, the
+        // signed-in user is the operator. Tag the order accordingly and credit
+        // the operator's reporting center.
+        if (state.repeatMember) {
+          order.memberId = state.repeatMember.id || order.memberId;
+          order.memberName = state.repeatMember.name || customer.name || null;
+          const subtype = state.repeatMember.subtype || 'repeat-purchase';
+          if (subtype === 'upgrade') {
+            order.source = 'member-upgrade';
+            const fromLevel = state.repeatMember.level || 'Member';
+            const toLevel = state.upgradeTo || fromLevel;
+            const diff = Math.max(0, state.upgradeDiff || 0);
+            order.upgrade = {
+              method: 'Pay the difference',
+              fromLevel: fromLevel,
+              toLevel: toLevel,
+              differentialBv: diff,
+              productBv: order.bv || 0,
+            };
+            // Apply the level change so the rest of the site reflects it.
+            saveLevelOverride(order.memberId, toLevel);
+            try {
+              window.dispatchEvent(new CustomEvent('al:member-level-changed', { detail: { memberId: order.memberId, level: toLevel } }));
+            } catch (e) {}
+            try { localStorage.setItem('al.memberLevels:ping', String(Date.now())); } catch (e) {}
+          } else if (subtype === 'auto-maintenance') {
+            order.source = 'member-auto-maintenance';
+          } else {
+            order.source = 'member-repeat-purchase';
+          }
+          const opMd = (function () { try { return JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) { return {}; } })();
+          // The reporting center is an editable field in member mode — the
+          // operator may correct it before submitting. No default: an empty
+          // field is blocked by the pay gate, so nothing is written either.
+          const rcField = (document.getElementById('rpRcId') || {}).value || '';
+          if (rcField.trim()) {
+            order.reportingCenterId = rcField.trim();
+          }
+          order.reportingCenterName = order.reportingCenterName || opMd.memberName || opMd.name || '';
+        }
+        // Guest / shopper orders: the Reporting Center ID is a required field
+        // on the checkout — whatever the customer typed wins; the fallback is
+        // the market's house reporting center
+        // (Nigeria → NG000000001, UAE → AE000000001).
+        if (!state.repeatMember) {
+          const shopRc = ((document.getElementById('shopRcId') || {}).value || '').trim();
+          if (shopRc) {
+            order.reportingCenterId = shopRc;
+          } else {
+            const cfg = pc0.getCountryConfig ? pc0.getCountryConfig(orderCountry) : null;
+            if (cfg && cfg.centerId) {
+              order.reportingCenterId = cfg.centerId;
+            }
+          }
+        }
         // Account balance: deduct Ecoin and mark as paid immediately
         if (state.payMethod === 'balance' && order.memberId && window.ProductCatalog && window.ProductCatalog.debitEcoin) {
           order.payStatus = 'Paid';
@@ -734,29 +1056,278 @@
             });
           }
         }
-        // Cart checkout: the order is now placed, so empty the cart.
-        if (state.cartCheckout && pc.clearCart) pc.clearCart();
+        // Cart checkout: the order is now placed, so empty the cart. Member
+        // repeat-purchase clears its own al.memberCart, not the shopper's cart.
+        if (state.cartCheckout) {
+          if (state.memberMode && pc.clearMemberCart) pc.clearMemberCart();
+          else if (pc.clearCart) pc.clearCart();
+        }
+        // Member repeat purchase: the context was consumed for this order.
+        if (state.repeatMember) clearRepeatMemberCtx();
         setTimeout(() => {
           location.href = 'shipping.html?order=' + encodeURIComponent(order.id);
         }, 900);
+      }
+
+      /* ---------- Paystack modal wiring (mirrors the signup flow) ---------- */
+      const psPayModal = document.getElementById('psPayModal');
+      const psCkModal = document.getElementById('psCheckoutModal');
+
+      function openPsPayModal() {
+        // Prefill with the contact email the customer already entered — except
+        // in the guest flow, where the hidden field only holds the derived
+        // fallback (customer@elken.demo). Opening empty there makes the guest
+        // enter the real address, which the order record then carries (and the
+        // order page's "send link by email" action uses).
+        const emailEl = document.getElementById('psPayEmail');
+        if (emailEl && !emailEl.value && !isGuestFlow()) {
+          emailEl.value = document.getElementById('contactEmail').value.trim();
+        }
+        document.getElementById('psPayAmount').textContent = money(state.total || 0);
+        psPayModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+      function closePsPayModal() {
+        psPayModal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+      function closePsCheckout() {
+        psCkModal.style.display = 'none';
+        document.body.style.overflow = '';
+        // Reset to the default test state for a possible retry
+        const first = psCkModal.querySelector('input[name="psOutcome"]');
+        if (first) first.checked = true;
+        document.getElementById('psCkError').style.display = 'none';
+        document.getElementById('psCkSuccess').style.display = 'none';
+        document.getElementById('psCkBody').style.display = '';
+      }
+
+      document.getElementById('psPayCancel').addEventListener('click', closePsPayModal);
+      psPayModal.addEventListener('click', e => { if (e.target === psPayModal) closePsPayModal(); });
+
+      document.getElementById('psPayConfirm').addEventListener('click', () => {
+        const emailInput = document.getElementById('psPayEmail');
+        const email = (emailInput.value || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          emailInput.setAttribute('aria-invalid', 'true');
+          document.getElementById('psPayEmailErr').style.display = 'block';
+          return;
+        }
+        emailInput.removeAttribute('aria-invalid');
+        document.getElementById('psPayEmailErr').style.display = 'none';
+        // Persist the confirmed address onto the order record — without this
+        // the order keeps the auto-filled fallback (customer@elken.demo) and
+        // the "send order link by email" action would mail a dead address.
+        document.getElementById('contactEmail').value = email;
+        // Hand the confirmed email + amount to the Paystack checkout modal
+        document.getElementById('psCkEmail').textContent = email;
+        const amount = money(state.total || 0);
+        document.getElementById('psCkAmount').textContent = amount;
+        document.getElementById('psCkPayBtn').textContent = 'Pay ' + amount;
+        closePsPayModal();
+        psCkModal.style.display = 'flex';
       });
+
+      document.getElementById('psCkClose').addEventListener('click', closePsCheckout);
+      psCkModal.addEventListener('click', e => { if (e.target === psCkModal) closePsCheckout(); });
+
+      document.getElementById('psCkPayBtn').addEventListener('click', () => {
+        const outcome = (psCkModal.querySelector('input[name="psOutcome"]:checked') || {}).value;
+        if (outcome === 'declined') {
+          document.getElementById('psCkError').style.display = 'block';
+          return;
+        }
+        // Success / Bank Authentication → payment done, place the order
+        document.getElementById('psCkError').style.display = 'none';
+        document.getElementById('psCkBody').style.display = 'none';
+        document.getElementById('psCkSuccess').style.display = 'flex';
+        setTimeout(() => {
+          closePsCheckout();
+          placeOrder();
+        }, 1400);
+      });
+
+      document.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        if (psCkModal.style.display !== 'none') closePsCheckout();
+        else if (psPayModal.style.display !== 'none') closePsPayModal();
+      });
+    }
+
+    /* ---------- Member flow specifics (auto-maintenance / upgrade) ----------
+       Beyond the shared repeat-purchase checkout, two flows add rules, read
+       from the stashed al.repeatMember.context:
+       - auto-maintenance: the selected products' total BV must be ≥ 90.
+       - upgrade: the operator picks a target level here; the products' total
+         BV must cover the upgrade difference (target BV − current BV). */
+    const LEVELS = ['Silver', 'Gold'];
+    const LEVEL_BV = { Member: 0, Silver: 300, Gold: 900, Platinum: 2700, Diamond: 8100, Corporate: 24300 };
+    function bvOfLevel(l) { const v = LEVEL_BV[l]; return typeof v === 'number' ? v : 0; }
+
+    function getLevelOverrides() {
+      try { return JSON.parse(localStorage.getItem('al.memberLevels') || '{}'); } catch (e) { return {}; }
+    }
+    function saveLevelOverride(id, level) {
+      const all = getLevelOverrides();
+      all[id] = level;
+      try { localStorage.setItem('al.memberLevels', JSON.stringify(all)); } catch (e) {}
+    }
+
+    // Builds the flow-specific card (BV requirement / upgrade target) and seeds
+    // the pay-button gate. Runs after setupMemberInfo() in member mode.
+    function setupMemberFlow() {
+      const card = document.getElementById('memberFlowCard');
+      // Flow cards are member-mode only, full stop — never on guest checkout.
+      if (!card || !state.memberMode) { if (card) card.hidden = true; return; }
+      const m = state.repeatMember || {};
+      const subtype = m.subtype;
+      if (!subtype || subtype === 'repeat-purchase') { card.hidden = true; return; }
+      card.hidden = false;
+      const body = document.getElementById('memberFlowBody');
+      if (!body) return;
+
+      if (subtype === 'auto-maintenance') {
+        state.subtype = 'auto-maintenance';
+        const MIN_BV = 90;
+        const bv = state.bv || 0;
+        const ok = bv >= MIN_BV;
+        body.innerHTML = `
+          <h2>Auto-Maintenance requirement</h2>
+          <p class="field__hint">Auto-Maintenance requires the selected products' total BV to be at least <strong>90 BV</strong>.</p>
+          <div class="row"><span class="k">Current BV</span><span class="v" id="flowBv">${bv} BV</span></div>
+          <div class="row"><span class="k">Requirement</span><span class="v" id="flowReq" style="color:${ok ? 'var(--ek-success)' : 'var(--ek-error)'}">${ok ? bv + ' / 90 BV ✓' : bv + ' / 90 BV — add more products'}</span></div>`;
+        updatePayBtn();
+      } else if (subtype === 'upgrade') {
+        state.subtype = 'upgrade';
+        const current = m.level || 'Member';
+        const options = LEVELS.filter(l => bvOfLevel(l) > bvOfLevel(current));
+        const opts = options.map(l => `<option value="${l}">${l}</option>`).join('');
+        body.innerHTML = `
+          <h2>Upgrade member</h2>
+          <p class="field__hint">Current level: <strong>${current}</strong>. Choose the level to upgrade to — the products' total BV must cover the difference.</p>
+          <div class="field">
+            <label for="flowUpgradeTo">Upgrade to <span class="req">*</span></label>
+            <select class="ek-select" id="flowUpgradeTo">${opts ? '<option value="">— Select level —</option>' + opts : '<option value="">No higher level available</option>'}</select>
+          </div>
+          <div class="row" id="flowDiffRow" style="display:none"><span class="k">Upgrade difference</span><span class="v" id="flowDiff"></span></div>`;
+        const sel = document.getElementById('flowUpgradeTo');
+        if (sel) {
+          // Pre-select the level the operator already chose in the cart, if any.
+          if (m.targetLevel && options.indexOf(m.targetLevel) !== -1) sel.value = m.targetLevel;
+          sel.addEventListener('change', () => {
+            const target = sel.value;
+            state.upgradeTo = target;
+            const diffRow = document.getElementById('flowDiffRow');
+            const diffEl = document.getElementById('flowDiff');
+            if (target) {
+              const diff = Math.max(0, bvOfLevel(target) - bvOfLevel(current));
+              state.upgradeDiff = diff;
+              if (diffRow) diffRow.style.display = 'flex';
+              if (diffEl) diffEl.textContent = `${target} ${bvOfLevel(target)} BV − ${current} ${bvOfLevel(current)} BV = ${diff} BV`;
+            } else {
+              state.upgradeDiff = 0;
+              if (diffRow) diffRow.style.display = 'none';
+            }
+            updatePayBtn();
+          });
+          // Fire once so the pre-selected level's diff + gate are applied.
+          sel.dispatchEvent(new Event('change'));
+        }
+        updatePayBtn();
+      }
+    }
+
+    // Extra pay-button gate layered on top of the shared member-mode rules.
+    function memberFlowGate() {
+      if (state.subtype === 'auto-maintenance') return (state.bv || 0) >= 90;
+      if (state.subtype === 'upgrade') {
+        if (!state.upgradeTo) return false;
+        return (state.bv || 0) >= (state.upgradeDiff || 0);
+      }
+      return true;
+    }
+
+    /* ---------- Member repeat-purchase info card (member mode only) ----------
+       Replaces the pickup + contact cards with the reference back-office
+       field set: read-only repeat member ID (+ resolved name) and the
+       reporting center, plus the temporary shipping-address form. */
+    function setupMemberInfo() {
+      const card = document.getElementById('memberInfoCard');
+      const contact = document.getElementById('contactCard');
+      if (card) card.hidden = false;
+      // Member mode keeps the same delivery-method chooser and the same
+      // "Address details" card as the shopper flow — bindDelivMethod() shows
+      // it for door delivery (member's preset list inside) and hides it for
+      // self-pickup.
+      if (contact) contact.hidden = true;
+      const pc = window.ProductCatalog || {};
+      const m = state.repeatMember || {};
+      let opMd = {};
+      try { opMd = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
+      document.getElementById('rpMemberId').value = m.id || '';
+      document.getElementById('rpMemberName').textContent = m.name ? `【${m.name}】` : '';
+      // Reporting Center ID starts empty and is required — the operator fills
+      // it in (the pay button stays disabled until it's non-empty).
+      document.getElementById('rpRcId').value = '';
+      // Hidden contact email feeds the Paystack modal prefill (member mode
+      // has no email field of its own — fall back to the operator's).
+      const emailEl = document.getElementById('contactEmail');
+      if (emailEl && !emailEl.value) {
+        emailEl.value = opMd.email || (m.id ? m.id.toLowerCase() + '@elken.demo' : '');
+      }
+      // Temporary shipping address: blank form, door delivery only (no
+      // delivery-method choice in member mode).
+      state.delivMethod = 'delivery';
+      const ship = document.getElementById('rpShipCard');
+      if (ship) ship.hidden = false;
+      const phoneHost = document.getElementById('rpPhoneField');
+      if (phoneHost && pc.phoneFieldHTML) phoneHost.innerHTML = pc.phoneFieldHTML(pc.DEFAULT_DIAL, 'rpPhone');
+      const rpState = document.getElementById('rpState');
+      if (rpState) {
+        const cfg = pc0.getCountryConfig ? pc0.getCountryConfig(orderCountry) : null;
+        const regions = (cfg && cfg.regions) || [];
+        rpState.innerHTML = '<option value="">Select region</option>' +
+          regions.map(r => '<option value="' + esc(r) + '">' + esc(r) + '</option>').join('');
+        rpState.addEventListener('change', updatePayBtn);
+      }
+      ['rpRcId', 'rpRecipient', 'rpDistrict', 'rpCity', 'rpAddr'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updatePayBtn);
+      });
+      document.querySelector('#rpPhoneField .phone-number')?.addEventListener('input', updatePayBtn);
+      updatePayBtn();
     }
 
     function applyI18nCheckout() {
       document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = window.T.tr(el.dataset.i18n));
+      // Region options depend on the order market — fill before the saved
+      // profile address (below) tries to pre-select one.
+      setupAddressRegions();
       const pc = window.ProductCatalog || {};
       const defaults = customerDefaults();
-      document.getElementById('fullName').value = defaults.name;
-      // phone fields: dial code + number pairs
+      // Member repeat purchase: pre-fill the shipping recipient with the
+      // looked-up member's profile (the operator is only placing the order).
+      if (state.repeatMember) {
+        if (state.repeatMember.name) defaults.name = state.repeatMember.name;
+        if (state.repeatMember.phone) defaults.phone = state.repeatMember.phone;
+        if (state.repeatMember.address) defaults.address = state.repeatMember.address;
+        if (state.repeatMember.city) defaults.city = state.repeatMember.city;
+        if (state.repeatMember.state) defaults.state = state.repeatMember.state;
+      }
+      document.getElementById('fullName').value = isGuestFlow() ? '' : defaults.name;
+      // phone fields: dial code + number pairs (no prefill for guest checkout)
       const phoneHost = document.getElementById('phoneField');
       const contactHost = document.getElementById('contactPhoneField');
       if (phoneHost && pc.phoneFieldHTML) phoneHost.innerHTML = pc.phoneFieldHTML(pc.DEFAULT_DIAL, 'phone');
       if (contactHost && pc.phoneFieldHTML) contactHost.innerHTML = pc.phoneFieldHTML(pc.DEFAULT_DIAL, 'contactPhone');
       if (pc.fillPhoneFields) {
-        pc.fillPhoneFields(phoneHost, defaults.phone);
-        pc.fillPhoneFields(contactHost, defaults.phone);
+        const phoneDefault = isGuestFlow() ? '' : defaults.phone;
+        pc.fillPhoneFields(phoneHost, phoneDefault);
+        pc.fillPhoneFields(contactHost, phoneDefault);
       }
-      document.getElementById('contactEmail').value = defaults.email;
+      // Hidden email feeds Paystack prefill / order record. Fall back to a
+      // derived address so the gate never blocks on an empty account email.
+      const emailFallback = ((window.Auth && window.Auth.user && window.Auth.user.memberId) || 'customer').toLowerCase() + '@elken.demo';
+      document.getElementById('contactEmail').value = defaults.email || emailFallback;
       document.getElementById('addr').value = defaults.address;
       document.getElementById('city').value = defaults.city;
       if (defaults.state) {
@@ -764,14 +1335,18 @@
         const opt = Array.from(sel.options).find(o => o.value === defaults.state || o.text === defaults.state);
         if (opt) sel.value = opt.value;
       }
-      document.getElementById('agreeContact').checked = true;
-      document.getElementById('agreeTerms').checked = true;
+      // The reporting center ID is the only field the customer fills in — the
+      // consent checkboxes were auto-satisfied at this point.
       renderSavedAddresses();
-      // Guest checkout has no saved addresses / account — hide the account-bound picker.
-      if (!(window.Auth && window.Auth.isLoggedIn())) {
-        const picker = document.querySelector('.saved-addr-picker');
-        if (picker) picker.style.display = 'none';
-      }
+      // Contact person card: only guests typing their own address keep it —
+      // signed-in shoppers take recipient + phone from their saved address
+      // (or are sent off to add one), and member mode has its own contact
+      // fields.
+      const contactCardEl = document.getElementById('contactCard');
+      if (contactCardEl && !state.memberMode) contactCardEl.hidden = !!state.shopListMode || !!state.shopAddrEmpty;
+      // Member repeat purchase: swap the pickup/contact cards for the
+      // member information field set (prefilled from the looked-up member).
+      if (state.memberMode) setupMemberInfo();
       // Build the shared payment chooser + panels first, then render the summary
       // (renderSummary() rebuilds the Method row, so it re-reads the selection).
       buildPayMethods();
@@ -784,29 +1359,56 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       // Cart checkout: build order items from the cart store (multi-item).
+      // Member repeat-purchase uses its own cart (al.memberCart), never the
+      // shopper's main al.cart, so the two never mix.
       const cartMode = new URLSearchParams(location.search).get('cart') === '1';
+      const memberMode = new URLSearchParams(location.search).get('mode') === 'member';
+      state.memberMode = memberMode;
       if (cartMode) {
-        const cart = (window.ProductCatalog && window.ProductCatalog.getCart) ? window.ProductCatalog.getCart() : [];
+        const pc = window.ProductCatalog || {};
+        const getCartFn = memberMode ? (pc.getMemberCart || pc.getCart) : pc.getCart;
+        const cart = getCartFn ? getCartFn() : [];
         if (!cart.length) {
-          location.replace('cart.html');
+          location.replace(memberMode ? 'cart.html?mode=member' : 'cart.html');
           return;
         }
-        const items = cart.map(c => ({
-          id: c.id,
-          name: c.name,
-          qty: c.qty || 1,
-          price: c.price || 0,
-          img: c.img || '',
-          category: c.category || '',
-          bv: Math.round((c.price || 0) / 1000) * (c.qty || 1),
-          image: _productImagePath(c.img, c.category),
-        }));
+        // Enrich with catalog data: real per-unit BV (not price/1000) and the
+        // product code (SKU) shown on the summary lines. Look the items up in
+        // the order market's catalogue first (a UAE cart holds ae-* ids the
+        // global Nigeria catalogue doesn't know).
+        const marketCatalog = (pc.getProductsByCountry ? pc.getProductsByCountry(orderCountry) : []) || [];
+        const catalog = marketCatalog.length ? marketCatalog : (pc.allProducts || []);
+        const items = cart.map(c => {
+          const p = catalog.find(x => x.id === c.id) || {};
+          const unitBV = (typeof p.bv === 'number') ? p.bv : Math.round((c.price || 0) / 1000);
+          return {
+            id: c.id,
+            name: c.name,
+            qty: c.qty || 1,
+            price: c.price || 0,
+            img: c.img || '',
+            category: c.category || '',
+            unitBV,
+            bv: unitBV * (c.qty || 1),
+            sku: p.sku || '',
+            image: _productImagePath(c.img, c.category),
+          };
+        });
         state.items = items;
         state.total = items.reduce((s, i) => s + i.price * i.qty, 0);
         state.bv = items.reduce((s, i) => s + (i.bv || 0), 0);
         state.cartCheckout = true;
-        document.title = 'Checkout · Your Cart · Elken';
+        // Carry the member-repeat-purchase context (if this cart came from
+        // member-repurchase.html) so the order is tagged for the right member.
+        // Member mode ONLY — a stale context from an abandoned member session
+        // must never leak into a guest checkout (it would show the
+        // Auto-Maintenance/upgrade card and tag the guest order).
+        state.repeatMember = memberMode ? getRepeatMemberCtx() : null;
+        if (state.repeatMember) document.title = 'Checkout · Member Repeat Purchase · Elken';
         applyI18nCheckout();
+        // Member flow specifics (auto-maintenance ≥ 90 BV / upgrade target)
+        // are layered on top of the shared member checkout.
+        setupMemberFlow();
         return;
       }
 
@@ -818,6 +1420,7 @@
       }
       state.product = product;
       state.qty = getQtyFromUrl();
+      const unitBV = (typeof product.bv === 'number') ? product.bv : Math.round((product.price || 0) / 1000);
       const single = {
         id: product.id,
         name: product.name,
@@ -825,7 +1428,9 @@
         price: product.price,
         img: product.img,
         category: product.category,
-        bv: Math.round((product.price || 0) / 1000) * state.qty,
+        unitBV,
+        bv: unitBV * state.qty,
+        sku: product.sku || '',
         image: product.image || _productImagePath(product.img, product.category),
       };
       state.items = [single];

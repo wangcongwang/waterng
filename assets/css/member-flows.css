@@ -12,7 +12,8 @@
 /* ---------- Page shell ---------- */
 .member-section { padding-top: var(--ek-48); padding-bottom: var(--ek-64); }
 .member-container {
-  width: min(1040px, 100% - (var(--ek-page-pad) * 2));
+  /* Match the signup (.signup-container) content width exactly. */
+  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2));
   margin-inline: auto;
 }
 .member-container .reg-submit-wrap { margin-top: var(--ek-24); }
@@ -24,8 +25,16 @@
   flex-wrap: wrap;
   align-items: flex-end;
 }
-.member-search .ek-input { flex: 1 1 260px; }
-.member-search .ek-btn { flex: 0 0 auto; }
+.member-search .ek-input { flex: 1 1 260px; min-height: 52px; }
+.member-search .ek-btn {
+  flex: 0 0 auto;
+  align-self: stretch;                 /* match input height exactly */
+  min-height: 52px;                    /* fallback when wrapped on its own line */
+  padding-inline: var(--ek-24);
+}
+@media (max-width: 767px) {
+  .member-search .ek-btn { flex: 1 1 100%; }
+}
 
 .reporting-grid {
   display: grid;
@@ -125,3 +134,10 @@
   .mrp-actions { justify-content: stretch; }
   .mrp-actions .ek-btn { flex: 1 1 auto; text-align: center; }
 }
+
+/* ---------- Pay-method panels between sections ------------------------------
+   The mounted .method-info-card (card details / paystack notice / etc.) sits
+   right after the "Payment method" card (whose edge it must NOT touch → keep
+   the 16px top gap) and before the next section (24px bottom gap, matching
+   the sec-block rhythm — its bottom edge used to touch the next card). ----- */
+.method-info-card { margin-top: var(--ek-16); margin-bottom: var(--ek-24); }

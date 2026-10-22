@@ -144,10 +144,10 @@
 @media (max-width: 600px) {
   .cart-item {
     display: grid;
-    grid-template-columns: 64px minmax(0, 1fr) auto;
+    grid-template-columns: 64px minmax(0, 1fr) auto auto;
     grid-template-areas:
-      "img body qty"
-      "img body line";
+      "img body body body"
+      "img qty  line line";
     align-items: center;
   }
   .cart-item-img { grid-area: img; width: 64px; height: 64px; flex: none; }
@@ -157,3 +157,19 @@
   .cart-summary { padding: var(--ek-20); }
   .cart-empty { padding: var(--ek-40) var(--ek-16); }
 }
+
+/* Member-flow rules (Auto-Maintenance BV / Upgrade) shown inside the cart */
+.cart-flow {
+  margin: var(--ek-16) 0 4px;
+  padding: var(--ek-16);
+  border: 1px solid var(--ek-line, #e4e4e7);
+  border-left-width: 4px;
+  border-radius: var(--ek-radius, 12px);
+  background: var(--ek-soft, #f6f8fb);
+}
+.cart-flow h3 { margin: 0 0 var(--ek-8); font-size: var(--ek-base, 16px); }
+.cart-flow__hint { margin: 0 0 var(--ek-12); font-size: var(--ek-small, 13px); color: var(--ek-muted, #6b7280); }
+.cart-flow .field { margin: 0 0 var(--ek-12); }
+.cart-flow--ok { border-left-color: var(--ek-success, #2e7d54); }
+.cart-flow--err { border-left-color: var(--ek-error, #c0392b); }
+.cart-flow .row { padding: 4px 0; }

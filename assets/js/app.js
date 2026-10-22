@@ -13,6 +13,34 @@
     GUEST: 'al.guestMode',   // 按标签页的 guest 下单标记（sessionStorage）
   };
 
+  /* ---------- Member ID format migration (9 → 8 digits) ----------
+     Regular member IDs are now NG/AE + 8 digits; only the house accounts
+     NG000000001 / AE000000001 keep 9 digits. Demo data saved in this browser
+     under the old 9-digit format is rewritten once (drop the last digit — the
+     same mapping used for the hard-coded demo IDs) so lookups stay linked. */
+  (function migrateMemberIds() {
+    try {
+      if (localStorage.getItem('al.idFormat') === '8') return;
+      const re = /\b(NG|AE)(\d{8})\d\b/g;
+      const fix = v => v.replace(re, (all, p, d) => (all === 'NG000000001' || all === 'AE000000001') ? all : p + d);
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k || k.indexOf('al.') !== 0) continue;
+        const v = localStorage.getItem(k);
+        if (v) { const nv = fix(v); if (nv !== v) localStorage.setItem(k, nv); }
+      }
+      try {
+        for (let i = 0; i < sessionStorage.length; i++) {
+          const k = sessionStorage.key(i);
+          if (!k || k.indexOf('al.') !== 0) continue;
+          const v = sessionStorage.getItem(k);
+          if (v) { const nv = fix(v); if (nv !== v) sessionStorage.setItem(k, nv); }
+        }
+      } catch (e) {}
+      localStorage.setItem('al.idFormat', '8');
+    } catch (e) {}
+  })();
+
   /* ---------- Auth state ---------- */
   const Auth = {
     get user() {
@@ -23,10 +51,14 @@
       if (v == null) localStorage.removeItem(STORAGE.AUTH);
       else localStorage.setItem(STORAGE.AUTH, JSON.stringify(v));
     },
-    isLoggedIn() { return !!this.user; },
+    // demo mode: treat every visitor as signed-in so no login gate / redirect ever fires
+    isLoggedIn() { return true; },
     login(user) {
       this.user = user;
       try { sessionStorage.removeItem(STORAGE.GUEST); } catch (e) {}
+      // A real session takes over the market: drop the guest market choice
+      // (kept beside the guest flag by the login page's "Shop now" chooser).
+      try { sessionStorage.removeItem('al.guestCountry'); } catch (e) {}
       window.dispatchEvent(new CustomEvent('al:authchange', { detail: { user } }));
     },
     logout() {
@@ -34,6 +66,7 @@
       // also clear any order/payment/agreement draft that belongs to this session
       // (keeps the logged-out state consistent for next visitor)
       try { sessionStorage.removeItem(STORAGE.GUEST); } catch (e) {}
+      try { sessionStorage.removeItem('al.guestCountry'); } catch (e) {}
       window.dispatchEvent(new CustomEvent('al:authchange', { detail: { user: null } }));
     },
   };
@@ -202,17 +235,18 @@
   window.fmtDate = fmtDate; window.fmtDateUp = fmtDateUp; window.fmtDT = fmtDT; window.fmtNum = fmtNum;
 
   /* ---------- Member ID normalization (shared by drawer & any other header surface) ----------
-     Project rule: Member ID must be exactly "NG" + 8 digits. Legacy/stale 12-digit
+     Project rule: Member ID = "NG"/"AE" + 8 digits; the house accounts
+     NG000000001 / AE000000001 are the only (special) 9-digit IDs. Legacy/stale
      values get normalized to the first 8 digits (keeps the identity prefix so
      orders stay linkable). The corrected value is persisted back into Auth.user
      and localStorage so subsequent reads are clean. */
   function normalizeMemberId(id) {
     if (!id) return '';
     const s = String(id).trim().toUpperCase();
-    const m = s.match(/^NG(\d+)$/);
+    if (s === 'NG000000001' || s === 'AE000000001') return s;
+    const m = s.match(/^(NG|AE)(\d+)$/);
     if (!m) return '';
-    const d = m[1];
-    return 'NG' + d.slice(0, 8).padStart(8, '0');
+    return m[1] + m[2].slice(0, 8).padStart(8, '0');
   }
   function healMemberIdForDrawer() {
     const u = Auth.user;
@@ -247,13 +281,16 @@
               ${mid ? `<small>${mid}</small>` : ''}
             </span>
           </div>
-          <a href="account.html" class="btn btn-dark btn-block">${T.tr('nav.account')}</a>
-          <button class="btn btn-ghost btn-block" id="drawerLogout" type="button">${T.tr('common.logout')}</button>
+          <a href="account.html" class="ek-btn ek-btn--block">${T.tr('nav.account')}</a>
+          <button class="ek-btn ek-btn--secondary ek-btn--block" id="drawerLogout" type="button">${T.tr('common.logout')}</button>
         </div>`;
     }
+    /* Sign-in navigates in THIS tab on purpose: opening login.html in a new
+       window crashes embedded preview webviews (WorkBuddy built-in browser).
+       login.html carries ?next= so sign-in still lands on repeat-purchase.html. */
     return `
       <div class="drawer-auth drawer-auth-out">
-        <a href="login.html${ACCOUNT_NEXT}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block">${T.tr('common.sign_in')}</a>
+        <a href="login.html${ACCOUNT_NEXT}" class="ek-btn ek-btn--block">${T.tr('common.sign_in')}</a>
         <a href="signup.html${nextParam}" class="drawer-auth-alt">${T.tr('common.create_account')}</a>
       </div>`;
   }
@@ -269,9 +306,11 @@
   const ICON_LOGOUT = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const ICON_CART = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="21" r="1.6" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="21" r="1.6" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 3h2l2.2 12.2a1.6 1.6 0 0 0 1.6 1.3h8.7a1.6 1.6 0 0 0 1.6-1.2L21 7H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-  /* 个人中心入口：未登录时点击导航/抽屉的账户图标，登录后回跳到 account.html。
-     用独立常量，避免与其它通用回跳(nextParam=当前页)混淆。 */
-  const ACCOUNT_NEXT = '?next=account.html';
+  /* 登录入口（导航/抽屉的 Sign in）：登录后回跳到 repeat-purchase.html
+     （Repeat Purchase 商品列表页）——从营销页登录的用户直接进入购物流程。
+     用独立常量，避免与其它通用回跳(nextParam=当前页)混淆。
+     注意：account.html 的未登录守卫仍自带 next=account.html，回跳账户页，不受此常量影响。 */
+  const ACCOUNT_NEXT = '?next=repeat-purchase.html';
 
   /* The four ranges, in the order the design settled on. Labels must stay in
      step with the home page range cards and the footer column. */
@@ -367,14 +406,11 @@
     const accountUtil = loggedIn
       ? `<a class="ek-util ek-util--icon" href="account.html" title="My Account" aria-label="My Account">${ICON_USER}</a>
          <button class="ek-util ek-util--icon" type="button" id="headerLogout" title="Sign out" aria-label="Sign out">${ICON_LOGOUT}</button>`
-      : `<a class="ek-util ek-util--icon" href="login.html${ACCOUNT_NEXT}" target="_blank" rel="noopener noreferrer" title="Sign in" aria-label="Sign in">${ICON_USER}</a>`;
+      /* Same-tab sign-in (no target=_blank): a new window crashes embedded
+         preview webviews. ?next=repeat-purchase.html lands on the Repeat
+         Purchase listing after sign-in. */
+      : `<a class="ek-util ek-util--icon" href="login.html${ACCOUNT_NEXT}" title="Sign in" aria-label="Sign in">${ICON_USER}</a>`;
 
-    /* 购物车图标：仅登录态或 guest 下单流程（isGuestEntry）显示。
-       普通未登录（完整菜单）不显示购物车按钮；未登录走 guest 购物车时
-       由 guest 流程保留该入口。购物车页/结算页仍按登录态区分 guest/member 分支。 */
-    const cartUtil = (loggedIn || isGuestEntry)
-      ? `<a class="ek-util ek-util--icon" href="cart.html" id="headerCart" title="Cart" aria-label="Cart">${ICON_CART}<span class="ek-util__badge" id="cartBadge"></span></a>`
-      : '';
     const langUtil = `<button class="ek-lang" type="button" id="headerLang" aria-label="Language">EN ${CHEVRON}</button>`;
 
     const productsNavItem = `
@@ -419,7 +455,6 @@
             ${mainNavItems}
             <div class="ek-nav__utils">
               ${accountUtil}
-              ${cartUtil}
               ${langUtil}
             </div>
           </nav>
@@ -435,13 +470,10 @@
             <button class="icon-btn" id="closeDrawer" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
           </div>
           ${drawerAuthHTML(user, nextParam)}
-          <nav class="drawer-nav">
+          ${isGuestEntry || !loggedIn ? `<nav class="drawer-nav">
             ${isGuestEntry
-              ? `<a href="products.html" class="${active === 'products' ? 'active' : ''}">Products</a>
-            <a href="cart.html">Cart</a>`
-              : loggedIn
-                ? `<a href="cart.html">Cart</a>`
-                : `<a href="index.html" class="${active === 'home' ? 'active' : ''}">Home</a>
+              ? `<a href="products.html" class="${active === 'products' ? 'active' : ''}">Products</a>`
+              : `<a href="index.html" class="${active === 'home' ? 'active' : ''}">Home</a>
             <a href="about.html" class="${active === 'about' ? 'active' : ''}">About Us</a>
             <a href="products.html" class="${active === 'products' ? 'active' : ''}">Products</a>
             <a href="become-a-distributor.html" class="${active === 'distributor' ? 'active' : ''}">Become a Distributor</a>
@@ -450,7 +482,7 @@
             <a href="faq.html" class="${active === 'faq' ? 'active' : ''}">FAQ</a>
             <a href="service.html">Service &amp; Support</a>
             <a href="case-studies.html">Case Studies</a>`}
-          </nav>
+          </nav>` : ''}
         </div>
       </div>
       <a class="wa-fab" href="https://wa.me/2348000000000" target="_blank" rel="noopener" aria-label="WhatsApp">
@@ -531,31 +563,25 @@
       { label: 'Community',           href: 'about-community.html' },
     ];
 
-    /* Signed-in / guest flows should not drop back to the marketing (logged-out)
-       category pages from the footer. Send them to the repeat-purchase listing
-       instead, and keep the page they are on open in the background. */
     /* Display-only pages read no login state: their footer Products column always
        points at the marketing category pages. */
     const displayOnly = isDisplayOnlyPage();
     const wordpress = isWordPressPage();
     const publicPage = displayOnly || wordpress;
-    const loggedIn = !publicPage && !!(window.Auth && window.Auth.user);
-    let isGuestEntry = false;
-    if (!publicPage) { try { isGuestEntry = sessionStorage.getItem(STORAGE.GUEST) === '1'; } catch (e) {} }
-    const prodBase = loggedIn
-      ? 'repeat-purchase.html'
-      : (isGuestEntry ? 'guest-repeat-purchase.html?guest=1' : null);
+    /* AE-side pages (account / member ops / cart / checkout / order…): every
+       footer link opens the matching WP marketing page in a new tab — the
+       footer never routes back into the AE commerce flow. On WP pages the
+       footer keeps normal same-tab navigation. */
+    const aeSide = !publicPage;
+    const aeAttrs = ' target="_blank" rel="noopener noreferrer"';
 
     function prodHref(cat) {
-      const fallback = {
+      return {
         'health-wellness': 'products-health.html',
         'wellness-devices': 'products-wellness.html',
         'home-appliances': 'products-water-filters.html',
         'beauty-skincare': 'products-beauty.html',
       }[cat] || 'products.html';
-      if (!prodBase) return fallback;
-      const sep = prodBase.includes('?') ? '&' : '?';
-      return `${prodBase}${sep}category=${encodeURIComponent(cat)}`;
     }
 
     const prodLinks = [
@@ -564,7 +590,8 @@
       { label: 'Water',    href: prodHref('home-appliances') },
       { label: 'Beauty',   href: prodHref('beauty-skincare') },
     ];
-    const productLinkAttrs = prodBase ? ' target="_blank" rel="noopener noreferrer"' : '';
+    const productLinkAttrs = aeSide ? aeAttrs : '';
+    const legalLinkAttrs = aeSide ? aeAttrs : '';
 
     const col = (title, links, linkAttrs = '') => `
         <div class="ek-fcol"><h2>${title}</h2><ul>
@@ -575,7 +602,7 @@
         <div class="ek-container--nav">
           <div class="sec-footer__inner">
             <div><img class="sec-footer__logo" src="assets/img/brand/elken-logo-white-v4.svg?v=20260909a" alt="Elken"></div>
-            ${col('Who We Are', whoLinks, ' target="_blank" rel="noopener noreferrer"')}
+            ${col('Who We Are', whoLinks, aeSide ? aeAttrs : '')}
             ${col('Products', prodLinks, productLinkAttrs)}
             <div class="ek-fcol"><h2>Contact Us</h2>
               <address class="ek-faddr"><strong>NIGERIA</strong><br>HEAD OFFICE<br>
@@ -587,7 +614,7 @@
           <div class="sec-footer__bar">
             <p>&copy; 2026 Elken Nigeria. All rights reserved.</p>
             <p>&copy; Copyright 2026, ELKEN SDN. BHD. 199501005790 (334986-W)(AJL 93727) &nbsp;&middot;&nbsp;
-              <a href="privacy.html">Privacy</a> | <a href="terms.html">Terms Of Use</a> | <a href="shipping.html">Policies</a> | <a href="service.html">Support</a></p>
+              <a href="privacy.html"${legalLinkAttrs}>Privacy</a> | <a href="terms.html"${legalLinkAttrs}>Terms Of Use</a> | <a href="shipping.html"${legalLinkAttrs}>Policies</a> | <a href="service.html"${legalLinkAttrs}>Support</a></p>
             <div class="ek-social">
               <a href="https://www.facebook.com/ElkenNigeria/" target="_blank" rel="noopener" aria-label="Elken Nigeria on Facebook"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M8.4 13V7.6h1.8l.3-2.1H8.4V4.2c0-.6.2-1 1-1h1.1V1.3C10.2 1.3 9.6 1.2 9 1.2c-1.7 0-2.9 1-2.9 2.9v1.4H4.3v2.1h1.8V13h2.3z" fill="#F4F5F5"/></svg></a>
               <a href="https://www.instagram.com/elkennigeria/" target="_blank" rel="noopener" aria-label="Elken Nigeria on Instagram"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1.6" y="1.6" width="10.8" height="10.8" rx="3.2" stroke="#F4F5F5" stroke-width="1.2"/><circle cx="7" cy="7" r="2.6" stroke="#F4F5F5" stroke-width="1.2"/><circle cx="10.2" cy="3.8" r=".8" fill="#F4F5F5"/></svg></a>
@@ -785,7 +812,31 @@
     signedInAt: Date.UTC(2026, 5, 3, 8, 52, 21), // 2026-06-03T08:52:21Z = join date
   };
 
+  /* ---------- Demo quick-state switch (?demo=member / ?demo=guest) ----------
+     演示辅助：URL 带 ?demo= 参数时一键切换演示人格，免手动清 localStorage。
+     member：清登录态+订单 → 走 seedDemoIfEmpty 完整播种（恒 NG09246375 Adaeze Okonkwo）。
+     guest ：清登录态 + 打 sessionStorage 游客标记，并跳过播种。
+     只影响当次加载；页面内后续导航（无参数）状态自然延续。
+     display-only / WordPress 页不参与（不写登录态、恒未登录营销版）。 */
+  function applyDemoParam() {
+    if (isDisplayOnlyPage() || isWordPressPage()) return null;
+    let demo = null;
+    try { demo = new URLSearchParams(location.search).get('demo'); } catch (e) {}
+    if (demo !== 'member' && demo !== 'guest') return null;
+    try {
+      localStorage.removeItem(STORAGE.AUTH);
+      if (demo === 'member') {
+        localStorage.removeItem('al.orders');
+        sessionStorage.removeItem(STORAGE.GUEST);
+      } else {
+        sessionStorage.setItem(STORAGE.GUEST, '1');
+      }
+    } catch (e) {}
+    return demo;
+  }
+
   function seedDemoIfEmpty() {
+    return; // demo mode: no seeding of demo account / orders / addresses
     try {
       const hasAuth = !!localStorage.getItem(STORAGE.AUTH);
       const hasOrdersRaw = localStorage.getItem('al.orders');
@@ -960,6 +1011,21 @@
   }
   window.renderEnvBanner = renderEnvBanner;
 
+  /* ---------- Embedded / in-app preview detection ----------
+     Spawning a NEW window (target=_blank / window.open) crashes some embedded
+     preview webviews. The WorkBuddy built-in browser is a TOP-LEVEL webview, so
+     the classic `window.self !== window.top` iframe test misses it completely —
+     a target=_blank click there asks the host to create a window it cannot
+     handle and the host app dies. Layer a UA sniff on top so in-app browsers
+     degrade to same-tab navigation. Real desktop/mobile browsers match none of
+     these tokens and keep their normal new-tab behaviour. */
+  function isEmbeddedPreview() {
+    try { if (window.self !== window.top) return true; } catch (e) { return true; }
+    var ua = navigator.userAgent || '';
+    return /\bwv\b|WorkBuddy|Trae|CodeBuddy|Electron/i.test(ua);
+  }
+  window.isEmbeddedPreview = isEmbeddedPreview;
+
   /* ---------- Buy Now gate (unlogged / "Wordpress page" product pages) ----------
      On product pages shown to signed-out visitors (env banner reads "此页面属于Wordpress页面"),
      the "Add to cart" / "Add to Cart" control is hidden and replaced by a "Buy Now" button.
@@ -974,9 +1040,40 @@
   function openLoginNewTab() {
     const file = location.pathname.split('/').pop() || 'index.html';
     const next = '?next=' + encodeURIComponent(file + location.search);
-    const w = window.open('login.html' + next, '_blank', 'noopener');
-    if (!w) location.href = 'login.html' + next; // popup blocked → same tab fallback
+    const url = 'login.html' + next;
+    // Embedded preview webviews (WorkBuddy built-in browser etc.) handle
+    // target=_blank window creation poorly and can crash the host app.
+    // Fall back to same-tab navigation there; real browsers keep the new tab.
+    if (isEmbeddedPreview()) { location.href = url; return; }
+    // Open via an anchor with target=_blank so it reliably opens in a NEW tab.
+    // window.open(url, '_blank', 'noopener') returns null in some browsers, which wrongly
+    // triggered the same-tab fallback (location.href) and navigated the current tab.
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   }
+  /* Embedded-preview compatibility: opening a new window from an embedded or
+     in-app webview can crash the host app (the WorkBuddy built-in browser is a
+     top-level webview, so `self !== top` alone does not catch it — see
+     isEmbeddedPreview()). Intercept same-origin target=_blank links (header
+     sign-in, footer links, Buy Now gate) and open them in this tab instead.
+     External http(s) links keep native behaviour. */
+  (function () {
+    if (!isEmbeddedPreview()) return;
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0) return;
+      const a = e.target && e.target.closest ? e.target.closest('a[target="_blank"]') : null;
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (!href || /^https?:\/\//i.test(href)) return;
+      e.preventDefault();
+      location.href = href;
+    }, true);
+  })();
   function applyBuyNowGate() {
     const unlogged = isGateUnlogged();
     const hasDetailBuyNow = !!document.getElementById('detailBuyNow');
@@ -1021,7 +1118,9 @@
     // Seed demo account + sample order BEFORE rendering the header so it shows the signed-in state.
     // This guarantees identical first-load content on both http://127.0.0.1:XXXX and file:// protocol.
     // Display-only pages (index.html) never write login state, so they skip seeding.
-    if (!isDisplayOnlyPage() && !isWordPressPage()) seedDemoIfEmpty();
+    // ?demo=guest also skips seeding (visitor persona); ?demo=member forces a fresh demo seed.
+    const demoMode = applyDemoParam();
+    if (demoMode !== 'guest' && !isDisplayOnlyPage() && !isWordPressPage()) seedDemoIfEmpty();
     renderHeader(document.body.dataset.page);
     renderFooter();
     renderCookieBanner();
@@ -1072,23 +1171,23 @@
       catch { return null; }
     },
     saveAddresses(arr) { localStorage.setItem(STORAGE.ADDRESSES, JSON.stringify(arr)); },
-    /** Returns a non-empty addresses list, seeded from auth/profile on first use. */
+    /** Returns the address book, seeded from auth/profile on first use.
+     *  The seed carries the profile address (Home · default) plus the two
+     *  alternates kept on file — mirroring the member repeat-purchase preset
+     *  list — so checkout always offers several preset addresses to pick. */
     getAddresses() {
       let arr = this.loadAddresses();
       if (arr) return arr;
       const u = Auth.user;
       if (!u) return [];
-      const seed = {
-        id: 'a_default',
-        label: 'Home',
-        recipient: u.name || '',
-        phone: u.phone || '',
-        street: u.address || '',
-        city: u.city || '',
-        state: u.state || '',
-        isDefault: true,
-      };
-      arr = [seed];
+      const city = u.city || 'Lagos';
+      const st = u.state || 'Lagos';
+      const phone = u.phone || '+234 803 123 4567';
+      arr = [
+        { id: 'a_default', label: 'Home', recipient: u.name || '', phone: phone, street: u.address || '1 Elken Way, Alausa', city: city, state: st, isDefault: true },
+        { id: 'a_office', label: 'Office', recipient: u.name || '', phone: phone, street: 'Plot 12, Central Business District', city: city, state: st },
+        { id: 'a_alt', label: 'Alternate address', recipient: u.name || '', phone: phone, street: '45 Airport Road', city: city, state: st },
+      ];
       this.saveAddresses(arr);
       return arr;
     },

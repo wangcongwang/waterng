@@ -1,7 +1,7 @@
 <Slide style={{ width: 1280, height: 720, padding: '20px 60px', fontFamily: 'Inter, PingFang SC, Helvetica Neue, sans-serif', background: '#FFFFFF' }}>
     {/* ===== A 区 标题块 ===== */}
     <Box style={{ height: 100, flexDirection: 'column', justifyContent: 'flex-start' }}>
-        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#202259', lineHeight: 1.3 }}>Member ID：NG + 8 位数字</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#202259', lineHeight: 1.3 }}>Member ID：AE/NG + 9 位数字</Text>
         <Text style={{ fontSize: 16, color: '#5C646A', lineHeight: 1.4, marginTop: 6 }}>
             系统生成、字段只读，校验只发生在另外三个地方
         </Text>
@@ -12,14 +12,14 @@
         {/* 巨型 ID */}
         <Box style={{ height: 226, background: '#202259', borderRadius: 10, padding: '0 34px', flexDirection: 'row', alignItems: 'center', gap: 30 }}>
             <Text style={{ fontSize: 92, fontWeight: 'bold', color: '#FFFFFF', lineHeight: 1, letterSpacing: -3, fontFamily: 'Menlo, ui-monospace, monospace' }}>
-                NG12345678
+                NG123456789
             </Text>
             <Box style={{ flexDirection: 'column', flex: 1 }}>
                 <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                     <Box style={{ padding: '4px 12px', background: '#F287B7', borderRadius: 4 }}>
-                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>共 10 位</Text>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>共 11 位</Text>
                     </Box>
-                    <Text style={{ fontSize: 17, color: '#7FD3EC' }}>NG 前缀 + 8 位数字</Text>
+                    <Text style={{ fontSize: 17, color: '#7FD3EC' }}>AE/NG 前缀 + 9 位数字</Text>
                 </Box>
                 <Text style={{ fontSize: 17, color: '#B9C6E4', lineHeight: 1.55, marginTop: 12 }}>
                     注册页一加载，脚本就生成好并填进这个输入框。它是
@@ -37,7 +37,7 @@
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#202259' }}>在哪生成</Text>
                 </Box>
                 <Text style={{ fontSize: 16, color: '#3F4A55', lineHeight: 1.5, flex: 1 }}>
-                    注册页加载时调用商品目录里的生成方法，逐位取 0–9 的随机数拼出 8 位，拼上前缀返回。代码里还写了一条兜底：取不到该方法时，改用 1 到 8 位区间内的随机整数补足。
+                    注册页加载时调用商品目录里的生成方法，逐位取 0–9 的随机数拼出 9 位，拼上前缀返回。代码里还写了一条兜底：取不到该方法时，改用 1 到 9 位区间内的随机整数补足。
                 </Text>
                 <Box style={{ marginTop: 10, padding: '10px 12px', background: '#FFFFFF', borderRadius: 6, borderLeft: '3px solid #2AA7CF' }}>
                     <Text style={{ fontSize: 15, color: '#5C646A', lineHeight: 1.45 }}>
@@ -54,7 +54,7 @@
                 <Box style={{ flex: 1, flexDirection: 'column', gap: 9 }}>
                     {[
                         { k: 'login.html', v: '登录时校验会员 ID 格式，不合法直接提示' },
-                        { k: 'account.html', v: '账户页输入框限长 10 位并按同规则判断' },
+                        { k: 'account.html', v: '账户页输入框限长 11 位并按同规则判断' },
                         { k: 'website.js', v: '捕获 ?ref= 推荐参数时，只接受合规的会员 ID' },
                     ].map(function (it, i) {
                         return (

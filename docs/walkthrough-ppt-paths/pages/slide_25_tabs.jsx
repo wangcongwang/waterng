@@ -50,7 +50,7 @@
                 </Text>
                 <Box style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid #E3E6E8' }}>
                     <Text style={{ fontSize: 15, color: '#5C646A', lineHeight: 1.5 }}>
-                        演示账号已经预填在登录页：会员 ID NG09246375。
+                        演示账号已经预填在登录页：会员 ID NG092463750。
                     </Text>
                 </Box>
             </Box>

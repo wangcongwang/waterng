@@ -3,8 +3,8 @@
 
    Loaded by order.html, shipping.html and account.html so a single
    implementation produces the receipt everywhere, including for **guest
-   orders** (no memberId / no logged-in user) reached through the shareable
-   order link.
+   orders** (attributed to the market house account, no logged-in user)
+   reached through the shareable order link.
 
    Contract:
      window.OrderReceipt.build(order, opts)    -> receipt document HTML string
@@ -131,7 +131,11 @@
     var rate = taxRateOf(order);
     var isPickup = deliv.method === 'pickup';
 
-    var memberId = order.memberId || user.memberId || memberData.memberId || '';
+    // Guest (no-account) orders are attributed to the market house account
+    // (NG000000001 / AE000000001). That internal ID must never appear on the
+    // customer-facing receipt — treat those orders as unregistered.
+    var rawMemberId = order.memberId || user.memberId || memberData.memberId || '';
+    var memberId = /^(NG|AE)000000001$/.test(String(rawMemberId)) ? '' : rawMemberId;
     var memberName = order.memberName || cust.name || user.name || user.fullName ||
       memberData.memberName || profile.name || '';
 

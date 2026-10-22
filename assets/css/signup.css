@@ -10,7 +10,12 @@
 
 /* ---------- Page shell ---------- */
 .signup-section { padding-top: var(--ek-48); padding-bottom: var(--ek-64); }
-.signup-container { max-width: 880px; }
+.signup-container {
+  /* Same column formula as .sec-banner__inner so the card column spans the
+     full banner width (left/right edges align with "Create your account."). */
+  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2));
+  margin-inline: auto;
+}
 
 /* Section cards already get .ek-card styling. Just space them + title. */
 .sec-block + .sec-block { margin-top: var(--ek-20); }
@@ -33,6 +38,14 @@
 .field-row { grid-column: auto; min-width: 0; }
 .field-row--full { grid-column: 1 / -1; }
 
+/* A .field-row is a grid container (water-pages.css) whose height is dictated
+   by the tallest sibling in .reg-grid. With the default align-content, the
+   auto rows stretch to fill that height — so when Referrer ID grows a hint
+   below it, the Actual Referrer ID input beside it stretches too (layout
+   shift). Pack the rows from the top instead: hints/errors take the space
+   they need, inputs keep their natural height. */
+.field-row { align-content: start; }
+
 .field-row > label {
   display: block;
   font-size: var(--ek-small);
@@ -54,11 +67,30 @@
   margin-top: var(--ek-4);
 }
 
+/* Inline field hint — referrer lookup status, country inheritance note */
+.field-hint {
+  display: block;
+  margin-top: var(--ek-4);
+  font-size: var(--ek-small);
+  line-height: var(--ek-small-lh);
+  color: var(--ek-muted);
+}
+.field-hint.is-ok { color: var(--ek-success); }
+.field-hint.is-err { color: var(--ek-error); }
+
 /* ---------- Product grid (official card style) ---------- */
 .prod-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--ek-20);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ek-24);
+}
+
+@media (max-width: 1024px) {
+  .prod-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .prod-grid { grid-template-columns: 1fr; }
 }
 .prod-empty {
   grid-column: 1 / -1;
@@ -68,48 +100,17 @@
   font-size: var(--ek-small);
 }
 
-.prod-card {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-  background: var(--ek-surface);
-  border: 1px solid var(--ek-border);
-  border-radius: var(--ek-radius-lg);
-  box-shadow: var(--ek-shadow-sm);
-  transition: transform var(--ek-fast) var(--ek-ease),
-              box-shadow var(--ek-fast) var(--ek-ease),
-              border-color var(--ek-fast) var(--ek-ease);
-}
-.prod-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--ek-blue);
-  box-shadow: var(--ek-shadow);
-}
-.prod-card.is-added {
+/* The grid reuses the Repeat Purchase card component (.rp-product-card from
+   repeat-purchase.css) so the two pages share one visual language. Only the
+   signup-specific selection states live here. */
+.rp-product-card.is-added {
   border-color: var(--ek-blue);
   box-shadow: 0 0 0 1px var(--ek-blue), var(--ek-shadow-sm);
 }
 
-.prod-card__media {
-  position: relative;
-  display: grid;
-  place-items: center;
-  min-height: 180px;
-  padding: var(--ek-24);
-  background: var(--ek-surface-sunken);
-  border-bottom: 1px solid var(--ek-border);
-}
-.prod-card__media img {
-  display: block;
-  max-width: 100%;
-  max-height: 150px;
-  object-fit: contain;
-  transition: transform var(--ek-fast) var(--ek-ease);
-}
-.prod-card:hover .prod-card__media img { transform: translateY(-4px); }
-.prod-card__media--empty { background: var(--ek-surface-sunken); }
+.rp-product-card__media--empty { background: var(--ek-surface-sunken); }
 
+/* "✓ Added" corner badge (reused class name from the old signup card) */
 .prod-card__badge {
   position: absolute;
   top: var(--ek-12);
@@ -126,87 +127,16 @@
   letter-spacing: .02em;
 }
 
-.prod-card__body {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--ek-8);
-  padding: var(--ek-20);
-  background: var(--ek-surface);
-}
-.prod-card__name {
-  margin: 0;
-  font-size: var(--ek-h4);
-  font-weight: var(--ek-w-bold);
-  line-height: var(--ek-h4-lh);
-  color: var(--ek-charcoal-deep);
-}
-.prod-card__sku {
-  font-size: var(--ek-caption);
-  color: var(--ek-muted);
-  letter-spacing: .04em;
-}
-.prod-card__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--ek-12);
-  flex-wrap: wrap;
-  margin-top: auto;
-}
-.prod-card__price {
-  font-size: var(--ek-h3);
-  font-weight: var(--ek-w-bold);
-  line-height: 1.2;
-  color: var(--ek-charcoal-deep);
-}
-.prod-card__bv {
-  display: inline-flex;
-  align-items: center;
-  min-height: 22px;
-  padding: 0 var(--ek-8);
-  border-radius: var(--ek-radius-pill);
-  background: var(--ek-info-tint);
-  color: var(--ek-blue);
-  font-size: var(--ek-caption);
-  font-weight: var(--ek-w-bold);
-}
-
-/* Default foot: full-width blue action */
-.prod-card__foot {
-  flex-shrink: 0;
-  padding: var(--ek-16) var(--ek-20);
-  background: var(--ek-blue);
-}
-.prod-card__add {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: var(--ek-12) var(--ek-16);
-  border: 0;
-  border-radius: var(--ek-radius);
-  background: transparent;
-  color: var(--ek-white);
-  font: inherit;
-  font-size: var(--ek-small);
-  font-weight: var(--ek-w-bold);
-  line-height: 1;
-  cursor: pointer;
-  transition: background var(--ek-fast) var(--ek-ease);
-}
-.prod-card__add:hover { background: rgba(255, 255, 255, 0.12); }
-.prod-card__add:focus-visible { outline: 2px solid var(--ek-white); outline-offset: 2px; }
-
-/* Added foot: sunken panel with qty stepper + remove */
-.prod-card__foot--added {
+/* Added foot: sunken panel with qty stepper + remove (RP has no added state) */
+.rp-product-card__foot--added {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--ek-12);
-  padding: var(--ek-12) var(--ek-20);
+  padding: var(--ek-12) var(--ek-24);
   background: var(--ek-surface-sunken);
 }
-.prod-card__remove {
+.rp-product-card__remove {
   border: 0;
   background: transparent;
   color: var(--ek-muted);
@@ -217,7 +147,7 @@
   white-space: nowrap;
   transition: color var(--ek-fast) var(--ek-ease);
 }
-.prod-card__remove:hover { color: var(--ek-error); }
+.rp-product-card__remove:hover { color: var(--ek-error); }
 
 /* Quantity stepper (shared with checkout) */
 .qty-stepper {
@@ -335,6 +265,198 @@
   .reg-grid { grid-template-columns: 1fr; }
   .sec-block { padding: var(--ek-20); }
   .pay-method-grid { grid-template-columns: 1fr 1fr; }
-  .prod-card__media { min-height: 160px; padding: var(--ek-20); }
-  .prod-card__media img { max-height: 130px; }
+}
+
+/* ---------- Product detail modal (View product) ----------------------------- */
+/* "View product" is a <button> styled like the shared card link */
+.rp-product-card__view {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font-family: inherit;
+}
+.pv-overlay {
+  position: fixed; inset: 0; z-index: var(--ek-z-modal);
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(13, 20, 23, .55);
+  padding: var(--ek-16);
+}
+.pv-dialog {
+  position: relative; width: 100%; max-width: 760px;
+  background: var(--ek-surface);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-lg);
+  padding: var(--ek-24) var(--ek-32) var(--ek-32);
+}
+.pv-dialog__topbar {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--ek-16); margin-bottom: var(--ek-20);
+}
+.pv-dialog__code {
+  font-size: var(--ek-h4); font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal); letter-spacing: .02em;
+}
+.pv-dialog__close {
+  width: 32px; height: 32px; border: none; border-radius: var(--ek-radius-pill);
+  background: transparent; color: var(--ek-muted);
+  font-size: var(--ek-h3); line-height: 1; cursor: pointer;
+}
+.pv-dialog__close:hover { color: var(--ek-charcoal); background: var(--ek-grey-light); }
+.pv-dialog__body {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: var(--ek-32); align-items: center;
+}
+.pv-dialog__media {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 260px; padding: var(--ek-16);
+  background: var(--ek-surface); border-radius: var(--ek-radius);
+}
+.pv-dialog__media img {
+  max-width: 100%; max-height: 300px; object-fit: contain;
+}
+.pv-dialog__name {
+  margin: 0 0 var(--ek-20);
+  font-size: var(--ek-h3); color: var(--ek-charcoal);
+}
+.pv-spec { margin: 0; }
+.pv-spec__row {
+  display: grid; grid-template-columns: 140px minmax(0, 1fr);
+  gap: var(--ek-16); align-items: baseline;
+  padding: var(--ek-8) 0;
+}
+.pv-spec__row dt { font-size: var(--ek-small); color: var(--ek-muted); }
+.pv-spec__row dd {
+  margin: 0; font-size: var(--ek-small); color: var(--ek-body-ink);
+  font-variant-numeric: var(--ek-num);
+}
+@media (max-width: 640px) {
+  .pv-dialog { padding: var(--ek-20); }
+  .pv-dialog__body { grid-template-columns: 1fr; gap: var(--ek-20); }
+  .pv-dialog__media { min-height: 200px; }
+  .pv-spec__row { grid-template-columns: 110px minmax(0, 1fr); }
+}
+
+/* ---------- Paystack payment modals --------------------------------------- */
+.ps-overlay {
+  position: fixed; inset: 0; z-index: var(--ek-z-modal);
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(13, 20, 23, .55);
+  padding: var(--ek-16);
+}
+.ps-overlay--ck { background: rgba(13, 20, 23, .72); }
+
+/* Step 1 — email + amount confirm dialog */
+.ps-dialog {
+  position: relative; width: 100%; max-width: 420px;
+  background: var(--ek-surface);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-lg);
+  padding: var(--ek-24);
+}
+.ps-dialog__close {
+  position: absolute; top: var(--ek-12); right: var(--ek-12);
+  width: 32px; height: 32px; border: none; border-radius: var(--ek-radius-pill);
+  background: transparent; color: var(--ek-muted);
+  font-size: var(--ek-h3); line-height: 1; cursor: pointer;
+}
+.ps-dialog__close:hover { color: var(--ek-charcoal); background: var(--ek-grey-light); }
+.ps-dialog__title { margin: 0 0 var(--ek-8); font-size: var(--ek-h3); color: var(--ek-charcoal); }
+.ps-dialog__note { margin: 0 0 var(--ek-16); font-size: var(--ek-small); color: var(--ek-muted); }
+.ps-amount-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--ek-12) var(--ek-16); margin: var(--ek-16) 0;
+  background: var(--ek-surface-sunken); border-radius: var(--ek-radius);
+  font-size: var(--ek-small); color: var(--ek-muted);
+}
+.ps-amount-row b { font-size: var(--ek-h4); color: var(--ek-success); font-variant-numeric: var(--ek-num); }
+.ps-dialog__go { width: 100%; }
+
+/* Step 2 — Paystack checkout (test) page */
+.ps-ck-wrap { position: relative; width: 100%; max-width: 560px; }
+.ps-ck-close {
+  position: absolute; top: calc(-1 * var(--ek-32)); right: 0;
+  border: none; background: transparent; color: var(--ek-white);
+  font-size: var(--ek-h2); line-height: 1; cursor: pointer;
+}
+.ps-ck { display: flex; background: var(--ek-surface); border-radius: var(--ek-radius); overflow: hidden; box-shadow: var(--ek-shadow-lg); }
+
+.ps-ck__side {
+  flex: 0 0 168px; padding: var(--ek-20) var(--ek-16);
+  background: var(--ek-surface-sunken); border-right: 1px solid var(--ek-border);
+}
+.ps-ck__side-title {
+  font-size: var(--ek-caption); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ek-muted); margin: 0 0 var(--ek-16);
+}
+.ps-ck__channel {
+  display: flex; align-items: center; gap: var(--ek-8);
+  padding: var(--ek-8); border-radius: var(--ek-radius-sm);
+  font-size: var(--ek-small); color: var(--ek-body-ink); cursor: pointer;
+}
+.ps-ck__channel input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.ps-ck__channel.is-active { color: var(--ek-success); font-weight: var(--ek-w-medium); }
+.ps-ck__channel:has(input:checked) { color: var(--ek-success); font-weight: var(--ek-w-medium); }
+.ps-ck__channel:hover { background: var(--ek-grey-mid); }
+
+.ps-ck__main { flex: 1; padding: var(--ek-20) var(--ek-24); text-align: center; }
+.ps-ck__head {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--ek-16);
+  margin-bottom: var(--ek-16);
+}
+.ps-ck__head-right { text-align: right; }
+.ps-ck__email { font-size: var(--ek-caption); color: var(--ek-muted); }
+.ps-ck__payline { font-size: var(--ek-small); color: var(--ek-muted); }
+.ps-ck__payline b { color: var(--ek-success); font-variant-numeric: var(--ek-num); }
+.ps-ck__testrow { display: flex; justify-content: center; margin-bottom: var(--ek-16); }
+.ps-ck__test {
+  padding: var(--ek-4) var(--ek-16); border-radius: var(--ek-radius-sm);
+  background: var(--ek-warning-tint); color: var(--ek-warning);
+  font-size: var(--ek-caption); font-weight: var(--ek-w-medium);
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.ps-ck__hint { margin: 0 0 var(--ek-16); font-size: var(--ek-small); color: var(--ek-body-ink); }
+
+.ps-ck__options { display: flex; flex-direction: column; gap: var(--ek-8); margin-bottom: var(--ek-16); }
+.ps-ck__option {
+  display: flex; align-items: center; gap: var(--ek-12);
+  padding: var(--ek-12) var(--ek-16); text-align: left;
+  border: 1px solid var(--ek-border-strong); border-radius: var(--ek-radius-sm);
+  font-size: var(--ek-small); color: var(--ek-body-ink); cursor: pointer;
+}
+.ps-ck__option:hover { border-color: var(--ek-aqua); }
+.ps-ck__option:has(input:checked) { border-color: var(--ek-success); }
+.ps-ck__option input { accent-color: var(--ek-success); }
+
+.ps-ck__error {
+  margin-bottom: var(--ek-12); padding: var(--ek-8) var(--ek-12);
+  background: var(--ek-error-tint); color: var(--ek-error);
+  border-radius: var(--ek-radius-sm); font-size: var(--ek-caption);
+}
+.ps-ck__paybtn {
+  display: block; width: 100%; padding: var(--ek-12);
+  border: none; border-radius: var(--ek-radius-sm);
+  background: var(--ek-success); color: var(--ek-white);
+  font-size: var(--ek-text); font-weight: var(--ek-w-bold); cursor: pointer;
+}
+.ps-ck__paybtn:hover { opacity: .92; }
+.ps-ck__another {
+  margin-top: var(--ek-12); border: none; background: transparent;
+  font-size: var(--ek-small); color: var(--ek-muted); cursor: pointer;
+}
+.ps-ck__another:hover { color: var(--ek-charcoal); text-decoration: underline; }
+
+.ps-ck__success {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--ek-16); min-height: 280px;
+}
+.ps-ck__success p { margin: 0; font-size: var(--ek-h4); font-weight: var(--ek-w-medium); color: var(--ek-success); }
+
+.ps-ck__secured {
+  display: flex; align-items: center; justify-content: center; gap: var(--ek-4);
+  margin-top: var(--ek-16); font-size: var(--ek-caption); color: var(--ek-white);
+}
+.ps-ck__secured b { font-weight: var(--ek-w-bold); }
+
+@media (max-width: 640px) {
+  .ps-ck { flex-direction: column; }
+  .ps-ck__side { flex: none; border-right: none; border-bottom: 1px solid var(--ek-border); }
+  .ps-ck-close { top: calc(-1 * var(--ek-40)); right: 0; }
 }

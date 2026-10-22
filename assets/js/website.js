@@ -37,6 +37,80 @@
     { id: 'wd1', name: 'Bes Massage Device', category: 'wellness-devices', tag: 'Massage', price: 95000, rp: 114000, bv: 78, stock: 12, sku: 'BES01', img: 'bes-massage-device.webp', desc: 'Portable massage device for muscle relief.' },
   ];
 
+  /* ---------- UAE product catalog ----------
+     The UAE market carries a different assortment, priced in AED (dirhams;
+     fils shown with 2 decimals) instead of NGN. IDs use an "ae-" prefix so
+     UAE items never collide with Nigerian ones inside shared carts. */
+  const uaeProducts = [
+    // Home Appliances (6)
+    { id: 'ae-bpn100', name: 'Bio Pure N100', category: 'home-appliances', tag: '100 GPD', price: 899, rp: 1079, bv: 300, stock: 15, sku: 'BPN100', img: 'bio-pure-n100.webp', desc: 'Compact alkaline water purifier for apartments.' },
+    { id: 'ae-bpn200', name: 'Bio Pure N200', category: 'home-appliances', tag: '200 GPD UV', price: 1299, rp: 1559, bv: 420, stock: 8, sku: 'BPN200', img: 'bio-pure-n200.webp', desc: 'UV sterilization with alkaline boost.' },
+    { id: 'ae-bpn300', name: 'Bio Pure N300', category: 'home-appliances', tag: '300 GPD Hot/Cold', price: 2880, rp: 3456, bv: 850, stock: 4, sku: 'BPN300', img: 'bio-pure-n300.webp', desc: 'Hot and cold drinking water for offices.' },
+    { id: 'ae-bpn400', name: 'Bio Pure N400', category: 'home-appliances', tag: '400 GPD Premium', price: 4150, rp: 4980, bv: 1200, stock: 2, sku: 'BPN400', img: 'bio-pure-n400.webp', desc: 'Flagship purifier with full-spectrum filtration.' },
+    { id: 'ae-hnh101', name: 'Hydromi NH101', category: 'home-appliances', tag: '101 GPD Coin', price: 1670, rp: 2004, bv: 520, stock: 6, sku: 'HNH101', img: 'hydromi-nh101.webp', desc: 'Coin-operated public water dispenser.' },
+    { id: 'ae-hnh500', name: 'Hydromi NH500', category: 'home-appliances', tag: '500 GPD Commercial', price: 3250, rp: 3900, bv: 900, stock: 3, sku: 'HNH500', img: 'hydromi-nh500.webp', desc: 'High-capacity commercial water dispenser.' },
+
+    // Health & Wellness (2)
+    { id: 'ae-calmag', name: 'Calmag', category: 'health-wellness', tag: 'Calms Restful Sleep', price: 88, rp: 106, bv: 35, stock: 42, sku: 'CALMAG02', img: 'calmag.webp', desc: 'Calming magnesium for restful sleep and relaxation.' },
+    { id: 'ae-spirulina', name: 'Elken Spirulina', category: 'health-wellness', tag: 'Daily Nutrition', price: 121, rp: 145, bv: 48, stock: 28, sku: 'ELSP03', img: 'elken-spirulina.webp', desc: 'Premium spirulina for daily energy and immunity.' },
+
+    // Beauty & Skincare (1)
+    { id: 'ae-naru', name: 'Naru Hydra', category: 'beauty-skincare', tag: 'Deep Hydration', price: 112, rp: 134, bv: 44, stock: 22, sku: 'NARU05', img: 'naru-hydra.webp', desc: 'Intense hydration for dry, thirsty skin.' },
+
+    // Food & Beverage (1)
+    { id: 'ae-puerh', name: 'Pu-erh Tea', category: 'food-beverage', tag: 'Fermented Tea', price: 58, rp: 70, bv: 20, stock: 60, sku: 'PUERH01', img: 'pu-erh-tea.webp', desc: 'Aged Pu-erh tea for digestion and daily wellness.' },
+
+    // Wellness Devices (2)
+    { id: 'ae-guasa', name: 'Guasa Board', category: 'wellness-devices', tag: 'Body Sculpting', price: 150, rp: 180, bv: 60, stock: 25, sku: 'GUASA01', img: 'guasa-board.webp', desc: 'Gua sha board for myofascial relief and glow.' },
+    { id: 'ae-bes', name: 'Bes Massage Device', category: 'wellness-devices', tag: 'Massage', price: 220, rp: 264, bv: 78, stock: 12, sku: 'BES01', img: 'bes-massage-device.webp', desc: 'Portable massage device for muscle relief.' },
+  ];
+
+  /* ---------- Country configuration ----------
+     Elken runs several markets. Each market has its own product catalog,
+     currency/unit, phone dial code, address regions, member-ID prefix,
+     default reporting center and VAT rate. Pages with a country selector
+     (signup.html) switch the whole experience through this map. */
+  const COUNTRY_CONFIG = {
+    Nigeria: {
+      code: 'NG',
+      currency: 'NGN',
+      dial: '+234',
+      memberIdPrefix: 'NG',
+      centerId: 'NG000000001',
+      taxRate: 0.075, // 7.5% VAT
+      regions: ['Lagos', 'Abuja FCT', 'Rivers', 'Kano', 'Oyo', 'Edo', 'Delta', 'Enugu', 'Kaduna', 'Ogun', 'Anambra', 'Imo', 'Other'],
+      catalog: allProducts,
+    },
+    UAE: {
+      code: 'AE',
+      currency: 'AED',
+      dial: '+971',
+      memberIdPrefix: 'AE',
+      centerId: 'AE000000001',
+      taxRate: 0.05, // 5% VAT
+      regions: ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah', 'Other'],
+      catalog: uaeProducts,
+    },
+  };
+  const DEFAULT_COUNTRY = 'Nigeria';
+
+  function getCountryConfig(country) {
+    return COUNTRY_CONFIG[country] || COUNTRY_CONFIG[DEFAULT_COUNTRY];
+  }
+  function getProductsByCountry(country) {
+    return getCountryConfig(country).catalog;
+  }
+  // Market-aware money formatting: NGN in whole naira, AED with 2-decimal fils.
+  // An explicit dp overrides the default decimals (used for tax breakdowns).
+  function formatMoney(amount, country, dp) {
+    const cfg = getCountryConfig(country);
+    const n = Number(amount) || 0;
+    const d = typeof dp === 'number' ? dp : (cfg.currency === 'AED' ? 2 : 0);
+    return cfg.currency + ' ' + n.toLocaleString('en-US', {
+      minimumFractionDigits: d, maximumFractionDigits: d
+    });
+  }
+
   /* ---------- Category metadata ---------- */
   const categories = {
     'health-wellness': { label: 'Health & Wellness', eyebrow: 'Health & Nutrition', color: '#202259' },
@@ -48,11 +122,52 @@
   };
 
   /* ---------- Cart & Order (web checkout) ---------- */
+  /* ---------- Market-aware shopper cart ----------
+     The two markets keep INDEPENDENT carts: Nigeria → al.cart (legacy key),
+     UAE → al.cart.ae. Their catalogues are different, so items must never
+     mix. The active market comes from the guest chooser (sessionStorage
+     al.guestCountry) or the signed-in member's own market. */
+  const CART_KEY = 'al.cart';
+  const CART_KEY_AE = 'al.cart.ae';
+  function currentMarket() {
+    try {
+      const g = normalizeCountryName(sessionStorage.getItem('al.guestCountry'));
+      if (g) return g;
+    } catch (e) {}
+    const u = (window.Auth && window.Auth.user) || {};
+    let md = {};
+    try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
+    const mid = (u && u.memberId) || md.memberId || '';
+    if (mid) {
+      for (const c of [md.country, md._defaultCountry, u && u.country]) {
+        const n = normalizeCountryName(c);
+        if (n) return n;
+      }
+      const fromId = countryFromMemberId(mid);
+      if (fromId) return fromId;
+    }
+    return DEFAULT_COUNTRY;
+  }
+  function cartKey() {
+    const cfg = getCountryConfig(currentMarket());
+    return (cfg && cfg.code === 'AE') ? CART_KEY_AE : CART_KEY;
+  }
+  // Which market's catalogue a product id belongs to ('' = unknown / custom).
+  function productMarket(id) {
+    if (!id) return '';
+    const s = String(id);
+    if (getProductsByCountry('UAE').some(p => p.id === s)) return 'UAE';
+    if (getProductsByCountry('Nigeria').some(p => p.id === s)) return 'Nigeria';
+    return '';
+  }
   function getCart() {
-    try { return JSON.parse(localStorage.getItem('al.cart') || '[]'); }
+    try { return JSON.parse(localStorage.getItem(cartKey()) || '[]'); }
     catch { return []; }
   }
-  function saveCart(cart) { localStorage.setItem('al.cart', JSON.stringify(cart)); window.dispatchEvent(new CustomEvent('al:cartchange')); }
+  function saveCart(cart) {
+    localStorage.setItem(cartKey(), JSON.stringify(cart));
+    window.dispatchEvent(new CustomEvent('al:cartchange'));
+  }
   // Total number of items (sum of qtys) in the cart.
   function getCartCount() {
     return getCart().reduce((s, c) => s + (c.qty || 0), 0);
@@ -62,6 +177,13 @@
   function addToCart(product, qty) {
     qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1));
     if (!product || !product.id) return getCartCount();
+    // Market guard: the two markets' carts are separate stores — a product
+    // from the other market can never be added (their catalogues differ).
+    const pm = productMarket(product.id);
+    if (pm && pm !== currentMarket()) {
+      if (window.toast) window.toast(product.name + ' belongs to the ' + pm + ' store — switch your market to add it.', 'error');
+      return getCartCount();
+    }
     const cart = getCart();
     const existing = cart.find(c => c.id === product.id);
     if (existing) {
@@ -97,9 +219,61 @@
     saveCart([]);
   }
 
+  /* ---------- Member repeat-purchase cart (independent of the main cart) ----------
+     Items added on member-repurchase.html go into al.memberCart so they never
+     mix with a shopper's own al.cart. The two stores are fully separate. */
+  function getMemberCart() {
+    try { return JSON.parse(localStorage.getItem('al.memberCart') || '[]'); }
+    catch { return []; }
+  }
+  function saveMemberCart(cart) { localStorage.setItem('al.memberCart', JSON.stringify(cart)); window.dispatchEvent(new CustomEvent('al:cartchange')); }
+  // Total number of items (sum of qtys) in the member cart.
+  function getMemberCartCount() {
+    return getMemberCart().reduce((s, c) => s + (c.qty || 0), 0);
+  }
+  // Same merge-by-id semantics as addToCart, but targets the member cart.
+  function addToMemberCart(product, qty) {
+    qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1));
+    if (!product || !product.id) return getMemberCartCount();
+    const cart = getMemberCart();
+    const existing = cart.find(c => c.id === product.id);
+    if (existing) {
+      existing.qty = Math.max(1, Math.min(99, (existing.qty || 1) + qty));
+      if (product.name) existing.name = product.name;
+      if (typeof product.price === 'number') existing.price = product.price;
+      if (product.img) existing.img = product.img;
+      if (product.category) existing.category = product.category;
+    } else {
+      cart.push({
+        id: product.id,
+        name: product.name || 'Product',
+        price: Number(product.price) || 0,
+        img: product.img || '',
+        category: product.category || '',
+        qty: qty,
+      });
+    }
+    saveMemberCart(cart); // dispatches al:cartchange → badge updates
+    return getMemberCartCount();
+  }
+  function updateMemberCartQty(id, qty) {
+    const cart = getMemberCart();
+    const item = cart.find(c => c.id === id);
+    if (!item) return;
+    item.qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1));
+    saveMemberCart(cart);
+  }
+  function removeFromMemberCart(id) {
+    saveMemberCart(getMemberCart().filter(c => c.id !== id));
+  }
+  function clearMemberCart() {
+    saveMemberCart([]);
+  }
+
   /* ---------- Country dial codes ---------- */
   const COUNTRY_CODES = [
     { code: '+234', label: 'Nigeria (+234)' },
+    { code: '+971', label: 'United Arab Emirates (+971)' },
     { code: '+60', label: 'Malaysia (+60)' },
     { code: '+65', label: 'Singapore (+65)' },
     { code: '+62', label: 'Indonesia (+62)' },
@@ -169,8 +343,12 @@
     try {
       const raw = new URLSearchParams(location.search).get('ref');
       if (!raw) return;
-      const id = (window.normalizeMemberId ? window.normalizeMemberId(raw) : String(raw).trim().toUpperCase());
-      if (!id || !/^NG\d{8}$/.test(id)) return; // only valid NG + 8-digit member IDs
+      // Both markets: NG… and AE… member IDs are valid referrers. Note this
+      // must NOT go through normalizeMemberId() — that helper is NG-only
+      // (it exists to heal legacy 12-digit drawer IDs) and would silently
+      // drop every UAE referrer.
+      const id = String(raw).trim().toUpperCase();
+      if (!id || !/^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/.test(id)) return; // only valid NG/AE + 8-digit member IDs (or a house account)
       // First-touch attribution: keep the earliest bound referrer.
       if (getReferral()) return;
       localStorage.setItem(REFERRAL_KEY, JSON.stringify({ id, name: '', ts: Date.now() }));
@@ -381,11 +559,13 @@
   }
 
   /* ---------- Member ID & account-bound orders ---------- */
-  // 10-digit member ID: "NG" + 8 random digits, e.g. NG12345678
-  function genMemberId() {
+  // Member ID: "<market prefix>" + 8 random digits, e.g. NG12345678 / AE12345678
+  // (house accounts NG000000001 / AE000000001 are the only 9-digit IDs)
+  function genMemberId(country) {
+    const prefix = getCountryConfig(country).memberIdPrefix;
     let digits = '';
     for (let i = 0; i < 8; i++) digits += Math.floor(Math.random() * 10);
-    return 'NG' + digits;
+    return prefix + digits;
   }
   function getCurrentMemberId() {
     const u = window.Auth && window.Auth.user;
@@ -431,20 +611,34 @@
     localStorage.setItem('al.orders', JSON.stringify(orders));
     window.dispatchEvent(new CustomEvent('al:orderschange'));
   }
-  // House account that owns guest (signed-out) orders.
-  const GUEST_MEMBER_ID = 'NG00000001';
+  // House account that owns guest (signed-out) orders, per market:
+  // Nigeria → NG000000001, UAE → AE000000001 (the market's centerId).
+  function guestHouseMemberId(country) {
+    return getCountryConfig(country || DEFAULT_COUNTRY).centerId;
+  }
+  // Is this tab in the guest ordering flow (login page's "Shop now")? The
+  // market choice itself also implies guest intent (direct ?country= links).
+  function isGuestFlow() {
+    try {
+      return sessionStorage.getItem('al.guestMode') === '1' || !!sessionStorage.getItem('al.guestCountry');
+    } catch (e) { return false; }
+  }
   function addOrder(order) {
     const orders = getOrders();
-    const me = getCurrentMemberId();
     // memberId = the TARGET member (whose account "owns" the order benefits — BV, etc.)
     // operatorId = the ACCOUNT that actually placed the order (may differ from memberId
     //              when a member uses the Member Repeat Purchase / Auto-Maintenance flow
     //              to place an order on behalf of another member).
-    // Signed-out (guest) orders are attributed to the house account GUEST_MEMBER_ID.
-    order.memberId = order.memberId || me || GUEST_MEMBER_ID;
-    order.operatorId = order.operatorId || me || GUEST_MEMBER_ID;
-    order.country = order.country || 'Nigeria';
-    order.currency = order.currency || 'NGN';
+    // Guest flow: the order belongs to the market's house account — never to the
+    // seeded/signed-in session (the demo seed would otherwise hijack it).
+    const me = isGuestFlow() ? null : getCurrentMemberId();
+    // Signed-out (guest) orders are attributed to the market's house account —
+    // the country picked on the login page's guest-market chooser.
+    order.country = order.country || DEFAULT_COUNTRY;
+    const houseId = guestHouseMemberId(order.country);
+    order.memberId = order.memberId || me || houseId;
+    order.operatorId = order.operatorId || me || houseId;
+    order.currency = order.currency || getCountryConfig(order.country).currency;
     orders.unshift(order);
     localStorage.setItem('al.orders', JSON.stringify(orders));
     window.dispatchEvent(new CustomEvent('al:orderschange'));
@@ -499,6 +693,7 @@
   function renderProductCards(container, products) {
     if (!container) return;
     const loggedIn = !!(window.Auth && window.Auth.isLoggedIn());
+    const isGuest = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
     container.innerHTML = products.map(p => {
       const detailUrl = `product-detail.html?name=${encodeURIComponent(p.name)}&category=${p.category}`;
       return `
@@ -512,7 +707,7 @@
           <p class="desc">${p.desc}</p>
           <div class="price-row">
             <span class="price">N${p.price.toLocaleString()}</span>
-            ${loggedIn ? `<span class="bv-chip" title="Rewards you earn with this purchase">${getBV(p)} BV</span>` : ''}
+            ${(!isGuest && loggedIn) ? `<span class="bv-chip" title="Rewards you earn with this purchase">${getBV(p)} BV</span>` : ''}
           </div>
           <div class="card-actions">
             ${loggedIn
@@ -561,8 +756,17 @@
      Visual style: the product image sits inside a framed card, above a white
      body with price (+BV for members) and a full-width bottom action.
   */
-  function renderRepeatPurchaseCards(container, products) {
+  function renderRepeatPurchaseCards(container, products, opts) {
     if (!container) return;
+    // opts.cartMode === 'member' → add to the independent member cart
+    // (al.memberCart) instead of the shopper's main al.cart.
+    const memberMode = !!(opts && opts.cartMode === 'member');
+    // opts.country → format prices in that market's currency (guest flow picks
+    // the market on the login page). Defaults to the legacy "N" prefix.
+    const priceCountry = (opts && opts.country) || '';
+    const money = n => (priceCountry && formatMoney)
+      ? formatMoney(n, priceCountry)
+      : ('N' + Number(n || 0).toLocaleString());
     // Optional category filter from the URL (used by member/guest footer links).
     const params = new URLSearchParams(window.location.search);
     const cat = params.get('category');
@@ -581,44 +785,46 @@
         }
       }
     }
-    // BV is a member benefit — only surface it when signed in.
+    // BV is a member benefit — only surface it when signed in (and never for guests).
     const loggedIn = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
+    const isGuest = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
     container.innerHTML = list.map(p => {
       const detailUrl = `product-detail.html?name=${encodeURIComponent(p.name)}&category=${p.category}`;
-      const isSoon = p.comingSoon;
-      const desc = isSoon && p.comingSoonDesc ? p.comingSoonDesc : p.desc;
       const bv = getBV(p);
       return `
-      <article class="rp-product-card${isSoon ? ' rp-product-card--soon' : ''}">
+      <article class="rp-product-card">
         <div class="rp-product-card__media">
           <img src="assets/img/products/${p.category}/${p.img}" alt="${p.name}" loading="lazy" />
         </div>
         <div class="rp-product-card__body">
           <h3>${p.name}</h3>
-          <p class="rp-product-card__desc">${desc}</p>
-          ${isSoon ? '' : `<div class="rp-product-card__price-row">
-            <span class="rp-product-card__price">N${p.price.toLocaleString()}</span>
-            ${loggedIn && bv > 0 ? `<span class="rp-product-card__bv" title="Bonus volume earned with this purchase">${bv} BV</span>` : ''}
+          <p class="rp-product-card__desc">${p.desc}</p>
+          <div class="rp-product-card__price-row">
+            <span class="rp-product-card__price">${money(p.price)}</span>
+            ${!isGuest && bv > 0 ? `<span class="rp-product-card__bv" title="Bonus volume earned with this purchase">${bv} BV</span>` : ''}
           </div>
-          <a href="${detailUrl}" class="rp-product-card__view">View product</a>`}
+          <a href="${detailUrl}" class="rp-product-card__view">View product</a>
         </div>
         <div class="rp-product-card__foot">
-          ${isSoon
-            ? `<span class="rp-product-card__soon-label">Coming soon</span><a href="#" class="rp-product-card__interest" data-interest="${p.id}">Register interest</a>`
-            : `<button type="button" class="rp-product-card__add" data-rp-add="${p.id}">Add to cart</button>`}
+          <button type="button" class="rp-product-card__add" data-rp-add="${p.id}">Add to cart</button>
         </div>
       </article>
     `;
     }).join('');
 
-    // Wire "Add to Cart" buttons
+    // Wire "Add to Cart" buttons — member mode routes to al.memberCart
     container.querySelectorAll('[data-rp-add]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = btn.dataset.rpAdd;
-        const product = allProducts.find(x => x.id === id);
+        // Look the product up in the list actually rendered (the passed-in
+        // catalogue), not the global allProducts — a market-specific list
+        // (e.g. the UAE catalogue) contains IDs the global one doesn't.
+        const product = list.find(x => x.id === id);
         if (product && window.ProductCatalog) {
-          const n = window.ProductCatalog.addToCart(product, 1);
+          const n = memberMode
+            ? window.ProductCatalog.addToMemberCart(product, 1)
+            : window.ProductCatalog.addToCart(product, 1);
           if (window.toast) window.toast(`${product.name} added to cart · ${n} item${n === 1 ? '' : 's'}`, 'success');
         }
       });
@@ -641,9 +847,12 @@
 
   /* ---------- Cart badge ---------- */
   function updateCartBadge() {
-    const cart = getCart();
+    // On member-repurchase.html (body[data-cart-mode="member"]) the badge
+    // reflects the independent member cart, never the shopper's main cart.
+    const memberMode = (document.body && document.body.getAttribute('data-cart-mode') === 'member');
+    const cart = memberMode ? getMemberCart() : getCart();
     const total = cart.reduce((s, c) => s + c.qty, 0);
-    document.querySelectorAll('[id="cartBadge"], [id="hubCartBadge"]').forEach(badge => {
+    document.querySelectorAll('[id="cartFabBadge"]').forEach(badge => {
       badge.textContent = total || '';
       if (badge.classList.contains('hub-badge')) {
         badge.hidden = total === 0;
@@ -663,10 +872,127 @@
   window.goCheckout = goCheckout;
 
 
+  /* ---------- Member directory & referrer lookup ----------
+     注册采用推荐制：新会员的国家属性由推荐人继承，用户不可手工填写。
+     本模块是这条规则的共享「会员接口」——把会员 ID 解析成记录（姓名 + 国家），
+     数据来源（本地演示环境）：
+       1. al.members     —— 每次注册成功后写入的注册表（此后本人可作推荐人）
+       2. 内置目录       —— Elken HQ 户头 + 演示会员
+       3. al.memberData  —— 当前登录会员本人
+       4. al.orders      —— 下过单的客户快照
+     真实部署时这里对应 GET /members/{id}；查不到即推荐人无效。 */
+  const MEMBERS_KEY = 'al.members';
+  const MEMBER_ID_RE = /^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/;
+  const HOUSE_ACCOUNTS = {
+    'NG000000001': { name: 'Elken HQ', country: 'Nigeria' },
+    'AE000000001': { name: 'Elken HQ (UAE)', country: 'UAE' },
+  };
+  const DEMO_MEMBERS = {
+    'NG09246375': { name: 'Amara Okafor', country: 'Nigeria' },
+    'NG23374876': { name: 'Fauzia Yunus Shehu', country: 'Nigeria' },
+    'NG27187710': { name: 'S2 (Referrer)', country: 'Nigeria' },
+    'NG66051653': { name: 'Reporting Center', country: 'Nigeria' },
+    'NG48655323': { name: 'Default Order Demo', country: 'Nigeria' },
+  };
+  function getMemberRegistry() {
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem(MEMBERS_KEY) || '[]'); } catch { return []; }
+    if (!Array.isArray(list)) return [];
+    // Self-heal: blank out junk names (e.g. a phone number typed into the name
+    // field) the first time they are read, so they never surface anywhere.
+    let healed = false;
+    list.forEach(m => {
+      if (m && m.name && !saneMemberName(m.name)) { m.name = ''; healed = true; }
+    });
+    if (healed) { try { localStorage.setItem(MEMBERS_KEY, JSON.stringify(list)); } catch (e) {} }
+    return list;
+  }
+  // Persist a newly registered member so later registrations can use them as
+  // a referrer (and resolve their inherited country).
+  function registerMember(rec) {
+    if (!rec || !rec.id) return null;
+    const list = getMemberRegistry();
+    const entry = {
+      id: String(rec.id).trim().toUpperCase(),
+      name: rec.name || '',
+      country: rec.country || '',
+      referrerId: rec.referrerId || '',
+      joinDate: rec.joinDate || new Date().toISOString(),
+    };
+    const idx = list.findIndex(m => m && m.id === entry.id);
+    if (idx >= 0) list[idx] = { ...list[idx], ...entry };
+    else list.unshift(entry);
+    try { localStorage.setItem(MEMBERS_KEY, JSON.stringify(list.slice(0, 500))); } catch (e) {}
+    return entry;
+  }
+  // Resolve any locally-known country value ("Nigeria" / "ng" / "NG" ...) to a
+  // COUNTRY_CONFIG key. Returns '' when unknown.
+  function normalizeCountryName(v) {
+    if (!v) return '';
+    const s = String(v).trim();
+    if (COUNTRY_CONFIG[s]) return s;
+    const lo = s.toLowerCase();
+    const hit = Object.keys(COUNTRY_CONFIG).find(k => k.toLowerCase() === lo);
+    if (hit) return hit;
+    const alias = { ng: 'Nigeria', nigeria: 'Nigeria', naijiria: 'Nigeria', ae: 'UAE', uae: 'UAE', 'united arab emirates': 'UAE' };
+    return alias[lo] || '';
+  }
+  // A stored "name" that contains no letters at all is junk data — e.g. a test
+  // registration that typed a phone number into the name field. Never surface
+  // it as a person's name; callers fall back to the member ID instead.
+  function saneMemberName(name) {
+    const s = String(name || '').trim();
+    if (!s) return '';
+    // Must contain at least one letter (Latin / accented / CJK) to be a name.
+    return /[a-zA-Z\u00C0-\u024F\u4E00-\u9FFF]/.test(s) ? s : '';
+  }
+  // Country implied by a member ID's market prefix (NG → Nigeria, AE → UAE).
+  function countryFromMemberId(id) {
+    const m = String(id || '').trim().toUpperCase().match(/^(NG|AE)/);
+    if (!m) return '';
+    const hit = Object.keys(COUNTRY_CONFIG).find(k => COUNTRY_CONFIG[k].memberIdPrefix === m[1]);
+    return hit || '';
+  }
+  // Look up a member by ID → { id, name, country, source } | null.
+  // This is the referrer-validity check used by the registration page.
+  function lookupMember(raw) {
+    const id = String(raw || '').trim().toUpperCase();
+    if (!MEMBER_ID_RE.test(id)) return null;
+    const reg = getMemberRegistry().find(m => m && m.id === id);
+    if (reg) {
+      const c = normalizeCountryName(reg.country) || countryFromMemberId(id);
+      if (c) return { id, name: saneMemberName(reg.name), country: c, source: 'registry' };
+    }
+    const known = HOUSE_ACCOUNTS[id] || DEMO_MEMBERS[id];
+    if (known) return { id, name: saneMemberName(known.name), country: normalizeCountryName(known.country), source: 'directory' };
+    try {
+      const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+      if (md && md.memberId === id) {
+        const c = normalizeCountryName(md.country) || countryFromMemberId(id);
+        if (c) return { id, name: saneMemberName(md.memberName || md.name), country: c, source: 'self' };
+      }
+    } catch (e) {}
+    try {
+      const orders = JSON.parse(localStorage.getItem('al.orders') || '[]');
+      const o = orders.find(o => o && o.memberId === id);
+      if (o) {
+        const c = normalizeCountryName(o.country) || (o.customer && normalizeCountryName(o.customer.country)) || countryFromMemberId(id);
+        if (c) return { id, name: saneMemberName(o.customer && o.customer.name), country: c, source: 'order' };
+      }
+    } catch (e) {}
+    return null;
+  }
+
   /* ---------- Expose globally ---------- */
   window.ProductCatalog = {
     allProducts,
+    uaeProducts,
+    COUNTRY_CONFIG,
+    DEFAULT_COUNTRY,
     categories,
+    getCountryConfig,
+    getProductsByCountry,
+    formatMoney,
     render: renderProducts,
     renderCards: renderProductCards,
     renderRepeatCards: renderRepeatPurchaseCards,
@@ -677,13 +1003,23 @@
     getOrderById,
     pruneOrphanOrders,
     addOrder,
-    // Cart
+    // Cart (market-aware: Nigeria → al.cart, UAE → al.cart.ae)
     getCart,
     getCartCount,
     addToCart,
     updateCartQty,
     removeFromCart,
     clearCart,
+    currentMarket,
+    cartKey,
+    productMarket,
+    // Member repeat-purchase cart (independent store)
+    getMemberCart,
+    getMemberCartCount,
+    addToMemberCart,
+    updateMemberCartQty,
+    removeFromMemberCart,
+    clearMemberCart,
     getBV,
     getBVTotal,
     genMemberId,
@@ -710,6 +1046,18 @@
     phoneFieldHTML,
     readPhone,
     fillPhoneFields,
+    // Member directory / referrer lookup (country inheritance)
+    MEMBER_ID_RE,
+    HOUSE_ACCOUNTS,
+    DEMO_MEMBERS,
+    getMemberRegistry,
+    registerMember,
+    lookupMember,
+    saneMemberName,
+    normalizeCountryName,
+    countryFromMemberId,
+    guestHouseMemberId,
+    isGuestFlow,
   };
 
   /* ---------- Init on DOM ready ---------- */

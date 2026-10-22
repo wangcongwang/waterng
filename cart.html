@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
-  <link rel="stylesheet" href="assets/css/cart.css?v=20260917a">
+  <link rel="stylesheet" href="assets/css/cart.css?v=20261012a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="cart" data-guest-no-nav="true">
@@ -38,13 +38,43 @@
   </main>
 
   <div id="app-footer" class="ek-site-footer"></div>
-  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-<script src="assets/js/app.js?v=20260923b"></script>
-  <script src="assets/js/website.js?v=20260909c-2"></script>
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+<script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
   <script>
     (function() {
       'use strict';
-      const N = n => 'N' + Number(n || 0).toLocaleString();
+      // Cart money follows the order market. Guest flow (login page's
+      // "Shop now") wins — the tab explicitly chose to shop without an
+      // account, so the market picked in the chooser applies (sessionStorage
+      // al.guestCountry, URL param as fallback). Otherwise the signed-in
+      // member's own market.
+      const cartCountry = (function () {
+        const pc = window.ProductCatalog || {};
+        try {
+          if (sessionStorage.getItem('al.guestMode') === '1') {
+            const g = sessionStorage.getItem('al.guestCountry');
+            if (g) return g;
+            const gp = new URLSearchParams(location.search).get('country');
+            if (gp) return gp;
+          }
+        } catch (e) {}
+        const u = (window.Auth && window.Auth.user) || {};
+        let md = {};
+        try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
+        if (u.memberId || md.memberId) {
+          for (const c of [md.country, md._defaultCountry, u.country]) {
+            const n = pc.normalizeCountryName ? pc.normalizeCountryName(c) : '';
+            if (n) return n;
+          }
+          const fromId = pc.countryFromMemberId ? pc.countryFromMemberId(u.memberId || md.memberId || '') : '';
+          if (fromId) return fromId;
+        }
+        return 'Nigeria';
+      })();
+      const N = n => (window.ProductCatalog && window.ProductCatalog.formatMoney)
+        ? window.ProductCatalog.formatMoney(n, cartCountry)
+        : ('N' + Number(n || 0).toLocaleString());
 
       function imgOf(item) {
         if (item.img) {
@@ -61,14 +91,47 @@
       function render() {
         const view = document.getElementById('cartView');
         if (!view) return;
-        const cart = (window.ProductCatalog && window.ProductCatalog.getCart) ? window.ProductCatalog.getCart() : [];
+        // Member repeat-purchase uses an independent cart (al.memberCart).
+        const memberMode = new URLSearchParams(location.search).get('mode') === 'member';
+        if (memberMode) {
+          document.body.setAttribute('data-cart-mode', 'member');
+          document.title = 'Member Cart · Elken';
+        }
+        const pc = window.ProductCatalog || {};
+        const getCartFn = memberMode ? pc.getMemberCart : pc.getCart;
+        const cart = (getCartFn ? getCartFn() : []);
+        const store = {
+          updateQty: memberMode ? pc.updateMemberCartQty : pc.updateCartQty,
+          remove: memberMode ? pc.removeFromMemberCart : pc.removeFromCart,
+          clear: memberMode ? pc.clearMemberCart : pc.clearCart,
+        };
+
+        // "Browse products" (empty state) and "Continue shopping" return to the
+        // matching shop. Member pages carry a `from` param so the operator lands
+        // back on the exact originating flow (restore=1 keeps the searched
+        // member & their cart intact); guests fall back to the guest copy.
+        const guestMode = (() => {
+          try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; }
+        })();
+        const loggedIn = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
+        let continueHref;
+        if (memberMode) {
+          const from = new URLSearchParams(location.search).get('from');
+          continueHref = (from ? from + '.html' : 'member-repurchase.html') + '?restore=1';
+        } else if (guestMode) {
+          continueHref = 'guest-repeat-purchase.html?guest=1';
+        } else {
+          continueHref = 'repeat-purchase.html';
+        }
+        const checkoutHref = memberMode ? 'checkout.html?cart=1&mode=member' : 'checkout.html?cart=1';
+
         if (!cart.length) {
           view.innerHTML = `
             <div class="cart-empty">
               <div class="cart-empty-icon">🛒</div>
-              <h2>Your cart is empty</h2>
-              <p>Add products you love and they will appear here.</p>
-              <a class="ek-btn ek-btn--primary" href="products.html">Browse products</a>
+              <h2>${memberMode ? 'This member cart is empty' : 'Your cart is empty'}</h2>
+              <p>${memberMode ? 'Search a member and add products to start their repeat-purchase order.' : 'Add products you love and they will appear here.'}</p>
+              <a class="ek-btn ek-btn--primary" href="${continueHref}">Browse products</a>
             </div>`;
           return;
         }
@@ -98,28 +161,72 @@
         const subtotal = cart.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
         const count = cart.reduce((s, i) => s + (i.qty || 1), 0);
 
-        // BV rewards — members only. Real per-unit `bv` comes from the catalogue
-        // (looked up by product id), so the total never drifts from the cards.
-        const loggedIn = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
+        // BV total — looked up from the catalogue by product id so it never
+        // drifts from the product cards. Member-flow rules below need it even
+        // when the operator isn't "loggedIn" in the shopper sense.
         let totalBV = 0;
-        if (loggedIn && window.ProductCatalog && window.ProductCatalog.allProducts) {
-          const catalog = window.ProductCatalog.allProducts;
+        if (pc.allProducts) {
+          const catalog = pc.allProducts;
           cart.forEach(item => {
             const matched = catalog.find(p => p.id === item.id);
-            const bv = (matched && typeof matched.bv === 'number') ? matched.bv : 0;
+            const bv = (matched && typeof matched.bv === 'number') ? matched.bv
+                     : (typeof item.bv === 'number' ? item.bv : 0);
             totalBV += bv * (item.qty || 1);
           });
         }
 
-        // "Continue shopping" returns to the product list that matches the
-        // shopper's state: members → repeat-purchase.html, guests → the guest
-        // copy of that page (also keeps the compact guest nav).
-        const guestMode = (() => {
-          try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; }
-        })();
-        const continueHref = (!loggedIn && guestMode)
-          ? 'guest-repeat-purchase.html?guest=1'
-          : 'repeat-purchase.html';
+        // Member-flow rules: auto-maintenance requires BV ≥ 90; upgrade requires
+        // BV ≥ the chosen target-level difference. Both block checkout here, in
+        // the cart, before the operator ever reaches the checkout page.
+        let flowHtml = '';
+        let blocked = false;
+        let blockNote = '';
+        if (memberMode) {
+          const rm = (() => { try { return JSON.parse(localStorage.getItem('al.repeatMember') || '{}'); } catch (e) { return {}; } })();
+          const subtype = rm.subtype;
+          if (subtype === 'auto-maintenance') {
+            const ok = totalBV >= 90;
+            blocked = !ok;
+            blockNote = ok ? '' : 'Add more products — Auto-Maintenance needs at least 90 BV.';
+            flowHtml = `
+              <div class="cart-flow${ok ? ' cart-flow--ok' : ' cart-flow--err'}">
+                <h3>Auto-Maintenance requirement</h3>
+                <div class="row"><span class="k">Current BV</span><span class="v">${totalBV} BV</span></div>
+                <div class="row"><span class="k">Requirement</span><span class="v">${ok ? totalBV + ' / 90 BV ✓' : totalBV + ' / 90 BV ✕'}</span></div>
+              </div>`;
+          } else if (subtype === 'upgrade') {
+            const LEVEL_BV = { Member: 0, Silver: 300, Gold: 900, Platinum: 2700, Diamond: 8100, Corporate: 24300 };
+            const bvOf = l => (typeof LEVEL_BV[l] === 'number' ? LEVEL_BV[l] : 0);
+            const current = rm.level || 'Member';
+            const options = ['Silver', 'Gold'].filter(l => bvOf(l) > bvOf(current));
+            const storedTarget = (typeof rm.targetLevel === 'string') ? rm.targetLevel : '';
+            const selVal = options.indexOf(storedTarget) !== -1 ? storedTarget : '';
+            const diff = selVal ? Math.max(0, bvOf(selVal) - bvOf(current)) : 0;
+            if (!selVal) {
+              blocked = true;
+              blockNote = 'Choose an upgrade level to continue.';
+            } else if (totalBV < diff) {
+              blocked = true;
+              blockNote = `Cart BV (${totalBV}) must be ≥ ${diff} BV to upgrade to ${selVal}.`;
+            }
+            const opts = options.map(l => `<option value="${l}"${l === selVal ? ' selected' : ''}>${l}</option>`).join('');
+            flowHtml = `
+              <div class="cart-flow${blocked ? ' cart-flow--err' : ' cart-flow--ok'}">
+                <h3>Upgrade member</h3>
+                <p class="cart-flow__hint">Current level: <strong>${current}</strong>. Choose the level to upgrade to — cart BV must cover the difference.</p>
+                <div class="field">
+                  <label for="cartUpgradeTo">Upgrade to <span class="req">*</span></label>
+                  <select class="ek-select" id="cartUpgradeTo">${opts ? '<option value="">— Select level —</option>' + opts : '<option value="">No higher level available</option>'}</select>
+                </div>
+                ${selVal ? `<div class="row"><span class="k">Upgrade difference</span><span class="v">${diff} BV</span></div>` : ''}
+                <div class="row"><span class="k">Current BV</span><span class="v">${totalBV} BV</span></div>
+              </div>`;
+          }
+        }
+
+        const checkoutBtn = blocked
+          ? `<button type="button" class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" disabled style="opacity:.45;cursor:not-allowed">Proceed to checkout</button>`
+          : `<a class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" href="${checkoutHref}">Proceed to checkout</a>`;
 
         view.innerHTML = `
           <div class="cart-layout">
@@ -130,37 +237,49 @@
                 <div class="row"><span class="k">Items</span><span class="v">${count}</span></div>
                 <div class="row"><span class="k">Subtotal</span><span class="v">${N(subtotal)}</span></div>
                 <div class="row"><span class="k">Shipping</span><span class="v">Calculated at checkout</span></div>
-                ${loggedIn && totalBV > 0 ? `<div class="row"><span class="k">BV rewards</span><span class="v">+${totalBV} BV</span></div>` : ''}
+                ${(memberMode || (!guestMode && totalBV > 0)) ? `<div class="row"><span class="k">Total BV</span><span class="v">${totalBV} BV</span></div>` : ''}
                 <div class="total"><span class="k">Total</span><span class="v" id="cartTotal">${N(subtotal)}</span></div>
-                <a class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" href="checkout.html?cart=1">Proceed to checkout</a>
+                ${flowHtml}
+                ${blocked ? `<p class="cart-block-note" style="color:var(--ek-error, #c0392b);font-size:13px;margin:10px 0 0">⚠ ${blockNote}</p>` : ''}
+                ${checkoutBtn}
                 <button type="button" class="ek-btn ek-btn--ghost ek-btn--block" id="clearCart">Clear cart</button>
                 <a class="ek-btn ek-btn--secondary ek-btn--block" href="${continueHref}">Continue shopping</a>
               </div>
             </div>
           </div>`;
 
+        // Upgrade target selection in the cart persists to al.repeatMember so the
+        // checkout page can pre-select it and re-validate the exact difference.
+        const flowSel = document.getElementById('cartUpgradeTo');
+        if (flowSel) flowSel.addEventListener('change', () => {
+          const rm = (() => { try { return JSON.parse(localStorage.getItem('al.repeatMember') || '{}'); } catch (e) { return {}; } })();
+          rm.targetLevel = flowSel.value;
+          try { localStorage.setItem('al.repeatMember', JSON.stringify(rm)); } catch (e) {}
+          render();
+        });
+
         // Quantity controls
         view.querySelectorAll('[data-inc]').forEach(b => b.addEventListener('click', () => {
           const id = b.dataset.inc;
           const input = view.querySelector(`.cartQty[data-id="${id}"]`);
           input.value = Math.min(99, (parseInt(input.value, 10) || 1) + 1);
-          if (window.ProductCatalog) window.ProductCatalog.updateCartQty(id, input.value);
+          if (store.updateQty) store.updateQty(id, input.value);
         }));
         view.querySelectorAll('[data-dec]').forEach(b => b.addEventListener('click', () => {
           const id = b.dataset.dec;
           const input = view.querySelector(`.cartQty[data-id="${id}"]`);
           input.value = Math.max(1, (parseInt(input.value, 10) || 1) - 1);
-          if (window.ProductCatalog) window.ProductCatalog.updateCartQty(id, input.value);
+          if (store.updateQty) store.updateQty(id, input.value);
         }));
         view.querySelectorAll('.cartQty').forEach(input => input.addEventListener('input', () => {
-          if (window.ProductCatalog) window.ProductCatalog.updateCartQty(input.dataset.id, input.value);
+          if (store.updateQty) store.updateQty(input.dataset.id, input.value);
         }));
         view.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', () => {
-          if (window.ProductCatalog) window.ProductCatalog.removeFromCart(b.dataset.remove);
+          if (store.remove) store.remove(b.dataset.remove);
         }));
         const clearBtn = document.getElementById('clearCart');
         if (clearBtn) clearBtn.addEventListener('click', () => {
-          if (window.ProductCatalog) window.ProductCatalog.clearCart();
+          if (store.clear) store.clear();
         });
       }
 

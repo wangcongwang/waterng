@@ -165,7 +165,7 @@ children.push(h2("5. 购物车与结算对接"));
 bullet("购物车页 cart.html：采用 guest-no-nav 模式（游客态隐藏顶部导航，聚焦下单）。");
 bullet("结算页 checkout.html：guest-no-nav 模式；支付渠道由 AE 提供。");
 bullet("订单页 order.html：.odet-* 结构；order-receipt.js 可导出 Word 兼容 .doc。");
-bullet("游客订单归属：guest 订单归属固定 Member ID NG00000001。");
+bullet("游客订单归属：guest 订单归属固定 Member ID NG000000001。");
 
 children.push(h2("6. 支付层（Payment Methods）"));
 bullet("共享层：payment-methods.js + qr.js + payment-methods.css，统一挂载各种支付方式。");
@@ -176,7 +176,7 @@ bullet("wire() 支持 includeBalance + balanceMemberId(fn) + balanceAmountId(选
 children.push(h2("7. 会员流程（AE 专属页）"));
 bullet("页面：member-welcome / member-repurchase / member-auto-maintenance / member-upgrade。");
 bullet("统一营销站风格：无 #app-header、隐藏主导航、顶部 sec-banner、内容区 .ek-container.member-container。");
-bullet("Member ID 格式：NG + 8 位数字（/^NG\\d{8}$/）；Member ID 与 Country 字段永久禁用 + 锁定提示。");
+bullet("Member ID 格式：AE/NG + 8 位数字；总部账号 AE000000001 / NG000000001 为特殊 9 位（/^(?:(?:NG|AE)\\d{8}|NG000000001|AE000000001)$/）；Member ID 与 Country 字段永久禁用 + 锁定提示。");
 bullet("升级逻辑：等级阈值 LEVEL_BV={Member:0,Silver:300,Gold:900,Platinum:2700,Diamond:8100,Corporate:24300}；补差 BV = 目标阈值 − 当前阈值（≥0）；目标白名单 Silver/Gold，当前级标 (current) 且 disabled；VAT_RATE=0。");
 bullet("保存门槛：已检会员 + 目标级 + ≥1 商品 + 商品 BV ≥ 补差 BV + 收货 5 必填 + 支付 isComplete；写 al.memberLevels、事件 al:member-level-changed、订单 source:'member-upgrade'；选余额调 ProductCatalog.debitEcoin。");
 

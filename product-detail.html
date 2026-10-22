@@ -25,7 +25,10 @@
     <section class="product-detail-hero">
       <div class="container product-detail-hero-grid">
         <div class="product-detail-copy">
-          <div class="crumbs"><a href="index.html" data-detail-i18n="home">Home</a> <span>/</span> <a href="products.html" data-detail-i18n="products">Products</a> <span>/</span> <span id="detailCrumb">Product</span></div>
+          <button type="button" class="detail-back" id="detailBack">
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 3 5.5 8l5 5"/></svg>
+            <span>Back</span>
+          </button>
           <p class="eyebrow eyebrow-ink" id="detailCategory">Product Center</p>
           <h1 id="detailTitle">Product Detail</h1>
           <p id="detailIntro">Elken product information for the selected category.</p>
@@ -34,15 +37,6 @@
             <span class="detail-price" id="detailPrice">—</span>
             <span class="detail-price-was" id="detailPriceWas" hidden></span>
             <div class="detail-bv-row" id="detailBV" hidden></div>
-          </div>
-          <div class="detail-actions">
-            <div class="qty-control detail-qty" id="detailQtyControl">
-              <button type="button" class="qty-btn" data-qty="-1" aria-label="Decrease quantity">−</button>
-              <input type="number" id="detailQty" value="1" min="1" max="99" inputmode="numeric" aria-label="Quantity" />
-              <button type="button" class="qty-btn" data-qty="1" aria-label="Increase quantity">+</button>
-            </div>
-            <button type="button" class="ek-btn ek-btn--primary ek-btn--lg" id="detailAddToCart">Add to Cart</button>
-            <button type="button" class="ek-btn ek-btn--secondary ek-btn--lg" id="detailBuyNow">Buy Now</button>
           </div>
         </div>
         <div class="product-detail-visual">
@@ -96,9 +90,10 @@
   </main>
 
   <div id="app-footer" class="ek-site-footer"></div>
-  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-<script src="assets/js/app.js?v=20260923b"></script>
-  <script src="assets/js/website.js?v=20260909c-2"></script>
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+<script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
+  <script src="assets/js/cart-fab.js?v=20261012a" defer></script>
   <script>
     const productDetails = {
       'spirulina': {
@@ -322,7 +317,6 @@ function localizedDetail(detail) { return detail; }
       applyDetailText();
       document.title = detail.name + ' · Elken';
       document.getElementById('detailTitle').textContent = detail.name;
-      document.getElementById('detailCrumb').textContent = detail.name;
       document.getElementById('detailCategory').textContent = detail.category;
       document.getElementById('detailIntro').textContent = detail.intro;
       document.getElementById('detailImage').src = detail.image;
@@ -386,34 +380,15 @@ function localizedDetail(detail) { return detail; }
         category: (String(detail.image).split('/').slice(-2, -1)[0]) || catKey,
       };
 
-      const qtyInput = document.getElementById('detailQty');
-      const readQty = () => Math.max(1, Math.min(99, parseInt(qtyInput.value, 10) || 1));
-      // The hero already shows the unit price, so the button stays a plain CTA.
-      const updateAddLabel = () => {
-        if (addBtn) addBtn.textContent = 'Add to Cart';
-      };
-      document.querySelectorAll('#detailQtyControl .qty-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          qtyInput.value = Math.max(1, Math.min(99, (parseInt(qtyInput.value, 10) || 1) + parseInt(btn.dataset.qty, 10)));
-          updateAddLabel();
-        });
-      });
-      qtyInput.addEventListener('input', updateAddLabel);
-
-      const addBtn = document.getElementById('detailAddToCart');
-      updateAddLabel();
-      if (addBtn) {
-        addBtn.onclick = () => {
-          const n = catalog.addToCart ? catalog.addToCart(catalogProduct, readQty()) : 0;
-          const label = catalogProduct.name + ' added to cart' + (n ? ` · ${n} item${n === 1 ? '' : 's'}` : '');
-          if (window.toast) window.toast(label, 'success');
-        };
-      }
-      const buyBtn = document.getElementById('detailBuyNow');
-      if (buyBtn) {
-        buyBtn.onclick = () => {
-          if (catalog.addToCart) catalog.addToCart(catalogProduct, readQty());
-          location.href = 'checkout.html?cart=1';
+      // Back button — return to the page the user came from (products list,
+      // repeat purchase, etc.); fall back to the products page on direct visits.
+      const backBtn = document.getElementById('detailBack');
+      if (backBtn) {
+        backBtn.onclick = () => {
+          let sameOriginRef = false;
+          try { sameOriginRef = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) {}
+          if (sameOriginRef || history.length > 1) history.back();
+          else location.href = 'products.html';
         };
       }
 
@@ -439,9 +414,10 @@ function localizedDetail(detail) { return detail; }
       // Show BV rewards — gated by login state per project convention
       const bvRow = document.getElementById('detailBV');
       if (bvRow) {
+        const isGuest = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
         const isMember = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
         const bv = window.ProductCatalog.getBV ? window.ProductCatalog.getBV(catalogProduct) : 0;
-        if (isMember && bv > 0) {
+        if (isMember && !isGuest && bv > 0) {
           bvRow.hidden = false;
           bvRow.innerHTML = `<span class="bv-badge" title="Bonus volume earned with this purchase">Earn <b>${bv} BV</b> with this purchase</span>`;
         } else {

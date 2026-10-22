@@ -12,14 +12,14 @@
         {/* 巨型 ID */}
         <Box style={{ height: 216, background: '#202259', borderRadius: 10, padding: '0 30px', flexDirection: 'row', alignItems: 'center', gap: 28 }}>
             <Text style={{ fontSize: 84, fontWeight: 'bold', color: '#FFFFFF', lineHeight: 1, letterSpacing: -3, fontFamily: 'Menlo, ui-monospace, monospace' }}>
-                NG12345678
+                NG123456789
             </Text>
             <Box style={{ flexDirection: 'column', flex: 1 }}>
                 <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                     <Box style={{ padding: '4px 12px', background: '#2AA7CF', borderRadius: 4 }}>
-                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>共 10 位</Text>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>共 11 位</Text>
                     </Box>
-                    <Text style={{ fontSize: 16, color: '#7FD3EC' }}>NG 前缀 + 8 位数字 · 系统生成 · 字段只读</Text>
+                    <Text style={{ fontSize: 16, color: '#7FD3EC' }}>AE/NG 前缀 + 9 位数字 · 系统生成 · 字段只读</Text>
                 </Box>
                 <Text style={{ fontSize: 16, color: '#B9C6E4', lineHeight: 1.55, marginTop: 12 }}>
                     注册页一加载就生成好并填进输入框，用户改不了。注册页本身不做校验 —— 校验只发生在登录页、账户页和捕获推荐参数这三处，用的是同一条规则。
@@ -37,7 +37,7 @@
                 <Box style={{ flex: 1, flexDirection: 'column', gap: 8 }}>
                     <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center', background: '#FFFFFF', borderRadius: 6, padding: '9px 12px' }}>
                         <Text style={{ fontSize: 15, color: '#202259', fontFamily: 'Menlo, ui-monospace, monospace', width: 62 }}>生成</Text>
-                        <Text style={{ fontSize: 15, color: '#3F4A55', flex: 1, lineHeight: 1.35 }}>注册页加载时逐位随机拼出八位数字，前面加 NG 前缀</Text>
+                        <Text style={{ fontSize: 15, color: '#3F4A55', flex: 1, lineHeight: 1.35 }}>注册页加载时逐位随机拼出九位数字，前面加 AE/NG 前缀</Text>
                     </Box>
                     {[
                         { k: '登录页', v: '校验会员 ID 格式，不合法直接提示' },
@@ -60,7 +60,7 @@
                     <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#7A2F5C' }}>推荐人字段的默认值</Text>
                 </Box>
                 <Text style={{ fontSize: 16, color: '#4A3040', lineHeight: 1.55 }}>
-                    如果客户不是通过推荐链接进来的，推荐人字段会被预填成一个**写死的会员 ID**：<span style={{ fontFamily: 'Menlo, ui-monospace, monospace', fontWeight: 'bold' }}>NG00000001</span>。
+                    如果客户不是通过推荐链接进来的，推荐人字段会被预填成一个**写死的会员 ID**：<span style={{ fontFamily: 'Menlo, ui-monospace, monospace', fontWeight: 'bold' }}>NG000000001</span>。
                 </Text>
                 <Text style={{ fontSize: 16, color: '#4A3040', lineHeight: 1.55, marginTop: 9 }}>
                     提交时只要推荐人不等于新会员自己，就会记账。所以——**每次没有带链接的注册，都会给这个 ID 记一笔推荐 BV。**

@@ -58,7 +58,7 @@
 | 13 | slide_13_flow_notes.jsx | 下单流程 · 讲解时要注意 | content | supporting | valley | 非对称双栏（40:60） | Diagram(注意事项编号清单) | evidence | 字数约 300 / 图 1 / 留白约 14% | 禁止把缺口写成"小问题"；禁止承诺取消订单等未实现功能 | 5 条实现缺口 + 对外口径建议 |
 | 14 | slide_14_section_signup.jsx | 第二章 · 会员注册与登录 | section | transition | transition | 全屏视觉+大标题 | L1: section_signup.png（全幅，占 B 区 70%） | atmosphere | 字数约 30 / 图 1 / 留白约 45% | 禁止四卡片预览；禁止铺满正文段落 | 章节大字 + 一句小标点出注册与登录 |
 | 15 | slide_15_signup_form.jsx | 注册：一页七个分区 | content | supporting | valley | 左大图+右侧文字 | Diagram(7 分区纵向结构 + 必填标记) | evidence | 字数约 290 / 图 1 / 留白约 16% | 禁止把 7 分区画成同尺寸方块；禁止不标必填 | 七个分区逐条列出字段与必填/选填，右侧点出真实必填 8 项 |
-| 16 | slide_16_memberid.jsx | Member ID：NG + 8 位 | content | hero | peak | 巨型数字+洞察 | 大数字 + Diagram(生成与校验三处落点) | anchor | 字数约 200 / 图 1 / 留白约 30% | 禁止只写"随机生成"而不说字符集；禁止省略三处校验 | 巨型展示 ID 格式，右侧列生成点与三处校验点 |
+| 16 | slide_16_memberid.jsx | Member ID：AE/NG + 9 位 | content | hero | peak | 巨型数字+洞察 | 大数字 + Diagram(生成与校验三处落点) | anchor | 字数约 200 / 图 1 / 留白约 30% | 禁止只写"随机生成"而不说字符集；禁止省略三处校验 | 巨型展示 ID 格式，右侧列生成点与三处校验点 |
 | 17 | slide_17_submit.jsx | 提交之后：自动登录与推荐关系 | content | supporting | valley | 非对称双栏（58:42） | Diagram(提交后写库路径 + 登录校验链) | evidence | 字数约 280 / 图 1 / 留白约 17% | 禁止把 5 个写入键合并成一句；禁止漏 ?next= 回跳 | 注册提交写入清单 + 登录页校验链与回跳规则 |
 | 18 | slide_18_section_account.jsx | 第三章 · 我的账户与奖金后台 | section | transition | transition | 全屏视觉+大标题 | L1: section_account.png（全幅，占 B 区 70%） | atmosphere | 字数约 30 / 图 1 / 留白约 45% | 禁止四卡片预览；禁止铺满正文段落 | 章节大字 + 一句小标点出奖金与团队 |
 | 19 | slide_19_tabs.jsx | 我的账户：四个 Tab | content | supporting | valley | N卡片横排（4 卡） | Diagram(4 Tab 卡片 + 每 Tab 关键内容) | evidence | 字数约 420（每卡 ≥ 100）/ 图 0 / 留白约 18% | 禁止卡片高度不齐；禁止每卡文字少于 80 字 | 四个 Tab 各写清包含什么、给谁看 |

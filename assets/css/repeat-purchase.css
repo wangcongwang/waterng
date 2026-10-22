@@ -65,8 +65,7 @@
   place-items: center;
   min-height: 200px;
   padding: var(--ek-24);
-  background: var(--ek-surface-sunken);
-  border-bottom: 1px solid var(--ek-border);
+  background: var(--ek-surface);
 }
 
 .rp-product-card__media img {
@@ -191,49 +190,6 @@
   outline-offset: 2px;
 }
 
-/* Coming-soon variant: no price / View product, so the action block sits
-   flush at the bottom of the card with a stacked label + link. */
-.rp-product-card--soon .rp-product-card__foot {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--ek-8);
-  padding: 0 var(--ek-24) var(--ek-24);
-  background: var(--ek-surface);
-}
-
-.rp-product-card__soon-label {
-  font-size: var(--ek-caption);
-  font-weight: var(--ek-w-bold);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ek-muted);
-}
-
-.rp-product-card__interest {
-  display: inline-flex;
-  align-items: center;
-  font-size: var(--ek-small);
-  font-weight: var(--ek-w-bold);
-  color: var(--ek-charcoal);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.rp-product-card__interest::after {
-  content: "→";
-  margin-left: var(--ek-8);
-  transition: transform var(--ek-fast) var(--ek-ease);
-}
-
-.rp-product-card__interest:hover {
-  color: var(--ek-blue);
-}
-
-.rp-product-card__interest:hover::after {
-  transform: translateX(3px);
-}
-
 /* Guest variant: sign-up nudge below the grid */
 .rp-guest-note {
   margin: var(--ek-32) 0 0;
@@ -241,6 +197,50 @@
   font-size: var(--ek-small);
   color: var(--ek-muted);
 }
+
+/* Checkout callout below the product grid */
+.mrp-cart-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-12);
+  margin: var(--ek-24) 0 0;
+  padding: var(--ek-16) var(--ek-20);
+  background: rgba(32, 34, 89, 0.06);
+  border: 1px solid rgba(32, 34, 89, 0.18);
+  border-left: 4px solid var(--ek-blue);
+  border-radius: var(--ek-radius, 10px);
+}
+
+.mrp-cart-hint__icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--ek-blue);
+  color: var(--ek-white, #fff);
+}
+
+.mrp-cart-hint p {
+  margin: 0;
+  font-size: var(--ek-small);
+  line-height: 1.5;
+  color: var(--ek-charcoal, #25292C);
+}
+
+.mrp-cart-hint strong {
+  color: var(--ek-blue);
+  font-weight: var(--ek-w-bold, 700);
+}
+
+@media (max-width: 640px) {
+  .mrp-cart-hint {
+    align-items: flex-start;
+  }
+}
+
 
 .rp-guest-note a {
   color: var(--ek-blue);
@@ -276,35 +276,4 @@
   .rp-product-card__foot {
     padding: var(--ek-20);
   }
-
-  .rp-product-card--soon .rp-product-card__foot {
-    padding: 0 var(--ek-20) var(--ek-20);
-  }
 }
-
-/* Floating cart — guest flow has no top header, so the cart lives here as a FAB
-   just below the env banner (top: env-banner height + gap) on the right. The
-   count badge reuses .ek-util__badge and is updated by updateCartBadge(). */
-.rp-cart-fab {
-  position: fixed;
-  top: calc(var(--ek-env-banner-h) + var(--ek-8));
-  right: var(--ek-12);
-  z-index: 80;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 999px;
-  background: var(--ek-white);
-  color: var(--ek-blue);
-  box-shadow: 0 6px 18px rgba(20, 40, 80, .18);
-  transition: transform .15s ease, box-shadow .15s ease;
-}
-.rp-cart-fab:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(20, 40, 80, .22);
-}
-.rp-cart-fab:active { transform: translateY(0); }
-.rp-cart-fab svg { display: block; }
-.rp-cart-fab .ek-util__badge { background: var(--ek-aqua); color: var(--ek-white); }

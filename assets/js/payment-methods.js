@@ -5,6 +5,11 @@
      Debit Card · USSD · Bank Transfer · Pay with Bank · Pay with Visa QR
      (+ Account Balance, retained from the existing member wallet)
 
+   Phase 1 gate: only Paystack (+ Account Balance where a page opts in via
+   `includeBalance`) is offered. The remaining guide channels stay fully
+   coded below and return automatically once PHASE2_ENABLED flips to true
+   (phase 2) — pages keep declaring them in `only`, the gate hides them.
+
    Used by: checkout.html, signup.html, member-welcome.html,
             member-repurchase.html, member-auto-maintenance.html
 
@@ -30,6 +35,7 @@
     bank: 'Bank Transfer',
     paybank: 'Pay with Bank',
     visaqr: 'Pay with Visa QR',
+    paystack: 'Paystack',
     balance: 'Account Balance',
     // legacy values still readable on older stored orders
     cod: 'Cash on delivery',
@@ -51,6 +57,7 @@
     bank: '<path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/>',
     paybank: '<path d="M12 2l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V5z"/><path d="M9 12l2 2 4-4"/>',
     visaqr: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v0M14 21h0M17 21h4v-4"/>',
+    paystack: '<path d="M12 3a7 7 0 0 1 7 7c0 3.5-2.6 6.4-6 6.9V21h-2v-4.1A7 7 0 0 1 12 3z"/><circle cx="12" cy="10" r="3"/>',
     balance: '<path d="M3 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v0"/><rect x="1" y="6" width="22" height="12" rx="2"/><circle cx="16" cy="12" r="2"/>'
   };
 
@@ -70,6 +77,14 @@
     key: 'account_balance',
     name: 'Account Balance',
     sub: 'Pay with your Ecoin balance'
+  };
+
+  /* Paystack — offered on the signup flow (opt-in via wire `only`). */
+  const PAYSTACK_METHOD = {
+    value: 'paystack',
+    key: 'paystack',
+    name: 'Paystack',
+    sub: 'Pay via Paystack checkout'
   };
 
   /* --- USSD channels (banks exposing a USSD payment code) --------------- */
@@ -202,10 +217,33 @@
     } catch (e) { /* clipboard unavailable — the value stays visible/selectable */ }
   }
 
+  /* --- Phase-1 channel gate --------------------------------------------
+     Phase 1 offers only Paystack (+ Account Balance via includeBalance).
+     The remaining Nigeria-guide channels — Debit Card, USSD, Bank Transfer,
+     Pay with Bank, Pay with Visa QR — stay coded here and come back the
+     day PHASE2_ENABLED flips to true. Pages keep listing them in `only`;
+     the gate simply hides them, so phase 2 is a one-line change. */
+  const PHASE2_CHANNELS = ['card', 'ussd', 'bank', 'paybank', 'visaqr'];
+  const PHASE2_ENABLED = false;
+
   /* --- Method chooser --------------------------------------------------- */
   function methods(opts) {
     const o = opts || {};
-    const list = CATALOGUE.slice();
+    let list;
+    if (o.only && o.only.length) {
+      // Restrict the chooser to specific values ('paystack' is opt-in only).
+      list = CATALOGUE.filter(m => o.only.indexOf(m.value) !== -1);
+      if (o.only.indexOf('paystack') !== -1) list.push(PAYSTACK_METHOD);
+    } else {
+      list = CATALOGUE.slice();
+    }
+    if (!PHASE2_ENABLED) {
+      list = list.filter(m => PHASE2_CHANNELS.indexOf(m.value) === -1);
+      // A page that asked only for gated channels still gets a usable
+      // chooser — Paystack is the phase-1 default — unless it opts out
+      // via noPaystack (a flow that must not offer Paystack at all).
+      if (!list.length && !o.noPaystack) list.push(PAYSTACK_METHOD);
+    }
     if (o.includeBalance) {
       list.push(Object.assign({}, BALANCE_METHOD, {
         name: o.balanceName || BALANCE_METHOD.name,
@@ -682,13 +720,35 @@
     };
   }
 
+  /* --- Paystack ---------------------------------------------------------
+     Redirect-style channel: no inline fields to fill. The page shows a
+     short notice; the actual checkout happens after the page's own submit
+     (email confirm → Paystack payment page). Always "complete". */
+  function mountPaystack(el, ctx) {
+    el.innerHTML = '' +
+      '<h2 class="pm-title" data-i18n="payment.paystack">Paystack</h2>' +
+      '<p>Pay <b class="pm-amount" data-ps-amount></b> through Paystack\'s secure checkout.</p>' +
+      '<p>Submit the form to continue — you will confirm your email and be ' +
+      'taken to the Paystack payment page.</p>';
+    const amountEl = el.querySelector('[data-ps-amount]');
+    function paint() { if (amountEl) amountEl.textContent = money(ctx.amount() || 0); }
+    paint();
+    return {
+      isComplete: () => true,
+      value: () => 'paystack',
+      reference: ctx.reference,
+      refresh: paint
+    };
+  }
+
   const MOUNTERS = {
     card: mountCard,
     ussd: mountUssd,
     bank: mountBankTransfer,
     paybank: mountPayWithBank,
     visaqr: mountVisaQr,
-    balance: mountBalance
+    balance: mountBalance,
+    paystack: mountPaystack
   };
 
   /* Mount one panel. `ctx` must provide { prefix, amount, reference, onChange }. */
@@ -717,6 +777,9 @@
        prefix          id prefix handed to the mounters
        amount()        current order total
        includeBalance  add the Account Balance option to the chooser
+       noPaystack      never offer Paystack — also skips the phase-1
+                       fallback that re-adds it when every other channel
+                       is gated (leaves e.g. Account Balance alone)
        balanceAmountId / balanceSubId / balanceLabelId
        extraPanels     { value: element|selector }  page-rendered panels
        extraComplete   { value: () => bool }        completeness for those
@@ -743,6 +806,8 @@
     renderGrid(grid, {
       name,
       selected: o.selected,
+      only: o.only,
+      noPaystack: !!o.noPaystack,
       includeBalance: !!o.includeBalance,
       balanceName: o.balanceName,
       balanceSub: o.balanceSub,

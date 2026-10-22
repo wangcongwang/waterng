@@ -36,10 +36,10 @@
 
   <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js?v=20260909c-2"></script>
-<script src="assets/js/app.js?v=20260923b"></script>
-  <script src="assets/js/website.js?v=20260909c-2"></script>
-  <script src="assets/js/order-receipt.js?v=20260915a"></script>
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+<script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
+  <script src="assets/js/order-receipt.js?v=20261021id"></script>
   <script>
     const PICKUP_LOCATIONS = {
       lagos: { name: 'Lagos HQ', addr: '12B Admiralty Way, Lekki Phase 1', hours: 'Mon–Sat · 8:00 – 18:00' },
@@ -65,6 +65,7 @@
       try { return new URL('order.html?order=' + encodeURIComponent(orderId), location.href).href; }
       catch (e) { return 'order.html?order=' + encodeURIComponent(orderId); }
     }
+    // Compose a pre-filled mailto to the customer with the order detail link + summary.
     function buildOrderMailto(order) {
       const item = (order.items && order.items[0]) || {};
       const qty = item.qty || 1;
@@ -78,7 +79,7 @@
         'Thank you for your order with Elken.\n\n' +
         'Order: ' + order.id + '\n' +
         'Product: ' + (item.name || 'Unnamed product') + ' × ' + qty + '\n' +
-        'Total: N' + (order.total || 0).toLocaleString() + '\n' +
+        'Total: ' + _currencySymbol(order.currency || 'NGN') + (order.total || 0).toLocaleString() + '\n' +
         'Delivery: ' + methodLabel + '\n' +
         'Payment: ' + payLabel + '\n\n' +
         'View your full order details here:\n' + link + '\n\n' +
@@ -99,7 +100,7 @@
       return 0;
     }
     function _currencySymbol(c) {
-      const m = { NGN: 'N', USD: '$', EUR: '€', GBP: '£', CNY: '¥', KES: 'KSh', GHS: 'GH₵' };
+      const m = { NGN: 'N', AED: 'AED ', USD: '$', EUR: '€', GBP: '£', CNY: '¥', KES: 'KSh', GHS: 'GH₵' };
       return m[c] || 'N';
     }
     function _resolveOrderItemImage(it) {
@@ -196,7 +197,6 @@
       const items = order.items || [];
       const isPickup = order.delivery && order.delivery.method === 'pickup';
       const link = orderDetailLink(order.id);
-      const email = (order.customer && order.customer.email) || '';
       const statusLabel = (order.status || 'pending').toUpperCase();
 
       // ---- Member / order meta (mirrors the member data shown on the Orders list) ----
@@ -223,8 +223,12 @@
       const orderTypeLabel = isMemberOrder ? 'Member order' : 'My order';
       const payStatusLabel = order.payStatus || statusLabel;
 
-      // BV only for signed-in members (visitor orders credit the referrer's ID)
-      const showBV = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn());
+      // BV only for signed-in members; never for guest (visitor) orders.
+      // A guest order is also detectable from the order itself: it is
+      // attributed to the market house account (NG/AE000000001).
+      const isGuestViewer = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
+      const isGuestOrder = isGuestViewer || /^(NG|AE)000000001$/.test(String(order.memberId || ''));
+      const showBV = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn()) && !isGuestOrder;
 
       const TAX_RATE = (typeof order.taxRate === 'number') ? order.taxRate
         : (typeof (items[0] && items[0].taxRate) === 'number' ? items[0].taxRate : 0.075);
@@ -339,7 +343,8 @@
                     : ''}
                 </section>
 
-                <!-- ---------- Member ---------- -->
+                <!-- ---------- Member (hidden entirely for guest / no-account orders) ---------- -->
+                ${isGuestOrder ? '' : `
                 <section class="ek-card odet-card">
                   <h3 class="odet-card-title">Member</h3>
                   <dl class="odet-rows">
@@ -349,7 +354,7 @@
                     <div class="odet-row"><dt>Paid</dt><dd>${esc(paidStr)}</dd></div>
                     <div class="odet-row"><dt>Currency</dt><dd>${esc(currency)}</dd></div>
                   </dl>
-                </section>
+                </section>`}
               </div>
             </div>
 
@@ -374,15 +379,13 @@
                     <input class="ek-input" id="orderLinkInput" readonly value="${link.replace(/"/g, '&quot;')}" />
                     <button type="button" class="ek-btn ek-btn--secondary ek-btn--sm" id="copyOrderLink">Copy</button>
                   </div>
-                  ${email
-                    ? `<button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="emailOrderLink">
-                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l9 6 9-6M3 7v10h18V7H3z"/></svg>
-                         Email order link to ${email}
-                       </button>`
-                    : ''}
+                  <button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="emailOrderLink">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l9 6 9-6M3 7v10h18V7H3z"/></svg>
+                    <span>Send order link by email</span>
+                  </button>
                   <p>
                     This link is stored in your browser, so it only opens on this device.
-                    Email it to yourself to keep a copy. (Static demo: no server-side email is sent; the button opens your email app with the link pre-filled.)
+                    Send it to your email to keep a copy — your email app opens with the message pre-filled. (Static demo: no server-side email is sent.)
                   </p>
                 </div>
                 <a href="index.html" class="odet-back">← Back to home</a>
@@ -401,7 +404,17 @@
         setTimeout(() => copyBtn.textContent = 'Copy', 1500);
       });
       const emailBtn = document.getElementById('emailOrderLink');
-      if (emailBtn) emailBtn.addEventListener('click', () => { location.href = buildOrderMailto(order); });
+      if (emailBtn) emailBtn.addEventListener('click', () => {
+        // One click, no modal: the link goes straight to the order's contact
+        // email. Static demo — the user's own mail client does the sending.
+        const to = (order.customer && order.customer.email) || '';
+        if (!to) {
+          if (window.toast) window.toast('No email address on file for this order', 'danger');
+          return;
+        }
+        location.href = buildOrderMailto(order, to);
+        if (window.toast) window.toast('Order link sent to ' + to, 'success');
+      });
 
       // Download receipt — delegated to the shared module so the signed-in and
       // guest (share-link) cases produce the identical document.

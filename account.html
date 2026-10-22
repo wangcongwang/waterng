@@ -253,7 +253,7 @@
               <div class="row">
                 <div class="field">
                   <label data-i18n="account.profile_member_id">Member ID</label>
-                  <input class="ek-input input-locked" name="memberId" id="pfMemberId" maxlength="10" autocomplete="off"
+                  <input class="ek-input input-locked" name="memberId" id="pfMemberId" maxlength="11" autocomplete="off"
                          data-i18n-ph="account.profile_member_id_ph" placeholder="NG12345678" disabled />
                   <span class="hint member-id-locked-hint" data-i18n="account.profile_member_id_locked">This ID is fixed and cannot be changed.</span>
                 </div>
@@ -403,10 +403,10 @@
 
   <div id="app-footer" class="ek-site-footer"></div>
 
-  <script src="assets/i18n/strings.js?v=20260909c"></script>
-<script src="assets/js/app.js?v=20260923b"></script>
-  <script src="assets/js/website.js?v=20260909c"></script>
-  <script src="assets/js/order-receipt.js?v=20260915a"></script>
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+<script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
+  <script src="assets/js/order-receipt.js?v=20261021id"></script>
   <script>
     /* ---------- i18n apply ---------- */
     function applyI18n() {
@@ -557,18 +557,20 @@
       const v = window.T?.tr ? window.T.tr(key) : fb;
       return (v && v !== key) ? v : fb;
     }
-    /* Member IDs must be exactly "NG" + 8 digits. If a stored value is
-       non-conforming (e.g. legacy 12-digit), normalize to the first 8 digits
-       after NG so the displayed/persisted value conforms and the identity
+    /* Member IDs are "NG"/"AE" + 8 digits (house accounts NG000000001 /
+       AE000000001 are the special 9-digit exception). If a stored value is
+       non-conforming (e.g. legacy 9/12-digit), normalize to the first 8 digits
+       after the prefix so the displayed/persisted value conforms and the identity
        prefix is preserved (orders stay linkable). Returns null for empty. */
     function normalizeMemberId(id) {
       if (!id) return null;
       const s = String(id).trim().toUpperCase();
-      const m = s.match(/^NG(\d+)$/);
+      if (s === 'NG000000001' || s === 'AE000000001') return s;
+      const m = s.match(/^(NG|AE)(\d+)$/);
       if (!m) return null;
-      const d = m[1];
+      const d = m[2];
       if (d.length === 8) return s;
-      return 'NG' + d.slice(0, 8).padStart(8, '0');
+      return m[1] + d.slice(0, 8).padStart(8, '0');
     }
     function healMemberId() {
       const u = window.Auth.user || {};
@@ -590,7 +592,7 @@
       if (!card) return;
       const u = window.Auth.user || {};
       const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
-      // Name & Member ID (normalized to NG + 8 digits; self-heals stale 12-digit data)
+      // Name & Member ID (normalized to NG/AE + 8 digits; self-heals stale legacy data)
       const memberId = healMemberId() || '—';
       const memberName = md.memberName || u.name || u.firstName || '—';
       // Country code
@@ -670,6 +672,7 @@
     /* ---------- Country list for Personal info select (i18n + stable codes) ---------- */
     const PROFILE_COUNTRIES = [
       { code: 'NG', key: 'account.profile_country_ng' },
+      { code: 'AE', key: 'account.profile_country_ae' },
       { code: 'GH', key: 'account.profile_country_gh' },
       { code: 'KE', key: 'account.profile_country_ke' },
       { code: 'ZA', key: 'account.profile_country_za' },
@@ -681,6 +684,34 @@
       { code: 'US', key: 'account.profile_country_us' },
       { code: 'OTHER', key: 'account.profile_country_other' },
     ];
+    // Country is inherited from the referrer at registration and is permanently
+    // read-only. Any stored value (name or code) resolves to a stable code here;
+    // unknown values fall back to OTHER. Nothing in the profile UI may WRITE it.
+    const COUNTRY_ALIASES = {
+      'nigeria': 'NG', 'najeriya': 'NG', 'nàìjíríà': 'NG', 'naịjirịa': 'NG', '奈及利亚': 'NG', '尼日利亚': 'NG',
+      'uae': 'AE', 'united arab emirates': 'AE', '阿联酋': 'AE',
+      'ghana': 'GH', 'gana': 'GH', '加纳': 'GH',
+      'kenya': 'KE', 'kẹ́ńyà': 'KE', '肯尼亚': 'KE',
+      'south africa': 'ZA', 'afirka ta kudu': 'ZA', 'gúúsù áfíríkà': 'ZA', '南非': 'ZA',
+      'uganda': 'UG', 'yuganda': 'UG', 'ùgándà': 'UG', '乌干达': 'UG',
+      'tanzania': 'TZ', 'tanzaniya': 'TZ', 'tànzáníà': 'TZ', '坦桑尼亚': 'TZ',
+      'china': 'CN', 'caina': 'CN', 'cháínà': 'CN', '中国': 'CN',
+      'malaysia': 'MY', 'málẹ̀shíà': 'MY', '马来西亚': 'MY',
+      'united kingdom': 'GB', 'biritaniya': 'GB', 'ilẹ̀ gẹ̀ẹ́sì': 'GB', '英国': 'GB',
+      'united states': 'US', 'amurka': 'US', 'amẹ́ríkà': 'US', '美国': 'US',
+    };
+    function resolveCountryCode(value) {
+      const s = String(value == null ? '' : value).trim();
+      if (!s) return '';
+      if (PROFILE_COUNTRIES.some(c => c.code === s)) return s;
+      const lo = s.toLowerCase();
+      if (COUNTRY_ALIASES[lo]) return COUNTRY_ALIASES[lo];
+      const matched = PROFILE_COUNTRIES.find(c => {
+        const label = (window.T.tr(c.key) || c.code).toLowerCase();
+        return label.includes(lo) || lo.includes(c.code.toLowerCase());
+      });
+      return matched ? matched.code : 'OTHER';
+    }
     function renderProfileCountries(selected) {
       const sel = document.getElementById('pfCountry');
       if (!sel) return;
@@ -699,44 +730,19 @@
       const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
       const u = window.Auth.user || {};
       // Member ID: Auth.user.memberId > memberData.memberId > stable gen (stored into Auth.user & md).
-      // healMemberId() also normalizes any non-conforming value (e.g. legacy NG+12digits) to NG+8digits
+      // healMemberId() also normalizes any non-conforming value (e.g. legacy NG+9/12 digits) to NG/AE+8 digits
       // and persists the corrected value back, so all downstream reads (drawer, checkout, etc.) see 8 digits.
       const memberId = healMemberId() || (window.ProductCatalog?.genMemberId?.()) || '';
       // Member name: prefer md.memberName (the authoritative field used by overview/syncHeader); then Auth.name; then profile.name.
       const memberName = md.memberName || u.name || u.firstName || p.name || '';
-      // Country: memberData.country code. If stored as name instead of code, best-match to a code.
-      // Seed default for md.country = Nigeria (matches memberData seed) when missing.
-      let country = md.country || md._defaultCountry || '';
-      if (!country) {
-        country = 'NG';
+      // Country: inherited from the referrer at registration — read-only here.
+      // Stored as a name ("Nigeria") or code ("NG"); both resolve to a code.
+      // Legacy records without a country derive it once from the member ID
+      // prefix (NG → Nigeria, AE → UAE); the form never supplies it.
+      let country = resolveCountryCode(md.country) || (/^AE/i.test(memberId || '') ? 'AE' : 'NG');
+      if (!md.country) {
         md.country = country;
         localStorage.setItem('al.memberData', JSON.stringify(md));
-      }
-      if (country && !PROFILE_COUNTRIES.some(c => c.code === country)) {
-        const nameLo = String(country).toLowerCase();
-        // 1) 常用英文/本地名称别名映射
-        const aliasMap = {
-          'nigeria': 'NG', 'najeriya': 'NG', 'nàìjíríà': 'NG', 'naịjirịa': 'NG', '奈及利亚': 'NG', '尼日利亚': 'NG',
-          'ghana': 'GH', 'gana': 'GH', '加纳': 'GH',
-          'kenya': 'KE', 'kẹ́ńyà': 'KE', '肯尼亚': 'KE',
-          'south africa': 'ZA', 'afirka ta kudu': 'ZA', 'gúúsù áfíríkà': 'ZA', 'south africa': 'ZA', '南非': 'ZA',
-          'uganda': 'UG', 'yuganda': 'UG', 'ùgándà': 'UG', '乌干达': 'UG',
-          'tanzania': 'TZ', 'tanzaniya': 'TZ', 'tànzáníà': 'TZ', '坦桑尼亚': 'TZ',
-          'china': 'CN', 'caina': 'CN', 'cháínà': 'CN', '中国': 'CN',
-          'malaysia': 'MY', 'málẹ̀shíà': 'MY', '马来西亚': 'MY',
-          'united kingdom': 'GB', 'biritaniya': 'GB', 'ilẹ̀ gẹ̀ẹ́sì': 'GB', '英国': 'GB',
-          'united states': 'US', 'amurka': 'US', 'amẹ́ríkà': 'US', '美国': 'US',
-        };
-        const m = aliasMap[nameLo];
-        if (m) {
-          country = m;
-        } else {
-          const matched = PROFILE_COUNTRIES.find(c => {
-            const label = (window.T.tr(c.key) || c.code).toLowerCase();
-            return label.includes(nameLo) || nameLo.includes(c.code.toLowerCase());
-          });
-          country = matched ? matched.code : 'OTHER';
-        }
       }
       // Render country select first (so we can set the value)
       renderProfileCountries(country);
@@ -1270,20 +1276,20 @@
                 <tbody>${itemRows}</tbody>
                 <tfoot>
                   <tr>
-                    <td class="col-img" data-label="Image"></td>
+                    <td class="col-img stack-hide" data-label="Image"></td>
                     <td colspan="2" class="lbl" data-i18n="account.orders_label_subtotal">Subtotal</td>
                     <td class="num" data-label="Qty">${items.reduce((s, it) => s + (Number(it.qty) || 1), 0)}</td>
-                    <td data-label="Price"></td>
+                    <td class="stack-hide" data-label="Price"></td>
                     <td class="num" data-label="Total Price">${sym}${fmtNum(subtotal)}</td>
                     <td class="num" data-label="Total BV">${sumBV}</td>
-                    <td data-label="Tax Rate"></td>
+                    <td class="stack-hide" data-label="Tax Rate"></td>
                     <td class="num" data-label="Total Tax">${sym}${fmtNum(sumTax)}</td>
                   </tr>
                   <tr class="ocard__grand">
-                    <td class="col-img" data-label="Image"></td>
+                    <td class="col-img stack-hide" data-label="Image"></td>
                     <td colspan="5" class="lbl" data-i18n="account.orders_label_total">Total (incl. tax)</td>
-                    <td data-label="Total BV"></td>
-                    <td data-label="Tax Rate"></td>
+                    <td class="stack-hide" data-label="Total BV"></td>
+                    <td class="stack-hide" data-label="Tax Rate"></td>
                     <td class="num" data-label="">${sym}${fmtNum(grand)}</td>
                   </tr>
                 </tfoot>
@@ -1571,11 +1577,7 @@
       } catch (e) {}
     }
 
-    /* ---------- Country & Bank constants ---------- */
-    const COUNTRIES = [
-      'Nigeria', 'Malaysia', 'Singapore', 'Indonesia', 'Thailand',
-      'Philippines', 'China', 'India', 'United States', 'United Kingdom',
-    ];
+    /* ---------- Bank constants ---------- */
     const NIGERIA_BANKS = [
       'Access Bank Nigeria Plc', 'First Bank of Nigeria', 'Zenith Bank Plc',
       'GTBank (Guarantee Trust Bank)', 'UBA (United Bank for Africa)',
@@ -1661,7 +1663,9 @@
         fieldEditable('Member Name', memberData.memberName || u.name || '—', 'memberName'),
         field('Login Status', memberData.loginStatus || 'Allowed', memberData.loginStatus === 'Allowed' ? 'ok' : 'info'),
         field('Status', memberData.status || 'Active', memberData.status === 'Active' ? 'ok' : 'info'),
-        fieldSelect('Country', memberData.country || 'Nigeria', 'country', COUNTRIES),
+        // Country is read-only (inherited from the referrer at registration) —
+        // display only, never an editable select.
+        field('Country', memberData.country || '—'),
         field('Join Date', fmtDateTime(memberData.joinDate)),
         field('Join Period', memberData.joinPeriod ? `#${memberData.joinPeriod}` : '—'),
       ].join('');
@@ -1679,12 +1683,16 @@
       ].join('');
       document.getElementById('memberLevelFields').innerHTML = levelHtml;
 
-      // Referral Network
+      // Referral Network — referrer names are inherited data; blank out junk
+      // values (e.g. a numeric string stored before the name sanity check)
+      // through the shared helper so they never surface as a person's name.
+      const pcName = window.ProductCatalog || {};
+      const saneName = v => (pcName.saneMemberName ? pcName.saneMemberName(v) : (v || ''));
       const referralHtml = [
         field('Referrer ID', memberData.referrerId || '—'),
-        field('Referrer Name', memberData.referrerName || '—'),
+        field('Referrer Name', saneName(memberData.referrerName) || '—'),
         field('Actual Referrer ID', memberData.actualReferrerId || '—'),
-        field('Actual Referrer Name', memberData.actualReferrerName || '—'),
+        field('Actual Referrer Name', saneName(memberData.actualReferrerName) || '—'),
       ].join('');
       document.getElementById('memberReferralFields').innerHTML = referralHtml;
 
@@ -1813,6 +1821,10 @@
 
     /* ---------- Save a single member field & sync ---------- */
     function saveMemberField(key, value) {
+      // Read-only fields can never be written through the member-info editor.
+      // Country is inherited from the referrer at registration (see the profile
+      // form); Member ID is locked to the NG+8 format.
+      if (key === 'country' || key === 'memberId') return;
       const memberData = JSON.parse(localStorage.getItem('al.memberData') || '{}');
       memberData[key] = value;
       localStorage.setItem('al.memberData', JSON.stringify(memberData));
@@ -1905,9 +1917,23 @@
 
     function currentView() {
       const hash = (location.hash || '#overview').replace(/^#/, '').replace(/[?#].*$/, '');
+      // 'add-address' deep-links straight to the delivery-address editor
+      // (used by checkout when the shopper has no saved address yet).
+      if (hash === 'add-address') return 'profile';
       // 'sponsor' is no longer a view — it lives inside Overview as a module, so
       // stale #sponsor bookmarks fall back to the default view.
       return ['overview', 'orders', 'profile'].includes(hash) ? hash : 'overview';
+    }
+
+    // Deep link: open the add-address editor automatically (checkout's "no
+    // address → go add" button). Clears the marker afterwards so a refresh
+    // doesn't re-pop the editor.
+    function maybeAutoOpenAddressEditor() {
+      const hash = (location.hash || '').replace(/^#/, '').replace(/[?#].*$/, '');
+      if (hash !== 'add-address') return;
+      showView('profile');
+      openAddressEditor(null);
+      history.replaceState(null, '', '#profile');
     }
 
     /* ---------- Header sync ---------- */
@@ -1958,6 +1984,7 @@
       // populated on the first paint too (not only when the Profile tab opens).
       renderProfileBasicBar();
       showView(currentView());
+      maybeAutoOpenAddressEditor();
       // Sponsor Network is a permanent Overview module now, so its tree has to be
       // painted on the first load rather than on a tab click.
       renderSponsorNetwork();
@@ -2019,7 +2046,7 @@
         showView(v);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
-      window.addEventListener('hashchange', () => showView(currentView()));
+      window.addEventListener('hashchange', () => { showView(currentView()); maybeAutoOpenAddressEditor(); });
 
       // Logout
       document.getElementById('accountLogout')?.addEventListener('click', () => {
@@ -2035,25 +2062,22 @@
         e.preventDefault();
         const form = e.currentTarget;
         const pc = window.ProductCatalog || {};
-        // Member ID: 会员编号格式 NG+8 位数字
+        // Member ID: 会员编号格式 AE/NG+8 位数字（总部账号 AE000000001 / NG000000001 为特殊 9 位）
         const memberId = (form.memberId ? form.memberId.value.trim() : (document.getElementById('pfMemberId').value || '')).trim().toUpperCase();
-        if (!/^NG\d{8}$/.test(memberId)) {
+        if (!/^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/.test(memberId)) {
           const msg = window.T.tr('account.profile_member_id_invalid');
-          window.toast((msg && msg !== 'account.profile_member_id_invalid') ? msg : 'Member ID must be NG + 8 digits (e.g. NG12345678).', 'danger');
+          window.toast((msg && msg !== 'account.profile_member_id_invalid') ? msg : 'Member ID must be NG/AE + 8 digits (e.g. NG12345678).', 'danger');
           return;
         }
-        // Country is a permanently locked field (see setProfileMode): the stored value wins.
-        // The select is only pre-filled from storage and can never be picked by the user, so
-        // this also protects against a stale cached page whose select was still editable.
+        // Country is inherited from the referrer at registration and is permanently
+        // read-only. This update interface must NOT accept a client-supplied country:
+        // the stored value always wins, so even a stale/crafted page cannot smuggle
+        // one in. Legacy records without a country derive it once from the member
+        // ID prefix (NG → Nigeria, AE → UAE).
         const countryEl = document.getElementById('pfCountry');
         if (countryEl) countryEl.disabled = true;
         const storedCountry = (JSON.parse(localStorage.getItem('al.memberData') || '{}').country || '').trim();
-        const lockedCountry = PROFILE_COUNTRIES.some(c => c.code === storedCountry) ? storedCountry : '';
-        const countryCode = (lockedCountry || (form.country ? form.country.value : (countryEl ? countryEl.value : '')) || '').trim();
-        if (!countryCode) {
-          window.toast(window.T.tr('account.profile_country_ph') || 'Please select a country.', 'danger');
-          return;
-        }
+        const countryCode = resolveCountryCode(storedCountry) || (/^AE/i.test(memberId) ? 'AE' : 'NG');
         const memberName = (form.memberName ? form.memberName.value.trim() : (document.getElementById('pfMemberName').value || '')).trim();
         const email = (form.email ? form.email.value : '').trim();
         const phone = (pc.readPhone ? pc.readPhone(form, 'phone') : (form.querySelector('[name="phone"]') || {}).value || '').trim();
@@ -2274,8 +2298,8 @@
           </div>
           <div class="ek-modal__body">
             <div class="modal-filter-bar">
-              <input type="date" id="${modalId}-start" title="Start date">
-              <input type="date" id="${modalId}-end" title="End date">
+              <input type="text" id="${modalId}-start" lang="en" title="Start date" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" autocomplete="off">
+              <input type="text" id="${modalId}-end" lang="en" title="End date" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" autocomplete="off">
               ${columns.find(c => c.key === 'type') ? `<select id="${modalId}-type">
                 <option value="">All Trans Type</option>
                 <option value="credit">Credit</option>
@@ -2764,11 +2788,11 @@
               <div class="modal-filter-bar modal-filter-bar--grid">
                 <div class="mf-field">
                   <label for="rtTransferStart">Start date</label>
-                  <input class="ek-input" type="date" id="rtTransferStart">
+                  <input class="ek-input" type="text" id="rtTransferStart" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" autocomplete="off">
                 </div>
                 <div class="mf-field">
                   <label for="rtTransferEnd">End date</label>
-                  <input class="ek-input" type="date" id="rtTransferEnd">
+                  <input class="ek-input" type="text" id="rtTransferEnd" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" autocomplete="off">
                 </div>
                 <div class="mf-field">
                   <label for="rtTransferOut">Transfer out of</label>
@@ -2988,11 +3012,37 @@
                 <label for="rechargeType">Type <span class="req">*</span></label>
                 <select class="ek-select" id="rechargeType" name="type" required>
                   <option value="Cash" selected>Cash</option>
+                  <option value="Credit Card">Credit Card</option>
+                  <option value="Direct Banking">Direct Banking</option>
                 </select>
               </div>
-              <div class="ek-field" style="grid-column: 1 / -1">
+              <div class="ek-field">
                 <label for="rechargePaymentDate">Payment Date <span class="req">*</span></label>
-                <input class="ek-input" type="date" id="rechargePaymentDate" name="paymentDate" required>
+                <input class="ek-input" type="text" id="rechargePaymentDate" name="paymentDate" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" autocomplete="off" required>
+              </div>
+              <div class="ek-field">
+                <label for="rechargePaymentRef">Payment Reference <span class="req">*</span></label>
+                <input class="ek-input" type="text" id="rechargePaymentRef" name="paymentRef" placeholder="" autocomplete="off" required>
+              </div>
+              <div class="ek-field" style="grid-column: 1 / -1">
+                <label for="rechargeBankName">Bank Name <span class="req">*</span></label>
+                <select class="ek-select" id="rechargeBankName" name="bankName" required>
+                  <option value="" selected disabled>Select</option>
+                  <option>Access Bank</option>
+                  <option>Ecobank Nigeria</option>
+                  <option>Fidelity Bank</option>
+                  <option>First Bank</option>
+                  <option>FCMB</option>
+                  <option>GTBank</option>
+                  <option>Keystone Bank</option>
+                  <option>Polaris Bank</option>
+                  <option>Stanbic IBTC</option>
+                  <option>Sterling Bank</option>
+                  <option>Union Bank</option>
+                  <option>UBA</option>
+                  <option>Wema Bank</option>
+                  <option>Zenith Bank</option>
+                </select>
               </div>
               <div class="ek-field" style="grid-column: 1 / -1">
                 <label for="rechargeRemark">Remark <span class="req">*</span></label>
@@ -3038,8 +3088,8 @@
           amount: amount,
           type: fd.get('type') || 'Cash',
           paymentDate: fd.get('paymentDate') || '',
-          bankName: '—',
-          paymentRef: rtId('REF-'),
+          bankName: fd.get('bankName') || '',
+          paymentRef: (fd.get('paymentRef') || '').trim(),
           voucher: '',
           remark: fd.get('remark') || '',
           status: 'pending',
@@ -3136,7 +3186,7 @@
         const amount = Number(fd.get('amount')) || 0;
         if (amount <= 0) { window.toast('Amount must be greater than 0.', 'danger'); return; }
         const code = (fd.get('receivingMemberCode') || '').trim().toUpperCase();
-        if (!/^NG\d{8}$/.test(code)) { window.toast('Member Code must be NG + 8 digits.', 'danger'); return; }
+        if (!/^(?:(?:NG|AE)\d{8}|NG000000001|AE000000001)$/.test(code)) { window.toast('Member Code must be NG/AE + 8 digits.', 'danger'); return; }
         const transferType = fd.get('transferType') || 'Bonus To Ecoin';
 
         // Validate balance based on transfer type

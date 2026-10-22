@@ -164,16 +164,21 @@
 .ek-burger span:nth-child(1), .ek-burger span:nth-child(2) { width: 22px; }
 .ek-burger span:nth-child(3) { width: 14px; }
 
+/* Mobile-only cart entry: hidden on desktop, shown in the header bar on
+   small screens so the cart is always one tap away (not buried in the drawer). */
+.ek-header__mobile-actions { display: none; }
+
 /* ==========================================================================
    Below the desktop breakpoint the navigation collapses into the drawer.
    ========================================================================== */
 @media (max-width: 1199px) {
   .ek-header { height: 64px; }
-  /* Collapsed header: logo left, burger right. Utilities move to drawer. */
+  /* Collapsed header: logo left, then a right-aligned group of burger + cart. */
   .ek-logo { width: 140px; height: 25px; }
   .ek-logo img { height: 25px; }
   .ek-nav { display: none; }
-  .ek-burger { display: flex; order: 1; }
+  .ek-burger { display: flex; order: 3; }
+  .ek-header__mobile-actions { display: flex; align-items: center; order: 2; margin-left: auto; }
 }
 
 @media (min-width: 1200px) {

@@ -57,7 +57,7 @@
 | 09 | slide_09_guest_truth.jsx | 访客下单后的三个真相 | content | supporting | valley | 非对称双栏 | Diagram(三个结论卡) | evidence | 字数约 300 / 图 1 / 留白 15% | 禁止含糊说"订单会保留"；禁止承诺访客单会并入新账号 | 订单可查但入不了账户、会被删除、BV 归分享者 |
 | 10 | slide_10_section_signup.jsx | 路径二 · 注册账户去购买 | section | transition | transition | 全屏视觉+大标题 | L1: section_signup.jpg | atmosphere | 字数约 32 / 图 1 / 留白 45% | 禁止四卡片预览；禁止铺满正文段落 | 章节大字 + 小标点出"注册即首购" |
 | 11 | slide_11_signup_form.jsx | 注册即首购：一页七个分区 | content | supporting | valley | 左大图+右侧文字 | Diagram(七分区纵向结构) | evidence | 字数约 300 / 图 1 / 留白 15% | 禁止把七分区画成同尺寸方块；禁止不标必填 | 七个分区逐条 + 真实必填八项 |
-| 12 | slide_12_memberid.jsx | Member ID 与推荐人默认值 | content | hero | peak | 巨型数字+洞察 | 92px ID 字面量 + Diagram(两处默认值) | anchor | 字数约 210 / 图 1 / 留白 28% | 禁止只讲 ID 不讲默认推荐人；禁止省略三处校验 | ID 规则 + 推荐人字段默认 NG00000001 这件事 |
+| 12 | slide_12_memberid.jsx | Member ID 与推荐人默认值 | content | hero | peak | 巨型数字+洞察 | 92px ID 字面量 + Diagram(两处默认值) | anchor | 字数约 210 / 图 1 / 留白 28% | 禁止只讲 ID 不讲默认推荐人；禁止省略三处校验 | ID 规则 + 推荐人字段默认 NG000000001 这件事 |
 | 13 | slide_13_submit.jsx | 提交即下单并自动登录 | content | supporting | valley | 左标题+右内容 | Diagram(提交后写入路径) | evidence | 字数约 290 / 图 1 / 留白 16% | 禁止把五处写入合并成一句；禁止漏倒计时跳转 | 注册提交同时生成订单、写购物车、记账、自动登录 |
 | 14 | slide_14_signup_order.jsx | 注册订单在账户里的样子 | content | supporting | valley | 非对称双栏 | Diagram(字段形态差异对照) | evidence | 字数约 300 / 图 1 / 留白 15% | 禁止把差异写成"小瑕疵"；禁止漏地址与付款状态两处 | 与结算下单的单字段形态差异及可见后果 |
 | 15 | slide_15_section_member.jsx | 路径三 · 已有账户去购买 | section | transition | transition | 全屏视觉+大标题 | L1: section_account.jpg | atmosphere | 字数约 30 / 图 1 / 留白 45% | 禁止四卡片预览；禁止铺满正文段落 | 章节大字 + 小标点出登录态带来的差异 |

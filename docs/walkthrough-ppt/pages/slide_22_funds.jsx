@@ -58,7 +58,7 @@
         <Box style={{ flex: 1, flexDirection: 'row', gap: 16 }}>
             {[
                 { icon: 'wallet', t: '充值 Recharge', d: '表单四项：充值金额（带加减步进，最小 1）、类型（目前只有 Cash）、支付日期、备注。记录列表展示创建时间、金额、状态、类型、银行、支付参考号与充值凭证，状态有 Pending 与 Approved 两种。提交后金额会同时写进 Bonus 流水。' },
-                { icon: 'exchange-alt', t: '转账 Transfer', d: '两种类型：Bonus To Ecoin 与 Ecoin To Ecoin。表单要填会员编码（须符合 NG 加 8 位规则）、金额与备注，界面上只读显示当前可用 Bonus 与可用 Ecoin。列表按转出账户、转入账户、收款人、金额、时间与备注展示。' },
+                { icon: 'exchange-alt', t: '转账 Transfer', d: '两种类型：Bonus To Ecoin 与 Ecoin To Ecoin。表单要填会员编码（须符合 AE/NG 加 9 位规则）、金额与备注，界面上只读显示当前可用 Bonus 与可用 Ecoin。列表按转出账户、转入账户、收款人、金额、时间与备注展示。' },
                 { icon: 'balance-scale', t: '余额怎么取', d: 'Bonus To Ecoin 的可用 Bonus 取 BV 台账最后一条记录的期末余额；Ecoin To Ecoin 的可用 Ecoin 取 Ecoin 台账累计值。提交成功后同时写扣减方与增加方的流水，余额不足则拦住提交。' },
             ].map(function (it, i) {
                 return (
