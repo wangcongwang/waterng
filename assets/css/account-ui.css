@@ -561,7 +561,21 @@
     margin: calc(var(--ek-20) * -1) calc(var(--ek-20) * -1) 0;
     padding: var(--ek-16) var(--ek-20);
   }
-  #snTopMember { width: 100%; }
+}
+
+/* 手机/窄屏：筛选栏铺满卡片宽度（Top Member 独占一行，Depth + Confirm 同行），
+   树节点拉满整行，让右侧 +/− 按钮在同一条竖线上对齐。 */
+@media (max-width: 720px) {
+  .sn-module .sponsor-toolbar {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--ek-12); align-items: end;
+  }
+  .sn-module .sponsor-field:first-child { grid-column: 1 / -1; }
+  .sn-module .sponsor-field { min-width: 0; }
+  #snTopMember, #snSpreadDepth { width: 100%; }
+  .sn-module #snConfirmBtn { min-height: 48px; }
+  .sn-module .ek-tree__node { width: 100%; }
+  .sn-module .ek-tree__body { flex: 1 1 auto; }
 }
 
 /* --------------------------------------------------------------------------
