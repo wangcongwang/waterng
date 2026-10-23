@@ -405,6 +405,16 @@
       if (referrerInput) referrerInput.value = refId;
       if (actualReferrerInput) actualReferrerInput.value = actualRefId;
 
+      /* ---------- Reporting Center ID: default to the signed-in account when
+         it is itself a Reporting Center (isReportingCenter === 'Yes'), then
+         lock it; otherwise left blank for manual entry. ---------- */
+      const centerInput = document.getElementById('regCenterId');
+      if (centerInput && md.isReportingCenter === 'Yes' && currentMemberId) {
+        centerInput.value = currentMemberId;
+        centerInput.readOnly = true;
+        centerInput.classList.add('input-locked');
+      }
+
       /* ---------- Referrer lookup & gate (same rule as signup) ----------
          The welcome-pack form is referral-based too: clearing the referrer
          (or typing an unknown member ID) hides every module below Network

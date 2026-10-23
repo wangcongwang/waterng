@@ -58,7 +58,7 @@
               <input class="ek-input is-locked" id="rpMemberId" readonly tabindex="-1" aria-readonly="true" />
               <span id="rpMemberName" style="display:block;margin-top:6px;color:#5a5f79;font-size:13px;"></span>
             </div>
-            <div class="field">
+            <div class="field" id="rpRcField">
               <label for="rpRcId">Reporting Center ID <span class="req">*</span></label>
               <input class="ek-input" id="rpRcId" required />
             </div>
@@ -668,7 +668,19 @@
         if (shopAddrWrap) shopAddrWrap.hidden = state.memberMode || !shopListMode;
         if (shopEmptyWrap) shopEmptyWrap.hidden = state.memberMode || !state.shopAddrEmpty;
         if (shopForm) shopForm.hidden = state.memberMode || shopListMode || !!state.shopAddrEmpty;
-        if (shopRcCard) shopRcCard.hidden = !!(state.memberMode || state.guestShip);
+        if (shopRcCard) {
+          shopRcCard.hidden = !!(state.memberMode || state.guestShip);
+          // 登录账号是报单中心 → Reporting Center ID 默认填其账号并锁定。
+          if (!shopRcCard.hidden) {
+            const selfRc = reportingCenterSelfId();
+            const rcEl = document.getElementById('shopRcId');
+            if (selfRc && rcEl) {
+              rcEl.value = selfRc;
+              rcEl.readOnly = true;
+              rcEl.classList.add('is-locked');
+            }
+          }
+        }
         updatePayBtn();
       };
       radios.forEach(r => {
@@ -795,6 +807,21 @@
       if (radio) radio.disabled = balance <= 0;
     }
 
+    // 当前登录账号若是报单中心（isReportingCenter === 'Yes'），返回其账号 ID；
+    // 否则返回 null。用于下单表单默认填充 Reporting Center ID 并锁定。
+    function reportingCenterSelfId() {
+      let md = {};
+      try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
+      if (!md || md.isReportingCenter !== 'Yes') return null;
+      const u = window.Auth && window.Auth.user;
+      return (u && u.memberId) || md.memberId || '';
+    }
+
+    // 会员升级单：不需要 Reporting Center ID 字段。
+    function isUpgradeOrder() {
+      return (state.subtype === 'upgrade') || (state.repeatMember && state.repeatMember.subtype === 'upgrade');
+    }
+
     function updatePayBtn() {
       const payBtn = document.getElementById('payBtn');
       if (!payBtn) return;
@@ -821,11 +848,13 @@
         ok = !!methodOk && tempShipOk && emailOk;
       } else if (state.memberMode) {
         // Member repeat purchase: reporting center ID + the temporary
-        // shipping address (district optional).
+        // shipping address (district optional). Upgrade orders carry no
+        // Reporting Center ID (the field is hidden) — skip its check.
         const rc = document.getElementById('rpRcId');
+        const rcOk = isUpgradeOrder() ? true : !!(rc && rc.value.trim());
         const shipOk = tempShipOk;
         ok = !!methodOk
-          && !!(rc && rc.value.trim())
+          && rcOk
           && shipOk
           && memberFlowGate();
       } else {
@@ -1271,9 +1300,27 @@
       try { opMd = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
       document.getElementById('rpMemberId').value = m.id || '';
       document.getElementById('rpMemberName').textContent = m.name ? `【${m.name}】` : '';
-      // Reporting Center ID starts empty and is required — the operator fills
-      // it in (the pay button stays disabled until it's non-empty).
-      document.getElementById('rpRcId').value = '';
+      // Reporting Center ID: hidden on upgrade orders (not needed there);
+      // otherwise required — prefilled + locked when the signed-in operator is
+      // a Reporting Center, else left empty for the operator to fill.
+      const rpRcEl = document.getElementById('rpRcId');
+      const rpRcField = document.getElementById('rpRcField');
+      if (isUpgradeOrder()) {
+        if (rpRcField) rpRcField.hidden = true;
+        if (rpRcEl) rpRcEl.value = '';
+      } else {
+        if (rpRcField) rpRcField.hidden = false;
+        const selfRc = reportingCenterSelfId();
+        if (selfRc && rpRcEl) {
+          rpRcEl.value = selfRc;
+          rpRcEl.readOnly = true;
+          rpRcEl.classList.add('is-locked');
+        } else if (rpRcEl) {
+          rpRcEl.value = '';
+          rpRcEl.readOnly = false;
+          rpRcEl.classList.remove('is-locked');
+        }
+      }
       // Hidden contact email feeds the Paystack modal prefill (member mode
       // has no email field of its own — fall back to the operator's).
       const emailEl = document.getElementById('contactEmail');
@@ -1281,7 +1328,7 @@
         emailEl.value = opMd.email || (m.id ? m.id.toLowerCase() + '@elken.demo' : '');
       }
       setupTempShipCard();
-      document.getElementById('rpRcId').addEventListener('input', updatePayBtn);
+      if (rpRcEl) rpRcEl.addEventListener('input', updatePayBtn);
       updatePayBtn();
     }
 
