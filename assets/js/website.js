@@ -998,6 +998,11 @@
         if (c) return { id, name: saneMemberName(o.customer && o.customer.name), country: c, source: 'order' };
       }
     } catch (e) {}
+    // Fallback (demo): a well-formed ID always resolves to its market — the
+    // NG/AE prefix implies the country — so any syntactically valid referrer
+    // can enter the registration flow, even if it is not in a directory yet.
+    const implied = countryFromMemberId(id);
+    if (implied) return { id, name: '', country: implied, source: 'inferred' };
     return null;
   }
 
