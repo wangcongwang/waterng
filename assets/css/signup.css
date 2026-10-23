@@ -460,3 +460,18 @@
   .ps-ck__side { flex: none; border-right: none; border-bottom: 1px solid var(--ek-border); }
   .ps-ck-close { top: calc(-1 * var(--ek-40)); right: 0; }
 }
+
+/* Read-only, system-filled fields (e.g. auto-locked Reporting Center ID,
+   inherited Country, auto-generated Member ID): greyed, no focus ring,
+   clearly not editable — mirrors checkout.css .is-locked. */
+.ek-input.input-locked,
+.ek-select.input-locked,
+.ek-input.input-locked:focus,
+.ek-select.input-locked:focus {
+  background: var(--ek-grey-light);
+  color: var(--ek-muted);
+  border-color: var(--ek-border, #e3e5ee);
+  box-shadow: none;
+  cursor: not-allowed;
+  pointer-events: none;
+}
