@@ -82,6 +82,29 @@
     </div>
   </dialog>
 
+  <!-- Product detail modal (guest: retail price only, no DP/member price) -->
+  <div class="pv-overlay" id="prodViewModal" style="display:none" role="dialog" aria-modal="true" aria-label="Product details">
+    <div class="pv-dialog">
+      <div class="pv-dialog__topbar">
+        <span class="pv-dialog__code" id="pvCode"></span>
+        <button type="button" class="pv-dialog__close" id="pvClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="pv-dialog__body">
+        <div class="pv-dialog__media" id="pvMedia"></div>
+        <div class="pv-dialog__info">
+          <h3 class="pv-dialog__name" id="pvName"></h3>
+          <dl class="pv-spec">
+            <div class="pv-spec__row"><dt>Product Code</dt><dd id="pvSku"></dd></div>
+            <div class="pv-spec__row"><dt>Retail Price</dt><dd id="pvPrice"></dd></div>
+            <div class="pv-spec__row"><dt>Tax Rate</dt><dd id="pvTaxRate"></dd></div>
+            <div class="pv-spec__row"><dt>Tax</dt><dd id="pvTax"></dd></div>
+            <div class="pv-spec__row"><dt>Inventory</dt><dd id="pvStock"></dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="assets/i18n/strings.js?v=20261021id"></script>
   <script src="assets/js/app.js?v=20261021id"></script>
   <script src="assets/js/website.js?v=20261021id"></script>
@@ -112,8 +135,46 @@
         document.title = 'Shop Elken ' + marketDisplay + ' Products · Elken';
         const catalog = pc.getProductsByCountry ? pc.getProductsByCountry(guestCountry) : (pc.allProducts || []);
         if (pc.renderRepeatCards) {
-          pc.renderRepeatCards(grid, catalog, { country: guestCountry });
+          pc.renderRepeatCards(grid, catalog, { country: guestCountry, modalView: true });
         }
+
+        // Product-detail modal: guests see the retail price only (no DP).
+        const pvModal = document.getElementById('prodViewModal');
+        const pvClose = document.getElementById('pvClose');
+        function guestMoney(n, dp) {
+          if (pc.formatMoney) return pc.formatMoney(n, guestCountry, dp);
+          return 'N' + Number(n || 0).toLocaleString();
+        }
+        window.__guestProductView = function (product) {
+          if (!pvModal || !product) return;
+          const retail = product.rp || product.price;
+          const cfg = pc.getCountryConfig ? pc.getCountryConfig(guestCountry) : null;
+          const rate = (cfg && typeof cfg.taxRate === 'number') ? cfg.taxRate : 0.075;
+          const tax = retail * rate / (1 + rate); // VAT-inclusive
+          document.getElementById('pvCode').textContent = product.sku || '—';
+          document.getElementById('pvName').textContent = product.name;
+          document.getElementById('pvSku').textContent = product.sku || '—';
+          document.getElementById('pvPrice').textContent = guestMoney(retail);
+          document.getElementById('pvTaxRate').textContent = (rate * 100) + '%';
+          document.getElementById('pvTax').textContent = guestMoney(tax, 2);
+          document.getElementById('pvStock').textContent = String(product.stock ?? 0);
+          const media = document.getElementById('pvMedia');
+          media.innerHTML = product.img
+            ? `<img src="assets/img/products/${product.category || ''}/${product.img}" alt="${product.name}" onerror="this.style.display='none'" />`
+            : '';
+          pvModal.style.display = 'flex';
+          document.body.style.overflow = 'hidden';
+        };
+        function closePvModal() {
+          if (!pvModal) return;
+          pvModal.style.display = 'none';
+          document.body.style.overflow = '';
+        }
+        if (pvClose) pvClose.addEventListener('click', closePvModal);
+        if (pvModal) {
+          pvModal.addEventListener('click', e => { if (e.target === pvModal) closePvModal(); });
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closePvModal(); });
 
         // Wire register-interest modal
         const modal = document.getElementById('interestModal');

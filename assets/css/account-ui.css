@@ -561,7 +561,21 @@
     margin: calc(var(--ek-20) * -1) calc(var(--ek-20) * -1) 0;
     padding: var(--ek-16) var(--ek-20);
   }
-  #snTopMember { width: 100%; }
+}
+
+/* 手机/窄屏：筛选栏铺满卡片宽度（Top Member 独占一行，Depth + Confirm 同行），
+   树节点拉满整行，让右侧 +/− 按钮在同一条竖线上对齐。 */
+@media (max-width: 720px) {
+  .sn-module .sponsor-toolbar {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--ek-12); align-items: end;
+  }
+  .sn-module .sponsor-field:first-child { grid-column: 1 / -1; }
+  .sn-module .sponsor-field { min-width: 0; }
+  #snTopMember, #snSpreadDepth { width: 100%; }
+  .sn-module #snConfirmBtn { min-height: 48px; }
+  .sn-module .ek-tree__node { width: 100%; }
+  .sn-module .ek-tree__body { flex: 1 1 auto; }
 }
 
 /* --------------------------------------------------------------------------
@@ -634,6 +648,12 @@
 /* Current / New / Confirm password fields stack one per row, same as every
    other profile-form row — not side by side. */
 .profile-form .row.cols-3 { grid-template-columns: 1fr; }
+/* 单字段行（Phone）：桌面端占半宽与上方字段对齐；手机端占满整行。
+   原来写在 HTML 内联 style 里强制两列，手机上手机号被挤成半宽。 */
+.profile-form .row.row--half { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 720px) {
+  .profile-form .row.row--half { grid-template-columns: minmax(0, 1fr); }
+}
 .profile-form .field { display: flex; flex-direction: column; gap: var(--ek-8); min-width: 0; }
 .profile-form .field > label {
   font-size: var(--ek-caption); font-weight: var(--ek-w-bold);

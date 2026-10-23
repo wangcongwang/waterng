@@ -435,10 +435,11 @@
             <div class="ek-nav__item"><a class="ek-nav__link" href="contact.html"${on('contact')}>Contact Us</a></div>
             <div class="ek-nav__item"><a class="ek-nav__link" href="faq.html"${on('faq')}>FAQ</a></div>`;
     /* 已登录：不显示任何主菜单项（Products 也隐藏）；guest 流程保留 Products；普通未登录显示完整菜单 */
-    const mainNavItems = isGuestEntry
-      ? productsNavItem
-      : loggedIn
-        ? ''
+    /* 已登录（AE 侧）优先：即使本标签页残留 guest 标记，也不显示 Products */
+    const mainNavItems = loggedIn
+      ? ''
+      : isGuestEntry
+        ? productsNavItem
         : loggedOutNavItems;
 
     const headerHTML = `
@@ -470,7 +471,7 @@
             <button class="icon-btn" id="closeDrawer" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
           </div>
           ${drawerAuthHTML(user, nextParam)}
-          ${isGuestEntry || !loggedIn ? `<nav class="drawer-nav">
+          ${!loggedIn ? `<nav class="drawer-nav">
             ${isGuestEntry
               ? `<a href="products.html" class="${active === 'products' ? 'active' : ''}">Products</a>`
               : `<a href="index.html" class="${active === 'home' ? 'active' : ''}">Home</a>

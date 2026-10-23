@@ -4,3 +4,7 @@
 outputs/
 # React source (not part of the static demo site)
 docs/
+# OS / editor / build noise
+.DS_Store
+.build/
+.trae/

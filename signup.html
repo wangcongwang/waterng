@@ -60,9 +60,9 @@
                 <small class="field-hint" id="regReferrerHint" hidden></small>
               </div>
               <div class="field-row ek-field">
-                <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
+                <label><span data-i18n="signup.actual_referrer_id">Actual Referrer ID</span><span class="req-star">*</span></label>
                 <input class="ek-input" type="text" name="actualReferrerId" id="regActualReferrerId"
-                       placeholder="e.g. NG12345678" autocomplete="off" />
+                       placeholder="e.g. NG12345678" autocomplete="off" required />
               </div>
             </div>
           </div>
@@ -431,8 +431,7 @@
           <h3 class="pv-dialog__name" id="pvName"></h3>
           <dl class="pv-spec">
             <div class="pv-spec__row"><dt>Product Code</dt><dd id="pvSku"></dd></div>
-            <div class="pv-spec__row"><dt>Sales Price</dt><dd id="pvPrice"></dd></div>
-            <div class="pv-spec__row"><dt>Market Price</dt><dd id="pvRp"></dd></div>
+            <div class="pv-spec__row"><dt>Retail Price</dt><dd id="pvRp"></dd></div>
             <div class="pv-spec__row"><dt>BV</dt><dd id="pvBv"></dd></div>
             <div class="pv-spec__row"><dt>Tax Rate</dt><dd id="pvTaxRate"></dd></div>
             <div class="pv-spec__row"><dt>Tax</dt><dd id="pvTax"></dd></div>
@@ -851,7 +850,6 @@
         document.getElementById('pvCode').textContent = p.sku || '—';
         document.getElementById('pvName').textContent = p.name;
         document.getElementById('pvSku').textContent = p.sku || '—';
-        document.getElementById('pvPrice').textContent = money(price);
         document.getElementById('pvRp').textContent = money(p.rp || price);
         document.getElementById('pvBv').textContent = String(bvVal);
         document.getElementById('pvTaxRate').textContent = (taxRate() * 100) + '%';
@@ -959,6 +957,7 @@
         // Required fields check
         const requiredMap = [
           ['regCenterId', 'signup.err_center_id'],
+          ['regActualReferrerId', 'login.err_required'],
           ['regMemberName', 'login.err_required'],
           ['regPhone', 'login.err_required'],
           ['regEmail', 'login.err_required'],

@@ -59,9 +59,9 @@
                 <small class="field-hint" id="regReferrerHint" hidden></small>
               </div>
               <div class="field-row ek-field">
-                <label data-i18n="signup.actual_referrer_id">Actual Referrer ID</label>
+                <label><span data-i18n="signup.actual_referrer_id">Actual Referrer ID</span><span class="req-star">*</span></label>
                 <input class="ek-input" type="text" name="actualReferrerId" id="regActualReferrerId"
-                       placeholder="e.g. NG12345678" autocomplete="off" />
+                       placeholder="e.g. NG12345678" autocomplete="off" required />
               </div>
             </div>
           </div>
@@ -731,6 +731,7 @@
         // Required fields check
         const requiredMap = [
           ['regCenterId', 'signup.err_center_id'],
+          ['regActualReferrerId', 'login.err_required'],
           ['regMemberName', 'login.err_required'],
           ['regPhone', 'login.err_required'],
           ['regEmail', 'login.err_required'],
