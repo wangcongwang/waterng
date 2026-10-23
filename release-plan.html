@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>支付功能测试与发布流程 · UAT &amp; Release Plan</title>
+<style>
+  :root{
+    --blue:#202259; --blue-deep:#0F1034; --pink:#F287B7; --aqua:#2AA7CF;
+    --ink:#27282B; --muted:#5C646A;
+    --page:#F4F6F8; --surface:#FFFFFF; --border:#E3E6E8; --border-strong:#D1D8DE;
+    --success:#1F6B3F; --success-tint:#EAF6EE;
+    --warning:#8A6D1F; --warning-tint:#FDF6E3;
+    --info:#1B6C88;   --info-tint:#E9F4F8;
+    --neutral:#5C646A; --neutral-tint:#F1F3F4;
+    --shadow:0 2px 8px rgba(13,20,23,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
+    background:var(--page); color:var(--ink); line-height:1.6; padding:32px 16px 64px;
+  }
+  .wrap{max-width:960px;margin:0 auto}
+
+  /* ---------- header ---------- */
+  .hero{
+    background:linear-gradient(135deg,var(--blue) 0%,var(--blue-deep) 100%);
+    color:#fff;border-radius:16px;padding:36px 40px;margin-bottom:28px;position:relative;overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;
+    background:radial-gradient(circle,rgba(242,135,183,.35) 0%,transparent 70%);
+  }
+  .hero .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--pink);font-weight:600;margin-bottom:8px}
+  .hero h1{font-size:28px;font-weight:700;margin-bottom:6px}
+  .hero p.sub{font-size:14px;color:#C9D2E4;max-width:640px}
+  .hero .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .hero .chip{
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;
+    padding:4px 14px;font-size:12.5px;color:#fff;
+  }
+
+  /* ---------- section titles ---------- */
+  .sec-title{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:var(--blue);margin:34px 0 16px}
+  .sec-title .bar{width:4px;height:20px;background:var(--pink);border-radius:2px}
+  .sec-title small{font-size:12.5px;font-weight:500;color:var(--muted);margin-left:auto}
+
+  /* ---------- timeline ---------- */
+  .timeline{position:relative;padding-left:28px}
+  .timeline::before{
+    content:"";position:absolute;left:9px;top:8px;bottom:8px;width:2px;
+    background:linear-gradient(180deg,var(--aqua),var(--blue));border-radius:1px;
+  }
+  .step{position:relative;margin-bottom:18px}
+  .step .dot{
+    position:absolute;left:-28px;top:20px;width:20px;height:20px;border-radius:50%;
+    background:#fff;border:3px solid var(--aqua);box-shadow:0 0 0 4px var(--info-tint);
+  }
+  .step.is-final .dot{border-color:var(--success);box-shadow:0 0 0 4px var(--success-tint)}
+  .step.is-future .dot{border-color:var(--muted);box-shadow:0 0 0 4px var(--neutral-tint)}
+  .card{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    padding:18px 22px;box-shadow:var(--shadow);
+  }
+  .card-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:8px}
+  .date{
+    font-size:13px;font-weight:700;color:#fff;background:var(--blue);
+    border-radius:6px;padding:3px 10px;white-space:nowrap;
+  }
+  .step.is-final .date{background:var(--success)}
+  .step.is-future .date{background:var(--neutral)}
+  .card h3{font-size:16px;font-weight:700;color:var(--ink)}
+  .owner{
+    margin-left:auto;font-size:12px;font-weight:600;border-radius:999px;padding:3px 12px;white-space:nowrap;
+  }
+  .owner.dev{background:var(--info-tint);color:var(--info)}
+  .owner.biz{background:var(--warning-tint);color:var(--warning)}
+  .owner.web{background:#F3E8F6;color:#7A3E8F}
+  .card p{font-size:13.5px;color:var(--muted)}
+  .card p b{color:var(--ink);font-weight:600}
+  .card .note{
+    margin-top:10px;font-size:12.5px;color:var(--info);background:var(--info-tint);
+    border-radius:8px;padding:8px 12px;
+  }
+
+  /* ---------- summary table ---------- */
+  .tbl-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{
+    text-align:left;background:var(--blue);color:#fff;font-weight:600;
+    padding:10px 16px;font-size:12.5px;letter-spacing:.04em;white-space:nowrap;
+  }
+  td{padding:11px 16px;border-top:1px solid var(--border);vertical-align:top}
+  tr:nth-child(even) td{background:#FAFBFC}
+  td.d{font-weight:700;color:var(--blue);white-space:nowrap}
+  .pill{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 10px;white-space:nowrap}
+  .pill.dev{background:var(--info-tint);color:var(--info)}
+  .pill.biz{background:var(--warning-tint);color:var(--warning)}
+  .pill.web{background:#F3E8F6;color:#7A3E8F}
+  .pill.done{background:var(--success-tint);color:var(--success)}
+
+  /* ---------- roadmap ---------- */
+  .road-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+  .road-card{
+    background:var(--surface);border:1px dashed var(--border-strong);border-radius:12px;padding:18px 20px;
+  }
+  .road-card h4{font-size:14.5px;font-weight:700;color:var(--blue);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .road-card h4 .tag{font-size:11px;font-weight:600;background:var(--neutral-tint);color:var(--neutral);border-radius:4px;padding:2px 8px}
+  .road-card ul{list-style:none}
+  .road-card li{font-size:13px;color:var(--muted);padding:5px 0 5px 16px;position:relative}
+  .road-card li::before{content:"";position:absolute;left:0;top:12px;width:6px;height:6px;border-radius:50%;background:var(--pink)}
+  .road-card li b{color:var(--ink)}
+
+  .footer{margin-top:36px;text-align:center;font-size:12px;color:var(--muted)}
+
+  @media print{
+    body{background:#fff;padding:0}
+    .hero{border-radius:0}
+    .card,.tbl-card,.road-card{box-shadow:none;break-inside:avoid}
+  }
+  @media (max-width:640px){
+    .hero{padding:26px 22px}
+    .owner{margin-left:0}
+    .card-top{gap:8px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ================= header ================= -->
+  <header class="hero">
+    <div class="eyebrow">UAT &amp; Release Plan</div>
+    <h1>支付功能测试与发布流程</h1>
+    <p class="sub">覆盖整体 UAT 提测、尼日利亚业务方验收、反馈修正、正式环境发布及非洲官网联动配置的完整计划，供业务方跟踪确认。</p>
+    <div class="meta">
+      <span class="chip">📅 计划周期：10月26日 – 11月3日</span>
+      <span class="chip">🌍 涉及区域：Nigeria / Malaysia</span>
+      <span class="chip">🔧 交付团队：DEV-CN</span>
+    </div>
+  </header>
+
+  <!-- ================= timeline ================= -->
+  <div class="sec-title">发布流程时间线 <small>共 6 个节点，按顺序推进</small></div>
+
+  <div class="timeline">
+
+    <div class="step">
+      <span class="dot"></span>
+      <div class="card">
+        <div class="card-top">
+          <span class="date">10月26日（周一）</span>
+          <h3>整体 UAT 提测</h3>
+          <span class="owner dev">DEV-CN</span>
+        </div>
+        <p>DEV-CN 完成全部功能开发与自测，向测试环境提交<b>整体 UAT 版本</b>，提供提测说明与测试范围清单。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="dot"></span>
+      <div class="card">
+        <div class="card-top">
+          <span class="date">10月29日（周四）</span>
+          <h3>提交业务方验收 UAT</h3>
+          <span class="owner biz">Nigeria 业务方</span>
+        </div>
+        <p>UAT 版本提交 <b>Nigeria 业务方</b>进行验收测试，重点验证支付主链路与本地化场景，业务方在此窗口内反馈问题。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="dot"></span>
+      <div class="card">
+        <div class="card-top">
+          <span class="date">10月31日（周六）</span>
+          <h3>根据反馈进行修正</h3>
+          <span class="owner dev">DEV-CN</span>
+        </div>
+        <p>DEV-CN 根据业务方验收反馈完成问题修正与回归，输出修正记录，确保不影响原定发布窗口。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="dot"></span>
+      <div class="card">
+        <div class="card-top">
+          <span class="date">11月3日 15:30（UTC+1）</span>
+          <h3>发布正式环境并验收</h3>
+          <span class="owner dev">DEV-CN</span>
+        </div>
+        <p>正式环境上线，DEV-CN 与 Nigeria 业务方在线上完成<b>生产环境验收</b>。</p>
+        <div class="note">⏰ 15:30（UTC+1）对应北京时间 22:30（UTC+8），发布当晚请相关同事保持在线待命。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="dot"></span>
+      <div class="card">
+        <div class="card-top">
+          <span class="date">11月3日（周二）</span>
+          <h3>WordPress 非洲官网登录增加跳转链接</h3>
+          <span class="owner web">Malaysia Ben</span>
+        </div>
+        <p>Malaysia Ben 在 WordPress 非洲官网的登录模块增加<b>跳转链接</b>，与正式环境发布时间对齐，保证用户登录入口一致。</p>
+      </div>
+    </div>
+
+    <div class="step is-final">
+      <span class="dot"></span>
+      <div class="card">
+        <div class="card-top">
+          <span class="date">11月3日</span>
+          <h3>流程完成</h3>
+          <span class="owner dev">全部完成</span>
+        </div>
+        <p>发布与官网配置均完成后，本次测试及发布流程关闭，转入后续迭代阶段。</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= summary table ================= -->
+  <div class="sec-title">节点一览 <small>可直接转发业务方</small></div>
+  <div class="tbl-card">
+    <table>
+      <thead>
+        <tr><th>日期</th><th>事项</th><th>负责方</th><th>产出 / 验收标准</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="d">10月26日</td><td>整体 UAT 提测</td><td><span class="pill dev">DEV-CN</span></td><td>UAT 版本 + 提测说明</td></tr>
+        <tr><td class="d">10月29日</td><td>业务方验收 UAT</td><td><span class="pill biz">Nigeria 业务方</span></td><td>验收报告 / 问题清单</td></tr>
+        <tr><td class="d">10月31日</td><td>反馈修正与回归</td><td><span class="pill dev">DEV-CN</span></td><td>修正记录 + 回归通过</td></tr>
+        <tr><td class="d">11月3日 15:30<br><small style="font-weight:400;color:var(--muted)">UTC+1 / 北京 22:30</small></td><td>正式环境发布并验收</td><td><span class="pill dev">DEV-CN</span></td><td>线上验收通过</td></tr>
+        <tr><td class="d">11月3日</td><td>官网登录跳转链接</td><td><span class="pill web">Malaysia Ben</span></td><td>登录入口上线</td></tr>
+        <tr><td class="d">11月3日</td><td>流程完成</td><td><span class="pill done">✔ 已完成</span></td><td>流程关闭</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================= roadmap ================= -->
+  <div class="sec-title">后续安排 <small>本次发布完成后的迭代方向</small></div>
+  <div class="road-grid">
+    <div class="road-card">
+      <h4>新增支付方式 <span class="tag">规划中</span></h4>
+      <ul>
+        <li>新增 <b>USSD</b> 支付方式</li>
+        <li>新增 <b>Visa QR</b> 支付方式</li>
+      </ul>
+    </div>
+    <div class="road-card">
+      <h4>Paystack 拆分 <span class="tag">规划中</span></h4>
+      <ul>
+        <li>将 Paystack 拆分为独立支付方式：</li>
+        <li><b>银行卡直连</b></li>
+        <li><b>银行转账</b></li>
+        <li><b>Pay with Bank</b></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">支付功能测试与发布流程 · 生成于 2026-10-23 · 供业务方跟踪使用</div>
+</div>
+</body>
+</html>

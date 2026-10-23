@@ -277,3 +277,65 @@
     padding: var(--ek-20);
   }
 }
+
+/* ---------- Guest product-detail modal (retail price only) ---------- */
+.pv-overlay {
+  position: fixed; inset: 0; z-index: var(--ek-z-modal);
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(13, 20, 23, .55);
+  padding: var(--ek-16);
+}
+.pv-dialog {
+  position: relative; width: 100%; max-width: 760px;
+  background: var(--ek-surface);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-lg);
+  padding: var(--ek-24) var(--ek-32) var(--ek-32);
+}
+.pv-dialog__topbar {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--ek-16); margin-bottom: var(--ek-20);
+}
+.pv-dialog__code {
+  font-size: var(--ek-h4); font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal); letter-spacing: .02em;
+}
+.pv-dialog__close {
+  width: 32px; height: 32px; border: none; border-radius: var(--ek-radius-pill);
+  background: transparent; color: var(--ek-muted);
+  font-size: var(--ek-h3); line-height: 1; cursor: pointer;
+}
+.pv-dialog__close:hover { color: var(--ek-charcoal); background: var(--ek-grey-light); }
+.pv-dialog__body {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: var(--ek-32); align-items: center;
+}
+.pv-dialog__media {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 260px; padding: var(--ek-16);
+  background: var(--ek-surface); border-radius: var(--ek-radius);
+}
+.pv-dialog__media img {
+  max-width: 100%; max-height: 300px; object-fit: contain;
+}
+.pv-dialog__name {
+  margin: 0 0 var(--ek-20);
+  font-size: var(--ek-h3); color: var(--ek-charcoal);
+}
+.pv-spec { margin: 0; }
+.pv-spec__row {
+  display: grid; grid-template-columns: 140px minmax(0, 1fr);
+  gap: var(--ek-16); align-items: baseline;
+  padding: var(--ek-8) 0;
+}
+.pv-spec__row dt { font-size: var(--ek-small); color: var(--ek-muted); }
+.pv-spec__row dd {
+  margin: 0; font-size: var(--ek-small); color: var(--ek-body-ink);
+  font-variant-numeric: var(--ek-num);
+}
+@media (max-width: 640px) {
+  .pv-dialog { padding: var(--ek-20); }
+  .pv-dialog__body { grid-template-columns: 1fr; gap: var(--ek-20); }
+  .pv-dialog__media { min-height: 200px; }
+  .pv-spec__row { grid-template-columns: 110px minmax(0, 1fr); }
+}

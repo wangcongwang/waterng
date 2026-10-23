@@ -761,6 +761,9 @@
     // opts.cartMode === 'member' → add to the independent member cart
     // (al.memberCart) instead of the shopper's main al.cart.
     const memberMode = !!(opts && opts.cartMode === 'member');
+    // opts.modalView → "View product" opens the guest product-detail modal
+    // (retail price only) instead of navigating to product-detail.html.
+    const modalView = !!(opts && opts.modalView);
     // opts.country → format prices in that market's currency (guest flow picks
     // the market on the login page). Defaults to the legacy "N" prefix.
     const priceCountry = (opts && opts.country) || '';
@@ -803,7 +806,9 @@
             <span class="rp-product-card__price">${money(p.price)}</span>
             ${!isGuest && bv > 0 ? `<span class="rp-product-card__bv" title="Bonus volume earned with this purchase">${bv} BV</span>` : ''}
           </div>
-          <a href="${detailUrl}" class="rp-product-card__view">View product</a>
+          ${modalView
+            ? `<a href="#" class="rp-product-card__view" data-rp-view="${p.id}" role="button">View product</a>`
+            : `<a href="${detailUrl}" class="rp-product-card__view">View product</a>`}
         </div>
         <div class="rp-product-card__foot">
           <button type="button" class="rp-product-card__add" data-rp-add="${p.id}">Add to cart</button>
@@ -811,6 +816,19 @@
       </article>
     `;
     }).join('');
+
+    // Wire "View product" — guest flow opens the product-detail modal instead
+    // of navigating away (member flow keeps the plain detail-page link above).
+    container.querySelectorAll('[data-rp-view]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const product = list.find(x => x.id === btn.dataset.rpView);
+        if (product && typeof window.__guestProductView === 'function') {
+          window.__guestProductView(product);
+        }
+      });
+    });
 
     // Wire "Add to Cart" buttons — member mode routes to al.memberCart
     container.querySelectorAll('[data-rp-add]').forEach(btn => {
