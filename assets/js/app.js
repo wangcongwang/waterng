@@ -555,13 +555,15 @@
     const host = document.getElementById('app-footer');
     if (!host) return;
     /* Footer mirrors the marketing site's sec-footer exactly (labels, address,
-       legal line, social handles). Only the hrefs are local. */
+       legal line, social handles). Only the hrefs are local. On the AE side the
+       Who We Are / Products columns point at the WP staging site instead. */
+    const WP_STAGING = 'https://staging.elkenafrica.com';
     const whoLinks = [
-      { label: 'About Elken Nigeria', href: 'about.html' },
-      { label: 'Our Global Strength', href: 'about-global-strength.html' },
-      { label: 'Leadership',          href: 'about-leadership.html' },
-      { label: 'Our Journey',         href: 'about-journey.html' },
-      { label: 'Community',           href: 'about-community.html' },
+      { label: 'About Elken Nigeria', href: 'about.html',               wp: '/about/' },
+      { label: 'Our Global Strength', href: 'about-global-strength.html', wp: '/about/global-strength/' },
+      { label: 'Leadership',          href: 'about-leadership.html',     wp: '/about/leadership/' },
+      { label: 'Our Journey',         href: 'about-journey.html',        wp: '/about/journey/' },
+      { label: 'Community',           href: 'about-community.html',      wp: '/about/community/' },
     ];
 
     /* Display-only pages read no login state: their footer Products column always
@@ -586,17 +588,17 @@
     }
 
     const prodLinks = [
-      { label: 'Health',   href: prodHref('health-wellness') },
-      { label: 'Wellness', href: prodHref('wellness-devices') },
-      { label: 'Water',    href: prodHref('home-appliances') },
-      { label: 'Beauty',   href: prodHref('beauty-skincare') },
+      { label: 'Health',   href: prodHref('health-wellness'),   wp: '/products/health/' },
+      { label: 'Wellness', href: prodHref('wellness-devices'),  wp: '/products/wellness/' },
+      { label: 'Water',    href: prodHref('home-appliances'),   wp: '/products/water-filters/' },
+      { label: 'Beauty',   href: prodHref('beauty-skincare'),   wp: '/products/beauty/' },
     ];
     const productLinkAttrs = aeSide ? aeAttrs : '';
     const legalLinkAttrs = aeSide ? aeAttrs : '';
 
     const col = (title, links, linkAttrs = '') => `
         <div class="ek-fcol"><h2>${title}</h2><ul>
-          ${links.map(l => `<li><a href="${l.href}"${linkAttrs}>${l.label}</a></li>`).join('')}
+          ${links.map(l => `<li><a href="${aeSide && l.wp ? WP_STAGING + l.wp : l.href}"${linkAttrs}>${l.label}</a></li>`).join('')}
         </ul></div>`;
     host.innerHTML = `
       <footer class="sec-footer">
