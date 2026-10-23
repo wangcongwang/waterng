@@ -807,14 +807,17 @@
       if (radio) radio.disabled = balance <= 0;
     }
 
-    // 当前登录账号若是报单中心（isReportingCenter === 'Yes'），返回其账号 ID；
-    // 否则返回 null。用于下单表单默认填充 Reporting Center ID 并锁定。
+    // 当前登录账号若是报单中心（isReportingCenter === 'Yes'，或 demo 报单中心
+    // 账号 NG66051653 本人登录），返回其账号 ID；未登录或非报单中心返回 null。
+    // 用于下单表单默认填充 Reporting Center ID 并锁定（只读、不可编辑）。
     function reportingCenterSelfId() {
+      const u = window.Auth && window.Auth.user;
+      if (!u || !u.memberId) return null; // 未登录不适用
       let md = {};
       try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
-      if (!md || md.isReportingCenter !== 'Yes') return null;
-      const u = window.Auth && window.Auth.user;
-      return (u && u.memberId) || md.memberId || '';
+      if (md && md.isReportingCenter === 'Yes') return u.memberId || md.memberId || '';
+      if (String(u.memberId).toUpperCase() === 'NG66051653') return u.memberId; // demo 报单中心
+      return null;
     }
 
     // 会员升级单：不需要 Reporting Center ID 字段。
@@ -1300,26 +1303,31 @@
       try { opMd = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
       document.getElementById('rpMemberId').value = m.id || '';
       document.getElementById('rpMemberName').textContent = m.name ? `【${m.name}】` : '';
-      // Reporting Center ID: hidden on upgrade orders (not needed there);
-      // otherwise required — prefilled + locked when the signed-in operator is
-      // a Reporting Center, else left empty for the operator to fill.
+      // Reporting Center ID: always shown, never hidden. Auto-filled + locked
+      // (read-only) when there is a deterministic default — upgrade orders
+      // inherit the member's own Reporting Center, and a signed-in Reporting
+      // Center operator gets their own ID; otherwise editable + required.
       const rpRcEl = document.getElementById('rpRcId');
       const rpRcField = document.getElementById('rpRcField');
+      if (rpRcField) rpRcField.hidden = false;
+      const selfRc = reportingCenterSelfId();
       if (isUpgradeOrder()) {
-        if (rpRcField) rpRcField.hidden = true;
-        if (rpRcEl) rpRcEl.value = '';
-      } else {
-        if (rpRcField) rpRcField.hidden = false;
-        const selfRc = reportingCenterSelfId();
-        if (selfRc && rpRcEl) {
-          rpRcEl.value = selfRc;
+        // 会员升级：不需要手动填写 — 默认带出被升级会员的归属报单中心
+        //（操作者本身是报单中心时用操作者账号），字段显示但不可编辑。
+        if (rpRcEl) {
+          rpRcEl.value = m.reportingCenterId || selfRc || '';
           rpRcEl.readOnly = true;
           rpRcEl.classList.add('is-locked');
-        } else if (rpRcEl) {
-          rpRcEl.value = '';
-          rpRcEl.readOnly = false;
-          rpRcEl.classList.remove('is-locked');
         }
+      } else if (selfRc && rpRcEl) {
+        // 登录账号是报单中心 → 默认填其账号，不可编辑。
+        rpRcEl.value = selfRc;
+        rpRcEl.readOnly = true;
+        rpRcEl.classList.add('is-locked');
+      } else if (rpRcEl) {
+        rpRcEl.value = '';
+        rpRcEl.readOnly = false;
+        rpRcEl.classList.remove('is-locked');
       }
       // Hidden contact email feeds the Paystack modal prefill (member mode
       // has no email field of its own — fall back to the operator's).
