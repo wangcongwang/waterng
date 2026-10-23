@@ -195,7 +195,7 @@
                 <div class="row"><span class="k">Requirement</span><span class="v">${ok ? totalBV + ' / 90 BV ✓' : totalBV + ' / 90 BV ✕'}</span></div>
               </div>`;
           } else if (subtype === 'upgrade') {
-            const LEVEL_BV = { Member: 0, Silver: 300, Gold: 900, Platinum: 2700, Diamond: 8100, Corporate: 24300 };
+            const LEVEL_BV = { Member: 0, Silver: 30, Gold: 250, Platinum: 2700, Diamond: 8100, Corporate: 24300 };
             const bvOf = l => (typeof LEVEL_BV[l] === 'number' ? LEVEL_BV[l] : 0);
             const current = rm.level || 'Member';
             const options = ['Silver', 'Gold'].filter(l => bvOf(l) > bvOf(current));

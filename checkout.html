@@ -1198,7 +1198,7 @@
        - upgrade: the operator picks a target level here; the products' total
          BV must cover the upgrade difference (target BV − current BV). */
     const LEVELS = ['Silver', 'Gold'];
-    const LEVEL_BV = { Member: 0, Silver: 300, Gold: 900, Platinum: 2700, Diamond: 8100, Corporate: 24300 };
+    const LEVEL_BV = { Member: 0, Silver: 30, Gold: 250, Platinum: 2700, Diamond: 8100, Corporate: 24300 };
     function bvOfLevel(l) { const v = LEVEL_BV[l]; return typeof v === 'number' ? v : 0; }
 
     function getLevelOverrides() {
