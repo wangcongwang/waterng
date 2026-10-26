@@ -419,7 +419,9 @@
          Purchase listing after sign-in. */
       : `<a class="ek-util ek-util--icon" href="login.html${ACCOUNT_NEXT}" title="Sign in" aria-label="Sign in">${ICON_USER}</a>`;
 
-    const langUtil = `<button class="ek-lang" type="button" id="headerLang" aria-label="Language">EN ${CHEVRON}</button>`;
+    const langUtil = document.body && document.body.dataset.page === 'account'
+      ? '' /* 账户页不需要语言切换 */
+      : `<button class="ek-lang" type="button" id="headerLang" aria-label="Language">EN ${CHEVRON}</button>`;
 
     const productsNavItem = `
             <div class="ek-nav__item ek-nav__item--parent">
