@@ -723,13 +723,13 @@
   /* --- Paystack ---------------------------------------------------------
      Redirect-style channel: no inline fields to fill. The page shows a
      short notice; the actual checkout happens after the page's own submit
-     (email confirm → Paystack payment page). Always "complete". */
+     (→ Paystack payment page). Always "complete". */
   function mountPaystack(el, ctx) {
     el.innerHTML = '' +
       '<h2 class="pm-title" data-i18n="payment.paystack">Paystack</h2>' +
       '<p>Pay <b class="pm-amount" data-ps-amount></b> through Paystack\'s secure checkout.</p>' +
-      '<p>Submit the form to continue — you will confirm your email and be ' +
-      'taken to the Paystack payment page.</p>';
+      '<p>Submit the form to continue — you will be taken to the Paystack ' +
+      'payment page.</p>';
     const amountEl = el.querySelector('[data-ps-amount]');
     function paint() { if (amountEl) amountEl.textContent = money(ctx.amount() || 0); }
     paint();

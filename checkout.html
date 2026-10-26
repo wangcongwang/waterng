@@ -77,6 +77,14 @@
               <label for="rpPhone">Phone</label>
               <div class="phone-field" id="rpPhoneField"></div>
             </div>
+            <!-- Email: guests type it (the order record needs a real address
+                 for the "send order link by email" action); member mode uses
+                 the operator's profile email instead, so the row stays hidden. -->
+            <div class="field" id="rpEmailRow" hidden>
+              <label for="rpEmail">Email</label>
+              <input class="ek-input" type="email" id="rpEmail" placeholder="you@example.com" autocomplete="email" />
+              <span class="field-error" id="rpEmailErr" hidden>Please enter a valid email address</span>
+            </div>
             <div class="field">
               <label for="rpState">Region / State</label>
               <select class="ek-select" id="rpState"></select>
@@ -191,13 +199,11 @@
           <!-- Contact person — hidden for signed-in shoppers (recipient +
                phone come from the selected saved address) and in member mode
                (the member card carries its own contact). Only guests typing
-               their own address still see and fill this card. The hidden
-               email input stays in the DOM for Paystack prefill / orders. -->
+               their own address still see and fill this card — including the
+               email, which the order record needs (pre-filled from the
+               profile when there is one). -->
           <div class="ek-card checkout-card" id="contactCard">
             <h2 data-i18n="checkout.contact">Contact person</h2>
-            <!-- Recipient name + phone for the delivery; the email is kept
-                 hidden and auto-filled (profile / derived fallback) to feed
-                 the Paystack modal prefill and the order record. -->
             <div class="row">
               <div class="field">
                 <label data-i18n="checkout.addr_full_name">Full name</label>
@@ -208,7 +214,11 @@
                 <div class="phone-field" id="phoneField"></div>
               </div>
             </div>
-            <input type="hidden" id="contactEmail" />
+            <div class="field">
+              <label for="contactEmail">Email</label>
+              <input class="ek-input" type="email" id="contactEmail" placeholder="you@example.com" autocomplete="email" />
+              <span class="field-error" id="emailError" hidden>Please enter a valid email address</span>
+            </div>
           </div>
 
           <!-- Step 2: Payment method -->
@@ -241,17 +251,12 @@
   <div id="app-footer" class="ek-site-footer"></div>
 
   <!-- ====== Paystack payment modals (shown when Paystack is selected) ====== -->
-  <!-- Step 1: confirm email + amount -->
+  <!-- Step 1: amount + handoff (the email comes from the contact / shipping card) -->
   <div class="ps-overlay" id="psPayModal" style="display:none" role="dialog" aria-modal="true" aria-label="Paystack payment">
     <div class="ps-dialog">
       <button type="button" class="ps-dialog__close" id="psPayCancel" aria-label="Close">&times;</button>
       <h3 class="ps-dialog__title">Paystack Payment</h3>
-      <p class="ps-dialog__note">Confirm your email to continue to the Paystack secure checkout.</p>
-      <div class="field">
-        <label for="psPayEmail">Email</label>
-        <input class="ek-input" type="email" id="psPayEmail" placeholder="you@example.com" autocomplete="email" />
-        <span class="field-error" id="psPayEmailErr" style="display:none">Please enter a valid email address</span>
-      </div>
+      <p class="ps-dialog__note">Continue to the Paystack secure checkout.</p>
       <div class="ps-amount-row"><span>Amount</span><b id="psPayAmount">NGN 0</b></div>
       <button type="button" class="ek-btn ek-btn--primary ps-dialog__go" id="psPayConfirm">Continue to Paystack</button>
     </div>
@@ -825,6 +830,14 @@
       return (state.subtype === 'upgrade') || (state.repeatMember && state.repeatMember.subtype === 'upgrade');
     }
 
+    // The order's contact email, by checkout mode: guests type it into the
+    // contact card (shopper) or the shipping card (无账户下单); member/signed-in
+    // modes auto-fill #contactEmail from the profile.
+    function orderEmail() {
+      const el = document.getElementById(state.guestShip ? 'rpEmail' : 'contactEmail');
+      return el ? el.value.trim() : '';
+    }
+
     function updatePayBtn() {
       const payBtn = document.getElementById('payBtn');
       if (!payBtn) return;
@@ -832,8 +845,8 @@
       const methodOk = payMethodComplete();
       const phoneInput = document.querySelector('#phoneField .phone-number');
       // email is mandatory and must be well-formed (used to send the order link)
-      const emailInput = document.getElementById('contactEmail');
-      const emailError = document.getElementById('emailError');
+      const emailInput = document.getElementById(state.guestShip ? 'rpEmail' : 'contactEmail');
+      const emailError = document.getElementById(state.guestShip ? 'rpEmailErr' : 'emailError');
       const emailVal = emailInput ? emailInput.value.trim() : '';
       const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
       if (emailInput && emailError) {
@@ -896,6 +909,8 @@
       if (shopRcEl) shopRcEl.addEventListener('input', updatePayBtn);
       const contactEmailEl = document.getElementById('contactEmail');
       if (contactEmailEl) contactEmailEl.addEventListener('input', updatePayBtn);
+      const rpEmailEl = document.getElementById('rpEmail');
+      if (rpEmailEl) rpEmailEl.addEventListener('input', updatePayBtn);
       // phone is a dial+number pair rendered into #phoneField
       document.querySelector('#phoneField .phone-number')?.addEventListener('input', updatePayBtn);
 
@@ -930,7 +945,7 @@
           name: rpVal('rpRecipient'),
           phone: pc.readPhone ? pc.readPhone(document.getElementById('rpPhoneField'), 'rpPhone') : '',
           contactPhone: contactPhone,
-          email: document.getElementById('contactEmail').value.trim(),
+          email: orderEmail(),
           city: rpVal('rpCity'),
           district: rpVal('rpDistrict'),
           address: rpVal('rpAddr'),
@@ -943,7 +958,7 @@
           name: (shopAddr && shopAddr.recipient) || document.getElementById('fullName').value.trim(),
           phone: (shopAddr && shopAddr.phone) || phone,
           contactPhone: contactPhone,
-          email: document.getElementById('contactEmail').value.trim(),
+          email: orderEmail(),
           city: shopAddr ? (shopAddr.city || '') : document.getElementById('city').value.trim(),
           address: shopAddr ? (shopAddr.street || '') : document.getElementById('addr').value.trim(),
           state: shopAddr ? (shopAddr.state || '') : document.getElementById('state').value,
@@ -1111,15 +1126,8 @@
       const psCkModal = document.getElementById('psCheckoutModal');
 
       function openPsPayModal() {
-        // Prefill with the contact email the customer already entered — except
-        // in the guest flow, where the hidden field only holds the derived
-        // fallback (customer@elken.demo). Opening empty there makes the guest
-        // enter the real address, which the order record then carries (and the
-        // order page's "send link by email" action uses).
-        const emailEl = document.getElementById('psPayEmail');
-        if (emailEl && !emailEl.value && !isGuestFlow()) {
-          emailEl.value = document.getElementById('contactEmail').value.trim();
-        }
+        // No email field here — the contact / shipping card already collected
+        // it; this step only shows the amount and hands over to Paystack.
         document.getElementById('psPayAmount').textContent = money(state.total || 0);
         psPayModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -1143,21 +1151,10 @@
       psPayModal.addEventListener('click', e => { if (e.target === psPayModal) closePsPayModal(); });
 
       document.getElementById('psPayConfirm').addEventListener('click', () => {
-        const emailInput = document.getElementById('psPayEmail');
-        const email = (emailInput.value || '').trim();
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          emailInput.setAttribute('aria-invalid', 'true');
-          document.getElementById('psPayEmailErr').style.display = 'block';
-          return;
-        }
-        emailInput.removeAttribute('aria-invalid');
-        document.getElementById('psPayEmailErr').style.display = 'none';
-        // Persist the confirmed address onto the order record — without this
-        // the order keeps the auto-filled fallback (customer@elken.demo) and
-        // the "send order link by email" action would mail a dead address.
-        document.getElementById('contactEmail').value = email;
-        // Hand the confirmed email + amount to the Paystack checkout modal
-        document.getElementById('psCkEmail').textContent = email;
+        // No email gate here — the contact / shipping card collected it (and
+        // the pay button was only enabled once it was valid). This step only
+        // shows the amount and hands over to the Paystack checkout modal.
+        document.getElementById('psCkEmail').textContent = orderEmail();
         const amount = money(state.total || 0);
         document.getElementById('psCkAmount').textContent = amount;
         document.getElementById('psCkPayBtn').textContent = 'Pay ' + amount;
@@ -1361,6 +1358,12 @@
         document.getElementById(id).addEventListener('input', updatePayBtn);
       });
       document.querySelector('#rpPhoneField .phone-number')?.addEventListener('input', updatePayBtn);
+      // Email: guests type it (the order needs a real address); member mode
+      // uses the operator's profile email — keep the row hidden there.
+      const rpEmailRow = document.getElementById('rpEmailRow');
+      if (rpEmailRow) rpEmailRow.hidden = !!state.memberMode;
+      const rpEmailEl = document.getElementById('rpEmail');
+      if (rpEmailEl) rpEmailEl.addEventListener('input', updatePayBtn);
     }
 
     function applyI18nCheckout() {
@@ -1390,10 +1393,11 @@
         pc.fillPhoneFields(phoneHost, phoneDefault);
         pc.fillPhoneFields(contactHost, phoneDefault);
       }
-      // Hidden email feeds Paystack prefill / order record. Fall back to a
-      // derived address so the gate never blocks on an empty account email.
+      // Contact email: members / signed-in shoppers get their profile email
+      // pre-filled into the (now visible) contact field; guests leave it
+      // empty and type their own — no fake elken.demo address shown.
       const emailFallback = ((window.Auth && window.Auth.user && window.Auth.user.memberId) || 'customer').toLowerCase() + '@elken.demo';
-      document.getElementById('contactEmail').value = defaults.email || emailFallback;
+      document.getElementById('contactEmail').value = isGuestFlow() ? '' : (defaults.email || emailFallback);
       document.getElementById('addr').value = defaults.address;
       document.getElementById('city').value = defaults.city;
       if (defaults.state) {

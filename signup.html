@@ -344,17 +344,12 @@
   </div>
 
   <!-- ====== Paystack payment modals (signup offers Paystack only) ====== -->
-  <!-- Step 1: confirm email + amount -->
+  <!-- Step 1: amount + handoff (the member's email comes from the form) -->
   <div class="ps-overlay" id="psPayModal" style="display:none" role="dialog" aria-modal="true" aria-label="Paystack payment">
     <div class="ps-dialog">
       <button type="button" class="ps-dialog__close" id="psPayCancel" aria-label="Close">&times;</button>
       <h3 class="ps-dialog__title">Paystack Payment</h3>
-      <p class="ps-dialog__note">Confirm your email to continue to the Paystack secure checkout.</p>
-      <div class="field-row ek-field">
-        <label for="psPayEmail">Email</label>
-        <input class="ek-input" type="email" id="psPayEmail" placeholder="you@example.com" autocomplete="email" />
-        <small class="field-err-text" id="psPayEmailErr" style="display:none">Please enter a valid email address</small>
-      </div>
+      <p class="ps-dialog__note">Continue to the Paystack secure checkout.</p>
       <div class="ps-amount-row"><span>Amount</span><b id="psPayAmount">NGN 0</b></div>
       <button type="button" class="ek-btn ps-dialog__go" id="psPayConfirm">Continue to Paystack</button>
     </div>
@@ -1019,14 +1014,11 @@
       });
 
       /* ---------- Paystack payment flow (signup offers Paystack only) ------
-         Step 1 — confirm dialog: email + order amount.
+         Step 1 — confirm dialog: order amount (no email — the registration
+                  form already collected it).
          Step 2 — Paystack checkout modal (Card / Bank / USSD · test options).
          A successful test payment hands back to processRegistration(). */
       function openPayModal() {
-        const emailInput = document.getElementById('psPayEmail');
-        if (emailInput && !emailInput.value.trim()) {
-          emailInput.value = (document.getElementById('regEmail') || {}).value || '';
-        }
         document.getElementById('psPayAmount').textContent = money(selectedTotal());
         document.getElementById('psPayModal').style.display = 'flex';
       }
@@ -1219,17 +1211,10 @@
       payModal.addEventListener('click', e => { if (e.target === payModal) closePayModal(); });
 
       document.getElementById('psPayConfirm').addEventListener('click', () => {
-        const emailInput = document.getElementById('psPayEmail');
-        const email = (emailInput.value || '').trim();
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          emailInput.setAttribute('aria-invalid', 'true');
-          document.getElementById('psPayEmailErr').style.display = 'block';
-          return;
-        }
-        emailInput.removeAttribute('aria-invalid');
-        document.getElementById('psPayEmailErr').style.display = 'none';
-        // Hand the confirmed email + amount to the Paystack checkout modal
-        document.getElementById('psCkEmail').textContent = email;
+        // No email gate here — the registration form already collected the
+        // member's address; the payment step only shows the amount and
+        // hands over to the Paystack checkout modal.
+        document.getElementById('psCkEmail').textContent = (document.getElementById('regEmail') || {}).value || '';
         const amount = money(selectedTotal());
         document.getElementById('psCkAmount').textContent = amount;
         document.getElementById('psCkPayBtn').textContent = 'Pay ' + amount;

@@ -816,9 +816,9 @@
   };
 
   /* ---------- Demo quick-state switch (?demo=member / ?demo=guest) ----------
-     演示辅助：URL 带 ?demo= 参数时一键切换演示人格，免手动清 localStorage。
-     member：清登录态+订单 → 走 seedDemoIfEmpty 完整播种（恒 NG09246375 Adaeze Okonkwo）。
-     guest ：清登录态 + 打 sessionStorage 游客标记，并跳过播种。
+     演示辅助：URL 带 ?demo= 参数时一键清状态，免手动清 localStorage。
+     member：清登录态+订单+游客标记（播种已停用 → 结果即全新未登录态）。
+     guest ：清登录态 + 打 sessionStorage 游客标记。
      只影响当次加载；页面内后续导航（无参数）状态自然延续。
      display-only / WordPress 页不参与（不写登录态、恒未登录营销版）。 */
   function applyDemoParam() {
