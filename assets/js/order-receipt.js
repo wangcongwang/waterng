@@ -164,12 +164,14 @@
         qty: q,
         price: price,
         amount: amount,
-        tax: typeof it.taxAmount === 'number' ? it.taxAmount : amount * rate
+        // Listed prices are tax-inclusive: show the VAT portion contained in
+        // the amount (amount * rate / (1 + rate)), never an extra charge.
+        tax: typeof it.taxAmount === 'number' ? it.taxAmount : amount * rate / (1 + rate)
       });
     });
 
     var tax = lines.reduce(function (s, l) { return s + l.tax; }, 0);
-    var total = subtotal + tax;
+    var total = subtotal;
     var showBV = (opts.showBV != null) ? !!opts.showBV : isSignedIn();
 
     var placedTs = order.date || order.createdAt || order.placeTime || null;
@@ -338,7 +340,7 @@
         '<td style="vertical-align:top;">' +
           '<table>' +
             totalsRow('Subtotal (' + m.totalQty + ' item' + (m.totalQty === 1 ? '' : 's') + ')', m.sym + money(m.subtotal)) +
-            totalsRow('Tax (' + m.ratePct + ')', m.sym + money(m.tax)) +
+            totalsRow('Tax (' + m.ratePct + ' incl.)', m.sym + money(m.tax)) +
             bvRow +
             totalsRow('TOTAL', m.sym + money(m.total), true) +
           '</table>' +

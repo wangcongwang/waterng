@@ -1185,7 +1185,9 @@
         const typeFallback = kind === 'member' ? 'Member order' : 'My order';
         const typeClass = kind === 'member' ? 'orders-type--member' : 'orders-type--self';
 
-        // Tax configuration (Nigeria default VAT rate).
+        // Tax configuration (Nigeria default VAT rate). Listed prices are
+        // tax-inclusive, so the tax columns are an informational breakdown
+        // (portion of the price already containing VAT), not an extra charge.
         const TAX_RATE = 0.075;
 
         // Per-product table rows. Columns mirror the screenshot:
@@ -1196,7 +1198,7 @@
           const bv = (typeof it.bv === 'number') ? it.bv : (_getBV(it) || 0);
           const totalPrice = qty * price;
           const totalBV = qty * (Number(bv) || 0);
-          const totalTax = totalPrice * TAX_RATE;
+          const totalTax = totalPrice * TAX_RATE / (1 + TAX_RATE); // VAT-inclusive breakdown
           const code = it.sku || it.code || it.id || 'Unlisted';
           const img = _resolveOrderItemImage(it);
           const picInner = img
@@ -1211,16 +1213,17 @@
               <td class="num" data-label="Price">${sym}${fmtNum(price)}</td>
               <td class="num" data-label="Total Price">${sym}${fmtNum(totalPrice)}</td>
               <td class="num" data-label="Total BV">${totalBV}</td>
-              <td class="num" data-label="Tax Rate">${TAX_RATE}</td>
+              <td class="num" data-label="Tax Rate">${(TAX_RATE * 100) + '%'}</td>
               <td class="num" data-label="Total Tax">${sym}${fmtNum(totalTax)}</td>
             </tr>`;
         }).join('');
 
-        // Order-wide totals (subtotal ex-tax, sum tax, grand total).
+        // Order-wide totals (item sum incl. tax, tax breakdown, grand total
+        // equals the item sum because listed prices already contain VAT).
         const subtotal = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number(it.price) || 0), 0);
         const sumBV = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number((typeof it.bv === 'number' ? it.bv : _getBV(it))) || 0), 0);
-        const sumTax = subtotal * TAX_RATE;
-        const grand = subtotal + sumTax;
+        const sumTax = subtotal * TAX_RATE / (1 + TAX_RATE);
+        const grand = subtotal;
 
         // Meta row (chip-style inline fields; address spans full width)
         const chip = (k, v, wide) => `<span${wide ? ' class="wide"' : ''}><b data-i18n="account.${k}">${t('account.' + k, v.fb)}</b><span>${esc(v.val)}</span></span>`;

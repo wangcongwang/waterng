@@ -271,8 +271,11 @@
 
       const subtotal = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number(it.price) || 0), 0);
       const sumBV = items.reduce((s, it) => s + (Number(it.qty) || 1) * (Number((typeof it.bv === 'number' ? it.bv : _getBV(it))) || 0), 0);
-      const sumTax = subtotal * TAX_RATE;
-      const grand = subtotal + sumTax;
+      // Listed prices are tax-inclusive: the tax row is an informational
+      // breakdown (portion of the price already containing VAT), not an
+      // extra charge. Total therefore equals the item sum.
+      const sumTax = subtotal * TAX_RATE / (1 + TAX_RATE);
+      const grand = subtotal;
       const totalQty = items.reduce((s, it) => s + (Number(it.qty) || 1), 0);
 
       const taxPct = Math.round(TAX_RATE * 1000) / 10;
@@ -280,7 +283,7 @@
       const totalsHtml = `
         <div class="odet-money">
           <div class="odet-money-row"><span>Subtotal</span><b>${sym}${fmtNum(subtotal)}</b></div>
-          <div class="odet-money-row"><span>Tax (${taxPct}%)</span><b>${sym}${fmtNum(sumTax)}</b></div>
+          <div class="odet-money-row"><span>Tax (${taxPct}% incl.)</span><b>${sym}${fmtNum(sumTax)}</b></div>
           ${showBV ? `<div class="odet-money-row"><span>BV earned</span><b class="odet-bv">+${order.bv != null ? order.bv : sumBV} BV</b></div>` : ''}
           <div class="odet-money-total"><span>Total</span><b>${sym}${fmtNum(grand)}</b></div>
         </div>`;
