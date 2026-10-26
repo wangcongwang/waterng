@@ -251,6 +251,12 @@
 .dash-referral-field .ek-input { flex: 1 1 220px; min-width: 0; }
 .dash-referral-actions { flex: 0 0 auto; display: flex; gap: var(--ek-8); flex-wrap: wrap; }
 .dash-referral-actions .ek-btn { gap: var(--ek-8); }
+/* Direct share channels: WhatsApp + Facebook (brand-colored, no underline) */
+.dash-referral-actions a.ek-btn { text-decoration: none; }
+.referral-share-wa { color: #fff; background: #25D366; border-color: #25D366; }
+.referral-share-wa:hover { background: #1fb757; border-color: #1fb757; color: #fff; }
+.referral-share-fb { color: #fff; background: #1877F2; border-color: #1877F2; }
+.referral-share-fb:hover { background: #1465d8; border-color: #1465d8; color: #fff; }
 @media (max-width: 767px) {
   .dash-referral-field,
   .dash-referral-actions { flex: 1 1 100%; }
