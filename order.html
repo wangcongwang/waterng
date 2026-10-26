@@ -204,8 +204,16 @@
       const authMemberId = authUser.memberId || null;
       const authName = authUser.name || authUser.fullName || null;
 
-      const memberId = orFallback(order.memberId || authMemberId, 'Not registered');
-      const memberName = orFallback(order.memberName || (order.customer && order.customer.name) || authName, 'Guest');
+      // BV only for signed-in members; never for guest (visitor) orders.
+      // A guest order is also detectable from the order itself: it is
+      // attributed to the market house account (NG/AE000000001).
+      const isGuestViewer = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
+      const isGuestOrder = isGuestViewer || /^(NG|AE)000000001$/.test(String(order.memberId || ''));
+
+      // Guest (no-account) orders still show the Member module — only the
+      // identity fields are masked with a dash; meta rows stay visible.
+      const memberId = isGuestOrder ? '-' : orFallback(order.memberId || authMemberId, 'Not registered');
+      const memberName = isGuestOrder ? '-' : orFallback(order.memberName || (order.customer && order.customer.name) || authName, 'Guest');
       const recipient = orFallback(order.customer && order.customer.name, memberName);
       const phone = orFallback(order.customer && order.customer.phone, 'No phone on file');
       const pickupLoc = (order.delivery && order.delivery.pickupLoc) || 'lagos';
@@ -223,11 +231,6 @@
       const orderTypeLabel = isMemberOrder ? 'Member order' : 'My order';
       const payStatusLabel = order.payStatus || statusLabel;
 
-      // BV only for signed-in members; never for guest (visitor) orders.
-      // A guest order is also detectable from the order itself: it is
-      // attributed to the market house account (NG/AE000000001).
-      const isGuestViewer = (() => { try { return sessionStorage.getItem('al.guestMode') === '1'; } catch (e) { return false; } })();
-      const isGuestOrder = isGuestViewer || /^(NG|AE)000000001$/.test(String(order.memberId || ''));
       const showBV = !!(window.Auth && window.Auth.isLoggedIn && window.Auth.isLoggedIn()) && !isGuestOrder;
 
       const TAX_RATE = (typeof order.taxRate === 'number') ? order.taxRate
@@ -343,8 +346,7 @@
                     : ''}
                 </section>
 
-                <!-- ---------- Member (hidden entirely for guest / no-account orders) ---------- -->
-                ${isGuestOrder ? '' : `
+                <!-- ---------- Member (always shown; guest / no-account orders mask ID + name with a dash) ---------- -->
                 <section class="ek-card odet-card">
                   <h3 class="odet-card-title">Member</h3>
                   <dl class="odet-rows">
@@ -354,7 +356,7 @@
                     <div class="odet-row"><dt>Paid</dt><dd>${esc(paidStr)}</dd></div>
                     <div class="odet-row"><dt>Currency</dt><dd>${esc(currency)}</dd></div>
                   </dl>
-                </section>`}
+                </section>
               </div>
             </div>
 
