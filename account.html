@@ -57,15 +57,21 @@
               <span>Share link</span>
             </button>
             <button class="ek-btn ek-btn--secondary" id="referralCopy" type="button">Copy link</button>
-            <!-- Direct share channels: WhatsApp + Facebook -->
-            <a class="ek-btn referral-share-wa" id="referralShareWA" href="#" target="_blank" rel="noopener" aria-label="Share on WhatsApp" title="Share on WhatsApp">
-              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12.04 2a9.9 9.9 0 0 0-8.4 15.2L2 22l4.94-1.6A9.9 9.9 0 1 0 12.04 2zm0 1.8a8.1 8.1 0 1 1-4.2 15l-.3-.18-2.94.95.96-2.86-.2-.32A8.1 8.1 0 0 1 12.04 3.8zm-3.1 3.6c-.2 0-.5.07-.72.34-.22.27-.86.84-.86 2.05s.88 2.38 1 2.54c.12.16 1.7 2.72 4.2 3.7 2.06.81 2.48.65 2.93.61.45-.04 1.44-.59 1.65-1.16.2-.57.2-1.05.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.52.06-.24-.12-1-.37-1.92-1.18-.71-.63-1.19-1.42-1.33-1.66-.14-.24-.02-.37.1-.49.12-.12.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.53-1.3-.74-1.78-.19-.43-.38-.43-.55-.44h-.48z"/></svg>
-              <span>WhatsApp</span>
-            </a>
-            <a class="ek-btn referral-share-fb" id="referralShareFB" href="#" target="_blank" rel="noopener" aria-label="Share on Facebook" title="Share on Facebook">
-              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5h1.3V4.9c-.3 0-1.1-.1-2-.1-2 0-3.4 1.2-3.4 3.5V11H8.5v3H11v7h2.5z"/></svg>
-              <span>Facebook</span>
-            </a>
+            <!-- Share-channel menu: opens under the Share link button (WA / FB / system) -->
+            <div class="share-menu" id="referralShareMenu" hidden>
+              <a class="share-menu__item" id="shareMenuWA" href="#" target="_blank" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#25D366" d="M12.04 2a9.9 9.9 0 0 0-8.4 15.2L2 22l4.94-1.6A9.9 9.9 0 1 0 12.04 2zm0 1.8a8.1 8.1 0 1 1-4.2 15l-.3-.18-2.94.95.96-2.86-.2-.32A8.1 8.1 0 0 1 12.04 3.8zm-3.1 3.6c-.2 0-.5.07-.72.34-.22.27-.86.84-.86 2.05s.88 2.38 1 2.54c.12.16 1.7 2.72 4.2 3.7 2.06.81 2.48.65 2.93.61.45-.04 1.44-.59 1.65-1.16.2-.57.2-1.05.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.52.06-.24-.12-1-.37-1.92-1.18-.71-.63-1.19-1.42-1.33-1.66-.14-.24-.02-.37.1-.49.12-.12.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.53-1.3-.74-1.78-.19-.43-.38-.43-.55-.44h-.48z"/></svg>
+                <span>Share on WhatsApp</span>
+              </a>
+              <a class="share-menu__item" id="shareMenuFB" href="#" target="_blank" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1877F2" d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5h1.3V4.9c-.3 0-1.1-.1-2-.1-2 0-3.4 1.2-3.4 3.5V11H8.5v3H11v7h2.5z"/></svg>
+                <span>Share on Facebook</span>
+              </a>
+              <button class="share-menu__item" id="shareMenuMore" type="button">
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 1 0-3-3c0 .24.04.47.09.7L8.04 9.81A3 3 0 1 0 6 15c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65a2.92 2.92 0 1 0 2.92-2.92z"/></svg>
+                <span>More options…</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1443,8 +1449,8 @@
       const linkEl = document.getElementById('referralLink');
       const link = (linkEl && linkEl.value) || '';
       const shareText = 'Join Elken through my referral link: ' + link;
-      const wa = document.getElementById('referralShareWA');
-      const fb = document.getElementById('referralShareFB');
+      const wa = document.getElementById('shareMenuWA');
+      const fb = document.getElementById('shareMenuFB');
       if (wa) wa.href = 'https://wa.me/?text=' + encodeURIComponent(shareText);
       if (fb) fb.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' + encodeURIComponent(shareText);
     }
@@ -1545,23 +1551,57 @@
         copyBtn.addEventListener('click', () => copyToClipboard(linkEl.value || '', (m) => { toast(m); flashCopy(); }));
       }
       if (shareBtn && linkEl) {
+        // Share link opens a channel menu: WhatsApp / Facebook / system share.
+        const menu = document.getElementById('referralShareMenu');
+        const moreBtn = document.getElementById('shareMenuMore');
+        const closeMenu = () => {
+          if (menu) menu.hidden = true;
+          document.removeEventListener('click', onDocClick, true);
+          document.removeEventListener('keydown', onEsc);
+        };
+        const onDocClick = (e) => {
+          if (!menu || menu.hidden) return;
+          if (menu.contains(e.target) || shareBtn.contains(e.target)) return;
+          closeMenu();
+        };
+        const onEsc = (e) => { if (e.key === 'Escape') closeMenu(); };
+        const openMenu = () => {
+          if (!menu) return;
+          updateReferralShareHrefs();
+          menu.hidden = false;
+          // Defer so the same click that opened the menu can't immediately close it.
+          setTimeout(() => {
+            document.addEventListener('click', onDocClick, true);
+            document.addEventListener('keydown', onEsc);
+          }, 0);
+        };
         shareBtn.addEventListener('click', () => {
-          const text = linkEl.value || '';
-          const shareText = 'Join Elken through my referral link: ' + text;
-          try {
-            if (navigator.share) {
-              // Share sheet (mobile + desktop Safari/Chrome). If it is unavailable,
-              // blocked, or fails for any reason other than the user dismissing it,
-              // fall back to the clipboard so the prominent Share button always works.
-              navigator.share({ title: 'Elken', text: shareText }).catch(err => {
-                if (err && err.name === 'AbortError') return;
-                copyToClipboard(shareText, toast);
-              });
-            } else if (navigator.clipboard) {
-              copyToClipboard(shareText, toast);
-            } else { if (window.toast) window.toast(shareText, 'info'); }
-          } catch (e) { copyToClipboard(shareText, toast); }
+          if (!menu) return;
+          if (menu.hidden) openMenu(); else closeMenu();
         });
+        // Menu item closes the menu after the browser opens the WA/FB tab.
+        if (menu) menu.querySelectorAll('a.share-menu__item').forEach(a => {
+          a.addEventListener('click', () => closeMenu());
+        });
+        if (moreBtn) {
+          moreBtn.addEventListener('click', () => {
+            closeMenu();
+            const text = linkEl.value || '';
+            const shareText = 'Join Elken through my referral link: ' + text;
+            try {
+              if (navigator.share) {
+                // System share sheet; fall back to the clipboard if it fails
+                // for any reason other than the user dismissing it.
+                navigator.share({ title: 'Elken', text: shareText }).catch(err => {
+                  if (err && err.name === 'AbortError') return;
+                  copyToClipboard(shareText, toast);
+                });
+              } else {
+                copyToClipboard(shareText, toast);
+              }
+            } catch (e) { copyToClipboard(shareText, toast); }
+          });
+        }
       }
     }
 
