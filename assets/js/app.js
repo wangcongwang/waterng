@@ -357,6 +357,14 @@
   }
 
   function renderHeader(active) {
+    /* Standalone pages (order.html — the shareable "Order details link"
+       landing page) never render the site chrome, whoever opens them and
+       however they arrive (guest flow, copied link, member from account). */
+    if (document.body && document.body.dataset.standalone === 'true') {
+      const hostEl = document.getElementById('app-header');
+      if (hostEl) hostEl.innerHTML = '';
+      return;
+    }
     /* Display-only pages ignore login/guest state entirely and always render the
        public marketing chrome (full nav, Sign in entry, no cart). */
     const displayOnly = isDisplayOnlyPage();
@@ -992,6 +1000,14 @@
   }
   function renderEnvBanner() {
     if (!document.body) return;
+    /* Standalone pages (order.html share-link landing) show no environment
+       banner either — the copied link must open as a clean order sheet. */
+    if (document.body.dataset.standalone === 'true') {
+      const existing = document.getElementById('envBanner');
+      if (existing) existing.remove();
+      document.body.classList.remove('has-env-banner');
+      return;
+    }
     /* Display-only pages never claim member ownership — they always read as the
        public (Wordpress) page, whatever the stored login state is. */
     const displayOnly = isDisplayOnlyPage();
