@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260919d">
-  <link rel="stylesheet" href="assets/css/account-ui.css?v=20260919i">
+  <link rel="stylesheet" href="assets/css/account-ui.css?v=20261027a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
 <body data-page="order" data-guest-no-nav="true" data-standalone="true">
@@ -216,12 +216,10 @@
       const memberName = isGuestOrder ? '-' : orFallback(order.memberName || (order.customer && order.customer.name) || authName, 'Guest');
       const recipient = orFallback(order.customer && order.customer.name, memberName);
       const phone = orFallback(order.customer && order.customer.phone, 'No phone on file');
-      const pickupLoc = (order.delivery && order.delivery.pickupLoc) || 'lagos';
-      const pickup = PICKUP_LOCATIONS[pickupLoc] || PICKUP_LOCATIONS.lagos;
-      const addressParts = [order.customer && order.customer.address, order.customer && order.customer.city, order.customer && order.customer.state].filter(Boolean);
-      const addressStr = isPickup
-        ? (pickup.name + ' · ' + pickup.addr)
-        : (addressParts.join(', ') || 'No address provided');
+      // Delivery card data: courier mode shows the customer's address; pickup
+      // mode shows no address module at all (recipient only).
+      const addrLine1 = (order.customer && order.customer.address) || '';
+      const addrLine2 = [order.customer && order.customer.city, order.customer && order.customer.state].filter(Boolean).join(', ');
       const country = order.country || 'Nigeria';
       const currency = order.currency || 'NGN';
       const payMethod = order.paymentLabel || PAY_LABELS[order.payment] || order.payment || 'Not specified';
@@ -237,6 +235,23 @@
         : (typeof (items[0] && items[0].taxRate) === 'number' ? items[0].taxRate : 0.075);
       const sym = _currencySymbol(currency);
       const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+      // ---- Delivery card: one skeleton for both methods ----
+      // Header (title + method chip) → Recipient row → Delivery address row.
+      // Pickup mode renders the header + Recipient only — no address module,
+      // no note block.
+      const dlvIcon = (paths) => '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths + '</svg>';
+      const dlvPersonIcon = dlvIcon('<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.2 3.8-5 7-5s5.8 1.8 7 5"/>');
+      const dlvPinIcon = dlvIcon('<path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>');
+      const dlvAddressRow = isPickup ? '' : `
+        <div class="odet-dlv-row">
+          <span class="odet-dlv-icon">${dlvPinIcon}</span>
+          <div>
+            <p class="odet-dlv-label">Delivery address</p>
+            <p class="odet-dlv-name">${esc(addrLine1 || 'No address provided')}</p>
+            ${(addrLine2 || country) ? `<p class="odet-dlv-text">${esc([addrLine2, country].filter(Boolean).join(', '))}</p>` : ''}
+          </div>
+        </div>`;
 
       // Items read as product rows (image · name · qty × unit price · line total).
       // The per-line tax / BV columns move into one summary block underneath, so
@@ -292,7 +307,6 @@
         if (/paid|complete|success|deliver/.test(s)) return 'ek-chip--success';
         return '';
       };
-      const noteText = (order.customer && order.customer.note) ? order.customer.note : '';
 
       host.innerHTML = `
         <div class="odet">
@@ -329,12 +343,24 @@
                    facts read as one block and the narrow right column is left for
                    the keep-a-copy actions. -->
               <div class="odet-info">
-                <!-- ---------- Delivery ---------- -->
+                <!-- ---------- Delivery / Pickup (one shared skeleton; pickup
+                     mode renders the Recipient row only — no address module) ---------- -->
                 <section class="ek-card odet-card">
-                  <h3 class="odet-card-title">${isPickup ? 'Pickup' : 'Delivery'}</h3>
-                  <p class="odet-person">${esc(recipient)}</p>
-                  <p class="odet-lines">${esc(phone)}<br>${esc(addressStr)}<br>${esc(country)}</p>
-                  ${noteText ? `<p class="odet-note">${esc(noteText)}</p>` : ''}
+                  <div class="odet-dlv-head">
+                    <h3 class="odet-card-title">${isPickup ? 'Pickup' : 'Delivery'}</h3>
+                    <span class="odet-dlv-chip ${isPickup ? 'odet-dlv-chip--pickup' : 'odet-dlv-chip--delivery'}">${isPickup ? 'Self-pickup' : 'Door delivery'}</span>
+                  </div>
+                  <div class="odet-dlv-rows">
+                    <div class="odet-dlv-row">
+                      <span class="odet-dlv-icon">${dlvPersonIcon}</span>
+                      <div>
+                        <p class="odet-dlv-label">Recipient</p>
+                        <p class="odet-dlv-name">${esc(recipient)}</p>
+                        <p class="odet-dlv-text">${esc(phone)}</p>
+                      </div>
+                    </div>
+                    ${dlvAddressRow}
+                  </div>
                 </section>
 
                 <!-- ---------- Payment ---------- -->

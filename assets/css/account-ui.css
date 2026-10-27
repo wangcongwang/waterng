@@ -1002,6 +1002,48 @@
 /* --- Side cards --- */
 .odet-person { margin: 0 0 var(--ek-4); font-weight: var(--ek-w-bold); color: var(--ek-charcoal-deep); }
 .odet-lines { margin: 0; font-size: var(--ek-small); color: var(--ek-muted); line-height: var(--ek-small-lh); }
+
+/* --- Delivery card (order details): one skeleton for both methods.
+   Header row = title + method chip. Info rows = icon + label + value lines.
+   Pickup mode renders the Recipient row only — the whole address module is
+   omitted; courier mode appends the Delivery address row. */
+.odet-dlv-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--ek-12); margin-bottom: var(--ek-16);
+}
+.odet-dlv-head .odet-card-title { margin-bottom: 0; }
+.odet-dlv-chip {
+  display: inline-flex; align-items: center;
+  padding: 3px var(--ek-12);
+  border-radius: var(--ek-radius-pill);
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
+  white-space: nowrap;
+}
+.odet-dlv-chip--delivery { background: var(--ek-info-tint); color: var(--ek-info); }
+.odet-dlv-chip--pickup { background: var(--ek-success-tint); color: var(--ek-success); }
+.odet-dlv-rows { display: grid; gap: var(--ek-8); }
+.odet-dlv-row {
+  display: flex; gap: var(--ek-12);
+  padding: var(--ek-12);
+  background: var(--ek-surface-sunken);
+  border-radius: var(--ek-radius);
+}
+.odet-dlv-icon { flex: 0 0 auto; margin-top: 2px; color: var(--ek-muted); }
+.odet-dlv-label {
+  margin: 0; font-size: var(--ek-caption);
+  text-transform: uppercase; letter-spacing: .04em;
+  color: var(--ek-muted);
+}
+.odet-dlv-name {
+  margin: 2px 0 0; font-weight: var(--ek-w-bold);
+  color: var(--ek-charcoal-deep); line-height: var(--ek-small-lh);
+  overflow-wrap: anywhere;
+}
+.odet-dlv-text {
+  margin: 2px 0 0; font-size: var(--ek-small);
+  color: var(--ek-muted); line-height: var(--ek-small-lh);
+  overflow-wrap: anywhere;
+}
 .odet-note {
   margin: var(--ek-12) 0 0; padding: var(--ek-12);
   background: var(--ek-surface-sunken); border-radius: var(--ek-radius);
