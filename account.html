@@ -144,9 +144,14 @@
             <button type="button" class="ek-btn ek-btn--primary" id="snConfirmBtn">Confirm</button>
           </div>
 
+          <div class="ex-crumbs" id="exCrumbs" hidden></div>
+
           <div class="sponsor-tree" id="sponsorTree">
             <!-- Rendered by JS -->
           </div>
+
+          <!-- Sponsor Network Ex: hover detail card / 悬浮会员详情卡 -->
+          <div class="ex-tip" id="exTip" hidden aria-hidden="true"></div>
         </section>
 
         <!-- ===== 九宫格多功能入口 ===== -->
@@ -2055,6 +2060,7 @@
           document.querySelectorAll('.sn-mode-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           snMode = btn.dataset.mode === 'ex' ? 'ex' : 'normal';
+          exPathCodes = [];   // 切换模式时回到组织根
           renderSponsorNetwork();
         });
       });
@@ -3482,22 +3488,160 @@
       const depth = Math.max(1, Math.min(10, Number(spreadDepth ? spreadDepth.value : 5) || 5));
       const data = snMode === 'ex' ? getSponsorNetworkEx(mid) : getSponsorNetwork(mid);
       renderSponsorSummary(data);
-      const filtered = filterSponsorTree(data, query, depth);
+
+      const crumbs = document.getElementById('exCrumbs');
+      const tip = document.getElementById('exTip');
+      if (snMode !== 'ex') {
+        if (crumbs) crumbs.hidden = true;
+        if (tip) tip.hidden = true;
+        host.classList.remove('has-ex');
+        const filtered = filterSponsorTree(data, query, depth);
+        if (!filtered.length) {
+          host.innerHTML = '<div class="ek-empty"><p class="ek-empty__body">No matching sponsor network records found.</p></div>';
+          return;
+        }
+        host.innerHTML = `<ul class="ek-tree">${filtered.map(n => renderTreeNode(n, depth, 1)).join('')}</ul>`;
+        host.querySelectorAll('.sn-toggle').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const children = btn.closest('li').querySelector(':scope > ul');
+            if (!children) return;
+            const hidden = children.hidden;
+            children.hidden = !hidden;
+            btn.textContent = hidden ? '−' : '+';
+            btn.setAttribute('aria-expanded', String(hidden));
+          });
+        });
+        return;
+      }
+      renderExNetwork(host, crumbs, tip, data, query, depth);
+    }
+
+    /* ---------- Sponsor Network Ex: drill-down tree / EX 下钻树 ----------
+       确认稿 outputs/network-ex-mockup.html v2：
+       · 点击带 ⊕ 的节点 → 以该节点为新根下钻一层
+       · 面包屑记录路径，点击回退
+       · 悬浮节点弹出详情卡（编号/姓名/级别/聘级/PCV）                 */
+    let exPathCodes = [];   // 从组织根到当前根的 code 链
+
+    function renderExNetwork(host, crumbsEl, tipEl, data, query, depth) {
+      const root = data[0];
+      if (!root) return;
+      // 校验路径：数据每次重灌，按 code 逐级确认，失效则截断
+      let chain = [root];
+      let walker = root;
+      for (let i = 1; i < exPathCodes.length; i++) {
+        const next = (walker.children || []).find(c => c.code === exPathCodes[i]);
+        if (!next) break;
+        chain.push(next);
+        walker = next;
+      }
+      exPathCodes = chain.map(n => n.code);
+      const current = chain[chain.length - 1];
+
+      // 面包屑
+      if (crumbsEl) {
+        let html = chain.map((n, i) => {
+          const isCurrent = i === chain.length - 1;
+          return `<button type="button" class="ex-crumb${isCurrent ? ' current' : ''}" data-idx="${i}">${esc(n.code)} · ${esc(n.name)}</button>`;
+        }).join('<span class="ex-crumb-sep">›</span>');
+        html += '<span class="ex-legend">Click a ⊕ node to drill down · Hover for details</span>';
+        crumbsEl.hidden = false;
+        crumbsEl.innerHTML = html;
+        crumbsEl.querySelectorAll('.ex-crumb:not(.current)').forEach(btn => {
+          btn.addEventListener('click', () => {
+            exPathCodes = exPathCodes.slice(0, Number(btn.dataset.idx) + 1);
+            renderSponsorNetwork();
+          });
+        });
+      }
+
+      // 只在当前根的子树内做搜索过滤
+      const filtered = filterSponsorTree([current], query, depth);
       if (!filtered.length) {
+        host.classList.add('has-ex');
         host.innerHTML = '<div class="ek-empty"><p class="ek-empty__body">No matching sponsor network records found.</p></div>';
         return;
       }
-      host.innerHTML = `<ul class="ek-tree">${filtered.map(n => renderTreeNode(n, depth, 1)).join('')}</ul>`;
-      host.querySelectorAll('.sn-toggle').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const children = btn.closest('li').querySelector(':scope > ul');
-          if (!children) return;
-          const hidden = children.hidden;
-          children.hidden = !hidden;
-          btn.textContent = hidden ? '−' : '+';
-          btn.setAttribute('aria-expanded', String(hidden));
+      host.classList.add('has-ex');
+      host.innerHTML = '';
+      host.appendChild(exBuildTree(filtered[0], depth, tipEl));
+    }
+
+    function exBuildTree(root, depth, tipEl) {
+      const tree = document.createElement('div');
+      tree.className = 'ex-tree';
+      tree.appendChild(exMakeCard(root, true, tipEl));
+      const kids = root.children || [];
+      if (kids.length && depth > 1) {
+        const ul = document.createElement('ul');
+        ul.className = 'ex-children';
+        kids.forEach(c => {
+          const li = document.createElement('li');
+          li.appendChild(exBuildSubtree(c, depth - 1, tipEl));
+          ul.appendChild(li);
         });
-      });
+        tree.appendChild(ul);
+      }
+      return tree;
+    }
+
+    function exBuildSubtree(node, levels, tipEl) {
+      const frag = document.createDocumentFragment();
+      frag.appendChild(exMakeCard(node, false, tipEl));
+      const kids = node.children || [];
+      if (kids.length && levels > 1) {
+        const ul = document.createElement('ul');
+        ul.className = 'ex-children';
+        kids.forEach(c => {
+          const li = document.createElement('li');
+          li.appendChild(exBuildSubtree(c, levels - 1, tipEl));
+          ul.appendChild(li);
+        });
+        frag.appendChild(ul);
+      }
+      return frag;
+    }
+
+    function exMakeCard(node, isRoot, tipEl) {
+      const card = document.createElement('div');
+      card.className = 'ex-card' + (isRoot ? ' ex-card--root' : '');
+      const hasKids = !!(node.children && node.children.length);
+      card.innerHTML =
+        '<span class="ex-card__id">' + esc(node.code) + '</span>' +
+        '<span class="ex-card__name">' + esc(node.name) + '</span>' +
+        '<span class="ex-card__meta">' +
+          '<span class="ex-badge ex-badge--lv">' + esc(node.level || '—') + '</span>' +
+          '<span class="ex-badge ex-badge--pcv">' + Number(node.pcv || 0).toLocaleString() + ' PCV</span>' +
+        '</span>' +
+        '<span class="ex-expand' + (hasKids ? '' : ' ex-expand--none') + '" aria-hidden="true">' + (hasKids ? '+' : '•') + '</span>';
+      card.addEventListener('mouseenter', () => exShowTip(node, card, tipEl));
+      card.addEventListener('mouseleave', () => { if (tipEl) tipEl.hidden = true; });
+      if (hasKids) {
+        card.addEventListener('click', () => {
+          exPathCodes.push(node.code);
+          renderSponsorNetwork();
+        });
+      }
+      return card;
+    }
+
+    function exShowTip(node, card, tipEl) {
+      if (!tipEl) return;
+      tipEl.innerHTML =
+        '<h4>' + esc(node.name) + '</h4>' +
+        '<dl>' +
+          '<dt>Member ID</dt><dd>' + esc(node.code) + '</dd>' +
+          '<dt>Name</dt><dd>' + esc(node.name) + '</dd>' +
+          '<dt>Level</dt><dd>' + esc(node.level || '—') + '</dd>' +
+          '<dt>Highest Rank</dt><dd>' + esc(node.highest || node.level || '—') + '</dd>' +
+          '<dt>PCV</dt><dd>' + Number(node.pcv || 0).toLocaleString() + '</dd>' +
+        '</dl>';
+      const r = card.getBoundingClientRect();
+      let x = r.right + 12;
+      if (x + 240 > window.innerWidth - 8) x = Math.max(8, r.left - 240 - 12);
+      tipEl.style.left = x + 'px';
+      tipEl.style.top = r.top + 'px';
+      tipEl.hidden = false;
     }
 
     // One background per sponsor-network depth, so the eye can tell a level

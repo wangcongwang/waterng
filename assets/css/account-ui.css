@@ -1192,3 +1192,121 @@
 
 /* Bonus period detail modal — .ek-kv rows that need emphasis (level, total) */
 .bonus-detail-value--highlight { color: var(--ek-blue); font-weight: var(--ek-w-bold); }
+
+/* ==========================================================================
+   Sponsor Network Ex — drill-down org tree / 网络图谱 EX 下钻树
+   Design: outputs/network-ex-mockup.html (confirmed v2).
+   Real tree connectors: parent stem → horizontal rail → drop lines.
+   ========================================================================== */
+.sponsor-tree.has-ex { overflow-x: auto; }
+
+/* Drill-down breadcrumb path / 下钻面包屑 */
+.ex-crumbs {
+  display: flex; align-items: center; flex-wrap: wrap; gap: var(--ek-8);
+  margin-bottom: var(--ek-12);
+}
+.ex-crumbs[hidden] { display: none; }
+.ex-crumb {
+  font: inherit; font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
+  color: var(--ek-aqua); background: var(--ek-surface);
+  border: 1px solid var(--ek-border-strong); border-radius: var(--ek-radius);
+  padding: 4px var(--ek-12); cursor: pointer;
+  transition: background var(--ek-fast) var(--ek-ease), border-color var(--ek-fast) var(--ek-ease);
+}
+.ex-crumb:hover { border-color: var(--ek-aqua); background: var(--ek-info-tint); }
+.ex-crumb.current { background: var(--ek-blue); border-color: var(--ek-blue); color: var(--ek-white); cursor: default; }
+.ex-crumb-sep { color: var(--ek-steel); font-size: var(--ek-caption); }
+.ex-legend { margin-left: auto; font-size: var(--ek-caption); color: var(--ek-muted); }
+
+/* Tree canvas / 树画布 */
+.ex-tree {
+  position: relative; display: flex; flex-direction: column; align-items: center;
+  width: max-content; min-width: 100%; margin: 0 auto;
+  padding: var(--ek-16) 0 var(--ek-8);
+}
+
+/* Connectors: stem (parent→rail) + rail + drops (rail→child) / 连接线 */
+.ex-children {
+  display: flex; justify-content: center; list-style: none;
+  margin: 40px 0 0; padding: 0; position: relative;
+}
+.ex-children::before {                       /* 父卡片底部 → 横轨的竖干 */
+  content: ""; position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+  width: 2px; height: 40px; background: var(--ek-grey-out);
+}
+.ex-children li {
+  position: relative; flex: 0 0 auto;
+  padding: 40px var(--ek-16) 0;              /* 上=下垂线高度，左右=兄弟间距 */
+  display: flex; flex-direction: column; align-items: center;
+}
+.ex-children li::before {                    /* 左半横轨 + 中心下垂线 */
+  content: ""; position: absolute; top: 0; left: 0; width: 50%; height: 40px;
+  border-top: 2px solid var(--ek-grey-out);
+  border-right: 2px solid var(--ek-grey-out);
+}
+.ex-children li::after {                     /* 右半横轨 */
+  content: ""; position: absolute; top: 0; left: 50%; width: 50%; height: 40px;
+  border-top: 2px solid var(--ek-grey-out);
+}
+.ex-children li:first-child::before { border-top-color: transparent; }  /* 首子节点左侧无轨 */
+.ex-children li:last-child::after { border-top-color: transparent; }    /* 末子节点右侧无轨 */
+
+/* Node card / 节点卡 */
+.ex-card {
+  position: relative; width: 188px; text-align: left; cursor: pointer;
+  background: var(--ek-surface); border: 1px solid var(--ek-border-strong);
+  border-radius: var(--ek-radius-lg, 12px); padding: 10px var(--ek-12);
+  box-shadow: var(--ek-shadow-sm);
+  transition: transform var(--ek-fast) var(--ek-ease),
+              border-color var(--ek-fast) var(--ek-ease),
+              box-shadow var(--ek-fast) var(--ek-ease);
+}
+.ex-card:hover {
+  border-color: var(--ek-aqua);
+  box-shadow: 0 0 0 3px rgba(42, 167, 207, .15), var(--ek-shadow);
+  transform: translateY(-2px);
+}
+.ex-card--root {
+  background: linear-gradient(135deg, var(--ek-stat-1), var(--ek-stat-3));
+  border-color: var(--ek-stat-1);
+}
+.ex-card--root:hover { border-color: var(--ek-aqua); }
+.ex-card__id {
+  display: block; font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: var(--ek-caption); font-weight: var(--ek-w-bold);
+  letter-spacing: .02em; color: var(--ek-aqua);
+}
+.ex-card--root .ex-card__id { color: #8FD8F2; }
+.ex-card__name {
+  display: block; margin-top: 2px;
+  font-size: var(--ek-small); font-weight: var(--ek-w-semibold, 600); color: var(--ek-charcoal);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ex-card--root .ex-card__name { color: var(--ek-white); }
+.ex-card__meta { display: flex; align-items: center; gap: 6px; margin-top: var(--ek-8); flex-wrap: wrap; }
+.ex-badge {
+  font-size: 11px; font-weight: var(--ek-w-semibold, 600);
+  padding: 2px var(--ek-8); border-radius: var(--ek-radius-pill); line-height: 1.4;
+}
+.ex-badge--lv { background: var(--ek-panel-cool); color: var(--ek-stat-3); }
+.ex-badge--pcv { background: var(--ek-neutral-tint); color: var(--ek-neutral); }
+.ex-expand {
+  position: absolute; right: 10px; bottom: 10px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--ek-aqua); color: var(--ek-white);
+  font-size: 12px; line-height: 18px; text-align: center; font-weight: var(--ek-w-bold);
+}
+.ex-expand--none { background: var(--ek-grey-out); color: var(--ek-muted); }
+
+/* Hover detail card / 悬浮详情卡 */
+.ex-tip {
+  position: fixed; z-index: 60; width: 228px; pointer-events: none;
+  background: var(--ek-surface); border: 1px solid var(--ek-border-strong);
+  border-left: 4px solid var(--ek-aqua); border-radius: var(--ek-radius-lg, 12px);
+  box-shadow: var(--ek-shadow); padding: var(--ek-12) var(--ek-16);
+}
+.ex-tip[hidden] { display: none; }
+.ex-tip h4 { margin: 0 0 6px; font-size: var(--ek-small); color: var(--ek-blue); }
+.ex-tip dl { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--ek-12); margin: 0; }
+.ex-tip dt { color: var(--ek-muted); white-space: nowrap; }
+.ex-tip dd { margin: 0; font-weight: var(--ek-w-semibold, 600); color: var(--ek-charcoal); font-size: var(--ek-caption); }
