@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260915c">
   <link rel="stylesheet" href="assets/css/repeat-purchase.css?v=20260922a">
-  <link rel="stylesheet" href="assets/css/signup.css?v=20260923a">
+  <link rel="stylesheet" href="assets/css/signup.css?v=20261028a">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
@@ -340,6 +340,40 @@
       <div class="cookie-actions cookie-actions--prefs">
         <button type="button" class="cb-btn cb-primary" data-cookie="save" data-i18n="cookie.save">cookie.save</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ====== Member ID credential modal (payment success · force-confirm) ======
+       Shown once after the Paystack checkout succeeds. The overlay cannot be
+       clicked or Esc-dismissed — "Got it" is the only way out, and it routes
+       to the login page so the new member signs in with the ID they saved. -->
+  <div class="mid-overlay" id="midModal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="midTitle" aria-describedby="midDesc">
+    <div class="mid-dialog">
+      <div class="mid-head">
+        <span class="mid-check" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12.5L10 17.5L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div>
+          <p class="mid-title" id="midTitle">Payment Successful</p>
+          <p class="mid-sub" id="midDesc">Your member account has been created. Please keep your Member ID safe.</p>
+        </div>
+      </div>
+      <div class="mid-idbox" id="midIdbox">
+        <div>
+          <p class="mid-idlabel">Member ID · Login credential</p>
+          <p class="mid-idvalue" id="midValue">—</p>
+        </div>
+        <button type="button" class="mid-copy" id="midCopyBtn" aria-label="Copy member ID">
+          <svg class="mid-ic-copy" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2" stroke="currentColor" stroke-width="2"/></svg>
+          <svg class="mid-ic-check" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5L10 17.5L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="midCopyLabel">Copy</span>
+        </button>
+      </div>
+      <div class="mid-warn">
+        <svg class="mid-warn-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8V13M12 16.5V17M10.3 3.9L2.8 17a2 2 0 001.7 3h15a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <p>Your Member ID is your login credential — you will need it every time you sign in. It cannot be recovered if lost. Screenshot or write it down now.</p>
+      </div>
+      <button type="button" class="ek-btn mid-got" id="midGotBtn">Got it</button>
     </div>
   </div>
 
@@ -1180,26 +1214,13 @@
             window.dispatchEvent(new CustomEvent('al:orderschange'));
           } catch(err) {}
 
-          // Success feedback
-          if (window.toast) {
-            window.toast(tr('signup.success_msg', { memberId }), 'success');
-          }
-
           submitBtn.textContent = tr('signup.success_done') || 'Registration Complete!';
           submitBtn.style.background = 'var(--ek-blue)';
 
-          // Redirect after delay
-          let remaining = 3;
-          const redirectTimer = setInterval(() => {
-            remaining -= 1;
-            if (remaining > 0) {
-              submitBtn.textContent = (tr('login.redirecting_in') || 'Redirecting in {s}s').replace('{s}', remaining);
-            } else {
-              clearInterval(redirectTimer);
-              // Land directly on the Orders view of the account dashboard.
-              location.href = 'account.html#orders';
-            }
-          }, 1000);
+          // Payment succeeded — show the Member ID credential modal (force-
+          // confirm). "Got it" routes to the login page (login.html?mid=…),
+          // replacing the old auto-redirect to the account dashboard.
+          openMemberIdModal(memberId);
         }, 600);
       }
 
@@ -1248,6 +1269,73 @@
           closeCheckout();
           processRegistration();
         }, 1400);
+      });
+
+      /* ---------- Member ID credential modal (payment success) ---------- */
+      const midModal = document.getElementById('midModal');
+      const midIdbox = document.getElementById('midIdbox');
+      const midValue = document.getElementById('midValue');
+      const midCopyBtn = document.getElementById('midCopyBtn');
+      const midCopyLabel = document.getElementById('midCopyLabel');
+      let midCopyTimer = null;
+
+      function openMemberIdModal(memberId) {
+        midValue.textContent = memberId || '—';
+        resetMidCopyState();
+        midModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        document.getElementById('midGotBtn').focus();
+      }
+
+      function resetMidCopyState() {
+        clearTimeout(midCopyTimer);
+        midCopyBtn.classList.remove('is-copied');
+        midIdbox.classList.remove('is-copied');
+        midCopyLabel.textContent = 'Copy';
+      }
+
+      function markMidCopied() {
+        midCopyBtn.classList.add('is-copied');
+        midIdbox.classList.add('is-copied');
+        midCopyLabel.textContent = 'Copied';
+        clearTimeout(midCopyTimer);
+        midCopyTimer = setTimeout(resetMidCopyState, 2000);
+      }
+
+      // execCommand fallback for http:// and file:// previews where the
+      // async Clipboard API may be unavailable or permission-gated.
+      function midFallbackCopy(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+      }
+
+      midCopyBtn.addEventListener('click', () => {
+        const text = midValue.textContent.trim();
+        if (!text || text === '—') return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(markMidCopied, () => {
+            if (midFallbackCopy(text)) markMidCopied();
+          });
+        } else if (midFallbackCopy(text)) {
+          markMidCopied();
+        }
+      });
+
+      // Force-confirm: the only way out. Route to the login page and carry
+      // the new ID via ?mid= so the sign-in form pre-fills it.
+      document.getElementById('midGotBtn').addEventListener('click', () => {
+        const mid = midValue.textContent.trim();
+        midModal.style.display = 'none';
+        document.body.style.overflow = '';
+        location.href = 'login.html' + (mid && mid !== '—' ? '?mid=' + encodeURIComponent(mid) : '');
       });
 
       /* ---------- Apply i18n to static texts ---------- */

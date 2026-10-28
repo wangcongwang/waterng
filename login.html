@@ -304,8 +304,11 @@
       applyI18n();
 
       // Pre-fill the fixed demo member ID + password so http:// and file:// previews match.
+      // A ?mid= param (right after signup) overrides the demo prefill — the
+      // new member signs in with the ID they just saved.
+      const midParam = (new URLSearchParams(location.search).get('mid') || '').trim();
       const emailInput = document.querySelector('#signinForm input[name="email"]');
-      if (emailInput && !emailInput.value) emailInput.value = DEMO_ACCOUNT.memberId;
+      if (emailInput) emailInput.value = midParam || (emailInput.value || DEMO_ACCOUNT.memberId);
       const pwdInput = document.querySelector('#signinForm input[name="password"]');
       if (pwdInput && !pwdInput.value) pwdInput.value = 'aqua2026';
 

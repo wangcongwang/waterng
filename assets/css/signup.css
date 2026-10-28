@@ -475,3 +475,77 @@
   cursor: not-allowed;
   pointer-events: none;
 }
+
+/* ==========================================================================
+   Member ID credential modal — shown once after signup payment succeeds.
+   Force-confirm: no overlay / Esc dismissal, "Got it" is the only way out.
+   All values from elken-tokens — nothing hardcoded (system rule).
+   ========================================================================== */
+.mid-overlay {
+  position: fixed; inset: 0; z-index: 1200;
+  background: rgba(13, 20, 23, .5);
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--ek-24);
+}
+.mid-dialog {
+  width: 420px; max-width: 100%;
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius-lg);
+  box-shadow: var(--ek-shadow-lg);
+  padding: var(--ek-24);
+  font-family: var(--ek-font);
+}
+.mid-head { display: flex; align-items: flex-start; gap: var(--ek-12); }
+.mid-check {
+  width: 40px; height: 40px; flex: none;
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-success-tint); color: var(--ek-success);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.mid-title { margin: 0; font-size: var(--ek-h3); line-height: var(--ek-h3-lh); font-weight: var(--ek-w-bold); color: var(--ek-blue); }
+.mid-sub { margin: var(--ek-4) 0 0; font-size: var(--ek-small); line-height: 1.5; color: var(--ek-muted); }
+.mid-idbox {
+  margin-top: var(--ek-20);
+  background: var(--ek-surface-sunken);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  padding: var(--ek-16);
+  display: flex; align-items: center; justify-content: space-between; gap: var(--ek-12);
+}
+.mid-idlabel { margin: 0 0 var(--ek-4); font-size: var(--ek-caption); line-height: var(--ek-caption-lh); color: var(--ek-muted); }
+.mid-idvalue {
+  margin: 0; font-size: 22px; font-weight: var(--ek-w-bold);
+  letter-spacing: 1px; color: var(--ek-blue);
+  font-variant-numeric: var(--ek-num);
+  transition: color .2s var(--ease-out, ease);
+}
+.mid-copy {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; color: var(--ek-blue);
+  border: 1px solid var(--ek-border-strong);
+  border-radius: var(--ek-radius);
+  padding: 8px 14px; font-size: var(--ek-small); font-weight: var(--ek-w-medium);
+  font-family: inherit; cursor: pointer;
+  transition: all .2s var(--ease-out, ease);
+}
+.mid-copy:hover { background: var(--ek-grey-light); }
+.mid-copy.is-copied { background: var(--ek-success-tint); border-color: var(--ek-success); color: var(--ek-success); }
+.mid-copy .mid-ic-check { display: none; }
+.mid-copy.is-copied .mid-ic-copy { display: none; }
+.mid-copy.is-copied .mid-ic-check { display: block; }
+.mid-idbox.is-copied .mid-idvalue { color: var(--ek-success); }
+.mid-warn {
+  margin-top: var(--ek-16);
+  background: var(--ek-warning-tint); color: var(--ek-warning);
+  border-radius: var(--ek-radius);
+  padding: var(--ek-12) 14px;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.mid-warn-ic { flex: none; margin-top: 2px; }
+.mid-warn p { margin: 0; font-size: var(--ek-small); line-height: 1.5; }
+.mid-got { width: 100%; margin-top: var(--ek-20); min-height: 44px; }
+@media (max-width: 640px) {
+  .mid-idbox { flex-direction: column; align-items: stretch; text-align: center; }
+}
