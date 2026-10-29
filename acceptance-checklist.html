@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>系统功能验收清单 · Elken Demo</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --border:#e3e8ef; --text:#1f2937; --muted:#6b7280;
+    --primary:#0e7490; --primary-soft:#ecfeff; --ok:#059669; --ok-soft:#ecfdf5;
+    --warn:#b45309; --warn-soft:#fffbeb; --danger:#dc2626;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding-bottom:80px}
+  .wrap{max-width:960px;margin:0 auto;padding:24px 16px}
+  header.top{background:linear-gradient(135deg,#0e7490,#155e75);color:#fff;border-radius:14px;padding:24px 28px;margin-bottom:20px}
+  header.top h1{font-size:22px;margin-bottom:6px}
+  header.top p{font-size:13px;opacity:.85}
+  .progress-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:20px;position:sticky;top:8px;z-index:50;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+  .progress-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+  .progress-row .num{font-size:18px;font-weight:700;color:var(--primary)}
+  .bar{height:10px;background:#e5e7eb;border-radius:6px;overflow:hidden}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,#06b6d4,#0e7490);border-radius:6px;transition:width .3s}
+  .toolbar{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .toolbar button{border:1px solid var(--border);background:#fff;color:var(--text);padding:6px 14px;border-radius:8px;font-size:13px;cursor:pointer}
+  .toolbar button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .toolbar button:hover{border-color:var(--primary)}
+  .group{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;overflow:hidden}
+  .group-head{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;background:#fafbfc;border-bottom:1px solid var(--border)}
+  .group-head h2{font-size:15px;display:flex;align-items:center;gap:10px}
+  .group-head .cnt{font-size:12px;color:var(--muted);font-weight:400}
+  .group-head .cnt.done{color:var(--ok);font-weight:700}
+  .group-head .arrow{transition:transform .2s;color:var(--muted);font-size:12px}
+  .group.collapsed .arrow{transform:rotate(-90deg)}
+  .group.collapsed .cases{display:none}
+  .case{display:flex;gap:12px;padding:14px 20px;border-bottom:1px dashed var(--border)}
+  .case:last-child{border-bottom:none}
+  .case.done-case{background:var(--ok-soft)}
+  .case input[type=checkbox]{width:20px;height:20px;margin-top:3px;flex-shrink:0;cursor:pointer;accent-color:var(--ok)}
+  .case .body{flex:1;min-width:0}
+  .case .title{font-size:14px;font-weight:600}
+  .case.done-case .title{color:var(--muted);text-decoration:line-through}
+  .case .tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:10px;margin-left:8px;vertical-align:1px}
+  .tag.flow{background:var(--primary-soft);color:var(--primary)}
+  .tag.warn{background:var(--warn-soft);color:var(--warn)}
+  .tag.core{background:#eef2ff;color:#4338ca}
+  .case .steps{font-size:13px;color:var(--muted);margin-top:4px;white-space:pre-line}
+  .case .steps b{color:var(--text)}
+  .note{background:var(--warn-soft);border:1px solid #fde68a;border-radius:10px;padding:12px 16px;font-size:13px;color:var(--warn);margin-bottom:16px}
+  .footer-tip{text-align:center;font-size:12px;color:var(--muted);margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>✅ 系统功能验收清单（Elken Water Demo）</h1>
+    <p>按模块逐条校验：执行操作步骤 → 核对预期结果 → 勾选。勾选状态保存在本机浏览器，刷新不丢失。</p>
+  </header>
+
+  <div class="note">
+    ⚠️ 前置准备：建议用 <b>Chrome 打开本地站点</b>（如 http://localhost:8080）。涉及登录态/购物车的用例，可在任意页面 URL 后加
+    <b>?demo=member</b>（清除登录+订单）或 <b>?demo=guest</b>（进入游客模式）快速重置状态。数据存于 localStorage，必要时可在 DevTools → Application → Local Storage 清空重来。
+  </div>
+
+  <div class="progress-box">
+    <div class="progress-row">
+      <span class="num" id="numText">0 / 0</span>
+      <span style="font-size:13px;color:var(--muted)" id="pctText">0%</span>
+    </div>
+    <div class="bar"><i id="barFill" style="width:0%"></i></div>
+    <div class="toolbar">
+      <button id="fAll" class="active">全部</button>
+      <button id="fTodo">未完成</button>
+      <button id="fDone">已完成</button>
+      <button id="btnExpand" style="margin-left:auto">展开全部</button>
+      <button id="btnReset">重置所有勾选</button>
+    </div>
+  </div>
+
+  <div id="groups"></div>
+  <p class="footer-tip">验收清单 v1 · 覆盖 20 个模块 / 6 条主链路 · 数据仅存本机</p>
+</div>
+
+<script>
+const DATA = [
+{ g:"G0", name:"全局公共组件（所有页面共用）", cases:[
+  {id:"G0-01", tag:"core", t:"公共导航栏渲染", s:"打开 index.html / products.html 等任意普通页面\n→ 顶部导航（Logo、菜单、Sign in）与页脚完整显示，无错位"},
+  {id:"G0-02", tag:"core", t:"移动端抽屉菜单", s:"窗口缩窄（<900px）或手机访问\n→ 显示汉堡按钮；点击 → 抽屉滑出菜单，链接可跳转，可关闭"},
+  {id:"G0-03", t:"登录态归属条（未登录）", s:"清空 localStorage 后打开任意普通页\n→ 顶部条显示「此页面属于Wordpress页面」"},
+  {id:"G0-04", t:"登录态归属条（已登录）", s:"完成登录后再刷新页面\n→ 顶部条变为「此页面属于外部AE页面」"},
+  {id:"G0-05", t:"Cookie 同意条首次弹出", s:"清除 localStorage 后首次访问首页\n→ 约 0.6s 后底部弹出 Cookie 条，含 Accept / Reject / Customise"},
+  {id:"G0-06", t:"Cookie 选择持久化", s:"点击 Accept 后刷新页面\n→ Cookie 条不再弹出；DevTools 可见 al.cookies 已写入"},
+  {id:"G0-07", t:"语言按钮占位提示", s:"点击导航语言切换按钮\n→ 弹 toast「coming in Phase 2」，不发生语言切换"},
+  {id:"G0-08", t:"悬浮购物车按钮（登录态）", s:"登录状态下访问商品列表页\n→ 右下角出现悬浮购物车按钮，不与 WhatsApp 按钮重叠"},
+  {id:"G0-09", t:"悬浮车徽标实时同步", s:"在商品页点 Add to cart\n→ 悬浮车徽标数字立即 +1（toast 同步显示 N items）"},
+  {id:"G0-10", t:"Buy Now 登录闸门", s:"未登录状态访问 repeat-purchase.html，点商品卡上的按钮\n→ 按钮显示为 Buy Now（非 Add to cart），点击打开 login.html?next=<当前页>"},
+  {id:"G0-11", t:"data-loading 按钮状态", s:"点击带 loading 态的按钮（如登录提交）\n→ 按钮进入 loading 约 1.6s，期间不重复提交"},
+  {id:"G0-12", t:"?demo=member 重置", s:"登录后访问任意页 URL 加 ?demo=member\n→ 登录态与订单被清除，页面回到未登录表现"},
+]},
+{ g:"G1", name:"首页 index.html", cases:[
+  {id:"G1-01", t:"Hero 轮播自动播放", s:"打开首页静止等待 7 秒以上\n→ 幻灯片自动切换"},
+  {id:"G1-02", t:"轮播手动切换", s:"点击圆点指示器 / 左右箭头\n→ 立即切换到对应幻灯片"},
+  {id:"G1-03", t:"深色幻灯头部反白", s:"切换到深色背景幻灯片\n→ 顶部导航文字变为反白（header-on-dark）"},
+  {id:"G1-04", t:"产品范围卡跳转", s:"点击 Our Products 下 4 张范围卡\n→ 分别跳 products.html?category=health-wellness / wellness-devices / home-appliances / beauty-skincare"},
+  {id:"G1-05", t:"首页按钮跳转", s:"分别点击 View Our Products / About Elken / Read about the Elken business\n→ 分别跳 products.html、about.html、team-inquiry.html"},
+  {id:"G1-06", t:"WhatsApp 按钮", s:"点击 WhatsApp 悬浮按钮\n→ 新标签打开 wa.me/2349131178401（内嵌预览环境下降级为当前页跳转）"},
+  {id:"G1-07", t:"首页不读写登录数据", s:"未登录打开首页，检查 DevTools localStorage\n→ 无新增 al.auth / al.cart 等登录购物数据；首页无购物车入口"},
+]},
+{ g:"G2", name:"产品列表与详情", cases:[
+  {id:"G2-01", t:"products.html 范围选择", s:"打开 products.html（无参数）\n→ 只显示范围选择卡；点击卡片跳对应 products-*.html"},
+  {id:"G2-02", t:"类目页营销版导航", s:"打开任一 products-*.html\n→ 顶部归属条恒为「此页面属于Wordpress页面」，导航为未登录营销版"},
+  {id:"G2-03", t:"类目页 View product 跳转", s:"点击任一商品卡 View product\n→ 跳对应设计师详情页（如 product-calmag.html）"},
+  {id:"G2-04", t:"类目页 Buy Now 闸门", s:"点击类目页 Add to cart 位置\n→ 显示为 Buy Now，点击打开 login.html?next=<当前页>"},
+  {id:"G2-05", t:"?category 过滤", s:"打开 products.html?category=health-wellness\n→ 直接只显示健康保健类商品"},
+  {id:"G2-06", tag:"core", t:"详情页按参数渲染", s:"打开 product-detail.html?name=Elken%20Spirulina&category=health-wellness\n→ 标题/图片/价格/标签按目录渲染，浏览器标签页标题变为「Elken Spirulina · Elken」"},
+  {id:"G2-07", t:"BV 徽标显隐", s:"已登录（非游客）看详情页 vs 退出登录再看\n→ 登录时显示 Earn N BV 徽标；游客/未登录时 BV 行隐藏"},
+  {id:"G2-08", t:"DP 价格与 RP 划线价", s:"查看目录内商品价格区\n→ 显示 DP 会员价 + 划线 RP 零售价对比"},
+  {id:"G2-09", t:"未知商品 fallback", s:"打开 product-detail.html?name=不存在的商品\n→ 显示通用 fallback 详情，不报错白屏"},
+  {id:"G2-10", t:"Back 按钮返回来源", s:"从产品列表进入详情后点 Back\n→ 返回来源页；直接打开 URL 时回 products.html"},
+  {id:"G2-11", t:"Related Products 区", s:"详情页滑到底部\n→ 显示同类目其它商品，链接仍为 product-detail.html?name=…&category=…，可继续跳转"},
+  {id:"G2-12", t:"详情页 WhatsApp 预填文案", s:"点击详情页 WhatsApp\n→ 预填消息中包含当前商品名"},
+]},
+{ g:"G3", name:"登录 login.html", cases:[
+  {id:"G3-01", t:"演示账号预填", s:"打开 login.html\n→ Member ID 预填 NG09246375，密码预填 aqua2026"},
+  {id:"G3-02", t:"?mid 覆盖预填", s:"打开 login.html?mid=NG23374876\n→ Member ID 框显示 NG23374876"},
+  {id:"G3-03", t:"非法 Member ID 校验", s:"输入 12345 提交\n→ 字段下方出现格式错误提示，不提交"},
+  {id:"G3-04", t:"密码过短校验", s:"密码输入少于 6 位提交\n→ 显示密码错误提示"},
+  {id:"G3-05", tag:"core", t:"登录成功跳转 next", s:"用预填账号提交\n→ loading 后 toast 成功，跳转到 ?next= 指定页（无参数时默认 repeat-purchase.html）"},
+  {id:"G3-06", t:"登录清除游客标记", s:"先走游客流程（Shop now），再正常登录\n→ 登录后 guest 标记被清除，回到完整会员导航"},
+  {id:"G3-07", tag:"core", t:"Shop now 游客入口", s:"点击 Shop now\n→ 弹出市场选择弹窗（Nigeria / UAE 两张卡）"},
+  {id:"G3-08", t:"选市场进游客商店", s:"选 Nigeria\n→ 跳 guest-repeat-purchase.html?guest=1&country=NG，sessionStorage 写入 al.guestMode/al.guestCountry"},
+  {id:"G3-09", t:"Register 入口", s:"点击 Register\n→ 跳 signup.html"},
+  {id:"G3-10", t:"忘记密码占位", s:"点击 Forgot password?\n→ 仅弹 toast 提示，无重置流程"},
+  {id:"G3-11", t:"密码可见性切换", s:"点击密码框眼睛图标\n→ 密码在明文/密文间切换"},
+  {id:"G3-12", t:"登录页归属条", s:"查看顶部\n→ 恒显示「此页面属于外部AE页面」"},
+]},
+{ g:"G4", name:"注册 signup.html", cases:[
+  {id:"G4-01", tag:"core", t:"推荐人闸门", s:"直接打开 signup.html，不填 Referrer ID\n→ Basic Info 及以下各区块均隐藏，无法注册"},
+  {id:"G4-02", t:"合法推荐人解锁表单", s:"Referrer ID 输入 NG23374876\n→ 表单区块展开；国家字段自动继承推荐人国家并锁定；Member ID 自动生成（NG+8位）"},
+  {id:"G4-03", t:"非法推荐人提示", s:"输入格式非法的 ID\n→ 显示推荐人无效提示，表单不解锁"},
+  {id:"G4-04", t:"Order Level 联动商品区", s:"分别选 Silver / Gold\n→ 商品区按所选市场目录重新渲染"},
+  {id:"G4-05", t:"选品汇总实时更新", s:"点商品加减数量\n→ Subtotal / BV / Tax 汇总条实时变化"},
+  {id:"G4-06", t:"配送方式联动地址", s:"Delivery 选 Pickup vs Door\n→ Pickup 时地址区块隐藏；Door 时显示地区/城市/详细地址"},
+  {id:"G4-07", t:"支付方式 Phase 1 限制", s:"查看支付方式区\n→ 仅 Paystack 可选，其它渠道不显示"},
+  {id:"G4-08", tag:"core", t:"Paystack 测试收银台", s:"提交订单\n→ 先弹金额确认，再进测试收银台（Success / Bank Auth / Declined 三个按钮）"},
+  {id:"G4-09", t:"支付失败分支", s:"收银台点 Declined\n→ 页面显示红色支付失败提示，订单未创建"},
+  {id:"G4-10", tag:"core", t:"注册成功 Member ID 弹窗", s:"收银台点 Success 完成注册\n→ 弹出「Member ID」弹窗，可复制新 ID；点 Got it 跳 login.html?mid=<新ID>"},
+  {id:"G4-11", t:"新会员可当推荐人", s:"用新注册的 Member ID 作为 Referrer 再开一次注册流程\n→ 能通过推荐人校验并继承国家"},
+]},
+{ g:"G5", name:"会员复购列表 repeat-purchase.html", cases:[
+  {id:"G5-01", tag:"core", t:"登录后默认落地页", s:"直接打开 login.html 提交登录\n→ 落地 repeat-purchase.html，显示全目录商品卡（DP 价格 + BV 徽标）"},
+  {id:"G5-02", t:"View product 跳详情", s:"点任一商品卡\n→ 跳 product-detail.html?name=…&category=…"},
+  {id:"G5-03", tag:"core", t:"加入普通购物车", s:"点 Add to cart\n→ toast「…added to cart · N items」，写入 al.cart，悬浮车徽标 +1"},
+  {id:"G5-04", t:"?category 类目过滤", s:"打开 repeat-purchase.html?category=health-wellness\n→ 只显示该类目，页面标题变为类目名"},
+  {id:"G5-05", t:"悬浮车入口", s:"点右下角悬浮购物车\n→ 进入 cart.html（普通模式）"},
+  {id:"G5-06", t:"未登录闸门", s:"清登录态后访问本页\n→ Add to cart 全部变为 Buy Now"},
+]},
+{ g:"G6", name:"游客商店 guest-repeat-purchase.html", cases:[
+  {id:"G6-01", t:"精简导航", s:"从登录页 Shop now 进入\n→ 顶部导航整体隐藏，仅留悬浮车；归属条显示「此页面属于AE页面」"},
+  {id:"G6-02", t:"标题带市场名", s:"选 Nigeria 进入\n→ 标题显示 Shop Elken Nigeria.（选 UAE 则为 Shop Elken UAE.）"},
+  {id:"G6-03", t:"币制跟随市场", s:"分别用 NG / UAE 进入对比\n→ NG 显示 NGN 整数；UAE 显示 AED 两位小数；卡片无 BV"},
+  {id:"G6-04", t:"页内商品弹窗", s:"点 View product\n→ 弹窗显示 Retail Price、SKU、税率、含税税额、库存；Esc 或点遮罩可关闭"},
+  {id:"G6-05", tag:"core", t:"游客加购", s:"点 Add to cart\n→ 写入对应市场购物车，toast + 徽标更新"},
+  {id:"G6-06", t:"注册入口", s:"点底部 Create an account\n→ 跳 signup.html?next=repeat-purchase.html"},
+  {id:"G6-07", tag:"core", t:"换市场购物车隔离", s:"NG 下加购 1 件 → 返回登录页 Shop now 选 UAE\n→ UAE 商店购物车为空（al.cart 与 al.cart.ae 互不影响）"},
+]},
+{ g:"G7", name:"购物车 cart.html", cases:[
+  {id:"G7-01", t:"普通车行项目渲染", s:"加购后打开 cart.html\n→ 行项目含图片/单价/Remove/±数量/行小计；右侧汇总 Items/Subtotal/Total 正确"},
+  {id:"G7-02", t:"数量增减联动", s:"点 + / − / 手输数量 / Remove / Clear cart\n→ 汇总实时联动，无残留"},
+  {id:"G7-03", tag:"core", t:"member 模式独立车", s:"打开 cart.html?mode=member\n→ 标题变 Member Cart，读写 al.memberCart，与普通车互不混杂"},
+  {id:"G7-04", t:"Continue shopping 回商店", s:"普通模式点 Continue shopping\n→ 回 repeat-purchase.html；游客模式回 guest-repeat-purchase.html?guest=1"},
+  {id:"G7-05", tag:"core", t:"member 模式 restore 回跳", s:"从 member-repurchase.html 进车（URL 带 from），点 Continue shopping\n→ 回 <from>.html?restore=1，原会员与购物车内容均保留"},
+  {id:"G7-06", t:"自动维护 BV 门槛阻断", s:"member 车在 subtype=auto-maintenance 且 BV<90 时\n→ 显示 Auto-Maintenance requirement 卡，Proceed to checkout 禁用并提示 Add more products — needs at least 90 BV"},
+  {id:"G7-07", t:"升级目标级选择", s:"member 车在 subtype=upgrade\n→ 显示等级下拉（高于当前的 Silver/Gold），选级显示差额 BV；车 BV 不足则 checkout 禁用；选择写回 al.repeatMember.targetLevel"},
+  {id:"G7-08", t:"结算跳转带 mode", s:"member 车点 Proceed to checkout vs 普通车\n→ 分别跳 checkout.html?cart=1&mode=member 与 checkout.html?cart=1"},
+  {id:"G7-09", t:"空车状态", s:"清空购物车\n→ 空态插画 + Browse products 回对应商店；member 空车文案与普通不同"},
+  {id:"G7-10", t:"游客币制格式", s:"游客（UAE）模式看金额\n→ 按 al.guestCountry 以 AED 两位小数格式化"},
+]},
+{ g:"G8", name:"结算 checkout.html", cases:[
+  {id:"G8-01", t:"空车自动回退", s:"清空购物车后直接打开 checkout.html?cart=1\n→ 自动 location.replace 回 cart.html；member 模式回 cart.html?mode=member"},
+  {id:"G8-02", t:"单品直购模式", s:"打开 checkout.html?id=<pid>&qty=1\n→ 只含该单品，qty 支持 1–99"},
+  {id:"G8-03", t:"三步 Stepper 联动", s:"选择支付方式\n→ 步骤 1 变完成，步骤 2 高亮"},
+  {id:"G8-04", t:"已保存地址单选", s:"登录账号（已有地址）进入\n→ 显示只读地址单选列表，首个默认选中；无联系人卡（收件人/电话取自地址）"},
+  {id:"G8-05", t:"无地址引导", s:"登录账号但地址簿为空\n→ 显示 Go add address 链接，点击跳 account.html#add-address"},
+  {id:"G8-06", tag:"core", t:"游客结算表单", s:"游客流程进入结算\n→ 显示可编辑收货地址表单 + 联系人卡；Email 必填校验；配送方式选择不显示"},
+  {id:"G8-07", tag:"core", t:"member 模式会员信息卡", s:"打开 checkout.html?cart=1&mode=member\n→ 顶部 Member information 卡只读显示会员 ID+姓名（来自 al.repeatMember）；Contact 卡隐藏；含临时收货地址卡"},
+  {id:"G8-08", t:"报单中心 ID 自动填充", s:"本人登录为报单中心时进入 member 结算\n→ Reporting Center ID 自动填本人 ID 并锁定；升级单自动带出且锁定"},
+  {id:"G8-09", t:"自动维护结算二次校验", s:"auto-maintenance 单 BV<90\n→ checkout 页同样显示 ≥90 BV 要求卡，Pay 按钮禁用"},
+  {id:"G8-10", t:"升级差额校验", s:"upgrade 单\n→ 选目标级显示差额公式，车 BV≥差额才可提交"},
+  {id:"G8-11", t:"Paystack 失败分支", s:"收银台点 Declined\n→ 红色错误提示，订单未创建，可重试"},
+  {id:"G8-12", tag:"core", t:"下单成功跳转", s:"收银台点 Success\n→ 约 1.4s 后创建订单（al.orders），清空对应购物车与 al.repeatMember，跳 shipping.html?order=<id>"},
+  {id:"G8-13", t:"member 单来源标记", s:"member / auto-maintenance / upgrade 三种单下单后查 al.orders\n→ source 分别为 member-repeat-purchase / member-auto-maintenance / member-upgrade，且 memberId=被服务会员、operatorId=登录者"},
+  {id:"G8-14", t:"升级写回等级", s:"upgrade 单成功后\n→ al.memberLevels 写入新级别并派发 al:member-level-changed，账户中心同步反映"},
+]},
+{ g:"G9", name:"下单后 shipping.html", cases:[
+  {id:"G9-01", tag:"core", t:"订单详情渲染", s:"下单后落地 shipping.html?order=<id>\n→ 显示状态徽标、商品行、含税拆分、收货/支付/Member 卡，与 order.html 一致"},
+  {id:"G9-02", t:"无参数回退最近订单", s:"直接打开 shipping.html（无 ?order=）\n→ 显示最近一笔订单"},
+  {id:"G9-03", t:"订单不存在兜底", s:"打开 shipping.html?order=AQ-000000\n→ 显示 Order not found 卡 + Back to home"},
+  {id:"G9-04", t:"下载收据", s:"点 Download receipt\n→ 浏览器下载收据文件，内容含订单明细（登录态含 BV 行）"},
+  {id:"G9-05", t:"复制分享链接", s:"点 Copy\n→ 剪贴板获得 order.html?order=<id> 完整链接"},
+  {id:"G9-06", t:"邮件分享", s:"点 Send order link by email\n→ 打开 mailto 预填订单摘要；无邮箱时 toast 报错"},
+  {id:"G9-07", t:"游客单 Member 卡置空", s:"游客单落地\n→ Member 卡 ID/姓名显示 -"},
+]},
+{ g:"G10", name:"可分享订单页 order.html", cases:[
+  {id:"G10-01", t:"独立干净页面", s:"直接打开 order.html?order=<id>\n→ 无站点 header、无归属条"},
+  {id:"G10-02", t:"订单完整信息", s:"传入有效订单号\n→ Hero（订单号/状态徽标/总金额/payStatus）+ Items 行 + Subtotal/Tax(incl.)/Total 均正确"},
+  {id:"G10-03", t:"BV 行显隐", s:"登录会员看自己非游客单 vs 游客单\n→ 前者显示 BV earned 行，后者不显示"},
+  {id:"G10-04", t:"代下单标注", s:"打开 operatorId ≠ memberId 的订单\n→ 标注 Member order；自己的单标注 My order"},
+  {id:"G10-05", t:"三件套操作", s:"Download receipt / Copy / Send order link by email\n→ 行为与 shipping.html 一致"},
+  {id:"G10-06", t:"跨设备隔离", s:"用另一浏览器/隐身窗打开同一订单链接\n→ 显示 Order not found（数据仅存本机 localStorage，属预期）"},
+]},
+{ g:"G11", name:"账户中心 account.html", cases:[
+  {id:"G11-01", t:"三 Tab 切换", s:"点击 Overview / Orders / Profile\n→ 按 #overview / #orders / #profile 锚点切换，URL 同步"},
+  {id:"G11-02", t:"Bonus BV KPI", s:"查看 Bonus BV\n→ = 自购订单 BV + 推荐入账 BV（al.bvCredits）；点击可展开明细（含 Referral orders 行）"},
+  {id:"G11-03", t:"Ecoin KPI", s:"查看 Member Ecoin\n→ 读 al.ecoin 台账，显示余额与最近一笔 Earned/Spent 说明"},
+  {id:"G11-04", tag:"core", t:"Dashboard hub 入口", s:"逐一点击 hub 卡\n→ Member Repeat Purchase / Auto-Maintenance / Member Upgrade / Welcome Pack / Network 分别跳对应 member-* 页面"},
+  {id:"G11-05", t:"Referral 分享链接", s:"查看并复制 Referral 链接\n→ 链接带 ?ref=<我的ID>；他人经此链接下单后 BV 入账本会员"},
+  {id:"G11-06", t:"Orders Tab 列表", s:"切到 Orders\n→ 显示本账户订单（产品编码/数量/价格/BV/税），可下载收据；self 与 member 代下单分类展示"},
+  {id:"G11-07", t:"地址簿管理", s:"Profile 中新增/编辑/删除/设默认地址\n→ 全部生效并持久化（al.addresses）；新增地址可在 checkout 地址列表中看到"},
+  {id:"G11-08", t:"资料只读项", s:"查看 Profile\n→ Member ID 与国家（继承推荐人）只读不可改；级别展示读 al.memberLevels"},
+  {id:"G11-09", t:"演示数据播种", s:"空库首次进入\n→ 自动播种演示 Ecoin/订单（仅本页），刷新后仍在"},
+]},
+{ g:"G12", name:"会员代购 member-repurchase.html", cases:[
+  {id:"G12-01", tag:"core", t:"搜会员揭示商品区", s:"输入 NG23374876 点 Search\n→ 显示会员卡（头像/姓名/ID/级别）并展开商品区"},
+  {id:"G12-02", t:"非法 ID 报错", s:"输入非法格式 ID 点 Search\n→ 红色 alert「Invalid member ID…」，商品区不显示"},
+  {id:"G12-03", tag:"core", t:"独立会员购物车", s:"搜到会员后点商品 Add to cart\n→ 写入 al.memberCart（不混入 al.cart），toast + 悬浮徽标更新"},
+  {id:"G12-04", t:"切换会员清车", s:"搜会员 A 加购 → 再搜会员 B\n→ 会员 A 的 al.memberCart 被清空，不会串车"},
+  {id:"G12-05", tag:"core", t:"restore 链路完整", s:"会员加购 → 悬浮车进 cart → 结算或 Continue shopping 回跳 member-repurchase.html?restore=1\n→ 搜索框/会员卡/商品区自动恢复，且保留原车内容"},
+  {id:"G12-06", t:"直接打开清上下文", s:"不带参数直接打开本页\n→ al.repeatMember 与会员车被清空（防旧上下文泄漏）"},
+  {id:"G12-07", t:"兜底查找顺序", s:"依次试内置演示 ID → al.memberData 本人 → al.orders 中出现过的 ID → 乱造的合法格式 ID\n→ 分别命中：目录会员 / 本人 / 订单快照 / 合成 Member xxxxx 占位"},
+  {id:"G12-08", t:"悬浮车带 from 参数", s:"查看本页悬浮车链接\n→ 为 cart.html?mode=member&from=member-repurchase"},
+]},
+{ g:"G13", name:"会员升级 member-upgrade.html", cases:[
+  {id:"G13-01", t:"Gold 会员不可再升级", s:"搜 NG23374876（Gold）\n→ 黄色警告 already Gold — highest upgradeable level is Gold，商品区不显示"},
+  {id:"G13-02", t:"Silver 会员正常流程", s:"搜 NG09246375（Silver）\n→ 正常揭示商品区，可加购"},
+  {id:"G13-03", t:"差额校验闭环", s:"加购后进 member 购物车选目标级\n→ 车 BV ≥ 差额才允许 checkout，否则禁用"},
+  {id:"G13-04", tag:"core", t:"升级成功闭环", s:"完成升级单后，account.html 或 member-upgrade.html 再搜该会员\n→ 级别已更新；再搜时显示 already Gold，不可再升"},
+  {id:"G13-05", t:"restore 遇 Gold 丢弃", s:"restore=1 但缓存会员已达 Gold\n→ 丢弃上下文、清车，重新开始流程"},
+]},
+{ g:"G14", name:"会员自动维护 member-auto-maintenance.html", cases:[
+  {id:"G14-01", t:"90 BV 提示文案", s:"搜会员进入商品区\n→ 页面副标题与商品区提示均注明 total BV at least 90 BV"},
+  {id:"G14-02", tag:"core", t:"双重 BV 校验", s:"加购不足 90 BV，分别看 cart 页与 checkout 页\n→ 两处均阻断结算并提示"},
+  {id:"G14-03", t:"达标下单成功", s:"加购 ≥90 BV 完成支付\n→ 订单 source=member-auto-maintenance，正常落地 shipping.html"},
+]},
+{ g:"G15", name:"Welcome Pack member-welcome.html", cases:[
+  {id:"G15-01", t:"按市场渲染商品", s:"分别用 NG / AE 会员登录进入\n→ 商品区金额与币制随国家配置"},
+  {id:"G15-02", t:"汇总实时更新", s:"选商品+数量\n→ Subtotal/BV/Tax 汇总实时更新；支付方式仅 Paystack"},
+  {id:"G15-03", tag:"core", t:"下单成功跳转", s:"Paystack Success 提交\n→ 页内成功卡显示约 1.8s 后跳 order.html?order=<id>；订单已写入 al.orders/al.memberData"},
+]},
+{ g:"G16", name:"表单页 contact / become-a-distributor", cases:[
+  {id:"G16-01", t:"Contact 表单提交", s:"填写必填项提交\n→ 绿色成功提示 Thank you. Your message has been received…，表单重置（无后端，演示行为）"},
+  {id:"G16-02", tag:"warn", t:"Distributor 表单提交（已知疑点）", s:"become-a-distributor.html 填写并提交\n→ ⚠️ 该表单 data-form=distributor，demo-add.js 只处理 contact —— 需确认是否有 handler；若无响应需修复或确认预期"},
+  {id:"G16-03", t:"营销版导航", s:"查看两页导航\n→ 未登录营销版（Who We Are / Products / Distributor / Contact / FAQ）；页脚链接可达 faq/service/shipping 等"},
+  {id:"G16-04", t:"必填校验", s:"空表单直接提交\n→ 浏览器原生必填校验拦截"},
+]},
+{ g:"G17", name:"团队查询 team-inquiry.html", cases:[
+  {id:"G17-01", t:"Personal Details 表", s:"打开页面\n→ 显示本人（al.memberData 的 ID/姓名/状态/BV/PGS/TotalBV）；无数据时回退演示 NG09246375 David Okafor"},
+  {id:"G17-02", t:"Team Details 表", s:"查看团队表\n→ al.teamMembers 为空时回退 5 行演示团队；状态徽标按 ACTIVE/PENDING/INACTIVE 着色"},
+  {id:"G17-03", t:"计算时间", s:"刷新页面\n→ 底部 Latest calculation time 显示当前时间且随刷新变化"},
+]},
+{ g:"G18", name:"业务流程图集 business-flows.html", cases:[
+  {id:"G18-01", t:"独立页面风格", s:"打开页面\n→ 深色「业务流程图集」界面，与站点导航完全无关（不加载 app.js）"},
+  {id:"G18-02", t:"主题色切换", s:"切换 cyan / acid 主题\n→ 界面配色变化；刷新后保留（localStorage bf-accent）"},
+  {id:"G18-03", tag:"core", t:"流程图编辑器", s:"进入编辑态：添加/连线/删除节点、改标签/线型、撤销/重做\n→ 各操作正常；编辑内容持久化，刷新后保留"},
+  {id:"G18-04", t:"导出与重置", s:"导出 JSON / 复制当前配置 / Reset all\n→ 导出内容正确；Reset all 还原初始状态"},
+]},
+{ g:"G19", name:"静态内容页", cases:[
+  {id:"G19-01", t:"FAQ 分类切换", s:"打开 faq.html 点击各分类按钮\n→ 对应分类问答显示，其它隐藏"},
+  {id:"G19-02", t:"About 系列互跳", s:"依次访问 about / about-global-strength / about-leadership / about-journey / about-community\n→ 均正常渲染，相互跳转链接可达"},
+  {id:"G19-03", t:"法务页可达", s:"从页脚逐一点击 privacy / terms / refund / cookie / service 链接\n→ 均打开对应静态页，无 404、无资源加载错误（Console 无红字）"},
+  {id:"G19-04", t:"Cookie 页与 Cookie 条一致", s:"对比 cookie.html 内容与实际 Cookie 条\n→ 文案与选项一致"},
+  {id:"G19-05", t:"案例页入口", s:"打开 case-studies.html\n→ 静态案例列表正常渲染；抽屉菜单中有入口"},
+]},
+{ g:"G20", name:"横切场景（端到端主链路）", cases:[
+  {id:"G20-01", tag:"core", t:"链路① 游客全流程（NG）", s:"login → Shop now → 选 Nigeria → 加购 → cart → checkout 填地址 → Paystack Success → shipping.html\n→ 全程 NGN；订单归属 NG000000001；无 BV 行"},
+  {id:"G20-02", tag:"core", t:"链路② 游客全流程（UAE）", s:"同上但选 UAE\n→ 全程 AED 两位小数；订单归属 AE000000001；与 NG 车互不影响"},
+  {id:"G20-03", tag:"core", t:"链路③ 会员自购复购", s:"登录 → repeat-purchase 加购 → cart → checkout → 支付\n→ 订单含 BV；落地 shipping；account Orders 可见"},
+  {id:"G20-04", tag:"core", t:"链路④ 会员代购完整闭环", s:"member-repurchase 搜会员 → 加购 → cart?mode=member → checkout?mode=member → 支付\n→ 订单 memberId=被服务会员、operatorId=登录者、source=member-repeat-purchase；双方车均被清；restore 不残留"},
+  {id:"G20-05", tag:"core", t:"链路⑤ 升级完整闭环", s:"member-upgrade 搜 Silver 会员 → 加购 ≥ 差额 → 选 Gold → 支付\n→ 级别写回 al.memberLevels；再搜该会员显示 already Gold；account 级别同步"},
+  {id:"G20-06", tag:"core", t:"链路⑥ 自动维护闭环", s:"member-auto-maintenance 搜会员 → 加购 ≥90 BV → 支付\n→ source=member-auto-maintenance；<90 BV 全程被拦"},
+  {id:"G20-07", t:"残留上下文不污染", s:"完成一次 member 代购后，直接走普通游客下单\n→ 游客结算不出现会员信息卡（al.repeatMember 已清，member 模式才读取）"},
+  {id:"G20-08", t:"登录动作清游客态", s:"游客流程中途返回 login 正常登录\n→ guest 标记清除，导航恢复完整会员版"},
+  {id:"G20-09", t:"订单数据全链一致性", s:"同一订单在 shipping.html、order.html、account Orders 三处对比\n→ 金额/商品/状态/BV 完全一致"},
+]},
+];
+// ---------- render ----------
+const KEY='al.acceptance.v1';
+let state={};try{state=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){state={}}
+let filter='all';
+const groupsEl=document.getElementById('groups');
+function tagHtml(tag){
+  if(tag==='core')return '<span class="tag core">核心链路</span>';
+  if(tag==='flow')return '<span class="tag flow">流程</span>';
+  if(tag==='warn')return '<span class="tag warn">⚠️ 待确认</span>';
+  return '';
+}
+function render(){
+  let total=0,done=0,html='';
+  DATA.forEach(g=>{
+    const cases=g.cases;total+=cases.length;
+    const doneN=cases.filter(c=>state[c.id]).length;done+=doneN;
+    let visible=cases.filter(c=>filter==='all'||(filter==='done'&&state[c.id])||(filter==='todo'&&!state[c.id]));
+    if(!visible.length&&filter!=='all')return;
+    html+='<div class="group" id="grp-'+g.g+'"><div class="group-head" onclick="this.parentElement.classList.toggle(\'collapsed\')">'
+      +'<h2>'+g.name+' <span class="cnt '+(doneN===cases.length?'done':'')+'">'+doneN+'/'+cases.length+'</span></h2>'
+      +'<span class="arrow">▼</span></div><div class="cases">';
+    visible.forEach(c=>{
+      const d=!!state[c.id];
+      html+='<div class="case '+(d?'done-case':'')+'">'
+        +'<input type="checkbox" id="'+c.id+'" '+(d?'checked':'')+' onchange="toggle(\''+c.id+'\')">'
+        +'<div class="body"><div class="title">'+c.id+'　'+c.t+tagHtml(c.tag)+'</div>'
+        +'<div class="steps">'+c.s.replace(/\n/g,'<br>').replace(/【/g,'<b>【').replace(/】/g,'】</b>')+'</div></div></div>';
+    });
+    html+='</div></div>';
+  });
+  groupsEl.innerHTML=html||'<p style="text-align:center;color:var(--muted);padding:40px">该筛选条件下没有用例 🎉</p>';
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('numText').textContent=done+' / '+total;
+  document.getElementById('pctText').textContent=pct+'%';
+  document.getElementById('barFill').style.width=pct+'%';
+  if(done===total&&total>0){document.getElementById('pctText').textContent=pct+'% 🎉 全部通过';}
+}
+function toggle(id){state[id]=!state[id];if(!state[id])delete state[id];localStorage.setItem(KEY,JSON.stringify(state));render();}
+document.getElementById('fAll').onclick=()=>{filter='all';setF(0);render()};
+document.getElementById('fTodo').onclick=()=>{filter='todo';setF(1);render()};
+document.getElementById('fDone').onclick=()=>{filter='done';setF(2);render()};
+function setF(i){['fAll','fTodo','fDone'].forEach((id,k)=>document.getElementById(id).classList.toggle('active',k===i));}
+document.getElementById('btnReset').onclick=()=>{if(confirm('确定清除所有勾选记录？')){state={};localStorage.removeItem(KEY);render();}};
+document.getElementById('btnExpand').onclick=()=>{const c=document.querySelectorAll('.group.collapsed');if(c.length)c.forEach(g=>g.classList.remove('collapsed'));else document.querySelectorAll('.group').forEach(g=>g.classList.add('collapsed'));};
+render();
+</script>
+</body>
+</html>
