@@ -315,18 +315,42 @@
 .summary .qty-btn:hover { background: var(--ek-stat-2); border-color: var(--ek-aqua); }
 .summary .orderQty { background: var(--ek-stat-3); border-color: var(--ek-stat-2); color: var(--ek-white); }
 
-/* ---------- Place order button ---------- */
-/* .summary is a dark card (see the light-on-dark overrides above/below), but
-   #payBtn kept the default .ek-btn--primary look — brand navy on navy, so it
-   barely read as a button at all. Give it the same light-on-dark treatment
-   as the payment chips just below it. */
-.summary #payBtn { --btn-bg: var(--ek-white); --btn-ink: var(--ek-blue); --btn-border: transparent; }
-/* .ek-btn:hover (elken-ui.css) sets `background` as a literal declaration
-   (background: var(--ek-blue-hover)), not through --btn-bg, so merely
-   reassigning --btn-bg here does nothing — the hover state was falling
-   straight back to brand navy on navy. Set `background` explicitly instead;
-   the ID selector gives this enough specificity to win. */
-.summary #payBtn:hover { background: var(--ek-grey-light); color: var(--ek-blue); }
+/* ---------- Bottom action bar (Place order) ----------
+   The submit button used to sit inside the dark summary card, where it was
+   easy to miss. It now has its own full-width bar at the very bottom of the
+   page: Back to cart on the left, a large primary button on the right. */
+.checkout-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ek-16);
+  margin: var(--ek-8) 0 var(--ek-40);
+  padding: var(--ek-20) var(--ek-24);
+  background: var(--ek-surface-sunken);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+}
+.checkout-actions__back {
+  background: var(--ek-white);
+  color: var(--ek-blue);
+  border: 1px solid var(--ek-border-strong);
+  white-space: nowrap;
+}
+.checkout-actions__back:hover { background: var(--ek-grey-light); }
+.checkout-actions__go { flex: 0 1 420px; }
+.checkout-actions #payBtn {
+  width: 100%;
+  padding: var(--ek-16) var(--ek-32);
+  background: var(--ek-blue);
+  color: var(--ek-white);
+  border-color: var(--ek-blue);
+  font-size: var(--ek-h3);
+  font-weight: var(--ek-w-bold);
+  letter-spacing: .02em;
+  box-shadow: var(--ek-shadow);
+}
+.checkout-actions #payBtn:hover { background: var(--ek-blue-hover); border-color: var(--ek-blue-hover); color: var(--ek-white); }
+.checkout-actions #payBtn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
 
 /* ---------- Pay methods chip container in summary ---------- */
 .summary .pay-methods { display: flex; flex-wrap: wrap; gap: var(--ek-8); margin-top: var(--ek-12); }
@@ -379,6 +403,9 @@
   .deliv-method-grid { grid-template-columns: 1fr; }
   .pay-method-grid { grid-template-columns: 1fr 1fr; }
   .summary { position: static; }
+  .checkout-actions { flex-direction: column; align-items: stretch; }
+  .checkout-actions__back { text-align: center; }
+  .checkout-actions__go { flex: 1 1 auto; width: 100%; }
 }
 @media (max-width: 560px) {
   .pay-method-grid { grid-template-columns: 1fr; }

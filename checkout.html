@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
   <link rel="stylesheet" href="assets/css/water-pages.css?v=20260919d">
-  <link rel="stylesheet" href="assets/css/checkout.css?v=20261021c">
+  <link rel="stylesheet" href="assets/css/checkout.css?v=20261106a">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
 </head>
@@ -244,6 +244,13 @@
         </div>
 
         <aside class="ek-card summary" id="summary"></aside>
+      </div>
+
+      <!-- Bottom action bar: Place order sits at the very end of the page (not
+           buried inside the summary card), next to a Back to cart link. -->
+      <div class="checkout-actions" id="checkoutActions">
+        <a class="ek-btn checkout-actions__back" id="backToCart" href="cart.html">Back to cart</a>
+        <div class="checkout-actions__go" id="payBtnSlot"></div>
       </div>
     </div>
   </main>
@@ -585,9 +592,6 @@
         <div class="total"><span class="k">Total</span><span class="v" id="sumTotal">${totalText}</span></div>
         <div class="row"><span class="k">Shipping</span><span class="v">NGN 0</span></div>
         <div class="row method-row" id="summaryMethodRow"><span class="k">Method</span><span class="v" id="summaryMethod"></span></div>
-        <button class="ek-btn ek-btn--primary ek-btn--block ek-btn--lg" id="payBtn" disabled>
-          <span data-label>${window.T.tr('checkout.place_order')}</span>
-        </button>
         <div class="pay-methods">
           <span class="ek-chip">VISA</span>
           <span class="ek-chip">MC</span>
@@ -598,6 +602,15 @@
         </div>
         <p>By placing this order you agree to our Terms of Service and Refund Policy. Our team will contact you to confirm before dispatch.</p>
       `;
+      // Submit button lives in the bottom action bar, not in the summary card.
+      // Rebuilt here so bindPay() always binds a fresh button.
+      const slot = document.getElementById('payBtnSlot');
+      if (slot) slot.innerHTML = `
+        <button class="ek-btn ek-btn--primary ek-btn--lg" id="payBtn" disabled>
+          <span data-label>${window.T.tr('checkout.place_order')}</span>
+        </button>`;
+      const back = document.getElementById('backToCart');
+      if (back) back.href = state.memberMode ? 'cart.html?mode=member' : 'cart.html';
       const bankEl = document.getElementById('bankAmount');
       if (bankEl) bankEl.textContent = money(total);
       updateAccountBalanceDisplay();
