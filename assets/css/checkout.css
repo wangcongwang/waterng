@@ -318,11 +318,11 @@
 /* ---------- Bottom action bar (Place order) ----------
    The submit button used to sit inside the dark summary card, where it was
    easy to miss. It now has its own full-width bar at the very bottom of the
-   page: Back to cart on the left, a large primary button on the right. */
+   page: Back to cart and the large primary button side by side on the left. */
 .checkout-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: var(--ek-16);
   margin: var(--ek-8) 0 var(--ek-40);
   padding: var(--ek-20) var(--ek-24);
@@ -337,7 +337,8 @@
   white-space: nowrap;
 }
 .checkout-actions__back:hover { background: var(--ek-grey-light); }
-.checkout-actions__go { flex: 0 1 420px; }
+/* Both buttons sit together on the left, Back to cart first. */
+.checkout-actions__go { flex: 0 0 280px; }
 .checkout-actions #payBtn {
   width: 100%;
   padding: var(--ek-16) var(--ek-32);
