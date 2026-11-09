@@ -536,6 +536,26 @@
 .mid-copy.is-copied .mid-ic-copy { display: none; }
 .mid-copy.is-copied .mid-ic-check { display: block; }
 .mid-idbox.is-copied .mid-idvalue { color: var(--ek-success); }
+/* Automatic Welcome Message delivery confirmation ------------------------- */
+.mid-mail {
+  margin-top: var(--ek-16);
+  display: flex; align-items: center; gap: var(--ek-12);
+  padding: var(--ek-12) var(--ek-16);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  background: var(--ek-success-tint);
+}
+.mid-mail[hidden] { display: none; }
+.mid-mail__ic {
+  flex: none; width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-surface); color: var(--ek-success);
+}
+.mid-mail__title { margin: 0; font-size: var(--ek-small); font-weight: var(--ek-w-bold); color: var(--ek-success); }
+.mid-mail__meta { margin: var(--ek-4) 0 0; font-size: var(--ek-caption); line-height: var(--ek-caption-lh); color: var(--ek-neutral); overflow-wrap: anywhere; }
+.mid-mail__meta b { color: var(--ek-charcoal); }
+
 .mid-warn {
   margin-top: var(--ek-16);
   background: var(--ek-warning-tint); color: var(--ek-warning);
@@ -546,6 +566,14 @@
 .mid-warn-ic { flex: none; margin-top: 2px; }
 .mid-warn p { margin: 0; font-size: var(--ek-small); line-height: 1.5; }
 .mid-got { width: 100%; margin-top: var(--ek-20); min-height: 44px; }
+.mid-skip {
+  display: block; width: 100%;
+  margin-top: var(--ek-12); padding: var(--ek-4);
+  border: 0; background: transparent;
+  color: var(--ek-muted); font: inherit; font-size: var(--ek-small);
+  text-align: center; cursor: pointer;
+}
+.mid-skip:hover { color: var(--ek-aqua); }
 @media (max-width: 640px) {
   .mid-idbox { flex-direction: column; align-items: stretch; text-align: center; }
 }

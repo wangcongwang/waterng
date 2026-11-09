@@ -344,9 +344,11 @@
   </div>
 
   <!-- ====== Member ID credential modal (payment success · force-confirm) ======
-       Shown once after the Paystack checkout succeeds. The overlay cannot be
-       clicked or Esc-dismissed — "Got it" is the only way out, and it routes
-       to the login page so the new member signs in with the ID they saved. -->
+       Shown once after the Paystack checkout succeeds. By this point the
+       automatic Welcome Message has already been sent to the member's
+       registered email. The overlay cannot be clicked or Esc-dismissed:
+       "View welcome message" opens welcome.html (which links to sign-in),
+       while "Skip and sign in" goes straight to login.html?mid=… . -->
   <div class="mid-overlay" id="midModal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="midTitle" aria-describedby="midDesc">
     <div class="mid-dialog">
       <div class="mid-head">
@@ -355,7 +357,7 @@
         </span>
         <div>
           <p class="mid-title" id="midTitle">Payment Successful</p>
-          <p class="mid-sub" id="midDesc">Your member account has been created. Please keep your Member ID safe.</p>
+          <p class="mid-sub" id="midDesc">Your account is created and your Welcome Message is on its way. Keep your Member ID safe.</p>
         </div>
       </div>
       <div class="mid-idbox" id="midIdbox">
@@ -369,11 +371,24 @@
           <span id="midCopyLabel">Copy</span>
         </button>
       </div>
+      <!-- Automatic Welcome Message confirmation. The message is composed and
+           sent by WelcomeMail.send() during processRegistration(), before this
+           dialog opens — so the member always sees the delivery result here. -->
+      <div class="mid-mail" id="midMail" hidden>
+        <span class="mid-mail__ic" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 15.5l2.2 2.2L16 12"/></svg>
+        </span>
+        <div>
+          <p class="mid-mail__title">Welcome email sent</p>
+          <p class="mid-mail__meta">Your registration details and account information were sent to <b id="midMailTo">—</b>.</p>
+        </div>
+      </div>
       <div class="mid-warn">
         <svg class="mid-warn-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8V13M12 16.5V17M10.3 3.9L2.8 17a2 2 0 001.7 3h15a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         <p>Your Member ID is your login credential — you will need it every time you sign in. It cannot be recovered if lost. Screenshot or write it down now.</p>
       </div>
-      <button type="button" class="ek-btn mid-got" id="midGotBtn">Got it</button>
+      <button type="button" class="ek-btn mid-got" id="midGotBtn">View welcome message</button>
+      <button type="button" class="mid-skip" id="midSkipBtn">Skip and sign in</button>
     </div>
   </div>
 
@@ -476,6 +491,7 @@
   <script src="assets/js/website.js?v=20261021id"></script>
   <script src="assets/js/qr.js?v=20260915a"></script>
   <script src="assets/js/payment-methods.js?v=20261021c"></script>
+  <script src="assets/js/welcome-mail.js?v=20261109a"></script>
   <script>
     (function() {
       'use strict';
@@ -1217,9 +1233,24 @@
           submitBtn.textContent = tr('signup.success_done') || 'Registration Complete!';
           submitBtn.style.background = 'var(--ek-blue)';
 
+          // --- Automatic Welcome Message -----------------------------------
+          // Registration is complete: compose and send the welcome email to the
+          // address the member provided. welcome.html reads the delivered copy
+          // back from the outbox. Passwords are deliberately excluded — see
+          // assets/js/welcome-mail.js for the real mail-service hook.
+          if (window.WelcomeMail && window.WelcomeMail.send) {
+            window.WelcomeMail.send(userData, {
+              id: orderId,
+              total: orderTotal,
+              totalLabel: money(orderTotal),
+              currency: order.currency,
+              itemCount: orderItems.reduce(function (n, it) { return n + (Number(it.qty) || 1); }, 0),
+              paymentLabel: order.paymentLabel
+            });
+          }
+
           // Payment succeeded — show the Member ID credential modal (force-
-          // confirm). "Got it" routes to the login page (login.html?mid=…),
-          // replacing the old auto-redirect to the account dashboard.
+          // confirm), now with the Welcome Message delivery confirmation.
           openMemberIdModal(memberId);
         }, 600);
       }
@@ -1282,6 +1313,14 @@
       function openMemberIdModal(memberId) {
         midValue.textContent = memberId || '—';
         resetMidCopyState();
+        // Confirm the automatic Welcome Message delivery to the registered email.
+        const mail = (window.WelcomeMail && window.WelcomeMail.get)
+          ? window.WelcomeMail.get() : null;
+        const mailBox = document.getElementById('midMail');
+        if (mail && mailBox) {
+          document.getElementById('midMailTo').textContent = mail.to || '—';
+          mailBox.hidden = false;
+        }
         midModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
         document.getElementById('midGotBtn').focus();
@@ -1329,12 +1368,21 @@
         }
       });
 
-      // Force-confirm: the only way out. Route to the login page and carry
-      // the new ID via ?mid= so the sign-in form pre-fills it.
-      document.getElementById('midGotBtn').addEventListener('click', () => {
-        const mid = midValue.textContent.trim();
+      // Force-confirm routes through the welcome page so the new member sees
+      // the Welcome Message that was just delivered (and its account details).
+      // The secondary "Skip and sign in" keeps the original direct sign-in path.
+      function closeMemberIdModal() {
         midModal.style.display = 'none';
         document.body.style.overflow = '';
+      }
+      document.getElementById('midGotBtn').addEventListener('click', () => {
+        const mid = midValue.textContent.trim();
+        closeMemberIdModal();
+        location.href = 'welcome.html' + (mid && mid !== '—' ? '?mid=' + encodeURIComponent(mid) : '');
+      });
+      document.getElementById('midSkipBtn').addEventListener('click', () => {
+        const mid = midValue.textContent.trim();
+        closeMemberIdModal();
         location.href = 'login.html' + (mid && mid !== '—' ? '?mid=' + encodeURIComponent(mid) : '');
       });
 

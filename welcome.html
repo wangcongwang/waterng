@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Welcome to Elken · Your member account is ready</title>
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23202259' d='M12 3C8 9 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6-6-12z'/></svg>" />
+
+  <link rel="stylesheet" href="assets/css/elken-tokens.css">
+  <link rel="stylesheet" href="assets/css/elken-base.css">
+  <link rel="stylesheet" href="assets/css/elken-ui.css?v=20260919a">
+  <link rel="stylesheet" href="assets/css/elken-marketing.css">
+  <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
+  <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
+  <link rel="stylesheet" href="assets/css/welcome.css?v=20261109a">
+  <script src="assets/js/elken-ui.js" defer></script>
+</head>
+<body data-page="welcome">
+  <div id="app-header" class="ek-site-header"></div>
+  <div id="offline-banner" class="offline-banner">Connection status</div>
+
+  <main id="main">
+
+    <!-- Same gradient section banner as every other member page -->
+    <section class="sec-banner sec-banner--gradient sec-banner--short welcome-banner">
+      <div class="sec-banner__glow" aria-hidden="true"></div>
+      <div class="sec-banner__inner">
+        <div class="sec-banner__crumb">
+          <nav class="ek-breadcrumb" aria-label="Breadcrumb">
+            <a href="index.html">Home</a><span aria-hidden="true">/</span>
+            <a href="account.html">My Account</a><span aria-hidden="true">/</span>
+            <span aria-current="page">Welcome</span>
+          </nav>
+        </div>
+        <div class="sec-banner__copy">
+          <h1 class="ek-h1">Welcome to <span class="t-accent">Elken.</span></h1>
+          <p class="sec-banner__sub">You're officially a member. We've automatically sent your registration details and account information to the email address you registered with.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec-pad welcome-section">
+      <div class="welcome-container">
+
+        <!-- Shown only when no real registration exists in this browser.
+             Sample content lives in memory only — nothing is written to
+             localStorage and it never enters the business flow. -->
+        <div class="wm-preview" id="wmPreview" hidden>
+          <span class="wm-preview__tag">Preview</span>
+          <p>Showing a sample Welcome Message. Complete a registration to see your own details and delivery status here.</p>
+          <a class="ek-btn ek-btn--secondary ek-btn--sm" href="signup.html">Create an account</a>
+        </div>
+
+        <!-- Automatic delivery confirmation -->
+        <div class="wm-status" id="wmStatus">
+          <span class="wm-status__ic" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 15.5l2.2 2.2L16 12"/></svg>
+          </span>
+          <div class="wm-status__copy">
+            <p class="wm-status__title" id="wmStatusTitle">Welcome email delivered</p>
+            <p class="wm-status__meta" id="wmStatusMeta"></p>
+          </div>
+          <div class="wm-status__act">
+            <button type="button" class="ek-btn ek-btn--secondary ek-btn--sm" id="wmResendBtn">Resend email</button>
+          </div>
+        </div>
+
+        <div class="welcome-layout">
+
+          <!-- ================= Welcome Message (email preview) ================= -->
+          <article class="wm-mail" aria-label="Welcome email">
+            <div class="wm-mail__toolbar">
+              <span class="wm-mail__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="wm-mail__folder">Inbox</span>
+              <span aria-hidden="true">/</span>
+              <span>Welcome Message</span>
+              <button type="button" class="wm-mail__toolbar-act" id="wmPrintBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 15h12v6H6z"/></svg>
+                Save as PDF
+              </button>
+            </div>
+
+            <dl class="wm-mail__headers">
+              <dt>From</dt><dd data-wm="from">Elken Member Care &lt;no-reply@elken.com&gt;</dd>
+              <dt>To</dt><dd data-wm="to">—</dd>
+              <dt>Subject</dt><dd class="wm-mail__subject" data-wm="subject">—</dd>
+              <dt>Sent</dt><dd><span data-wm="sentAt">—</span> &nbsp; <span class="wm-mail__delivered" id="wmDeliveredTag">✓ Delivered</span></dd>
+            </dl>
+
+            <div class="wm-mail__brand">
+              <span class="wm-mail__brand-mark" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--ek-pink)"><path d="M12 2C8 8.5 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6.5-6-13z"/></svg>
+              </span>
+              <div>
+                <div class="wm-mail__brand-name">ELKEN</div>
+                <div class="wm-mail__brand-sub">Member Care · Welcome Programme</div>
+              </div>
+              <div class="wm-mail__brand-side" data-wm="messageId">—</div>
+            </div>
+
+            <div class="wm-mail__body">
+              <p class="wm-mail__eyebrow">Welcome Message · Automatically sent after registration</p>
+              <h2 class="wm-mail__title">Welcome aboard, <span data-wm="firstName">member</span>!</h2>
+              <p class="wm-mail__lead">Your <strong>Elken membership is now active</strong>. Below is a copy of the registration details and account information we hold for you. Please keep this email for your records — you will need your Member ID every time you sign in.</p>
+
+              <h3 class="wm-mail__h">Your registration details</h3>
+              <div class="wm-kv">
+                <div class="wm-kv__row"><span class="wm-kv__k">Member ID</span><span class="wm-kv__v"><span class="wm-kv__id" data-wm="memberId">—</span><button type="button" class="wm-kv__copy" id="wmCopyId">Copy</button></span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Member name</span><span class="wm-kv__v" data-wm="name">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Registered email</span><span class="wm-kv__v" data-wm="email">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Phone number</span><span class="wm-kv__v" data-wm="phone">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Country / Market</span><span class="wm-kv__v" data-wm="country">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Preferred language</span><span class="wm-kv__v" data-wm="language">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Member level</span><span class="wm-kv__v" data-wm="level">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Referrer ID</span><span class="wm-kv__v" data-wm="referrerId">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Stockist ID</span><span class="wm-kv__v" data-wm="centerId">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Registration date</span><span class="wm-kv__v" data-wm="registeredAt">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Starter order</span><span class="wm-kv__v" data-wm="orderId">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Order total</span><span class="wm-kv__v" data-wm="orderTotal">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Payment method</span><span class="wm-kv__v" data-wm="paymentLabel">—</span></div>
+              </div>
+
+              <h3 class="wm-mail__h">Your account information</h3>
+              <div class="wm-kv">
+                <div class="wm-kv__row"><span class="wm-kv__k">Login account</span><span class="wm-kv__v">Your Member ID — <span class="wm-kv__id" data-wm="loginId">—</span></span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Login password</span><span class="wm-kv__v" data-wm="loginPassword">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Payment password</span><span class="wm-kv__v" data-wm="paymentPassword">—</span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Sign-in page</span><span class="wm-kv__v"><a data-wm-href="loginUrl" href="login.html">Member sign in</a></span></div>
+                <div class="wm-kv__row"><span class="wm-kv__k">Member dashboard</span><span class="wm-kv__v"><a data-wm-href="accountUrl" href="account.html">My Account</a></span></div>
+              </div>
+
+              <div class="wm-note">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 8V13M12 16.5V17M10.3 3.9L2.8 17a2 2 0 001.7 3h15a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>
+                <p><b>Keep your account safe.</b> For your security we never send passwords by email. Your Member ID is your login credential — never share it, and remember that Elken staff will never ask for your password or payment PIN.</p>
+              </div>
+              <div class="wm-note wm-note--info">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/></svg>
+                <p><b>Not you?</b> This message was sent automatically because a new member account was registered with this address. If you did not register, contact Member Care right away.</p>
+              </div>
+
+              <div class="wm-mail__cta">
+                <a class="ek-btn ek-btn--primary ek-btn--lg" data-wm-href="loginUrl" href="login.html" id="wmSigninBtn">Sign in to your account</a>
+                <p class="wm-mail__cta-note">Your Member ID is pre-filled for you on the sign-in page.</p>
+              </div>
+            </div>
+
+            <div class="wm-mail__foot">
+              <div>This message was sent automatically to <span data-wm="toFoot">—</span> after a successful member registration.</div>
+              <div class="wm-mail__foot-links">
+                <a href="privacy.html">Privacy policy</a>
+                <a href="terms.html">Terms</a>
+                <a href="faq.html">Help centre</a>
+                <a href="contact.html">Contact Member Care</a>
+              </div>
+              <div style="margin-top: var(--ek-8)">© Elken. All rights reserved.</div>
+            </div>
+          </article>
+
+          <!-- ================= Right column ================= -->
+          <aside class="wm-side">
+            <div class="wm-card">
+              <h2 class="wm-card__title">Getting started</h2>
+              <p class="wm-card__sub">Three quick steps to make the most of your membership.</p>
+              <ol class="wm-steps">
+                <li class="wm-step">
+                  <span class="wm-step__num">1</span>
+                  <div>
+                    <p class="wm-step__t">Save your Member ID</p>
+                    <p class="wm-step__d">It's your login credential. Copy it from the email above and keep it somewhere safe.</p>
+                  </div>
+                </li>
+                <li class="wm-step">
+                  <span class="wm-step__num">2</span>
+                  <div>
+                    <p class="wm-step__t">Sign in & check your profile</p>
+                    <p class="wm-step__d">Confirm your contact details and delivery address in My Account.</p>
+                  </div>
+                </li>
+                <li class="wm-step">
+                  <span class="wm-step__num">3</span>
+                  <div>
+                    <p class="wm-step__t">Track your starter order</p>
+                    <p class="wm-step__d">Follow your first order and see your membership benefits.</p>
+                  </div>
+                </li>
+              </ol>
+              <a class="ek-btn ek-btn--primary ek-btn--block" data-wm-href="loginUrl" href="login.html">Sign in now</a>
+              <a class="ek-btn ek-btn--secondary ek-btn--block" href="order.html">View my orders</a>
+            </div>
+
+            <div class="wm-card">
+              <h2 class="wm-card__title">Message details</h2>
+              <p class="wm-card__sub">Delivery record for this Welcome Message.</p>
+              <div class="wm-help__row"><span>Trigger</span><b data-wm="channel">—</b></div>
+              <div class="wm-help__row"><span>Recipient</span><b data-wm="to">—</b></div>
+              <div class="wm-help__row"><span>Delivered</span><b data-wm="sentAt">—</b></div>
+              <div class="wm-help__row"><span>Message ID</span><b data-wm="messageId">—</b></div>
+              <a class="ek-btn ek-btn--secondary ek-btn--block" href="account.html">Back to My Account</a>
+            </div>
+
+            <div class="wm-card">
+              <h2 class="wm-card__title">Need a hand?</h2>
+              <p class="wm-card__sub">Member Care is here if anything in this email looks wrong.</p>
+              <div class="wm-help__row"><span>Help centre</span><b><a href="faq.html">FAQ</a></b></div>
+              <div class="wm-help__row"><span>Contact</span><b><a href="contact.html">Contact us</a></b></div>
+              <div class="wm-help__row"><span>Email not arriving?</span><b><a href="#" id="wmResendLink">Resend it</a></b></div>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="app-footer" class="ek-site-footer"></div>
+
+  <script src="assets/i18n/strings.js?v=20261021id"></script>
+  <script src="assets/js/app.js?v=20261021id"></script>
+  <script src="assets/js/website.js?v=20261021id"></script>
+  <script src="assets/js/welcome-mail.js?v=20261109a"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      /* In-memory sample used ONLY when no real registration exists in this
+         browser, so the page design is visible on a first visit. It is never
+         persisted and never used by the registration flow. */
+      var SAMPLE = {
+        messageId: 'WM-SAMPLE',
+        to: 'new.member@example.com',
+        from: 'Elken Member Care <no-reply@elken.com>',
+        subject: 'Welcome to Elken — your member account is ready',
+        sentAt: Date.now(),
+        status: 'delivered',
+        channel: 'Registration auto-send',
+        member: {
+          id: 'NG12345678', name: 'Alex Johnson', firstName: 'Alex',
+          email: 'new.member@example.com', phone: '+234 800 000 0000',
+          country: 'Nigeria', language: 'English', level: 'Gold Card',
+          referrerId: 'NG000000001', centerId: 'NG66051653',
+          registeredAt: Date.now()
+        },
+        account: {
+          loginId: 'NG12345678',
+          loginUrl: 'login.html?mid=NG12345678',
+          passwordSet: true, paymentPasswordSet: true,
+          accountUrl: 'account.html'
+        },
+        order: {
+          id: 'ORD-SAMPLE', total: 'NGN 0', itemCount: 0,
+          paymentLabel: 'Account Balance'
+        }
+      };
+
+      var mail = (window.WelcomeMail && window.WelcomeMail.get()) || null;
+      var isPreview = !mail;
+      if (isPreview) mail = SAMPLE;
+
+      function fmtDate(ts) {
+        var d = new Date(Number(ts) || Date.now());
+        if (isNaN(d.getTime())) return '—';
+        return d.toLocaleString('en-GB', {
+          day: '2-digit', month: 'short', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        });
+      }
+      function dash(v) { return (v === undefined || v === null || v === '') ? '—' : String(v); }
+
+      function render(data) {
+        var m = data.member || {}, a = data.account || {}, o = data.order || {};
+        var values = {
+          from: data.from, to: data.to, toFoot: data.to,
+          subject: data.subject, sentAt: fmtDate(data.sentAt),
+          messageId: data.messageId, channel: data.channel,
+          firstName: m.firstName || 'member',
+          memberId: m.id, name: m.name, email: m.email, phone: m.phone,
+          country: m.country, language: m.language, level: m.level,
+          referrerId: m.referrerId, centerId: m.centerId,
+          registeredAt: fmtDate(m.registeredAt),
+          orderId: o.id ? (o.id + (o.itemCount ? ' · ' + o.itemCount + ' item(s)' : '')) : '—',
+          orderTotal: o.total, paymentLabel: o.paymentLabel,
+          loginId: a.loginId,
+          loginPassword: a.passwordSet ? 'Set at registration — not sent by email' : 'Not set',
+          paymentPassword: a.paymentPasswordSet ? 'Set at registration — not sent by email' : 'Not set'
+        };
+        document.querySelectorAll('[data-wm]').forEach(function (el) {
+          var v = values[el.dataset.wm];
+          if (v !== undefined) el.textContent = dash(v);
+        });
+        document.querySelectorAll('[data-wm-href]').forEach(function (el) {
+          var key = el.dataset.wmHref;
+          var map = { loginUrl: a.loginUrl, accountUrl: a.accountUrl };
+          if (map[key]) el.setAttribute('href', map[key]);
+        });
+
+        var statusTitle = document.getElementById('wmStatusTitle');
+        var statusMeta = document.getElementById('wmStatusMeta');
+        var status = document.getElementById('wmStatus');
+        var resendBtn = document.getElementById('wmResendBtn');
+        var deliveredTag = document.getElementById('wmDeliveredTag');
+
+        if (isPreview) {
+          document.getElementById('wmPreview').hidden = false;
+          statusTitle.textContent = 'Welcome Message — delivery preview';
+          statusMeta.innerHTML = 'This is how the automatic email looks once a member registers. No message has been sent in this browser yet.';
+          status.style.background = 'var(--ek-info-tint)';
+          status.style.color = 'var(--ek-info)';
+          statusTitle.style.color = 'var(--ek-info)';
+          status.querySelector('.wm-status__ic').style.color = 'var(--ek-info)';
+          resendBtn.hidden = true;
+          deliveredTag.hidden = true;
+        } else {
+          document.getElementById('wmPreview').hidden = true;
+          statusTitle.textContent = 'Welcome email delivered';
+          statusMeta.textContent = '';
+          var b = document.createElement('b');
+          b.textContent = dash(data.to);
+          statusMeta.appendChild(document.createTextNode('Sent automatically to '));
+          statusMeta.appendChild(b);
+          statusMeta.appendChild(document.createTextNode(' · ' + fmtDate(data.sentAt) + ' · ' + dash(data.messageId)));
+          resendBtn.hidden = false;
+          deliveredTag.hidden = false;
+        }
+      }
+
+      render(mail);
+
+      /* Resend — refreshes the delivery timestamp and updates the UI. */
+      function resend(ev) {
+        if (ev) ev.preventDefault();
+        if (isPreview) {
+          if (window.toast) window.toast('Complete a registration to send a real Welcome Message.', 'info');
+          return;
+        }
+        var fresh = window.WelcomeMail.resend();
+        if (!fresh) return;
+        render(fresh);
+        if (window.toast) window.toast('Welcome email resent to ' + fresh.to, 'success');
+      }
+      document.getElementById('wmResendBtn').addEventListener('click', resend);
+      document.getElementById('wmResendLink').addEventListener('click', resend);
+      document.getElementById('wmPrintBtn').addEventListener('click', function () { window.print(); });
+
+      /* Copy the Member ID — async Clipboard API with a file:// fallback. */
+      var copyBtn = document.getElementById('wmCopyId');
+      function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+        return ok;
+      }
+      copyBtn.addEventListener('click', function () {
+        var id = (mail.member && mail.member.id) || '';
+        if (!id) return;
+        var done = function () {
+          copyBtn.textContent = 'Copied';
+          if (window.toast) window.toast('Member ID copied', 'success');
+          setTimeout(function () { copyBtn.textContent = 'Copy'; }, 2000);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(id).then(done, function () { if (fallbackCopy(id)) done(); });
+        } else if (fallbackCopy(id)) { done(); }
+      });
+    })();
+  </script>
+</body>
+</html>
