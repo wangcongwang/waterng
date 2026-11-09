@@ -357,6 +357,16 @@
   }
 
   function renderHeader(active) {
+    /* AE-side pages own a SEPARATE navigation: assets/js/ae-nav.js renders
+       into #ae-header with .ae-* classes and its own login-state handling.
+       Never render the WordPress/marketing header here as well — that would
+       produce two headers and let the two systems share one implementation.
+       Declared with <body data-ae-nav="true">. */
+    if (document.body && document.body.dataset.aeNav === 'true') {
+      const marketingHost = document.getElementById('app-header');
+      if (marketingHost) marketingHost.innerHTML = '';
+      return;
+    }
     /* Standalone pages (order.html — the shareable "Order details link"
        landing page) never render the site chrome, whoever opens them and
        however they arrive (guest flow, copied link, member from account). */
