@@ -73,7 +73,6 @@
               <p class="wm-idcard__label">Your Member ID · login credential</p>
               <div class="wm-idcard__idrow">
                 <span class="wm-idcard__id" data-wm="memberId">—</span>
-                <button type="button" class="wm-idcard__copy" id="wmCopyId">Copy</button>
               </div>
             </div>
             <div class="wm-idcard__badge">
@@ -262,32 +261,6 @@
         window.toast('Welcome email resent to ' + fresh.to);
       });
 
-      /* Copy the Member ID — async Clipboard API with a file:// fallback. */
-      var copyBtn = document.getElementById('wmCopyId');
-      function fallbackCopy(text) {
-        var ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        var ok = false;
-        try { ok = document.execCommand('copy'); } catch (e) {}
-        document.body.removeChild(ta);
-        return ok;
-      }
-      copyBtn.addEventListener('click', function () {
-        var id = (mail.member && mail.member.id) || '';
-        if (!id) return;
-        var done = function () {
-          copyBtn.textContent = 'Copied';
-          window.toast('Member ID copied');
-          setTimeout(function () { copyBtn.textContent = 'Copy'; }, 2000);
-        };
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(id).then(done, function () { if (fallbackCopy(id)) done(); });
-        } else if (fallbackCopy(id)) { done(); }
-      });
     })();
   </script>
 </body>

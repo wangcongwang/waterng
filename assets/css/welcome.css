@@ -174,7 +174,7 @@
   text-transform: uppercase;
   opacity: .72;
 }
-.wm-idcard__idrow { display: flex; align-items: center; gap: var(--ek-12); flex-wrap: wrap; }
+.wm-idcard__idrow { display: flex; align-items: center; }
 .wm-idcard__id {
   font-size: clamp(28px, 4vw, 40px);
   font-weight: var(--ek-w-bold);
@@ -182,18 +182,6 @@
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
 }
-.wm-idcard__copy {
-  padding: var(--ek-4) var(--ek-12);
-  border: 1px solid rgba(255, 255, 255, .4);
-  border-radius: var(--ek-radius-sm);
-  background: transparent;
-  color: var(--ek-white);
-  font: inherit;
-  font-size: var(--ek-caption);
-  font-weight: var(--ek-w-bold);
-  cursor: pointer;
-}
-.wm-idcard__copy:hover { background: rgba(255, 255, 255, .12); }
 .wm-idcard__badge {
   display: inline-flex;
   align-items: center;
