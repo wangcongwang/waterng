@@ -1,42 +1,128 @@
 /* ============================================================================
-   Welcome page + Welcome Message (email preview)
+   Welcome page — compact, focused layout (v2)
    ----------------------------------------------------------------------------
-   Built entirely on elken-tokens.css so it inherits the marketing site and
-   member portal visual language: Deep Vital Blue banner, Radiant Bloom Pink
-   accent, ek-card surfaces, ek-btn actions, ek typography. No local hex,
-   no local font sizes — every value comes from a var(--ek-…).
+   No gradient banner, no breadcrumb, no email-client chrome, no side column.
+   Structure: compact hero → membership identity card → two info panels →
+   actions. Built only on elken-tokens.css so it still inherits the site's
+   Deep Vital Blue / Radiant Bloom Pink / Aqua palette, card surfaces,
+   ek-btn actions and typography.
    ============================================================================ */
 
-/* Several elements below use display:flex/grid, which would otherwise
-   override the UA [hidden] rule. Keep the hidden attribute authoritative. */
 [hidden] { display: none !important; }
 
-/* ---------- Page shell ---------- */
+/* ---------- Shell ---------- */
+.welcome-container {
+  width: min(980px, 100% - (var(--ek-page-pad) * 2));
+  margin-inline: auto;
+}
 .welcome-section {
-  padding-top: var(--ek-40);
+  padding-top: var(--ek-32);
   padding-bottom: var(--ek-80);
   background: var(--ek-surface-page);
 }
-.welcome-container {
-  width: min(var(--ek-content-max), 100% - (var(--ek-page-pad) * 2));
-  margin-inline: auto;
-}
-/* Same gradient banner as the other member pages, just a little shorter so
-   the sent-confirmation and the email are visible in the first viewport. */
-.sec-banner--short.welcome-banner { min-height: clamp(300px, 26vw, 380px); }
-.welcome-banner .sec-banner__sub { max-width: 560px; }
 
-.welcome-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.62fr) minmax(280px, 1fr);
+/* ---------- Compact welcome hero ---------- */
+.wm-hero {
+  padding-block: var(--ek-40);
+  background: var(--ek-surface);
+  border-bottom: 1px solid var(--ek-border);
+}
+.wm-hero__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--ek-24);
-  align-items: start;
+  flex-wrap: wrap;
 }
-@media (max-width: 1023px) {
-  .welcome-layout { grid-template-columns: 1fr; }
+.wm-hero__main {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ek-16);
+  max-width: 580px;
+  min-width: 0;
+}
+.wm-hero__mark {
+  flex: none;
+  width: 48px; height: 48px;
+  display: grid; place-items: center;
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-blue);
+  color: var(--ek-white);
+}
+.wm-hero__eyebrow {
+  margin: 0;
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ek-aqua);
+}
+.wm-hero__title {
+  margin: var(--ek-4) 0 var(--ek-8);
+  font-size: var(--ek-h1);
+  line-height: var(--ek-h1-lh);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-blue);
+}
+.wm-hero__dot { color: var(--ek-pink); }
+.wm-hero__sub {
+  margin: 0;
+  font-size: var(--ek-small);
+  line-height: var(--ek-small-lh);
+  color: var(--ek-muted);
 }
 
-/* ---------- Preview notice (only when no real registration exists) ---------- */
+/* Delivery chip — the only delivery info kept */
+.wm-delivery {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-12);
+  min-width: 280px;
+  padding: var(--ek-12) var(--ek-16);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  background: var(--ek-surface-page);
+}
+.wm-delivery__ic {
+  flex: none;
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-success-tint);
+  color: var(--ek-success);
+}
+.wm-delivery__copy { min-width: 0; }
+.wm-delivery__label {
+  margin: 0;
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-success);
+}
+.wm-delivery__meta {
+  margin: var(--ek-4) 0 0;
+  font-size: var(--ek-caption);
+  line-height: var(--ek-caption-lh);
+  color: var(--ek-muted);
+  overflow-wrap: anywhere;
+}
+.wm-delivery__meta b { color: var(--ek-charcoal); }
+.wm-delivery__resend {
+  margin-left: auto;
+  flex: none;
+  padding: var(--ek-4);
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--ek-caption);
+  font-weight: var(--ek-w-bold);
+  color: var(--ek-aqua);
+  cursor: pointer;
+}
+.wm-delivery__resend:hover { color: var(--ek-aqua-hover); }
+.wm-delivery.is-preview .wm-delivery__ic { background: var(--ek-info-tint); color: var(--ek-info); }
+.wm-delivery.is-preview .wm-delivery__label { color: var(--ek-info); }
+
+/* ---------- Preview notice ---------- */
 .wm-preview {
   display: flex;
   align-items: center;
@@ -63,219 +149,116 @@
 .wm-preview p { margin: 0; }
 .wm-preview .ek-btn { margin-left: auto; flex: none; }
 
-/* ---------- Delivery status strip ---------- */
-.wm-status {
-  display: flex;
-  align-items: center;
-  gap: var(--ek-16);
-  padding: var(--ek-16) var(--ek-20);
-  margin-bottom: var(--ek-16);
-  border: 1px solid var(--ek-border);
-  border-radius: var(--ek-radius);
-  background: var(--ek-success-tint);
-}
-.wm-status__ic {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: var(--ek-radius-pill);
-  background: var(--ek-surface);
-  color: var(--ek-success);
-}
-.wm-status__copy { min-width: 0; }
-.wm-status__title {
-  margin: 0;
-  font-size: var(--ek-h4);
-  font-weight: var(--ek-w-bold);
-  color: var(--ek-success);
-}
-.wm-status__meta {
-  margin: var(--ek-4) 0 0;
-  font-size: var(--ek-small);
-  line-height: var(--ek-small-lh);
-  color: var(--ek-neutral);
-  overflow-wrap: anywhere;
-}
-.wm-status__meta b { color: var(--ek-charcoal); }
-.wm-status__act { margin-left: auto; flex: none; }
-@media (max-width: 767px) {
-  .wm-status { flex-wrap: wrap; }
-  .wm-status__act { margin-left: 0; width: 100%; }
-  .wm-status__act .ek-btn { width: 100%; }
-}
-
-/* ---------- Email client card ---------- */
-.wm-mail {
-  background: var(--ek-surface);
-  border: 1px solid var(--ek-border);
+/* ---------- Membership identity card ---------- */
+.wm-idcard {
+  padding: var(--ek-32);
   border-radius: var(--ek-radius-lg);
+  background: linear-gradient(120deg, var(--ek-blue), var(--ek-blue-hover));
+  color: var(--ek-white);
   box-shadow: var(--ek-shadow);
-  overflow: hidden;
 }
-.wm-mail__toolbar {
+.wm-idcard__top {
   display: flex;
-  align-items: center;
-  gap: var(--ek-8);
-  padding: var(--ek-12) var(--ek-20);
-  background: var(--ek-surface-sunken);
-  border-bottom: 1px solid var(--ek-border);
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ek-16);
+  flex-wrap: wrap;
+}
+.wm-idcard__label {
+  margin: 0 0 var(--ek-8);
   font-size: var(--ek-caption);
-  color: var(--ek-muted);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  opacity: .72;
 }
-.wm-mail__dots { display: inline-flex; gap: 5px; margin-right: var(--ek-8); }
-.wm-mail__dots i {
-  width: 8px; height: 8px; border-radius: var(--ek-radius-pill);
-  background: var(--ek-border-strong);
+.wm-idcard__idrow { display: flex; align-items: center; gap: var(--ek-12); flex-wrap: wrap; }
+.wm-idcard__id {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: var(--ek-w-bold);
+  letter-spacing: .06em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
 }
-.wm-mail__folder { font-weight: var(--ek-w-bold); color: var(--ek-blue); }
-.wm-mail__toolbar-act {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ek-8);
-  padding: 0;
-  border: 0;
+.wm-idcard__copy {
+  padding: var(--ek-4) var(--ek-12);
+  border: 1px solid rgba(255, 255, 255, .4);
+  border-radius: var(--ek-radius-sm);
   background: transparent;
-  color: var(--ek-aqua);
+  color: var(--ek-white);
   font: inherit;
+  font-size: var(--ek-caption);
   font-weight: var(--ek-w-bold);
   cursor: pointer;
 }
-.wm-mail__toolbar-act:hover { color: var(--ek-aqua-hover); }
-
-.wm-mail__headers {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: var(--ek-8) var(--ek-16);
-  margin: 0;
-  padding: var(--ek-20) var(--ek-24);
-  border-bottom: 1px solid var(--ek-border);
-  font-size: var(--ek-small);
-}
-.wm-mail__headers dt { color: var(--ek-muted); }
-.wm-mail__headers dd {
-  margin: 0;
-  color: var(--ek-charcoal);
-  font-weight: var(--ek-w-medium);
-  overflow-wrap: anywhere;
-}
-.wm-mail__headers .wm-mail__subject { font-weight: var(--ek-w-bold); color: var(--ek-blue); }
-.wm-mail__delivered {
+.wm-idcard__copy:hover { background: rgba(255, 255, 255, .12); }
+.wm-idcard__badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--ek-4);
-  padding: 1px var(--ek-8);
+  gap: var(--ek-8);
+  padding: var(--ek-8) var(--ek-12);
   border-radius: var(--ek-radius-pill);
-  background: var(--ek-success-tint);
-  color: var(--ek-success);
-  font-size: var(--ek-caption);
+  background: rgba(255, 255, 255, .14);
+  font-size: var(--ek-small);
   font-weight: var(--ek-w-bold);
+  white-space: nowrap;
 }
-
-/* Brand header inside the email */
-.wm-mail__brand {
-  display: flex;
-  align-items: center;
-  gap: var(--ek-12);
-  padding: var(--ek-24) var(--ek-32);
-  background: var(--ek-blue);
-  color: var(--ek-white);
-}
-.wm-mail__brand-mark {
-  flex: none;
+.wm-idcard__facts {
   display: grid;
-  place-items: center;
-  width: 40px; height: 40px;
-  border-radius: var(--ek-radius);
-  background: rgba(255, 255, 255, .12);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ek-16);
+  margin-top: var(--ek-24);
+  padding-top: var(--ek-20);
+  border-top: 1px solid rgba(255, 255, 255, .2);
 }
-.wm-mail__brand-name {
-  font-size: var(--ek-h3);
-  font-weight: var(--ek-w-bold);
-  letter-spacing: .18em;
-  line-height: 1;
-}
-.wm-mail__brand-sub { margin-top: var(--ek-4); font-size: var(--ek-caption); opacity: .78; }
-.wm-mail__brand-side { margin-left: auto; font-size: var(--ek-caption); opacity: .78; }
+.wm-idcard__facts div { display: flex; flex-direction: column; gap: var(--ek-4); min-width: 0; }
+.wm-idcard__facts span { font-size: var(--ek-caption); opacity: .7; }
+.wm-idcard__facts b { font-size: var(--ek-small); font-weight: var(--ek-w-bold); overflow-wrap: anywhere; }
 
-/* Email body */
-.wm-mail__body { padding: var(--ek-32); }
-.wm-mail__eyebrow {
+/* ---------- Two info panels ---------- */
+.wm-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ek-16);
+  margin-top: var(--ek-16);
+}
+.wm-panel {
+  padding: var(--ek-24);
+  background: var(--ek-surface);
+  border: 1px solid var(--ek-border);
+  border-radius: var(--ek-radius);
+  box-shadow: var(--ek-shadow-sm);
+}
+.wm-panel__head { margin-bottom: var(--ek-12); }
+.wm-panel__title {
   margin: 0;
-  font-size: var(--ek-caption);
-  font-weight: var(--ek-w-bold);
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ek-aqua);
-}
-.wm-mail__title {
-  margin: var(--ek-8) 0 var(--ek-12);
-  font-size: var(--ek-h2);
-  line-height: var(--ek-h2-lh);
-  font-weight: var(--ek-w-bold);
-  color: var(--ek-blue);
-}
-.wm-mail__lead {
-  margin: 0 0 var(--ek-24);
-  font-size: var(--ek-text);
-  line-height: var(--ek-text-lh);
-  color: var(--ek-body-ink);
-}
-.wm-mail__lead strong { color: var(--ek-blue); }
-.wm-mail__h {
-  margin: var(--ek-24) 0 var(--ek-8);
   font-size: var(--ek-h4);
   font-weight: var(--ek-w-bold);
   color: var(--ek-blue);
 }
+.wm-panel__sub { margin: var(--ek-4) 0 0; font-size: var(--ek-caption); color: var(--ek-muted); }
 
-/* Key/value detail table inside the email */
 .wm-kv { margin: 0; }
 .wm-kv__row {
   display: grid;
-  grid-template-columns: 40% minmax(0, 1fr);
+  grid-template-columns: 44% minmax(0, 1fr);
   gap: var(--ek-12);
-  padding: var(--ek-12) 0;
+  align-items: start;
+  padding: var(--ek-8) 0;
   border-bottom: 1px solid var(--ek-border);
   font-size: var(--ek-small);
 }
 .wm-kv__row:last-child { border-bottom: 0; }
-.wm-kv__k { color: var(--ek-muted); }
-.wm-kv__v {
-  color: var(--ek-charcoal);
-  font-weight: var(--ek-w-bold);
-  overflow-wrap: anywhere;
-}
-.wm-kv__id {
-  display: inline-block;
-  padding: 2px var(--ek-8);
-  border-radius: var(--ek-radius-sm);
-  background: var(--ek-info-tint);
-  color: var(--ek-info);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: .04em;
-}
-.wm-kv__copy {
-  margin-left: var(--ek-8);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--ek-aqua);
-  font: inherit;
-  font-size: var(--ek-caption);
-  font-weight: var(--ek-w-bold);
-  cursor: pointer;
-}
-.wm-kv__copy:hover { color: var(--ek-aqua-hover); }
+.wm-kv dt { color: var(--ek-muted); }
+.wm-kv dd { margin: 0; color: var(--ek-charcoal); font-weight: var(--ek-w-bold); overflow-wrap: anywhere; }
+.wm-kv dd a { color: var(--ek-aqua); }
+.wm-kv dd a:hover { color: var(--ek-aqua-hover); }
 
-/* Inline notes */
+/* ---------- Safety note, actions, next steps ---------- */
 .wm-note {
   display: flex;
   gap: var(--ek-12);
+  margin-top: var(--ek-16);
   padding: var(--ek-16);
-  margin-top: var(--ek-24);
   border-radius: var(--ek-radius);
   background: var(--ek-warning-tint);
   color: var(--ek-warning);
@@ -284,90 +267,70 @@
 }
 .wm-note svg { flex: none; margin-top: 2px; }
 .wm-note p { margin: 0; }
-.wm-note--info { background: var(--ek-info-tint); color: var(--ek-info); }
 .wm-note b { font-weight: var(--ek-w-bold); }
+.wm-note a { color: inherit; text-decoration: underline; }
 
-.wm-mail__cta { padding: var(--ek-24) 0 var(--ek-8); text-align: center; }
-.wm-mail__cta .ek-btn { min-width: 240px; }
-.wm-mail__cta-note { margin: var(--ek-12) 0 0; font-size: var(--ek-caption); color: var(--ek-muted); }
-
-.wm-mail__foot {
-  padding: var(--ek-20) var(--ek-24);
-  border-top: 1px solid var(--ek-border);
-  background: var(--ek-surface-sunken);
-  text-align: center;
-  font-size: var(--ek-caption);
-  line-height: var(--ek-caption-lh);
-  color: var(--ek-muted);
-}
-.wm-mail__foot a { color: var(--ek-muted); }
-.wm-mail__foot a:hover { color: var(--ek-aqua); }
-.wm-mail__foot-links { margin-top: var(--ek-8); display: flex; justify-content: center; gap: var(--ek-16); }
-
-/* ---------- Right column ---------- */
-.wm-side { display: flex; flex-direction: column; gap: var(--ek-16); }
-.wm-card {
-  padding: var(--ek-24);
-  background: var(--ek-surface);
-  border: 1px solid var(--ek-border);
-  border-radius: var(--ek-radius);
-  box-shadow: var(--ek-shadow-sm);
-}
-.wm-card__title {
-  margin: 0 0 var(--ek-4);
-  font-size: var(--ek-h4);
-  font-weight: var(--ek-w-bold);
-  color: var(--ek-blue);
-}
-.wm-card__sub { margin: 0 0 var(--ek-20); font-size: var(--ek-small); color: var(--ek-muted); }
-
-.wm-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--ek-20); }
-.wm-step { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: var(--ek-12); }
-.wm-step__num {
-  width: 28px; height: 28px;
-  display: grid; place-items: center;
-  border-radius: var(--ek-radius-pill);
-  background: var(--ek-blue);
-  color: var(--ek-white);
-  font-size: var(--ek-caption);
-  font-weight: var(--ek-w-bold);
-}
-.wm-step__t { margin: 0; font-size: var(--ek-small); font-weight: var(--ek-w-bold); color: var(--ek-charcoal); }
-.wm-step__d { margin: var(--ek-4) 0 0; font-size: var(--ek-small); line-height: var(--ek-small-lh); color: var(--ek-muted); }
-
-.wm-help__row {
+.wm-actions {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: var(--ek-12);
-  padding: var(--ek-12) 0;
-  border-bottom: 1px solid var(--ek-border);
-  font-size: var(--ek-small);
+  flex-wrap: wrap;
+  margin-top: var(--ek-24);
 }
-.wm-help__row:last-of-type { border-bottom: 0; }
-.wm-help__row span { color: var(--ek-muted); }
-.wm-help__row b { color: var(--ek-charcoal); text-align: right; overflow-wrap: anywhere; }
-.wm-card .ek-btn--block { margin-top: var(--ek-16); }
+.wm-actions .ek-btn--primary { flex: 1 1 260px; }
+
+.wm-next {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ek-12);
+  margin-top: var(--ek-24);
+  padding-top: var(--ek-20);
+  border-top: 1px solid var(--ek-border);
+}
+.wm-next__item {
+  display: flex;
+  align-items: center;
+  gap: var(--ek-8);
+  font-size: var(--ek-caption);
+  color: var(--ek-muted);
+}
+.wm-next__item span {
+  flex: none;
+  width: 22px; height: 22px;
+  display: grid; place-items: center;
+  border-radius: var(--ek-radius-pill);
+  background: var(--ek-panel-cool);
+  color: var(--ek-blue);
+  font-weight: var(--ek-w-bold);
+}
+.wm-next__item p { margin: 0; }
 
 /* ---------- Responsive ---------- */
+@media (min-width: 1024px) {
+  /* Give the headline enough room to sit on one line on desktop. */
+  .wm-hero__main { flex: 1 1 420px; max-width: 640px; }
+  .wm-hero__title { white-space: nowrap; }
+}
+@media (max-width: 1023px) {
+  .wm-hero__inner { flex-direction: column; align-items: stretch; }
+  .wm-delivery { width: 100%; }
+}
 @media (max-width: 767px) {
-  .wm-mail__body { padding: var(--ek-24) var(--ek-16); }
-  .wm-mail__brand { padding: var(--ek-20) var(--ek-16); }
-  .wm-mail__brand-side { display: none; }
-  .wm-mail__headers { padding: var(--ek-16); grid-template-columns: max-content minmax(0, 1fr); }
+  .wm-idcard { padding: var(--ek-20); }
+  .wm-idcard__facts { grid-template-columns: 1fr; gap: var(--ek-12); }
+  .wm-grid { grid-template-columns: 1fr; }
   .wm-kv__row { grid-template-columns: 1fr; gap: var(--ek-4); }
-  .wm-mail__cta .ek-btn { min-width: 0; width: 100%; }
+  .wm-actions .ek-btn { width: 100%; }
+  .wm-next { grid-template-columns: 1fr; }
   .wm-preview { flex-wrap: wrap; }
   .wm-preview .ek-btn { margin-left: 0; width: 100%; }
 }
 
-/* ---------- Print / save the email as PDF ---------- */
+/* ---------- Print ---------- */
 @media print {
-  .ek-site-header, .ek-site-footer, .sec-banner, .wm-side,
-  .wm-preview, .wm-status, .wm-mail__toolbar, .wm-mail__cta,
-  .offline-banner, .cookie-banner { display: none !important; }
+  .ek-site-header, .ek-site-footer, .wm-hero, .wm-preview,
+  .wm-actions, .wm-next, .offline-banner, .cookie-banner { display: none !important; }
   .welcome-section { padding: 0; background: var(--ek-white); }
-  .welcome-layout { display: block; }
-  .wm-mail { border: 0; box-shadow: none; }
+  .wm-idcard, .wm-panel { box-shadow: none; }
   body { background: var(--ek-white); }
 }
