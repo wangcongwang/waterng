@@ -68,7 +68,7 @@
   /* ---------- Country configuration ----------
      Elken runs several markets. Each market has its own product catalog,
      currency/unit, phone dial code, address regions, member-ID prefix,
-     default reporting center and VAT rate. Pages with a country selector
+     default stockist and VAT rate. Pages with a country selector
      (signup.html) switch the whole experience through this map. */
   const COUNTRY_CONFIG = {
     Nigeria: {
@@ -909,7 +909,7 @@
     'NG09246375': { name: 'Amara Okafor', country: 'Nigeria' },
     'NG23374876': { name: 'Fauzia Yunus Shehu', country: 'Nigeria' },
     'NG27187710': { name: 'S2 (Referrer)', country: 'Nigeria' },
-    'NG66051653': { name: 'Reporting Center', country: 'Nigeria' },
+    'NG66051653': { name: 'Stockist', country: 'Nigeria' },
     'NG48655323': { name: 'Default Order Demo', country: 'Nigeria' },
   };
   function getMemberRegistry() {

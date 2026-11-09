@@ -104,9 +104,9 @@
               </div>
 
               <div class="field-row ek-field field-row--full">
-                <label><span data-i18n="signup.center_id">Reporting Center ID</span><span class="req-star">*</span></label>
+                <label><span data-i18n="signup.center_id">Stockist ID</span><span class="req-star">*</span></label>
                 <input class="ek-input" type="text" name="centerId" id="regCenterId"
-                       data-i18n-ph="signup.center_id_ph" placeholder="Enter reporting center ID" required />
+                       data-i18n-ph="signup.center_id_ph" placeholder="Enter Stockist ID" required />
               </div>
             </div>
           </div>
@@ -405,9 +405,9 @@
       if (referrerInput) referrerInput.value = refId;
       if (actualReferrerInput) actualReferrerInput.value = actualRefId;
 
-      /* ---------- Reporting Center ID: default to the signed-in account when
-         it is itself a Reporting Center (isReportingCenter === 'Yes', or the
-         demo Reporting Center account NG66051653), then lock it; otherwise
+      /* ---------- Stockist ID: default to the signed-in account when
+         it is itself a Stockist (isReportingCenter === 'Yes', or the
+         demo Stockist account NG66051653), then lock it; otherwise
          left blank for manual entry. ---------- */
       const centerInput = document.getElementById('regCenterId');
       const isCenterAccount = md.isReportingCenter === 'Yes' || currentMemberId === 'NG66051653';

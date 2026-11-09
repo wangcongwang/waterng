@@ -184,7 +184,7 @@ const DATA = [
   {id:"G8-05", t:"无地址引导", s:"登录账号但地址簿为空\n→ 显示 Go add address 链接，点击跳 account.html#add-address"},
   {id:"G8-06", tag:"core", t:"游客结算表单", s:"游客流程进入结算\n→ 显示可编辑收货地址表单 + 联系人卡；Email 必填校验；配送方式选择不显示"},
   {id:"G8-07", tag:"core", t:"member 模式会员信息卡", s:"打开 checkout.html?cart=1&mode=member\n→ 顶部 Member information 卡只读显示会员 ID+姓名（来自 al.repeatMember）；Contact 卡隐藏；含临时收货地址卡"},
-  {id:"G8-08", t:"报单中心 ID 自动填充", s:"本人登录为报单中心时进入 member 结算\n→ Reporting Center ID 自动填本人 ID 并锁定；升级单自动带出且锁定"},
+  {id:"G8-08", t:"Stockist ID 自动填充", s:"本人登录为 Stockist 时进入 member 结算\n→ Stockist ID 自动填本人 ID 并锁定；升级单自动带出且锁定"},
   {id:"G8-09", t:"自动维护结算二次校验", s:"auto-maintenance 单 BV<90\n→ checkout 页同样显示 ≥90 BV 要求卡，Pay 按钮禁用"},
   {id:"G8-10", t:"升级差额校验", s:"upgrade 单\n→ 选目标级显示差额公式，车 BV≥差额才可提交"},
   {id:"G8-11", t:"Paystack 失败分支", s:"收银台点 Declined\n→ 红色错误提示，订单未创建，可重试"},

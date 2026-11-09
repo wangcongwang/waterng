@@ -461,7 +461,7 @@
   .ps-ck-close { top: calc(-1 * var(--ek-40)); right: 0; }
 }
 
-/* Read-only, system-filled fields (e.g. auto-locked Reporting Center ID,
+/* Read-only, system-filled fields (e.g. auto-locked Stockist ID,
    inherited Country, auto-generated Member ID): greyed, no focus ring,
    clearly not editable — mirrors checkout.css .is-locked. */
 .ek-input.input-locked,

@@ -1011,8 +1011,8 @@
         mk({
           date: now - 2 * DAY, paidAt: null,
           status: 'pending', payStatus: 'Unpaid', payment: 'visaqr', paymentLabel: 'Pay with Visa QR',
-          memberId: 'NG66051653', memberName: 'Reporting Center', operatorId: me,
-          customer: { name: 'Reporting Center', phone: '+234 809 222 3344', address: '22 Broad Street', city: 'Lagos', state: 'Lagos' },
+          memberId: 'NG66051653', memberName: 'Stockist', operatorId: me,
+          customer: { name: 'Stockist', phone: '+234 809 222 3344', address: '22 Broad Street', city: 'Lagos', state: 'Lagos' },
           items: [
             { id: 'fb1', name: 'Elcafe', category: 'food-beverage', img: 'elcafe.webp', price: 25000, qty: 3, bv: 22 },
           ],
@@ -1751,13 +1751,13 @@
       ].join('');
       document.getElementById('memberReferralFields').innerHTML = referralHtml;
 
-      // Reporting Center
+      // Stockist
       const reportingHtml = [
-        field('Reporting Center ID', memberData.reportingCenterId || '—'),
-        field('Is Reporting Center', memberData.isReportingCenter === 'Yes' ? 'Yes' : 'No', memberData.isReportingCenter === 'Yes' ? 'ok' : 'neutral'),
+        field('Stockist ID', memberData.reportingCenterId || '—'),
+        field('Is Stockist', memberData.isReportingCenter === 'Yes' ? 'Yes' : 'No', memberData.isReportingCenter === 'Yes' ? 'ok' : 'neutral'),
         field('Show Chart', memberData.showChart === 'Yes' ? 'Yes' : 'No'),
         field('Show Recharge', memberData.showRecharge === 'Yes' ? 'Yes' : 'No'),
-        field('Reporting Center Level', memberData.reportingCenterLevel || '—'),
+        field('Stockist Level', memberData.reportingCenterLevel || '—'),
       ].join('');
       document.getElementById('memberReportingFields').innerHTML = reportingHtml;
 

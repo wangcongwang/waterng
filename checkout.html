@@ -37,17 +37,16 @@
 
       <div class="checkout-grid">
         <div>
-          <!-- Reporting Center ID: required on every shopper order, kept as
+          <!-- Stockist ID: required on every shopper order, kept as
                its own top section above the delivery choice (member mode has
                its own field inside the member card). -->
           <div class="ek-card checkout-card" id="shopRcCard" hidden>
-            <h2>Reporting Center ID <span class="req">*</span></h2>
-            <input class="ek-input" id="shopRcId" required placeholder="e.g. NG66051653" aria-label="Reporting Center ID" />
+            <h2>Stockist ID <span class="req">*</span></h2>
+            <input class="ek-input" id="shopRcId" required placeholder="e.g. NG66051653" aria-label="Stockist ID" />
           </div>
 
           <!-- Member repeat-purchase info (member mode only, revealed by JS):
-               repeat member ID (+ resolved name, read-only) and reporting
-               center. The shipping address is typed into #rpShipCard below. Sits at the top (like the shopper's Reporting Center
+               repeat member ID (+ resolved name, read-only) and stockist. The shipping address is typed into #rpShipCard below. Sits at the top (like the shopper's Stockist
                card); the member's saved addresses live in the shared
                "Address details" card below Delivery method, exactly like the
                shopper flow. -->
@@ -59,7 +58,7 @@
               <span id="rpMemberName" style="display:block;margin-top:6px;color:#5a5f79;font-size:13px;"></span>
             </div>
             <div class="field" id="rpRcField">
-              <label for="rpRcId">Reporting Center ID <span class="req">*</span></label>
+              <label for="rpRcId">Stockist ID <span class="req">*</span></label>
               <input class="ek-input" id="rpRcId" required />
             </div>
           </div>
@@ -679,7 +678,7 @@
         // read-only preset saved addresses (express delivery only) —
         // self-pickup shows nothing, exactly like the shopper flow.
         // Shopper mode: preset saved-address list when signed in (read-only),
-        // editable form for guests. The Reporting Center ID is its own top
+        // editable form for guests. The Stockist ID is its own top
         // card and shows for every shopper order (member mode has its own
         // field inside the member card).
         const shopListMode = !!state.shopListMode;
@@ -688,7 +687,7 @@
         if (shopForm) shopForm.hidden = state.memberMode || shopListMode || !!state.shopAddrEmpty;
         if (shopRcCard) {
           shopRcCard.hidden = !!(state.memberMode || state.guestShip);
-          // 登录账号是报单中心 → Reporting Center ID 默认填其账号并锁定。
+          // 登录账号是 Stockist → Stockist ID 默认填其账号并锁定。
           if (!shopRcCard.hidden) {
             const selfRc = reportingCenterSelfId();
             const rcEl = document.getElementById('shopRcId');
@@ -825,20 +824,20 @@
       if (radio) radio.disabled = balance <= 0;
     }
 
-    // 当前登录账号若是报单中心（isReportingCenter === 'Yes'，或 demo 报单中心
-    // 账号 NG66051653 本人登录），返回其账号 ID；未登录或非报单中心返回 null。
-    // 用于下单表单默认填充 Reporting Center ID 并锁定（只读、不可编辑）。
+    // 当前登录账号若是 Stockist（isReportingCenter === 'Yes'，或 demo Stockist
+    // 账号 NG66051653 本人登录），返回其账号 ID；未登录或非 Stockist 返回 null。
+    // 用于下单表单默认填充 Stockist ID 并锁定（只读、不可编辑）。
     function reportingCenterSelfId() {
       const u = window.Auth && window.Auth.user;
       if (!u || !u.memberId) return null; // 未登录不适用
       let md = {};
       try { md = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
       if (md && md.isReportingCenter === 'Yes') return u.memberId || md.memberId || '';
-      if (String(u.memberId).toUpperCase() === 'NG66051653') return u.memberId; // demo 报单中心
+      if (String(u.memberId).toUpperCase() === 'NG66051653') return u.memberId; // demo Stockist
       return null;
     }
 
-    // 会员升级单：不需要 Reporting Center ID 字段。
+    // 会员升级单：不需要 Stockist ID 字段。
     function isUpgradeOrder() {
       return (state.subtype === 'upgrade') || (state.repeatMember && state.repeatMember.subtype === 'upgrade');
     }
@@ -873,12 +872,12 @@
       const tempShipOk = !!v('rpRecipient') && !!(rpPhoneEl && rpPhoneEl.value.trim())
         && !!v('rpState') && !!v('rpCity') && !!v('rpAddr');
       if (state.guestShip) {
-        // 无账户下单：只校验本单收货地址 + 支付方式，报单中心自动分配。
+        // 无账户下单：只校验本单收货地址 + 支付方式，Stockist 自动分配。
         ok = !!methodOk && tempShipOk && emailOk;
       } else if (state.memberMode) {
-        // Member repeat purchase: reporting center ID + the temporary
+        // Member repeat purchase: Stockist ID + the temporary
         // shipping address (district optional). Upgrade orders carry no
-        // Reporting Center ID (the field is hidden) — skip its check.
+        // Stockist ID (the field is hidden) — skip its check.
         const rc = document.getElementById('rpRcId');
         const rcOk = isUpgradeOrder() ? true : !!(rc && rc.value.trim());
         const shipOk = tempShipOk;
@@ -887,7 +886,7 @@
           && shipOk
           && memberFlowGate();
       } else {
-        // Shopper flow: the Reporting Center ID is always required. Signed-in
+        // Shopper flow: the Stockist ID is always required. Signed-in
         // users ship to a preset saved address whose recipient + phone act as
         // the order contact (no contact card); guests type both themselves
         // and their full address details.
@@ -1029,7 +1028,7 @@
         };
         // Member repeat purchase: the looked-up member is the customer, the
         // signed-in user is the operator. Tag the order accordingly and credit
-        // the operator's reporting center.
+        // the operator's stockist.
         if (state.repeatMember) {
           order.memberId = state.repeatMember.id || order.memberId;
           order.memberName = state.repeatMember.name || customer.name || null;
@@ -1058,7 +1057,7 @@
             order.source = 'member-repeat-purchase';
           }
           const opMd = (function () { try { return JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) { return {}; } })();
-          // The reporting center is an editable field in member mode — the
+          // The stockist is an editable field in member mode — the
           // operator may correct it before submitting. No default: an empty
           // field is blocked by the pay gate, so nothing is written either.
           const rcField = (document.getElementById('rpRcId') || {}).value || '';
@@ -1067,9 +1066,9 @@
           }
           order.reportingCenterName = order.reportingCenterName || opMd.memberName || opMd.name || '';
         }
-        // Guest / shopper orders: the Reporting Center ID is a required field
+        // Guest / shopper orders: the Stockist ID is a required field
         // on the checkout — whatever the customer typed wins; the fallback is
-        // the market's house reporting center
+        // the market's house stockist
         // (Nigeria → NG000000001, UAE → AE000000001).
         if (!state.repeatMember) {
           const shopRc = ((document.getElementById('shopRcId') || {}).value || '').trim();
@@ -1297,7 +1296,7 @@
     /* ---------- Member repeat-purchase info card (member mode only) ----------
        Replaces the pickup + contact cards with the reference back-office
        field set: read-only repeat member ID (+ resolved name) and the
-       reporting center, plus the temporary shipping-address form. */
+       stockist, plus the temporary shipping-address form. */
     function setupMemberInfo() {
       const card = document.getElementById('memberInfoCard');
       const contact = document.getElementById('contactCard');
@@ -1313,24 +1312,24 @@
       try { opMd = JSON.parse(localStorage.getItem('al.memberData') || '{}'); } catch (e) {}
       document.getElementById('rpMemberId').value = m.id || '';
       document.getElementById('rpMemberName').textContent = m.name ? `【${m.name}】` : '';
-      // Reporting Center ID: always shown, never hidden. Auto-filled + locked
+      // Stockist ID: always shown, never hidden. Auto-filled + locked
       // (read-only) when there is a deterministic default — upgrade orders
-      // inherit the member's own Reporting Center, and a signed-in Reporting
+      // inherit the member's own Stockist, and a signed-in Reporting
       // Center operator gets their own ID; otherwise editable + required.
       const rpRcEl = document.getElementById('rpRcId');
       const rpRcField = document.getElementById('rpRcField');
       if (rpRcField) rpRcField.hidden = false;
       const selfRc = reportingCenterSelfId();
       if (isUpgradeOrder()) {
-        // 会员升级：不需要手动填写 — 默认带出被升级会员的归属报单中心
-        //（操作者本身是报单中心时用操作者账号），字段显示但不可编辑。
+        // 会员升级：不需要手动填写 — 默认带出被升级会员的归属 Stockist
+        //（操作者本身是 Stockist 时用操作者账号），字段显示但不可编辑。
         if (rpRcEl) {
           rpRcEl.value = m.reportingCenterId || selfRc || '';
           rpRcEl.readOnly = true;
           rpRcEl.classList.add('is-locked');
         }
       } else if (selfRc && rpRcEl) {
-        // 登录账号是报单中心 → 默认填其账号，不可编辑。
+        // 登录账号是 Stockist → 默认填其账号，不可编辑。
         rpRcEl.value = selfRc;
         rpRcEl.readOnly = true;
         rpRcEl.classList.add('is-locked');
@@ -1418,7 +1417,7 @@
         const opt = Array.from(sel.options).find(o => o.value === defaults.state || o.text === defaults.state);
         if (opt) sel.value = opt.value;
       }
-      // The reporting center ID is the only field the customer fills in — the
+      // The Stockist ID is the only field the customer fills in — the
       // consent checkboxes were auto-satisfied at this point.
       renderSavedAddresses();
       // Contact person card: only guests typing their own address keep it —
@@ -1453,8 +1452,8 @@
       const memberMode = new URLSearchParams(location.search).get('mode') === 'member';
       state.memberMode = memberMode;
       // 无账户下单（登录页「Shop now」进入）：结算页与 Member Repeat Purchase
-      // 一致——直接填写本单收货地址，不选配送方式、不手填报单中心
-      // （下单时自动归到该市场的默认报单中心），支付方式只有 Paystack。
+      // 一致——直接填写本单收货地址，不选配送方式、不手填 Stockist
+      // （下单时自动归到该市场的默认 Stockist），支付方式只有 Paystack。
       state.guestShip = !memberMode && isGuestFlow();
       if (cartMode) {
         const pc = window.ProductCatalog || {};

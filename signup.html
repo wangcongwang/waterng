@@ -107,9 +107,9 @@
               </div>
 
               <div class="field-row ek-field field-row--full">
-                <label><span data-i18n="signup.center_id">Reporting Center ID</span><span class="req-star">*</span></label>
+                <label><span data-i18n="signup.center_id">Stockist ID</span><span class="req-star">*</span></label>
                 <input class="ek-input" type="text" name="centerId" id="regCenterId"
-                       data-i18n-ph="signup.center_id_ph" placeholder="Enter reporting center ID" required />
+                       data-i18n-ph="signup.center_id_ph" placeholder="Enter Stockist ID" required />
               </div>
             </div>
           </div>
@@ -670,7 +670,7 @@
             runs on every page) already stored that referrer in localStorage.
          Either way the parameter is copied into BOTH Referrer ID and Actual
          Referrer ID. Direct visits with no invitation at all leave all three
-         inputs (Referrer / Actual Referrer / Reporting Center) empty. */
+         inputs (Referrer / Actual Referrer / Stockist) empty. */
       const actualReferrerInput = document.getElementById('regActualReferrerId');
       let refId = '';
       try {
@@ -928,7 +928,7 @@
             cfg.regions.map(r => '<option value="' + r + '">' + r + '</option>').join('');
         }
 
-        // Reporting Center ID: no auto-fill — the user enters it (required).
+        // Stockist ID: no auto-fill — the user enters it (required).
 
         // Phone placeholders follow the market dial code
         ['regPhone', 'regRecipientPhone'].forEach(id => {
