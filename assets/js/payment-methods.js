@@ -5,10 +5,10 @@
      Debit Card · USSD · Bank Transfer · Pay with Bank · Pay with Visa QR
      (+ Account Balance, retained from the existing member wallet)
 
-   Phase 1 gate: only Paystack (+ Account Balance where a page opts in via
-   `includeBalance`) is offered. The remaining guide channels stay fully
-   coded below and return automatically once PHASE2_ENABLED flips to true
-   (phase 2) — pages keep declaring them in `only`, the gate hides them.
+   All channels are live: Paystack, the five guide channels (+ Account
+   Balance where a page opts in via `includeBalance`). Set PHASE2_ENABLED
+   back to false to restore the old phase-1 Paystack-only gate; pages keep
+   declaring the full catalogue in `only`, so that is a one-line rollback.
 
    Used by: checkout.html, signup.html, member-welcome.html,
             member-repurchase.html, member-auto-maintenance.html
@@ -217,14 +217,14 @@
     } catch (e) { /* clipboard unavailable — the value stays visible/selectable */ }
   }
 
-  /* --- Phase-1 channel gate --------------------------------------------
-     Phase 1 offers only Paystack (+ Account Balance via includeBalance).
-     The remaining Nigeria-guide channels — Debit Card, USSD, Bank Transfer,
-     Pay with Bank, Pay with Visa QR — stay coded here and come back the
-     day PHASE2_ENABLED flips to true. Pages keep listing them in `only`;
-     the gate simply hides them, so phase 2 is a one-line change. */
+  /* --- Channel gate ----------------------------------------------------
+     Phase 2 is on: every Nigeria-guide channel is offered everywhere the
+     shared chooser is wired. Flip PHASE2_ENABLED back to false to restore
+     the phase-1 Paystack-only view — the gate below then drops the five
+     guide channels and re-adds Paystack as a fallback so no page is left
+     with an empty chooser. */
   const PHASE2_CHANNELS = ['card', 'ussd', 'bank', 'paybank', 'visaqr'];
-  const PHASE2_ENABLED = false;
+  const PHASE2_ENABLED = true;
 
   /* --- Method chooser --------------------------------------------------- */
   function methods(opts) {

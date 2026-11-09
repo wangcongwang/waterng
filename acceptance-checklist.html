@@ -141,7 +141,7 @@ const DATA = [
   {id:"G4-04", t:"Order Level 联动商品区", s:"分别选 Silver / Gold\n→ 商品区按所选市场目录重新渲染"},
   {id:"G4-05", t:"选品汇总实时更新", s:"点商品加减数量\n→ Subtotal / BV / Tax 汇总条实时变化"},
   {id:"G4-06", t:"配送方式联动地址", s:"Delivery 选 Pickup vs Door\n→ Pickup 时地址区块隐藏；Door 时显示地区/城市/详细地址"},
-  {id:"G4-07", t:"支付方式 Phase 1 限制", s:"查看支付方式区\n→ 仅 Paystack 可选，其它渠道不显示"},
+  {id:"G4-07", t:"支付方式全渠道", s:"查看支付方式区\n→ Debit Card / USSD / Bank Transfer / Pay with Bank / Visa QR / Paystack 全部可选，默认 Paystack"},
   {id:"G4-08", tag:"core", t:"Paystack 测试收银台", s:"提交订单\n→ 先弹金额确认，再进测试收银台（Success / Bank Auth / Declined 三个按钮）"},
   {id:"G4-09", t:"支付失败分支", s:"收银台点 Declined\n→ 页面显示红色支付失败提示，订单未创建"},
   {id:"G4-10", tag:"core", t:"注册成功 Member ID 弹窗", s:"收银台点 Success 完成注册\n→ 弹出「Member ID」弹窗，可复制新 ID；点 Got it 跳 login.html?mid=<新ID>"},
@@ -244,7 +244,7 @@ const DATA = [
 ]},
 { g:"G15", name:"Welcome Pack member-welcome.html", cases:[
   {id:"G15-01", t:"按市场渲染商品", s:"分别用 NG / AE 会员登录进入\n→ 商品区金额与币制随国家配置"},
-  {id:"G15-02", t:"汇总实时更新", s:"选商品+数量\n→ Subtotal/BV/Tax 汇总实时更新；支付方式仅 Paystack"},
+  {id:"G15-02", t:"汇总实时更新", s:"选商品+数量\n→ Subtotal/BV/Tax 汇总实时更新；支付方式展示全部渠道"},
   {id:"G15-03", tag:"core", t:"下单成功跳转", s:"Paystack Success 提交\n→ 页内成功卡显示约 1.8s 后跳 order.html?order=<id>；订单已写入 al.orders/al.memberData"},
 ]},
 { g:"G16", name:"表单页 contact / become-a-distributor", cases:[

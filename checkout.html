@@ -731,11 +731,10 @@
       payMethods = window.PayMethods.wire('#payMethodGrid', {
         name: 'payMethod',
         // Full catalogue + the opt-in Paystack channel (balance is added
-        // separately via includeBalance below). Phase 1: the shared layer's
-        // gate hides every channel except Paystack (+ Account Balance when
-        // logged in); the declarations stay so phase 2 is a one-flag flip
-        // in payment-methods.js — no page edits needed.
+        // separately via includeBalance below). Keep Paystack as the default
+        // so the pay button is not gated behind card details on load.
         only: ['card', 'ussd', 'bank', 'paybank', 'visaqr', 'paystack'],
+        selected: 'paystack',
         panelHost: '#payPanels',
         panelClass: 'ek-card checkout-card method-info-card',
         prefix: 'co',
@@ -1453,7 +1452,7 @@
       state.memberMode = memberMode;
       // 无账户下单（登录页「Shop now」进入）：结算页与 Member Repeat Purchase
       // 一致——直接填写本单收货地址，不选配送方式、不手填 Stockist
-      // （下单时自动归到该市场的默认 Stockist），支付方式只有 Paystack。
+      // （下单时自动归到该市场的默认 Stockist），支付方式展示全部渠道。
       state.guestShip = !memberMode && isGuestFlow();
       if (cartMode) {
         const pc = window.ProductCatalog || {};

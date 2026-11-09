@@ -371,12 +371,12 @@
       }
 
       /* ---------- Demo wallet: welcome Ecoin credit ----------
-         This flow does not offer Paystack (see buildPayMethods), which leaves
-         Account Balance as the only payment channel — and a brand-new member
-         starts with an empty wallet, so the balance gate would block every
-         order. Credit the generated member a one-off demo welcome bonus so
-         the flow is completable end-to-end (the order debits it again on
-         submit). Idempotent: only tops up when the wallet is still short. */
+         Account Balance is the default channel (see buildPayMethods), and a
+         brand-new member starts with an empty wallet, so the balance gate
+         would block that default. Credit the generated member a one-off demo
+         welcome bonus so the flow is completable end-to-end (the order debits
+         it again on submit). Idempotent: only tops up when the wallet is
+         still short. */
       const WELCOME_ECOIN_CREDIT = 100000;
       if (memberIdInput && memberIdInput.value && pc0.creditEcoin && pc0.getEcoinTotal
           && pc0.getEcoinTotal(memberIdInput.value) < WELCOME_ECOIN_CREDIT) {
@@ -550,11 +550,9 @@
       function buildPayMethods() {
         payMethods = window.PayMethods.wire('#signupPayGrid', {
           name: 'paymentMethod',
-          // Paystack is NOT offered on this flow: it is dropped from `only`
-          // and noPaystack opts out of the shared layer's phase-1 fallback
-          // (which would otherwise re-add it once every other channel is
-          // gated). The full catalogue stays declared in `only` so phase 2
-          // is a one-flag flip in payment-methods.js — no page edits needed.
+          // Paystack is NOT offered on this flow; noPaystack keeps the
+          // shared layer from adding it back. All five guide channels are
+          // available alongside Account Balance (the default).
           only: ['card', 'ussd', 'bank', 'paybank', 'visaqr'],
           noPaystack: true,
           panelHost: '#signupPayPanels',
@@ -800,9 +798,9 @@
         submitBtn.disabled = true;
         submitBtn.textContent = tr('signup.saving') || 'Saving...';
 
-        // Paystack is not offered on this flow (noPaystack), so no channel
-        // needs a modal handoff — the registration order is created directly
-        // (Account Balance settles when the order is recorded below).
+        // No channel on this flow needs a modal handoff — the registration
+        // order is created directly (Account Balance settles when the order
+        // is recorded below).
         setTimeout(processWelcomeOrder, 600);
       });
 

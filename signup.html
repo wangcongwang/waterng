@@ -735,9 +735,9 @@
           panelClass: 'ek-card ek-card--quiet method-info-card',
           prefix: 'su',
           amount: selectedTotal,
-          // Signup only offers Paystack — the other channels stay available
-          // to checkout / member flows through the same shared layer.
-          only: ['paystack'],
+          // Full catalogue, same channels as every other order flow.
+          // Paystack stays the default; the other five are selectable.
+          only: ['card', 'ussd', 'bank', 'paybank', 'visaqr', 'paystack'],
           selected: 'paystack',
           companions: { bank: '#signupRemitFields', paybank: '#signupRemitFields' },
           // no onChange: this flow has no live pay button — the form's own
@@ -1059,15 +1059,21 @@
           return;
         }
 
-        // --- All valid → open the Paystack payment confirm dialog ---
-        openPayModal();
+        // --- All valid → Paystack runs its own confirm/checkout modal; all
+        //     other channels already collected their details in the shared
+        //     panels, so the registration order is created directly. ---
+        const chosen = (payMethods && payMethods.value()) || 'paystack';
+        if (chosen === 'paystack') { openPayModal(); return; }
+        processRegistration();
       });
 
-      /* ---------- Paystack payment flow (signup offers Paystack only) ------
+      /* ---------- Paystack payment flow (only for the Paystack channel) ----
          Step 1 — confirm dialog: order amount (no email — the registration
                   form already collected it).
          Step 2 — Paystack checkout modal (Card / Bank / USSD · test options).
-         A successful test payment hands back to processRegistration(). */
+         A successful test payment hands back to processRegistration().
+         The other channels skip these modals and call processRegistration()
+         directly from the submit handler. */
       function openPayModal() {
         document.getElementById('psPayAmount').textContent = money(selectedTotal());
         document.getElementById('psPayModal').style.display = 'flex';
