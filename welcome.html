@@ -15,17 +15,19 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
-  <link rel="stylesheet" href="assets/css/welcome.css?v=20261109b">
-  <script src="assets/js/elken-ui.js" defer></script>
+  <link rel="stylesheet" href="assets/css/welcome.css?v=20261109c">
 </head>
 <body data-page="welcome">
-  <div id="app-header" class="ek-site-header"></div>
-  <div id="offline-banner" class="offline-banner">Connection status</div>
-
+  <!--
+    EMAIL-CONTENT PAGE
+    This page represents the Welcome Message delivered to the member's inbox.
+    It deliberately loads NO site scripts (app.js / website.js / strings.js),
+    so there is no site navigation, no site footer, no cookie banner and no
+    floating WhatsApp button. Only the message content is rendered.
+  -->
   <main id="main">
 
-    <!-- Compact welcome header. No tall gradient banner and no breadcrumb:
-         the page gets straight to the membership information. -->
+    <!-- Compact welcome header -->
     <section class="wm-hero">
       <div class="welcome-container wm-hero__inner">
         <div class="wm-hero__main">
@@ -86,7 +88,7 @@
           </div>
         </section>
 
-        <!-- Two compact panels replace the long single email table -->
+        <!-- Two compact information panels -->
         <div class="wm-grid">
 
           <section class="wm-panel">
@@ -130,31 +132,26 @@
           <p><b>Keep your account safe.</b> We never send passwords by email. Your Member ID is your login credential — never share it, and Elken staff will never ask for your password or payment PIN. If you did not register this account, <a href="contact.html">contact Member Care</a>.</p>
         </div>
 
-        <div class="wm-actions">
-          <a class="ek-btn ek-btn--primary ek-btn--lg" data-wm-href="loginUrl" href="login.html" id="wmSigninBtn">Sign in to your account</a>
-          <a class="ek-btn ek-btn--secondary" href="order.html">View my orders</a>
-          <a class="ek-btn ek-btn--ghost" href="account.html">Back to My Account</a>
-        </div>
-
-        <div class="wm-next" aria-label="Next steps">
-          <div class="wm-next__item"><span>1</span><p>Save your Member ID</p></div>
-          <div class="wm-next__item"><span>2</span><p>Sign in &amp; check your profile</p></div>
-          <div class="wm-next__item"><span>3</span><p>Track your starter order</p></div>
-        </div>
-
       </div>
     </section>
   </main>
 
-  <div id="app-footer" class="ek-site-footer"></div>
-
-  <script src="assets/i18n/strings.js?v=20261021id"></script>
-  <script src="assets/js/app.js?v=20261021id"></script>
-  <script src="assets/js/website.js?v=20261021id"></script>
   <script src="assets/js/welcome-mail.js?v=20261109a"></script>
   <script>
     (function () {
       'use strict';
+
+      /* This page loads no site scripts, so provide the small feedback helper
+         the Resend / Copy interactions expect. */
+      if (!window.toast) {
+        window.toast = function (msg) {
+          var el = document.createElement('div');
+          el.className = 'wm-toast';
+          el.textContent = msg;
+          document.body.appendChild(el);
+          setTimeout(function () { el.remove(); }, 2600);
+        };
+      }
 
       /* In-memory sample used ONLY when no real registration exists in this
          browser, so the page design is visible on a first visit. It is never
@@ -256,13 +253,13 @@
       /* Resend — refreshes the delivery timestamp and updates the UI. */
       document.getElementById('wmResendBtn').addEventListener('click', function () {
         if (isPreview) {
-          if (window.toast) window.toast('Complete a registration to send a real Welcome Message.', 'info');
+          window.toast('Complete a registration to send a real Welcome Message.');
           return;
         }
         var fresh = window.WelcomeMail.resend();
         if (!fresh) return;
         render(fresh);
-        if (window.toast) window.toast('Welcome email resent to ' + fresh.to, 'success');
+        window.toast('Welcome email resent to ' + fresh.to);
       });
 
       /* Copy the Member ID — async Clipboard API with a file:// fallback. */
@@ -284,7 +281,7 @@
         if (!id) return;
         var done = function () {
           copyBtn.textContent = 'Copied';
-          if (window.toast) window.toast('Member ID copied', 'success');
+          window.toast('Member ID copied');
           setTimeout(function () { copyBtn.textContent = 'Copy'; }, 2000);
         };
         if (navigator.clipboard && navigator.clipboard.writeText) {

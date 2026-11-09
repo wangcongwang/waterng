@@ -1,11 +1,14 @@
 /* ============================================================================
-   Welcome page — compact, focused layout (v2)
+   Welcome Message — email-content page (v3)
    ----------------------------------------------------------------------------
-   No gradient banner, no breadcrumb, no email-client chrome, no side column.
-   Structure: compact hero → membership identity card → two info panels →
-   actions. Built only on elken-tokens.css so it still inherits the site's
-   Deep Vital Blue / Radiant Bloom Pink / Aqua palette, card surfaces,
-   ek-btn actions and typography.
+   This page stands for the message delivered to the member's inbox, so it has
+   NO site navigation and NO site footer: no banner, no breadcrumb, no CTA
+   button row, no "next steps" strip. Structure: compact message header →
+   membership identity card → two info panels → safety note → end.
+
+   Built only on elken-tokens.css so it still inherits the site's Deep Vital
+   Blue / Radiant Bloom Pink / Aqua palette, card surfaces, ek-btn actions
+   and typography.
    ============================================================================ */
 
 [hidden] { display: none !important; }
@@ -17,11 +20,11 @@
 }
 .welcome-section {
   padding-top: var(--ek-32);
-  padding-bottom: var(--ek-80);
+  padding-bottom: var(--ek-64);
   background: var(--ek-surface-page);
 }
 
-/* ---------- Compact welcome hero ---------- */
+/* ---------- Compact message header ---------- */
 .wm-hero {
   padding-block: var(--ek-40);
   background: var(--ek-surface);
@@ -253,7 +256,7 @@
 .wm-kv dd a { color: var(--ek-aqua); }
 .wm-kv dd a:hover { color: var(--ek-aqua-hover); }
 
-/* ---------- Safety note, actions, next steps ---------- */
+/* ---------- Safety note (end of the message) ---------- */
 .wm-note {
   display: flex;
   gap: var(--ek-12);
@@ -270,40 +273,23 @@
 .wm-note b { font-weight: var(--ek-w-bold); }
 .wm-note a { color: inherit; text-decoration: underline; }
 
-.wm-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--ek-12);
-  flex-wrap: wrap;
-  margin-top: var(--ek-24);
+/* ---------- Self-contained toast (no site scripts loaded) ---------- */
+.wm-toast {
+  position: fixed;
+  left: 50%;
+  bottom: var(--ek-24);
+  transform: translateX(-50%);
+  z-index: var(--ek-z-toast);
+  max-width: min(420px, calc(100% - (var(--ek-page-pad) * 2)));
+  padding: var(--ek-12) var(--ek-20);
+  border-radius: var(--ek-radius);
+  background: var(--ek-blue);
+  color: var(--ek-white);
+  box-shadow: var(--ek-shadow-lg);
+  font-family: var(--ek-font);
+  font-size: var(--ek-small);
+  text-align: center;
 }
-.wm-actions .ek-btn--primary { flex: 1 1 260px; }
-
-.wm-next {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--ek-12);
-  margin-top: var(--ek-24);
-  padding-top: var(--ek-20);
-  border-top: 1px solid var(--ek-border);
-}
-.wm-next__item {
-  display: flex;
-  align-items: center;
-  gap: var(--ek-8);
-  font-size: var(--ek-caption);
-  color: var(--ek-muted);
-}
-.wm-next__item span {
-  flex: none;
-  width: 22px; height: 22px;
-  display: grid; place-items: center;
-  border-radius: var(--ek-radius-pill);
-  background: var(--ek-panel-cool);
-  color: var(--ek-blue);
-  font-weight: var(--ek-w-bold);
-}
-.wm-next__item p { margin: 0; }
 
 /* ---------- Responsive ---------- */
 @media (min-width: 1024px) {
@@ -320,17 +306,14 @@
   .wm-idcard__facts { grid-template-columns: 1fr; gap: var(--ek-12); }
   .wm-grid { grid-template-columns: 1fr; }
   .wm-kv__row { grid-template-columns: 1fr; gap: var(--ek-4); }
-  .wm-actions .ek-btn { width: 100%; }
-  .wm-next { grid-template-columns: 1fr; }
   .wm-preview { flex-wrap: wrap; }
   .wm-preview .ek-btn { margin-left: 0; width: 100%; }
 }
 
 /* ---------- Print ---------- */
 @media print {
-  .ek-site-header, .ek-site-footer, .wm-hero, .wm-preview,
-  .wm-actions, .wm-next, .offline-banner, .cookie-banner { display: none !important; }
-  .welcome-section { padding: 0; background: var(--ek-white); }
+  .wm-preview, .wm-toast { display: none !important; }
+  .welcome-section { padding-bottom: 0; background: var(--ek-white); }
   .wm-idcard, .wm-panel { box-shadow: none; }
   body { background: var(--ek-white); }
 }
