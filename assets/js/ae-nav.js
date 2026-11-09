@@ -14,16 +14,18 @@
      exists. That is also what renderEnvBanner() uses, so nav + banner agree.
    - AE pages seed a demo login at DOMContentLoaded (app.js), so they normally
      open signed-in. ?demo=guest / Sign out clear it.
-   - Auth pages (login/signup) always render the signed-OUT chrome: a visitor
-     on the sign-in form must never see "My Account / Sign out".
+   - Auth pages render the signed-OUT chrome: a visitor on a registration
+     form must never see "My Account / Sign out". login.html has NO navigation
+     at all (it is a standalone brand panel), so in practice this is signup.html.
    - Guest ordering (?guest=1 -> sessionStorage 'al.guestMode') keeps the
      reduced/no-chrome journey on data-guest-no-nav pages. Auth.login() clears
      that flag, so a member in the same flow gets the full AE navigation.
    - Cross-tab changes are picked up through the `storage` event.
 
    Pages that are deliberately chrome-free are NOT wired to this file:
-   welcome.html (email body), order.html (standalone share link), and the
-   internal review tools (acceptance-checklist / business-flows / release-plan).
+   login.html (standalone sign-in brand panel), welcome.html (email body),
+   order.html (standalone share link), and the internal review tools
+   (acceptance-checklist / business-flows / release-plan).
    ========================================================================== */
 (function () {
   'use strict';
