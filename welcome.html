@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="assets/css/elken-marketing.css">
   <link rel="stylesheet" href="assets/css/elken-pages.css?v=20260917a">
   <link rel="stylesheet" href="assets/css/elken-chrome.css?v=20260909d">
-  <link rel="stylesheet" href="assets/css/welcome.css?v=20261109c">
+  <link rel="stylesheet" href="assets/css/welcome.css?v=20261109d">
 </head>
 <body data-page="welcome">
   <!--
@@ -25,114 +25,150 @@
     so there is no site navigation, no site footer, no cookie banner and no
     floating WhatsApp button. Only the message content is rendered.
   -->
-  <main id="main">
+  <main id="main" class="welcome-page">
+    <div class="welcome-container">
 
-    <!-- Compact welcome header -->
-    <section class="wm-hero">
-      <div class="welcome-container wm-hero__inner">
-        <div class="wm-hero__main">
-          <span class="wm-hero__mark" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.4 4.4L19 7.5"/></svg>
-          </span>
-          <div>
-            <p class="wm-hero__eyebrow">Membership activated</p>
-            <h1 class="wm-hero__title">Welcome to Elken<span class="wm-hero__dot">.</span></h1>
-            <p class="wm-hero__sub">Your account is ready. Here are the registration details and account information we sent to your email.</p>
-          </div>
-        </div>
-
-        <div class="wm-delivery" id="wmDelivery">
-          <span class="wm-delivery__ic" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 15.5l2.2 2.2L16 12"/></svg>
-          </span>
-          <div class="wm-delivery__copy">
-            <p class="wm-delivery__label" id="wmDeliveryLabel">Welcome email delivered</p>
-            <p class="wm-delivery__meta" id="wmDeliveryMeta">To <b data-wm="to">—</b> · <span data-wm="sentAt">—</span></p>
-          </div>
-          <button type="button" class="wm-delivery__resend" id="wmResendBtn">Resend</button>
-        </div>
+      <!-- Shown only when no real registration exists in this browser.
+           Sample content lives in memory only — nothing is written to
+           localStorage and it never enters the business flow. -->
+      <div class="wm-preview" id="wmPreview" hidden>
+        <span class="wm-preview__tag">Preview</span>
+        <p>Showing a sample welcome letter. Complete a registration to see your own details here.</p>
+        <a class="ek-btn ek-btn--secondary ek-btn--sm" href="signup.html">Create an account</a>
       </div>
-    </section>
 
-    <section class="welcome-section">
-      <div class="welcome-container">
+      <!-- Email letter sheet -->
+      <article class="wm-letter" aria-label="Welcome email content">
+        <div class="wm-letter__accent" aria-hidden="true"></div>
 
-        <!-- Shown only when no real registration exists in this browser.
-             Sample content lives in memory only — nothing is written to
-             localStorage and it never enters the business flow. -->
-        <div class="wm-preview" id="wmPreview" hidden>
-          <span class="wm-preview__tag">Preview</span>
-          <p>Showing a sample layout. Complete a registration to see your own details here.</p>
-          <a class="ek-btn ek-btn--secondary ek-btn--sm" href="signup.html">Create an account</a>
-        </div>
+        <!-- Masthead / Welcome banner -->
+        <section class="wm-hero">
+          <div class="wm-hero__glow" aria-hidden="true"></div>
 
-        <!-- Membership identity card: the one thing a new member must keep -->
-        <section class="wm-idcard" aria-label="Your membership">
-          <div class="wm-idcard__top">
-            <div class="wm-idcard__idwrap">
-              <p class="wm-idcard__label">Your Member ID · login credential</p>
-              <div class="wm-idcard__idrow">
-                <span class="wm-idcard__id" data-wm="memberId">—</span>
-              </div>
+          <div class="wm-hero__topbar">
+            <div class="wm-hero__status">
+              <span class="wm-hero__mark" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.4 4.4L19 7.5"/></svg>
+              </span>
+              <p class="wm-hero__eyebrow">Membership activated</p>
             </div>
-            <div class="wm-idcard__badge">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.2l5.9-.8L12 3z"/></svg>
-              <span data-wm="level">—</span>
+
+            <div class="wm-delivery" id="wmDelivery">
+              <span class="wm-delivery__ic" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 15.5l2.2 2.2L16 12"/></svg>
+              </span>
+              <div class="wm-delivery__copy">
+                <p class="wm-delivery__label" id="wmDeliveryLabel">Welcome email delivered</p>
+                <p class="wm-delivery__meta" id="wmDeliveryMeta">To <b data-wm="to">—</b> · <span data-wm="sentAt">—</span></p>
+              </div>
+              <button type="button" class="wm-delivery__resend" id="wmResendBtn">Resend</button>
             </div>
           </div>
-          <div class="wm-idcard__facts">
-            <div><span>Member</span><b data-wm="name">—</b></div>
-            <div><span>Market</span><b data-wm="country">—</b></div>
-            <div><span>Registered</span><b data-wm="registeredAt">—</b></div>
+
+          <div class="wm-hero__main">
+            <h1 class="wm-hero__title">Welcome to Elken, <span data-wm="firstName">Member</span><span class="wm-hero__dot">.</span></h1>
+            <p class="wm-hero__sub">Congratulations on activating your membership. Your account is ready — below are the registration details, sign-in credentials, and starter order record sent to your email.</p>
           </div>
         </section>
 
-        <!-- Two compact information panels -->
-        <div class="wm-grid">
+        <!-- Letter body -->
+        <div class="wm-body">
 
-          <section class="wm-panel">
-            <header class="wm-panel__head">
-              <h2 class="wm-panel__title">Registration details</h2>
-              <p class="wm-panel__sub">As submitted on your registration form</p>
-            </header>
-            <dl class="wm-kv">
-              <div class="wm-kv__row"><dt>Member name</dt><dd data-wm="name">—</dd></div>
-              <div class="wm-kv__row"><dt>Registered email</dt><dd data-wm="email">—</dd></div>
-              <div class="wm-kv__row"><dt>Phone number</dt><dd data-wm="phone">—</dd></div>
-              <div class="wm-kv__row"><dt>Country / Market</dt><dd data-wm="country">—</dd></div>
-              <div class="wm-kv__row"><dt>Preferred language</dt><dd data-wm="language">—</dd></div>
-              <div class="wm-kv__row"><dt>Referrer ID</dt><dd data-wm="referrerId">—</dd></div>
-              <div class="wm-kv__row"><dt>Stockist ID</dt><dd data-wm="centerId">—</dd></div>
-              <div class="wm-kv__row"><dt>Registration date</dt><dd data-wm="registeredAt">—</dd></div>
-            </dl>
+          <!-- Membership identity card: the one thing a new member must keep -->
+          <section class="wm-idcard" id="wmIdCard" aria-label="Your membership">
+            <div class="wm-idcard__watermark" aria-hidden="true">
+              <svg width="180" height="180" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.5 8.8 5 12.4 5 16a7 7 0 0 0 14 0c0-3.6-2.5-7.2-7-14z"/></svg>
+            </div>
+
+            <div class="wm-idcard__top">
+              <div class="wm-idcard__idwrap">
+                <p class="wm-idcard__label">Your Member ID · Login Credential</p>
+                <div class="wm-idcard__idrow">
+                  <span class="wm-idcard__id" data-wm="memberId">—</span>
+                </div>
+              </div>
+              <div class="wm-idcard__badge">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.2l5.9-.8L12 3z"/></svg>
+                <span data-wm="level">—</span>
+              </div>
+            </div>
+
+            <div class="wm-idcard__facts">
+              <div class="wm-idcard__fact">
+                <span>Member Holder</span>
+                <b data-wm="name">—</b>
+              </div>
+              <div class="wm-idcard__fact">
+                <span>Home Market</span>
+                <b data-wm="country">—</b>
+              </div>
+              <div class="wm-idcard__fact">
+                <span>Registered On</span>
+                <b data-wm="registeredAt">—</b>
+              </div>
+            </div>
           </section>
 
-          <section class="wm-panel">
-            <header class="wm-panel__head">
-              <h2 class="wm-panel__title">Account &amp; first order</h2>
-              <p class="wm-panel__sub">Your sign-in details and starter order</p>
-            </header>
-            <dl class="wm-kv">
-              <div class="wm-kv__row"><dt>Login account</dt><dd data-wm="loginId">—</dd></div>
-              <div class="wm-kv__row"><dt>Login password</dt><dd data-wm="loginPassword">—</dd></div>
-              <div class="wm-kv__row"><dt>Payment password</dt><dd data-wm="paymentPassword">—</dd></div>
-              <div class="wm-kv__row"><dt>Starter order</dt><dd data-wm="orderId">—</dd></div>
-              <div class="wm-kv__row"><dt>Order total</dt><dd data-wm="orderTotal">—</dd></div>
-              <div class="wm-kv__row"><dt>Payment method</dt><dd data-wm="paymentLabel">—</dd></div>
-              <div class="wm-kv__row"><dt>Sign-in page</dt><dd><a data-wm-href="loginUrl" href="login.html">Member sign in</a></dd></div>
-              <div class="wm-kv__row"><dt>Dashboard</dt><dd><a data-wm-href="accountUrl" href="account.html">My Account</a></dd></div>
-            </dl>
-          </section>
+          <!-- Two structured information panels -->
+          <div class="wm-grid">
+
+            <section class="wm-panel">
+              <header class="wm-panel__head">
+                <span class="wm-panel__icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.6-3.8 4.6-6 8-6s6.4 2.2 8 6"/></svg>
+                </span>
+                <div>
+                  <h2 class="wm-panel__title">Registration details</h2>
+                  <p class="wm-panel__sub">As submitted on your registration form</p>
+                </div>
+              </header>
+              <dl class="wm-kv">
+                <div class="wm-kv__row"><dt>Member name</dt><dd data-wm="name">—</dd></div>
+                <div class="wm-kv__row"><dt>Registered email</dt><dd data-wm="email">—</dd></div>
+                <div class="wm-kv__row"><dt>Phone number</dt><dd data-wm="phone">—</dd></div>
+                <div class="wm-kv__row"><dt>Country / Market</dt><dd data-wm="country">—</dd></div>
+                <div class="wm-kv__row"><dt>Preferred language</dt><dd data-wm="language">—</dd></div>
+                <div class="wm-kv__row"><dt>Referrer ID</dt><dd class="wm-kv__mono" data-wm="referrerId">—</dd></div>
+                <div class="wm-kv__row"><dt>Stockist ID</dt><dd class="wm-kv__mono" data-wm="centerId">—</dd></div>
+                <div class="wm-kv__row"><dt>Registration date</dt><dd data-wm="registeredAt">—</dd></div>
+              </dl>
+            </section>
+
+            <section class="wm-panel">
+              <header class="wm-panel__head">
+                <span class="wm-panel__icon wm-panel__icon--accent" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <div>
+                  <h2 class="wm-panel__title">Account &amp; first order</h2>
+                  <p class="wm-panel__sub">Your sign-in details and starter order</p>
+                </div>
+              </header>
+              <dl class="wm-kv">
+                <div class="wm-kv__row"><dt>Login account</dt><dd class="wm-kv__mono" data-wm="loginId">—</dd></div>
+                <div class="wm-kv__row"><dt>Login password</dt><dd><span class="wm-kv__pill" data-wm="loginPassword">—</span></dd></div>
+                <div class="wm-kv__row"><dt>Payment password</dt><dd><span class="wm-kv__pill" data-wm="paymentPassword">—</span></dd></div>
+                <div class="wm-kv__row"><dt>Starter order</dt><dd class="wm-kv__mono" data-wm="orderId">—</dd></div>
+                <div class="wm-kv__row"><dt>Order total</dt><dd class="wm-kv__amount" data-wm="orderTotal">—</dd></div>
+                <div class="wm-kv__row"><dt>Payment method</dt><dd data-wm="paymentLabel">—</dd></div>
+                <div class="wm-kv__row"><dt>Sign-in page</dt><dd><a class="wm-kv__link" data-wm-href="loginUrl" href="login.html">Member sign in</a></dd></div>
+                <div class="wm-kv__row"><dt>Dashboard</dt><dd><a class="wm-kv__link" data-wm-href="accountUrl" href="account.html">My Account</a></dd></div>
+              </dl>
+            </section>
+
+          </div>
+
+          <div class="wm-note">
+            <span class="wm-note__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+            </span>
+            <p><b>Keep your account safe.</b> We never send passwords by email. Your Member ID is your login credential — never share it, and Elken staff will never ask for your password or payment PIN. If you did not register this account, <a href="contact.html">contact Member Care</a>.</p>
+          </div>
 
         </div>
+      </article>
 
-        <div class="wm-note">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 8V13M12 16.5V17M10.3 3.9L2.8 17a2 2 0 001.7 3h15a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>
-          <p><b>Keep your account safe.</b> We never send passwords by email. Your Member ID is your login credential — never share it, and Elken staff will never ask for your password or payment PIN. If you did not register this account, <a href="contact.html">contact Member Care</a>.</p>
-        </div>
-
-      </div>
-    </section>
+    </div>
   </main>
 
   <script src="assets/js/welcome-mail.js?v=20261109a"></script>
@@ -141,7 +177,7 @@
       'use strict';
 
       /* This page loads no site scripts, so provide the small feedback helper
-         the Resend / Copy interactions expect. */
+         the Resend interaction expects. */
       if (!window.toast) {
         window.toast = function (msg) {
           var el = document.createElement('div');
@@ -198,9 +234,10 @@
 
       function render(data) {
         var m = data.member || {}, a = data.account || {}, o = data.order || {};
+        var firstName = m.firstName || (m.name ? String(m.name).trim().split(/\s+/)[0] : '') || 'Member';
         var values = {
           to: data.to, sentAt: fmtDate(data.sentAt),
-          firstName: m.firstName || 'member',
+          firstName: firstName,
           memberId: m.id, name: m.name, email: m.email, phone: m.phone,
           country: m.country, language: m.language, level: m.level,
           referrerId: m.referrerId, centerId: m.centerId,
@@ -220,6 +257,12 @@
           var map = { loginUrl: a.loginUrl, accountUrl: a.accountUrl };
           if (map[key]) el.setAttribute('href', map[key]);
         });
+
+        var idCard = document.getElementById('wmIdCard');
+        if (idCard) {
+          var lvl = String(m.level || '').toLowerCase();
+          idCard.setAttribute('data-tier', lvl.indexOf('silver') !== -1 ? 'silver' : 'gold');
+        }
 
         var preview = document.getElementById('wmPreview');
         var delivery = document.getElementById('wmDelivery');
