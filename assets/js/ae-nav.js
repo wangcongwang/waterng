@@ -153,15 +153,11 @@
   }
 
   function utils() {
-    /* The WP header hides this pill on account.html. AE keeps it on every
-       page so the two headers read identically and the AE chrome is
-       self-consistent — an independent implementation, not WP's exceptions. */
-    var lang = '<button class="ae-lang" type="button" id="headerLang" data-ae-lang aria-label="Language">EN ' + CHEVRON + '</button>';
     if (signedIn()) {
       return '<a class="ae-util ae-util--icon" href="account.html" title="My Account" aria-label="My Account">' + ICON_USER + '</a>' +
-        '<button class="ae-util ae-util--icon" type="button" id="headerLogout" data-ae-logout title="Sign out" aria-label="Sign out">' + ICON_LOGOUT + '</button>' + lang;
+        '<button class="ae-util ae-util--icon" type="button" id="headerLogout" data-ae-logout title="Sign out" aria-label="Sign out">' + ICON_LOGOUT + '</button>';
     }
-    return '<a class="ae-util ae-util--icon" href="login.html' + ACCOUNT_NEXT + '" title="Sign in" aria-label="Sign in">' + ICON_USER + '</a>' + lang;
+    return '<a class="ae-util ae-util--icon" href="login.html' + ACCOUNT_NEXT + '" title="Sign in" aria-label="Sign in">' + ICON_USER + '</a>';
   }
 
   function drawerAuth() {
@@ -277,16 +273,11 @@
     }, 400);
   }
   function onClick(e) {
-    var t = e.target && e.target.closest ? e.target.closest('[data-ae-burger],[data-ae-close],[data-ae-logout],[data-ae-lang]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-ae-burger],[data-ae-close],[data-ae-logout]') : null;
     if (!t) { closePanels(); return; }
     if (t.hasAttribute('data-ae-burger')) { e.preventDefault(); openDrawer(); return; }
     if (t.hasAttribute('data-ae-close')) { e.preventDefault(); closeDrawer(); return; }
     if (t.hasAttribute('data-ae-logout')) { e.preventDefault(); logout(); return; }
-    if (t.hasAttribute('data-ae-lang')) {
-      e.preventDefault();
-      notify('Bilingual UI (EN / 中文) is coming in Phase 2.', 'info');
-      return;
-    }
     if (t.hasAttribute('data-ae-toggle')) {
       e.preventDefault();
       var item = t.closest('.ae-nav__item');
