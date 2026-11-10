@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AE-side navigation — independent from the WP marketing header.
+   AE-side navigation — independent copy with WP marketing navigation content.
 
    The WordPress side renders its chrome from app.js -> renderHeader() into
    #app-header using .ek-* classes. AE pages must NOT use that implementation:
@@ -46,32 +46,33 @@
      convention as renderFooter()). Local filenames are used so the demo stays
      clickable offline. Signed-in visitors get an AE-only Member Centre group;
      signed-out visitors see the same five marketing groups as the WP header. */
+  var WP_BASE = 'https://www.elkenafrica.com';
   var WP_EXT = ' target="_blank" rel="noopener noreferrer"';
 
   var WHO_WE_ARE = [
-    { label: 'About Elken Nigeria', href: 'about.html' },
-    { label: 'Our Global Strength', href: 'about-global-strength.html' },
-    { label: 'Leadership', href: 'about-leadership.html' },
-    { label: 'Our Journey', href: 'about-journey.html' },
-    { label: 'Community', href: 'about-community.html' }
+    { label: 'About Elken Nigeria', href: WP_BASE + '/about/' },
+    { label: 'Our Global Strength', href: WP_BASE + '/about/global-strength/' },
+    { label: 'Leadership', href: WP_BASE + '/about/leadership/' },
+    { label: 'Our Journey', href: WP_BASE + '/about/journey/' },
+    { label: 'Community', href: WP_BASE + '/about/community/' }
   ];
   var RANGES = [
-    { name: 'Health', href: 'products-health.html', items: [
-      { label: 'Elken Calmag', href: 'product-calmag.html' },
-      { label: 'Elken Spirulina', href: 'product-spirulina.html' },
-      { label: 'LivXtra Yang', href: 'product-livxtra-yang.html' }
+    { name: 'Health', href: WP_BASE + '/products/health/', items: [
+      { label: 'Elken Calmag', href: WP_BASE + '/product/calmag/' },
+      { label: 'Elken Spirulina', href: WP_BASE + '/product/spirulina/' },
+      { label: 'LivXtra Yang', href: WP_BASE + '/product/livxtra-yang/' }
     ] },
-    { name: 'Wellness', href: 'products-wellness.html', items: [
-      { label: 'GenQi Hydrogen Inhaler', href: 'product-genqi.html' }
+    { name: 'Wellness', href: WP_BASE + '/products/wellness/', items: [
+      { label: 'GenQi Hydrogen Inhaler', href: WP_BASE + '/product/genqi/' }
     ] },
-    { name: 'Water', href: 'products-water-filters.html', items: [
-      { label: 'Bio Pure Ultra', href: 'product-bio-pure-ultra.html' },
-      { label: 'Bio Pure POE Mini', href: 'product-bio-pure-poe-mini.html' },
-      { label: 'Bio Pure POE Ultra', href: 'product-bio-pure-poe-ultra.html' },
-      { label: 'Hydromi', href: 'product-hydromi.html' }
+    { name: 'Water', href: WP_BASE + '/products/water-filters/', items: [
+      { label: 'Bio Pure Ultra', href: WP_BASE + '/product/bio-pure-ultra/' },
+      { label: 'Bio Pure POE Mini', href: WP_BASE + '/product/bio-pure-poe-mini/' },
+      { label: 'Bio Pure POE Ultra', href: WP_BASE + '/product/bio-pure-poe-ultra/' },
+      { label: 'Hydromi', href: WP_BASE + '/product/hydromi/' }
     ] },
-    { name: 'Beauty', href: 'products-beauty.html', items: [
-      { label: 'El Marino Yang', href: 'product-el-marino-yang.html' }
+    { name: 'Beauty', href: WP_BASE + '/products/beauty/', items: [
+      { label: 'El Marino Yang', href: WP_BASE + '/product/el-marino-yang/' }
     ] }
   ];
   /* AE-only destinations — these live in the application layer, never in WP. */
@@ -114,7 +115,7 @@
       '</div>';
   }
   function productsPanel() {
-    return '<div class="ae-nav__panel ae-nav__panel--products ae-nav__panel--right">' +
+    return '<div class="ae-nav__panel ae-nav__panel--products">' +
       RANGES.map(function (r) {
         return '<div class="ae-nav__sub">' +
           '<a class="ae-nav__sublink" href="' + r.href + '"' + WP_EXT + ' data-ae-sub-toggle aria-expanded="false" aria-haspopup="true">' +
@@ -124,7 +125,7 @@
             '</div>' : '') +
         '</div>';
       }).join('') +
-      '<a class="ae-nav__seeall" href="products.html"' + WP_EXT + '><span>See all products</span>' + ARROW + '</a>' +
+      '<a class="ae-nav__seeall" href="' + WP_BASE + '/products/"' + WP_EXT + '><span>See all products</span>' + ARROW + '</a>' +
       '</div>';
   }
   function navGroup(label, dropdown) {
@@ -136,25 +137,19 @@
 
   function mainNavItems(active) {
     var on = function (name) { return active === name ? ' aria-current="page"' : ''; };
-    if (signedIn()) {
-      /* AE's own navigation: member operations first, marketing content is
-         still reachable but lives in the WP layer (new tab). */
-      return navGroup('Member Centre', panel(MEMBER_LINKS, 'ae-nav__panel--right')) +
-        navGroup('Products', productsPanel()) +
-        navGroup('Support', panel(SUPPORT_LINKS, 'ae-nav__panel--right', WP_EXT));
-    }
+    /* AE pages display WP marketing navigation */
     /* Signed out / auth pages: identical group structure to the WP header. */
     return '<div class="ae-nav__item ae-nav__item--parent">' +
-        '<a class="ae-nav__link" href="about.html"' + WP_EXT + ' data-ae-toggle aria-expanded="false" aria-haspopup="true"' + on('about') + '>Who We Are ' + CHEVRON + '</a>' +
+        '<a class="ae-nav__link" href="' + WP_BASE + '/about/"' + WP_EXT + ' data-ae-toggle aria-expanded="false" aria-haspopup="true"' + on('about') + '>Who We Are ' + CHEVRON + '</a>' +
         panel(WHO_WE_ARE, '', WP_EXT) +
       '</div>' +
       '<div class="ae-nav__item ae-nav__item--parent">' +
-        '<a class="ae-nav__link" href="products.html"' + WP_EXT + ' data-ae-toggle aria-expanded="false" aria-haspopup="true"' + on('products') + '>Products ' + CHEVRON + '</a>' +
+        '<a class="ae-nav__link" href="' + WP_BASE + '/products/"' + WP_EXT + ' data-ae-toggle aria-expanded="false" aria-haspopup="true"' + on('products') + '>Products ' + CHEVRON + '</a>' +
         productsPanel() +
       '</div>' +
-      '<div class="ae-nav__item"><a class="ae-nav__link" href="become-a-distributor.html"' + WP_EXT + on('distributor') + '>Become a Distributor</a></div>' +
-      '<div class="ae-nav__item"><a class="ae-nav__link" href="contact.html"' + WP_EXT + on('contact') + '>Contact Us</a></div>' +
-      '<div class="ae-nav__item"><a class="ae-nav__link" href="faq.html"' + WP_EXT + on('faq') + '>FAQ</a></div>';
+      '<div class="ae-nav__item"><a class="ae-nav__link" href="' + WP_BASE + '/become-a-distributor/"' + WP_EXT + on('distributor') + '>Become a Distributor</a></div>' +
+      '<div class="ae-nav__item"><a class="ae-nav__link" href="' + WP_BASE + '/contact/"' + WP_EXT + on('contact') + '>Contact Us</a></div>' +
+      '<div class="ae-nav__item"><a class="ae-nav__link" href="' + WP_BASE + '/faq/"' + WP_EXT + on('faq') + '>FAQ</a></div>';
   }
 
   function utils() {
@@ -162,14 +157,6 @@
        page so the two headers read identically and the AE chrome is
        self-consistent — an independent implementation, not WP's exceptions. */
     var lang = '<button class="ae-lang" type="button" id="headerLang" data-ae-lang aria-label="Language">EN ' + CHEVRON + '</button>';
-    if (isAuthPage()) {
-      /* Never show a signed-in identity on the sign-in / sign-up screens.
-         Offer the complementary action instead of a self-link. */
-      var other = currentFile() === 'login.html'
-        ? '<a class="ae-util" href="signup.html' + ACCOUNT_NEXT + '">Create account</a>'
-        : '<a class="ae-util" href="login.html' + ACCOUNT_NEXT + '">Sign in</a>';
-      return other + lang;
-    }
     if (signedIn()) {
       return '<a class="ae-util ae-util--icon" href="account.html" title="My Account" aria-label="My Account">' + ICON_USER + '</a>' +
         '<button class="ae-util ae-util--icon" type="button" id="headerLogout" data-ae-logout title="Sign out" aria-label="Sign out">' + ICON_LOGOUT + '</button>' + lang;
@@ -179,13 +166,7 @@
 
   function drawerAuth() {
     var next = '?next=' + encodeURIComponent(currentFile() + location.search);
-    if (isAuthPage()) {
-      return '<div class="ae-drawer__stack">' +
-        (currentFile() === 'login.html'
-          ? '<a class="ae-btn" href="signup.html' + next + '">Create account</a>'
-          : '<a class="ae-btn" href="login.html' + next + '">Sign in</a>') +
-        '</div>';
-    }
+    /* Unlogged / auth state: mirrors WP header / drawer auth */
     if (signedIn()) {
       var u = aeUser() || {};
       var name = u.name || ((u.firstName || '') + ' ' + (u.lastName || '')).trim() || 'Elken Member';
@@ -208,29 +189,15 @@
   }
 
   function drawerNav(active) {
-    var links;
-    if (signedIn()) {
-      links = MEMBER_LINKS.slice(0, 2).map(function (l) {
-        return '<a class="' + (active === 'account' && l.href === 'account.html' ? 'active' : '') + '" href="' + l.href + '">' + l.label + '</a>';
-      }).concat(RANGES.map(function (r) {
-        return '<a href="' + r.href + '"' + WP_EXT + '>' + r.name + ' (WP)</a>';
-      })).concat([
-        '<a href="contact.html"' + WP_EXT + '>Contact Us</a>',
-        '<a href="faq.html"' + WP_EXT + '>FAQ</a>'
-      ]);
-    } else {
-      links = [
-        '<a href="about.html"' + WP_EXT + '>About Us</a>',
-        '<a href="products.html"' + WP_EXT + '>Products</a>',
-        '<a href="become-a-distributor.html"' + WP_EXT + '>Become a Distributor</a>',
-        '<a href="contact.html"' + WP_EXT + '>Contact Us</a>',
-        '<a href="faq.html"' + WP_EXT + '>FAQ</a>',
-        '<a href="service.html"' + WP_EXT + '>Service &amp; Support</a>'
-      ];
-    }
-    return '<div class="ae-drawer__section"><p class="ae-drawer__label">' +
-      (signedIn() ? 'Member &amp; catalogue' : 'Explore') +
-      '</p><nav class="ae-drawer__nav" aria-label="AE navigation">' + links.join('') + '</nav></div>';
+    var links = [
+      '<a href="' + WP_BASE + '/"' + WP_EXT + '>Home</a>',
+      '<a href="' + WP_BASE + '/about/"' + WP_EXT + '>About Us</a>',
+      '<a href="' + WP_BASE + '/products/"' + WP_EXT + '>Products</a>',
+      '<a href="' + WP_BASE + '/become-a-distributor/"' + WP_EXT + '>Become a Distributor</a>',
+      '<a href="' + WP_BASE + '/contact/"' + WP_EXT + '>Contact Us</a>',
+      '<a href="' + WP_BASE + '/faq/"' + WP_EXT + '>FAQ</a>'
+    ];
+    return '<nav class="ae-drawer__nav" aria-label="AE navigation">' + links.join('') + '</nav>';
   }
 
   /* ---------- Render ------------------------------------------------------ */
@@ -239,19 +206,9 @@
     var host = document.getElementById('ae-header');
     if (!host) return;
 
-    /* The guest ordering journey stays chrome-free on its declared pages.
-       A signed-in member has no guest flag (Auth.login clears it), so they
-       still get the full AE navigation on those same pages. */
-    var hide = (document.body.dataset.standalone === 'true') ||
-      (guestMode() && document.body.dataset.guestNoNav === 'true');
-    if (hide) {
-      host.innerHTML = '';
-      return;
-    }
-
     var active = document.body.dataset.page || '';
-    var home = signedIn() ? 'account.html' : 'index.html';
-    var logoTarget = signedIn() ? '' : WP_EXT;
+    var home = WP_BASE + '/';
+    var logoTarget = WP_EXT;
 
     host.innerHTML =
       '<header class="ae-header">' +
@@ -320,7 +277,7 @@
     }, 400);
   }
   function onClick(e) {
-    var t = e.target && e.target.closest ? e.target.closest('[data-ae-burger],[data-ae-close],[data-ae-toggle],[data-ae-sub-toggle],[data-ae-logout],[data-ae-lang]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-ae-burger],[data-ae-close],[data-ae-logout],[data-ae-lang]') : null;
     if (!t) { closePanels(); return; }
     if (t.hasAttribute('data-ae-burger')) { e.preventDefault(); openDrawer(); return; }
     if (t.hasAttribute('data-ae-close')) { e.preventDefault(); closeDrawer(); return; }

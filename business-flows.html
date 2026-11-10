@@ -323,7 +323,7 @@ g.node.link-src .hit{stroke:var(--crit);stroke-width:3.5;stroke-dasharray:none;f
     <h1><span class="glitch" data-text="业务流程图集">业务流程图集</span></h1>
     <p class="lede">本版按新架构重做：<b>WordPress 承载前端页面展示</b>（首页、品牌、商品展示、FAQ、法务，含商品图文与展示价自维护）；<b>所有下单流程与我的账户流程跳转到外部网页</b>，由外部系统独立开发。两侧各有独立后台与数据，靠「跳转衔接」打通。并覆盖复购双页（会员 / 游客）、游客免注册下单、会员四流程（欢迎包 / 复购 / 自动维护 ≥90BV / 等级升级 BV 补差）与六种支付渠道。点击节点看业务说明，悬停节点高亮链路，箭头虚线流向即业务流转方向。</p>
     <div class="hero-meta">
-      <span><b>18</b> 张业务流程图</span>
+      <span><b>21</b> 张业务流程图</span>
       <span><b>2</b> 套后台（WP / 外部）</span>
       <span><b>23</b> 条规则配置归属</span>
       <span><b>12</b> 项已知偏差</span>
@@ -361,6 +361,10 @@ g.node.link-src .hit{stroke:var(--crit);stroke-width:3.5;stroke-dasharray:none;f
     <a href="#f-admin_order" class="toc-b"><span class="dot"></span>15 · 订单 / 物流 / 订单类型</a>
     <a href="#f-admin_rbac" class="toc-b"><span class="dot"></span>16 · 角色与权限 + 审计</a>
     <a href="#f-admin_report" class="toc-b"><span class="dot"></span>17 · 报表与结算</a>
+    <h2>二期核心流程</h2>
+    <a href="#f-p2_pay" class="toc-b"><span class="dot"></span>20 · 尼日利亚支付（USSD+Visa & 独立 QR）</a>
+    <a href="#f-p2_welcome" class="toc-b"><span class="dot"></span>21 · 注册欢迎邮件与信函页</a>
+    <a href="#f-p2_ae_nav" class="toc-b"><span class="dot"></span>22 · AE 通用导航与跨层跳转</a>
     <h2>附录</h2>
     <a href="#f-map" class="toc-apx"><span class="dot"></span>18 · 归属地图（规则 / 页面）</a>
     <a href="#f-backlog" class="toc-apx"><span class="dot"></span>19 · 检查结论 + 待建清单</a>
@@ -848,6 +852,129 @@ admin_report:{
   {from:"a",to:"b"},{from:"b",to:"c"},{from:"c",to:"d"},{from:"d",to:"e"},{from:"e",to:"f"},
   {from:"g",to:"e",label:"口径"},{from:"h",to:"b",label:"取数"},{from:"h",to:"c",label:"取数"}
  ]
+},
+
+/* ---------------- 二期核心流程 ---------------- */
+p2_pay:{ fit:true,
+ title:"20 · 尼日利亚支付扩展：Paystack（USSD & Visa）与独立 QR 扫码",
+ sub:"面向尼日利亚市场（NGN）的本地化支付链路：结算/注册页根据 resolveOrderCountry() 进行国家市场门控判定（Nigeria vs 非尼日利亚）→ Paystack 通道内提供 Card、Bank、USSD 拨号串与 Visa 快捷支付通道；同时提供一级独立「Pay with Visa QR」扫码通道，含 10 分钟倒计时与一键重生成。",
+ nodes:[
+  {id:"p0",x:340,y:10,w:260,h:60,label:"结算/注册页支付区",sub:"signup / checkout / member-welcome",type:"page",detail:"用户进入支付选择区；系统调用 resolveOrderCountry() 判定当前订单市场。"},
+  {id:"p_mkt",x:363,y:104,w:214,h:118,label:"国家市场门控？",sub:"Nigeria (NGN) 专属",type:"decision",detail:"Nigeria (NGN)：开放 USSD 与 Visa QR；非尼日利亚市场（如 UAE/AED）：自动隐藏尼日利亚专属 USSD 与 QR 通道。"},
+  {id:"p_uae",x:720,y:135,w:230,h:60,label:"非尼日利亚市场 (UAE)",sub:"常规跨境可用支付通道",type:"action",detail:"仅展示国际卡等常规渠道，隐藏/禁用 USSD 与 Visa QR。"},
+  {id:"p_sel",x:363,y:260,w:214,h:118,label:"选择支付方式",sub:"Paystack / QR / Balance",type:"decision",detail:"Paystack 通道下含 Card / Bank / USSD / Visa；Pay with Visa QR 作为独立一级单选入口。"},
+
+  {id:"u1",x:170,y:410,w:240,h:66,label:"选 Paystack → 提交",sub:"弹出金额确认框 (#psPayModal)",type:"action",detail:"展示 NGN 应付总额，点击 Continue to Paystack 进入收银台。"},
+  {id:"u2",x:30,y:512,w:230,h:74,label:"收银台切至【USSD】",sub:"选择 16 家开户行之一",type:"action",detail:"支持 GTBank *737# / Access *901# / Zenith *966# 等 16 家银行通道。"},
+  {id:"u_v",x:290,y:512,w:230,h:74,label:"收银台切至【Visa】",sub:"Visa 快捷 / 3DS 授权",type:"action",detail:"Paystack 收银台内选择 Visa 通道，输入 Visa 卡号并校验 3D Secure 短信 OTP 完成实时扣款。"},
+  {id:"u3",x:30,y:622,w:230,h:74,label:"生成动态拨号串",sub:"*银行码*000*金额*参考号#",type:"store",detail:"金额动态随商品数量联动；支持点击 Copy code 一键复制进剪贴板。"},
+  {id:"u4",x:30,y:732,w:230,h:66,label:"手机拨号 + 输入 PIN 授权",sub:"核对商户 Elken Nigeria Ltd",type:"action",detail:"用户在手机拨打 USSD 码，输入银行 PIN 码完成实时扣款。"},
+  {id:"u5",x:170,y:834,w:214,h:118,label:"网关回调校验",sub:"Success / Declined",type:"decision",detail:"扣款成功落单；Declined 拒绝显示红字报错，不建单，可换卡/换银行重试。"},
+
+  {id:"q1",x:680,y:410,w:250,h:74,label:"选【Pay with Visa QR】",sub:"即时展开二维码面板",type:"action",detail:"作为一级单选卡片；点击后下方即时挂载 .pm-qr-wrap 区域。"},
+  {id:"q2",x:680,y:520,w:250,h:74,label:"动态生成 SVG 二维码",sub:"ref + amount(kobo) + NGN",type:"store",detail:"QRCode 实时编码交易参考号、kobo 最小单位金额、币种与商户名。"},
+  {id:"q3",x:698,y:630,w:214,h:118,label:"10:00 倒计时有效？",sub:"每秒跳动 · 校验有效期",type:"decision",detail:"未超时 isComplete()=true 允许提交；倒计时归零置为 Expired。"},
+  {id:"q4",x:680,y:784,w:250,h:66,label:"银行 App 扫码核销",sub:"Visa QR / NQR 授权完成",type:"action",detail:"用户使用支持 Visa QR / NQR 的手机银行 App 扫码支付后提交落单。"},
+  {id:"q_exp",x:980,y:656,w:230,h:70,label:"超时 Expired 拦截",sub:"禁用提交 · 点击 Regenerate",type:"action",detail:"isComplete()=false 禁用按钮；点 Regenerate QR code 原地刷新 10:00 倒计时与二维码。"},
+
+  {id:"p_done",x:345,y:986,w:250,h:74,label:"落单成功 · 状态回写",sub:"写入 al.orders + paymentReference",type:"store",detail:"绑定唯一 paymentReference (AQ-xxxxxx)；注册流程触发欢迎邮件，结算流程跳 shipping.html。"},
+  {id:"p_cfg",x:345,y:1096,w:250,h:66,label:"配置点：尼日利亚通道启停",sub:"USSD 银行清单 · QR 密钥与时效",type:"cfg",detail:"由外部后台支付模块配置，服务端根据商户与币种下发。"}
+ ],
+ edges:[
+  {from:"p0",to:"p_mkt"},
+  {from:"p_mkt",to:"p_uae",label:"非尼日利亚",dash:true},
+  {from:"p_mkt",to:"p_sel",label:"尼日利亚 (NGN)"},
+  {from:"p_sel",to:"u1",label:"选 Paystack (含 USSD/Visa)"},
+  {from:"u1",to:"u2",label:"切 USSD"},
+  {from:"u1",to:"u_v",label:"切 Visa"},
+  {from:"u2",to:"u3"},{from:"u3",to:"u4"},{from:"u4",to:"u5"},
+  {from:"u_v",to:"u5",label:"Visa 扣款"},
+  {from:"u5",to:"u2",label:"Declined 换通道重试",dash:true},
+  {from:"u5",to:"p_done",label:"Success"},
+  {from:"p_sel",to:"q1",label:"选 Visa QR"},
+  {from:"q1",to:"q2"},{from:"q2",to:"q3"},
+  {from:"q3",to:"q4",label:"≤ 10分钟"},
+  {from:"q3",to:"q_exp",label:"超时",dash:true},
+  {from:"q_exp",to:"q2",label:"Regenerate 刷新",dash:true},
+  {from:"q4",to:"p_done",label:"扫码提交"},
+  {from:"p_done",to:"p_cfg",label:"配置"}
+ ]
+},
+
+p2_welcome:{ fit:true,
+ title:"21 · 注册成功欢迎邮件与独立信函页（welcome.html v5）",
+ sub:"新会员注册完成首单支付后，系统自动触发欢迎邮件并组装独立电子信函（welcome.html v5 最新改版）：无任何站点外壳、三色饰条、深蓝个性化信头、VIP 身份卡（含水滴水印与卡级粉色星标）、双栏 16 项结构化信息（密码脱敏）、底部盾牌安全警示条，支持强确认弹窗直达与会员中心常驻回看/重发。",
+ nodes:[
+  {id:"w1",x:340,y:10,w:250,h:66,label:"新会员注册首单支付成功",sub:"signup.html processRegistration",type:"page",detail:"完成推荐人验证、国家继承、Order Level、商品选择与支付验证。"},
+  {id:"w2",x:340,y:110,w:250,h:74,label:"自动发送欢迎邮件",sub:"WelcomeMail.send(userData, order)",type:"action",detail:"生成唯一 messageId (WM-xxxxxx)，组装会员资料、登录账号与首单摘要。"},
+  {id:"w_sec",x:660,y:110,w:250,h:74,label:"双密码安全脱敏规则",sub:"严禁将密码写入邮件载荷",type:"note",detail:"登录密码与支付密码在邮件内固定显示为脱敏胶囊：Set at registration — not sent by email。"},
+  {id:"w3",x:340,y:220,w:250,h:66,label:"写入站内信箱并广播",sub:"al.welcomeMail + al:welcomemail",type:"store",detail:"本地持久化并派发全局事件；生产环境同构调用 ESP / SMTP 邮件服务。"},
+  {id:"w4",x:340,y:320,w:250,h:74,label:"弹出 Member ID 强确认弹窗",sub:"#midModal (不可遮罩关闭)",type:"page",detail:"醒目展示新 Member ID + Copy 按钮 + 绿底提示「Welcome email sent to <邮箱>」。"},
+
+  {id:"w_opt",x:358,y:430,w:214,h:118,label:"用户弹窗操作选择",sub:"查看信函 vs 跳过登录",type:"decision",detail:"主按钮跳欢迎信函页；次按钮 Skip and sign in 直接跳登录页并回填账号。"},
+  {id:"w_skip",x:60,y:460,w:220,h:60,label:"Skip and sign in",sub:"login.html?mid=<MemberID>",type:"action",detail:"直接去登录页，账号已自动预填，输入密码即可登录。"},
+  {id:"w_acc",x:660,y:460,w:240,h:60,label:"账户页常驻入口",sub:"account.html Quick actions",type:"action",detail:"已登录会员点击「My welcome email」随时回看欢迎信函并支持 Resend。"},
+  {id:"w_view",x:340,y:584,w:250,h:66,label:"打开独立电子欢迎信函页",sub:"welcome.html?mid=<MemberID>",type:"page",detail:"v5 最新改版：无顶部导航、无底部页脚、无 Cookie 横幅、无 WhatsApp 悬浮球。"},
+
+  {id:"w_hero",x:30,y:690,w:250,h:74,label:"三色饰条 + 深蓝信头",sub:".wm-letter__accent + .wm-hero",type:"action",detail:"MEMBERSHIP ACTIVATED 状态胶囊 + 大标题 Welcome to Elken, <firstName>. + 右端毛玻璃投递卡。"},
+  {id:"w_card",x:340,y:690,w:250,h:80,label:"悬浮 VIP 会员身份卡",sub:"#wmIdCard (data-tier='gold|silver')",type:"store",detail:"叠压在信头底部，带 -14deg 水滴水印；金卡五角星渲染品牌粉色；大号 Member ID + 姓名/市场/时间三格。"},
+  {id:"w_grid",x:650,y:690,w:250,h:74,label:"双栏 16 项结构化明细",sub:".wm-grid (两个 .wm-panel)",type:"action",detail:"左栏 Registration details (8项) / 右栏 Account & first order (8项) + 胶囊链接。"},
+  {id:"w_note",x:340,y:814,w:250,h:66,label:"底部盾牌安全警示条",sub:".wm-note (琥珀色竖条边框)",type:"note",detail:"提醒永不通过邮件发送密码、切勿向任何人透露 Member ID 或支付 PIN，非本人操作联系客服。"},
+  {id:"w_resend",x:30,y:814,w:250,h:66,label:"一键重发【Resend】",sub:"刷新 sentAt + 弹自包含 Toast",type:"action",detail:"点击毛玻璃卡内的 Resend 按钮调用 WelcomeMail.resend()，更新时间戳并弹 Toast 确认。"}
+ ],
+ edges:[
+  {from:"w1",to:"w2"},
+  {from:"w2",to:"w_sec"},
+  {from:"w2",to:"w3"},{from:"w3",to:"w4"},{from:"w4",to:"w_opt"},
+  {from:"w_opt",to:"w_skip",label:"Skip and sign in",dash:true},
+  {from:"w_opt",to:"w_view",label:"View welcome message"},
+  {from:"w_acc",to:"w_view",label:"常驻入口"},
+  {from:"w_view",to:"w_hero"},{from:"w_view",to:"w_card"},{from:"w_view",to:"w_grid"},
+  {from:"w_hero",to:"w_resend",label:"点 Resend"},
+  {from:"w_card",to:"w_note"}
+ ]
+},
+
+p2_ae_nav:{ fit:true,
+ title:"22 · AE 侧通用导航状态判定与跨层跳转",
+ sub:"AE 交易与会员侧（28 个页面）挂载独立通用导航（ae-nav.js + ae-nav.css），彻底解耦 WP 导航代码；根据 Auth.user 实时感知已登录与未登录态并动态切换菜单；点击 WP 侧品牌/产品/支持菜单在新标签页打开（target='_blank'），保护 AE 页面已填表单与结算状态不丢失。",
+ nodes:[
+  {id:"n0",x:340,y:10,w:250,h:60,label:"页面加载 (DOMContentLoaded)",sub:"检测 body 归属属性",type:"page",detail:"检测 body 是否声明 data-ae-nav / data-wordpress / data-display-only / data-standalone。"},
+  {id:"n_flt",x:358,y:104,w:214,h:118,label:"页面类型分流",sub:"独立无导航 vs WP vs AE",type:"decision",detail:"• 6 个独立页：login / welcome / order / 3个工具页（不挂载导航）
+• 14 个 WP 营销页：app.js 渲染 #app-header
+• 28 个 AE 业务页：挂载 #ae-header"},
+  {id:"n_no",x:50,y:135,w:220,h:60,label:"独立无导航页面 (6 页)",sub:"login / welcome / order...",type:"action",detail:"login（品牌分栏）、welcome（邮件信函）、order（单据）等页面保持独立干净，不挂载导航。"},
+  {id:"n_ae",x:340,y:260,w:250,h:66,label:"AE 独立接管容器 #ae-header",sub:"ae-nav.js 独立渲染 (.ae-*)",type:"action",detail:"app.js 检测到 data-ae-nav='true' 时清空 #app-header 并退出；ae-nav 独立挂载 .ae-* 导航组件。"},
+
+  {id:"n_gst",x:358,y:360,w:214,h:118,label:"游客结算免导航判定？",sub:"al.guestMode && guestNoNav",type:"decision",detail:"游客在 guest-repeat-purchase / cart / checkout 流程中隐藏顶部导航，保持专注下单。会员登录后自动清除 guest 标记恢复导航。"},
+  {id:"n_hide",x:50,y:390,w:220,h:60,label:"隐藏顶部导航 (#ae-header 置空)",sub:"聚焦游客免登录下单闭环",type:"action",detail:"仅保留悬浮购物车与页面内流程按钮，无多余外链干扰。"},
+
+  {id:"n_auth",x:358,y:512,w:214,h:118,label:"登录态判定 (signedIn)",sub:"!isAuthPage && !!Auth.user",type:"decision",detail:"已登录会员态 vs 未登录态/认证页（signup.html 恒按未登录态渲染，显示互补的 Sign in）。"},
+
+  {id:"n_unlog",x:40,y:664,w:260,h:74,label:"渲染【未登录态主菜单】",sub:"Who We Are / Products / Support / FAQ",type:"action",detail:"与 WP 官网对齐 5 大栏目，右侧显示文字链接 Sign in（跳 login.html?next=repeat-purchase.html）+ EN 胶囊。"},
+  {id:"n_login",x:620,y:664,w:260,h:74,label:"渲染【已登录会员态主菜单】",sub:"Member Centre / Products / Support",type:"action",detail:"主菜单前置 Member Centre（6项会员业务）；右侧显示 My Account 用户图标 + Sign out 退出按钮 + EN 胶囊。"},
+
+  {id:"n_target",x:358,y:780,w:214,h:118,label:"用户点击链接目标层？",sub:"AE 应用层 vs WP 营销层",type:"decision",detail:"判定点击目标归属于 AE 系统内部还是 WP 营销网站。"},
+
+  {id:"n_same",x:40,y:930,w:250,h:74,label:"在【当前标签页】直接跳转",sub:"同页内部业务流转",type:"action",detail:"涵盖：Member Centre 下属 6 个会员操作页、My Account 个人中心、已登录态下的 Logo（跳 account.html）。"},
+  {id:"n_new",x:610,y:930,w:280,h:80,label:"在【新标签页】打开对应 WP 页面",sub:"target='_blank' rel='noopener noreferrer'",type:"action",detail:"涵盖：Who We Are 全系、Products 二级品类与单品、Support、FAQ、Contact、未登录 Logo、底部 Footer 品牌与产品列。"},
+  {id:"n_wv",x:610,y:1044,w:280,h:70,label:"内嵌 WebView 降级保护",sub:"isEmbeddedPreview() 自动拦截",type:"note",detail:"在 WorkBuddy / Electron 等受限内嵌 webview 下自动降级为同页跳转，防止新窗口崩溃；普通浏览器严格保持新标签打开。"}
+ ],
+ edges:[
+  {from:"n0",to:"n_flt"},
+  {from:"n_flt",to:"n_no",label:"独立页",dash:true},
+  {from:"n_flt",to:"n_ae",label:"AE 页面"},
+  {from:"n_ae",to:"n_gst"},
+  {from:"n_gst",to:"n_hide",label:"游客结算态",dash:true},
+  {from:"n_gst",to:"n_auth",label:"正常 AE 导航"},
+  {from:"n_auth",to:"n_unlog",label:"未登录 / signup"},
+  {from:"n_auth",to:"n_login",label:"已登录会员"},
+  {from:"n_unlog",to:"n_target"},
+  {from:"n_login",to:"n_target"},
+  {from:"n_target",to:"n_same",label:"AE 内部目标"},
+  {from:"n_target",to:"n_new",label:"WP 营销目标"},
+  {from:"n_new",to:"n_wv",label:"环境检测"}
+ ]
 }
 
 };
@@ -1006,7 +1133,8 @@ const EYEBROW = {
   checkout:"外部系统 · 交易", orders:"外部系统 · 履约", account:"外部系统 · 账户",
   lifecycle:"外部系统 · 会员流程", upgrade:"外部系统 · 等级升级", referral:"外部系统 · 分销",
   admin_product:"外部后台 · 商品", admin_member:"外部后台 · 会员",
-  admin_order:"外部后台 · 订单", admin_rbac:"外部后台 · 权限", admin_report:"外部后台 · 报表"
+  admin_order:"外部后台 · 订单", admin_rbac:"外部后台 · 权限", admin_report:"外部后台 · 报表",
+  p2_pay:"二期 · 支付扩展", p2_welcome:"二期 · 会员触达", p2_ae_nav:"二期 · 架构与导航"
 };
 
 /* ---- 附录 A-1：业务规则 → 配置归属 ---- */
