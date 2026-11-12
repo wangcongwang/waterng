@@ -1068,17 +1068,12 @@
     if (window.isWordPressPage && window.isWordPressPage()) return true;
     return !(window.Auth && typeof window.Auth.isLoggedIn === 'function' && window.Auth.isLoggedIn());
   }
-  function openLoginNewTab() {
-    const file = location.pathname.split('/').pop() || 'index.html';
-    const next = '?next=' + encodeURIComponent(file + location.search);
-    const url = 'login.html' + next;
+  function openUrlFromGate(url) {
     // Embedded preview webviews (WorkBuddy built-in browser etc.) handle
     // target=_blank window creation poorly and can crash the host app.
     // Fall back to same-tab navigation there; real browsers keep the new tab.
     if (isEmbeddedPreview()) { location.href = url; return; }
     // Open via an anchor with target=_blank so it reliably opens in a NEW tab.
-    // window.open(url, '_blank', 'noopener') returns null in some browsers, which wrongly
-    // triggered the same-tab fallback (location.href) and navigated the current tab.
     const a = document.createElement('a');
     a.href = url;
     a.target = '_blank';
@@ -1086,6 +1081,122 @@
     document.body.appendChild(a);
     a.click();
     a.remove();
+  }
+  function openLoginNewTab() {
+    const file = location.pathname.split('/').pop() || 'index.html';
+    const next = '?next=' + encodeURIComponent(file + location.search);
+    openUrlFromGate('login.html' + next);
+  }
+  function ensureBuyNowChoiceModal() {
+    let modal = document.getElementById('buyNowChoiceModal');
+    if (modal) return modal;
+    modal = document.createElement('dialog');
+    modal.className = 'ek-modal ek-modal--buynow';
+    modal.id = 'buyNowChoiceModal';
+    modal.setAttribute('aria-labelledby', 'buyNowChoiceTitle');
+    modal.innerHTML = `
+      <div class="ek-modal__head">
+        <span class="guest-market-head-icon" id="buyNowMarketIcon" aria-hidden="true" hidden>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>
+            <path d="M12 3a14.5 14.5 0 0 1 0 18"/><path d="M12 3a14.5 14.5 0 0 0 0 18"/>
+          </svg>
+        </span>
+        <h3 class="ek-modal__title" id="buyNowChoiceTitle">How would you like to continue?</h3>
+        <button type="button" class="modal-close" id="buyNowChoiceClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="ek-modal__body">
+        <div id="buyNowStepChoice">
+          <p class="ek-text">Sign in to your Elken member account, or continue as a guest to shop without an account.</p>
+          <div class="buynow-choice-actions">
+            <button type="button" class="ek-btn ek-btn--primary ek-btn--block" id="buyNowLoginBtn">LOGIN TO CONTINUE</button>
+            <button type="button" class="ek-btn ek-btn--secondary ek-btn--block" id="buyNowGuestBtn">CONTINUE AS A GUEST</button>
+          </div>
+        </div>
+        <div id="buyNowStepMarket" hidden>
+          <p class="ek-text">Select the country you are shopping from. Products, prices and your order's home market all follow this choice.</p>
+          <div class="guest-market-list" id="buyNowMarketOptions"></div>
+          <button type="button" class="buynow-back" id="buyNowMarketBack">&larr; Back</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    const stepChoice = modal.querySelector('#buyNowStepChoice');
+    const stepMarket = modal.querySelector('#buyNowStepMarket');
+    const marketIcon = modal.querySelector('#buyNowMarketIcon');
+    const titleEl = modal.querySelector('#buyNowChoiceTitle');
+    const marketOptions = modal.querySelector('#buyNowMarketOptions');
+
+    function showChoiceStep() {
+      stepChoice.hidden = false;
+      stepMarket.hidden = true;
+      marketIcon.hidden = true;
+      titleEl.textContent = 'How would you like to continue?';
+    }
+    function showMarketStep() {
+      const MARKET_FLAGS = {
+        Nigeria: '<svg class="guest-market-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false">' +
+          '<rect width="20" height="30" fill="#008751"/><rect x="20" width="20" height="30" fill="#ffffff"/>' +
+          '<rect x="40" width="20" height="30" fill="#008751"/></svg>',
+        UAE: '<svg class="guest-market-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false">' +
+          '<rect width="15" height="30" fill="#ff0000"/>' +
+          '<rect x="15" width="45" height="10" fill="#00732f"/>' +
+          '<rect x="15" y="10" width="45" height="10" fill="#ffffff"/>' +
+          '<rect x="15" y="20" width="45" height="10" fill="#000000"/></svg>',
+      };
+      const cfgMap = (window.ProductCatalog && window.ProductCatalog.COUNTRY_CONFIG) || {};
+      const markets = Object.keys(cfgMap).length ? Object.keys(cfgMap) : ['Nigeria', 'UAE'];
+      const CURRENCY_NAMES = { NGN: 'Nigerian Naira', AED: 'UAE Dirham' };
+      marketOptions.innerHTML = markets.map(k => {
+        const cfg = cfgMap[k] || {};
+        const cur = cfg.currency || (k === 'UAE' ? 'AED' : 'NGN');
+        const sub = cur ? cur + ' · ' + (CURRENCY_NAMES[cur] || cur) : '';
+        return '<button type="button" class="guest-market-btn" data-guest-country="' + k + '">' +
+          (MARKET_FLAGS[k] || '') +
+          '<span class="guest-market-text">' +
+            '<span class="guest-market-name">' + k + '</span>' +
+            (sub ? '<span class="guest-market-sub">' + sub + '</span>' : '') +
+          '</span>' +
+          '<svg class="guest-market-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" ' +
+            'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ' +
+            'aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>' +
+        '</button>';
+      }).join('');
+      stepChoice.hidden = true;
+      stepMarket.hidden = false;
+      marketIcon.hidden = false;
+      titleEl.textContent = 'Choose your market';
+    }
+
+    modal._showChoiceStep = showChoiceStep;
+    modal.querySelector('#buyNowChoiceClose').addEventListener('click', () => modal.close());
+    modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+    modal.querySelector('#buyNowLoginBtn').addEventListener('click', () => {
+      modal.close();
+      openLoginNewTab();
+    });
+    modal.querySelector('#buyNowGuestBtn').addEventListener('click', showMarketStep);
+    modal.querySelector('#buyNowMarketBack').addEventListener('click', showChoiceStep);
+    marketOptions.addEventListener('click', e => {
+      const btn = e.target.closest('[data-guest-country]');
+      if (!btn) return;
+      const country = btn.dataset.guestCountry;
+      try {
+        sessionStorage.setItem('al.guestCountry', country);
+        sessionStorage.setItem(STORAGE.GUEST, '1');
+      } catch (err) {}
+      modal.close();
+      openUrlFromGate('guest-repeat-purchase.html?guest=1&country=' + encodeURIComponent(country));
+    });
+    return modal;
+  }
+  function openBuyNowChoiceModal() {
+    const modal = ensureBuyNowChoiceModal();
+    if (modal._showChoiceStep) modal._showChoiceStep();
+    if (typeof modal.showModal === 'function') modal.showModal();
+    else modal.setAttribute('open', '');
   }
   /* Embedded-preview compatibility: opening a new window from an embedded or
      in-app webview can crash the host app (the WorkBuddy built-in browser is a
@@ -1118,7 +1229,7 @@
           buy.type = 'button';
           buy.className = (btn.className || '') + ' ek-buy-now-gate';
           buy.textContent = 'Buy Now';
-          buy.addEventListener('click', openLoginNewTab);
+          buy.addEventListener('click', openBuyNowChoiceModal);
           btn.parentNode.insertBefore(buy, btn.nextSibling);
         }
         btn.hidden = true;
@@ -1136,13 +1247,14 @@
         if (isGateUnlogged()) {
           e.stopImmediatePropagation();
           e.preventDefault();
-          openLoginNewTab();
+          openBuyNowChoiceModal();
         }
       });
     }
   }
   window.applyBuyNowGate = applyBuyNowGate;
   window.openLoginNewTab = openLoginNewTab;
+  window.openBuyNowChoiceModal = openBuyNowChoiceModal;
 
   /* ---------- Init ---------- */
   document.addEventListener('DOMContentLoaded', () => {
