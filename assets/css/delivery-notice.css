@@ -93,9 +93,60 @@
 .rp-order-summary .total b { font-weight: 700; }
 .rp-order-summary .delivery-notice { margin-bottom: 0; }
 
+/* ---------- Estimated delivery timeline ----------
+   A companion panel directly below the "Important Delivery Information"
+   notice: same blue left bar, lighter surface, three location-based ETAs. */
+.delivery-timeline {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 8px 0 16px;
+  padding: 14px 16px;
+  background: #f4f9ff;
+  border: 1px solid #d3e6f8;
+  border-left: 4px solid var(--ek-blue, #1b3f9e);
+  border-radius: 0 12px 12px 0;
+  color: #26324c;
+  text-align: left;
+}
+/* Keep the notice + timeline visually paired when adjacent. */
+.delivery-notice:has(+ .delivery-timeline) { margin-bottom: 8px; }
+.delivery-timeline__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ek-blue, #1b3f9e);
+}
+.delivery-timeline__title svg { width: 17px; height: 17px; flex: 0 0 17px; display: block; }
+.delivery-timeline__list { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.delivery-timeline__list li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #26324c;
+}
+.delivery-timeline__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ek-blue, #1b3f9e);
+}
+.delivery-timeline__list b { font-weight: 700; color: #1d2b4a; }
+/* Inside the compact member-page summary the pair is the last content. */
+.rp-order-summary .delivery-timeline { margin-bottom: 0; }
+
 @media (max-width: 560px) {
   .delivery-notice { padding: 13px; gap: 10px; }
   .delivery-notice__icon { flex-basis: 30px; width: 30px; height: 30px; }
   .delivery-notice__title { font-size: 14px; }
   .delivery-notice p { font-size: 13px; }
+  .delivery-timeline { padding: 12px 13px; }
+  .delivery-timeline__list li { font-size: 12.5px; }
 }
