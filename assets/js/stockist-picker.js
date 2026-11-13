@@ -2,8 +2,14 @@
    Searchable Stockist picker.
    Replaces the manual Stockist ID text fields on distributor
    registration (signup / member-welcome) and checkout (shopper /
-   member repeat purchase) with a dropdown of the five official
-   stockists, showing both the shop name and its ID.
+   member repeat purchase) with a dropdown of the official stockists,
+   showing both the shop name and its ID.
+
+   The list is market-aware: Nigeria offers the five official Nigerian
+   Stockists, while UAE offers ONLY its house stockist AE000000001.
+   The active market is resolved every time the list is drawn, so a
+   registration page that inherits UAE from an AE referrer switches
+   over without a reload.
 
    The original <input> is KEPT as the value holder: same id, same name,
    same .value (the selected ID). Existing validation, form serialization
@@ -14,20 +20,71 @@
 (function () {
   'use strict';
 
-  var STOCKISTS = [
+  var NG_STOCKISTS = [
     { name: 'Elken Onyx Shop',            id: 'NG576513886' },
     { name: 'Shalom Shop',                id: 'NG538666436' },
     { name: 'Elken Great Achievers',      id: 'NG662021398' },
     { name: 'De Wellness Centre',         id: 'NG87440247'  },
     { name: 'Elken JC Solution Centre',   id: 'NG92944313'  }
   ];
+  /* UAE has no independent Stockist shops in this market: every guest
+     order and every registration is attributed to the UAE house account.
+     Keep this as the sole entry — do not mix Nigerian shops in here. */
+  var AE_STOCKISTS = [
+    { name: 'Elken HQ (UAE)',             id: 'AE000000001' }
+  ];
+  var BY_MARKET = { Nigeria: NG_STOCKISTS, UAE: AE_STOCKISTS };
 
   var registry = new Map();
 
+  function normalizeMarket(v) {
+    var s = String(v || '').trim().toLowerCase();
+    if (!s) return '';
+    if (s === 'uae' || s === 'ae' || s === 'are' || s === 'united arab emirates') return 'UAE';
+    if (s === 'nigeria' || s === 'ng') return 'Nigeria';
+    return '';
+  }
+  function marketFromMemberId(id) {
+    var m = String(id || '').trim().toUpperCase().match(/^(NG|AE)/);
+    return m ? (m[1] === 'AE' ? 'UAE' : 'Nigeria') : '';
+  }
+  /* Resolve the market for one field. Registration inherits the country
+     from the referrer via #regCountry, which must win over any guest / signed-in
+     market hint; checkout has no such select and uses the site's resolver. */
+  function marketFor(input) {
+    if (input && input.closest) {
+      var explicit = input.closest('[data-stockist-market]');
+      var forced = explicit && normalizeMarket(explicit.getAttribute('data-stockist-market'));
+      if (forced) return forced;
+    }
+    var countryField = document.getElementById('regCountry');
+    var inherited = countryField && normalizeMarket(countryField.value);
+    if (inherited) return inherited;
+    try {
+      var qs = new URLSearchParams(location.search);
+      var fromUrl = normalizeMarket(qs.get('country') || qs.get('market'));
+      if (fromUrl) return fromUrl;
+      var guest = normalizeMarket(sessionStorage.getItem('al.guestCountry'));
+      if (guest) return guest;
+      var pc = window.ProductCatalog;
+      var resolved = pc && typeof pc.currentMarket === 'function' && normalizeMarket(pc.currentMarket());
+      if (resolved) return resolved;
+      var u = (window.Auth && window.Auth.user) || {};
+      var md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
+      var fromMember = normalizeMarket(md.country || u.country) ||
+        marketFromMemberId(u.memberId || md.memberId);
+      if (fromMember) return fromMember;
+    } catch (e) {}
+    return 'Nigeria';
+  }
+  function activeList(input) {
+    return BY_MARKET[marketFor(input)] || NG_STOCKISTS;
+  }
+
   function label(s) { return s.name + ' (' + s.id + ')'; }
-  function byId(id) {
+  function byId(id, input) {
     var v = String(id || '').trim().toUpperCase();
-    return STOCKISTS.filter(function (s) { return s.id === v; })[0] || null;
+    return activeList(input).filter(function (s) { return s.id === v; })[0] || null;
   }
   function fire(input, type) {
     try { input.dispatchEvent(new Event(type, { bubbles: true })); } catch (e) {}
@@ -35,7 +92,7 @@
 
   function renderOptions(ui, query) {
     var q = String(query || '').trim().toLowerCase();
-    var items = STOCKISTS.filter(function (s) {
+    var items = activeList(ui.input).filter(function (s) {
       return !q || (s.name + ' ' + s.id).toLowerCase().indexOf(q) !== -1;
     });
     ui.list.innerHTML = '';
@@ -110,7 +167,7 @@
     var ui = registry.get(input);
     if (!ui) return;
     var value = String(input.value || '').trim();
-    var s = byId(value);
+    var s = byId(value, input);
     ui.search.value = s ? label(s) : value; // unknown pre-filled IDs stay visible
     var locked = !!input.readOnly ||
       input.classList.contains('is-locked') ||
@@ -197,7 +254,7 @@
         e.preventDefault();
         var opts = ui.list.querySelectorAll('.stockist-picker__option');
         var chosen = ui.activeIndex >= 0 ? opts[ui.activeIndex] : (opts.length === 1 ? opts[0] : null);
-        if (chosen) { var s = byId(chosen.dataset.stockistId); if (s) select(ui, s); }
+        if (chosen) { var s = byId(chosen.dataset.stockistId, ui.input); if (s) select(ui, s); }
       } else if (e.key === 'Escape') { close(ui); search.blur(); }
     });
     search.addEventListener('blur', function () {
@@ -232,8 +289,15 @@
     });
   }, true);
 
+  function clone(items) {
+    return items.map(function (s) { return { name: s.name, id: s.id }; });
+  }
   window.StockistPicker = {
-    list: STOCKISTS.map(function (s) { return { name: s.name, id: s.id }; }),
+    // Legacy `.list` now follows the active market, so callers inspecting it
+    // see exactly what the dropdown offers.
+    get list() { return clone(activeList(null)); },
+    listFor: function (market) { return clone(BY_MARKET[normalizeMarket(market)] || NG_STOCKISTS); },
+    market: marketFor,
     enhance: enhance,
     sync: sync,
     setValue: setValue,
