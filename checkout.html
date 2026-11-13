@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="assets/css/checkout.css?v=20261106b">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
+  <link rel="stylesheet" href="assets/css/delivery-notice.css?v=20261113a">
   <link rel="stylesheet" href="assets/css/ae-nav.css?v=20261109a">
 </head>
 <body data-page="checkout" data-guest-no-nav="true" data-ae-nav="true">
@@ -589,15 +590,27 @@
       }).join('');
 
       // Summary layout is identical across flows (member and shopper): the
-      // total always carries its BV and shipping is free (self-pickup).
+      // total always carries its BV. Delivery fee is not known at checkout —
+      // it is quoted later from the shipping address, so it is shown as
+      // "To be determined" and excluded from the total.
       // Hide BV for guest checkout.
       const totalText = `${money(total)}${isGuest ? '' : ` (${bv} BV)`}`;
 
       summary.innerHTML = `
         <h3 data-i18n="checkout.summary">Order summary</h3>
         <div class="summary-items">${itemRows}</div>
+        <div class="row"><span class="k">Subtotal</span><span class="v" id="sumSubtotal">${money(total)}</span></div>
+        <div class="row"><span class="k">Delivery Fee</span><span class="v delivery-fee-tbd">To be determined</span></div>
         <div class="total"><span class="k">Total</span><span class="v" id="sumTotal">${totalText}</span></div>
-        <div class="row"><span class="k">Shipping</span><span class="v">NGN 0</span></div>
+        <div class="delivery-notice" role="note">
+          <span class="delivery-notice__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M3 6.5h11v9H3zM14 9.5h3.4l2.6 3v3H14z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.6" fill="currentColor"/><circle cx="17" cy="17.5" r="1.6" fill="currentColor"/></svg>
+          </span>
+          <div class="delivery-notice__body">
+            <div class="delivery-notice__title">Important Delivery Information</div>
+            <p>Product prices exclude delivery fees. The exact delivery fee will be determined based on your shipping address and communicated to you once your order is processed and confirmed.</p>
+          </div>
+        </div>
         <div class="row method-row" id="summaryMethodRow"><span class="k">Method</span><span class="v" id="summaryMethod"></span></div>
         <div class="pay-methods">
           <span class="ek-chip">VISA</span>
@@ -637,6 +650,8 @@
         state.bv = (state.items || []).reduce((s, i) => s + (Math.round((i.price || 0) / 1000) * (i.qty || 1)), 0);
         const totalEl = document.getElementById('sumTotal');
         if (totalEl) totalEl.textContent = `${money(state.total)}${isGuest ? '' : ` (${state.bv} BV)`}`;
+        const subEl = document.getElementById('sumSubtotal');
+        if (subEl) subEl.textContent = money(state.total);
         const bvEl = document.getElementById('sumBV');
         if (bvEl && !isGuest) bvEl.textContent = '+' + state.bv + ' BV';
         const bankEl = document.getElementById('bankAmount');

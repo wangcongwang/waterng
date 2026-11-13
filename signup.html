@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="assets/css/signup.css?v=20261028a">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
+  <link rel="stylesheet" href="assets/css/delivery-notice.css?v=20261113a">
   <link rel="stylesheet" href="assets/css/ae-nav.css?v=20261109a">
 </head>
 
@@ -125,6 +126,17 @@
               <span data-i18n="signup.summary_price">Subtotal:</span> <b id="summaryPrice">NGN 0</b>
               <span>BV:</span> <b id="summaryBV">0</b>
               <span data-i18n="signup.summary_tax">Tax:</span> <b id="summaryTax">NGN 0</b>
+              <span>Delivery Fee:</span> <b class="delivery-fee-tbd">To be determined</b>
+              <span>Total:</span> <b id="summaryTotal">NGN 0</b>
+            </div>
+            <div class="delivery-notice" role="note">
+              <span class="delivery-notice__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M3 6.5h11v9H3zM14 9.5h3.4l2.6 3v3H14z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.6" fill="currentColor"/><circle cx="17" cy="17.5" r="1.6" fill="currentColor"/></svg>
+              </span>
+              <div class="delivery-notice__body">
+                <div class="delivery-notice__title">Important Delivery Information</div>
+                <p>Product prices exclude delivery fees. The exact delivery fee will be determined based on your shipping address and communicated to you once your order is processed and confirmed.</p>
+              </div>
             </div>
           </div>
 
@@ -833,6 +845,7 @@
         const priceEl = document.getElementById('summaryPrice');
         const bvEl = document.getElementById('summaryBV');
         const taxEl = document.getElementById('summaryTax');
+        const totalEl = document.getElementById('summaryTotal');
         let total = 0, totalBV = 0;
         Object.keys(selectedProds).forEach(pid => {
           const s = selectedProds[pid];
@@ -844,6 +857,7 @@
           }
         });
         if (priceEl) priceEl.textContent = money(total);
+        if (totalEl) totalEl.textContent = money(total);
         if (bvEl) bvEl.textContent = totalBV.toFixed(totalBV % 1 === 0 ? 0 : 1);
         if (taxEl) taxEl.textContent = money(0);
         // Keep the open payment panel's amount in sync with the selection

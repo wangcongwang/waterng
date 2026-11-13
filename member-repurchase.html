@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="assets/css/member-flows.css?v=20260923a">
   <link rel="stylesheet" href="assets/css/payment-methods.css?v=20260915a">
   <script src="assets/js/elken-ui.js" defer></script>
+  <link rel="stylesheet" href="assets/css/delivery-notice.css?v=20261113a">
   <link rel="stylesheet" href="assets/css/ae-nav.css?v=20261109a">
 </head>
 <body data-page="member-repurchase" data-cart-mode="member" data-ae-nav="true">
@@ -68,6 +69,23 @@
           <div class="sec-title">Choose products</div>
           <p class="sec-hint">Tap a product to add it to your cart. Prices shown are DP (distributor price) with BV, and the retail reference RP.</p>
           <div class="rp-product-grid" id="productPick" aria-live="polite"></div>
+          <!-- Order summary — the delivery fee is quoted from the shipping
+               address after the order is processed and confirmed. -->
+          <div class="rp-order-summary" id="mrpSummary">
+            <div class="rp-order-summary__title">Order summary</div>
+            <div class="row"><span>Subtotal</span><b id="mrpSubtotal">NGN 0</b></div>
+            <div class="row"><span>Delivery Fee</span><b class="delivery-fee-tbd">To be determined</b></div>
+            <div class="total"><span>Total</span><b id="mrpTotal">NGN 0</b></div>
+            <div class="delivery-notice" role="note">
+              <span class="delivery-notice__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M3 6.5h11v9H3zM14 9.5h3.4l2.6 3v3H14z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="17.5" r="1.6" fill="currentColor"/><circle cx="17" cy="17.5" r="1.6" fill="currentColor"/></svg>
+              </span>
+              <div class="delivery-notice__body">
+                <div class="delivery-notice__title">Important Delivery Information</div>
+                <p>Product prices exclude delivery fees. The exact delivery fee will be determined based on your shipping address and communicated to you once your order is processed and confirmed.</p>
+              </div>
+            </div>
+          </div>
           <div class="mrp-cart-hint" role="note">
             <span class="mrp-cart-hint__icon" aria-hidden="true">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.4 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L21 8H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="21" r="1.4" fill="currentColor"/><circle cx="17.5" cy="21" r="1.4" fill="currentColor"/></svg>
@@ -286,6 +304,23 @@
         if (section) section.hidden = false;
       }
 
+      /* ---------- Order summary (member cart) ----------
+         The delivery fee is not known at this point — it is quoted from
+         the shipping address once the order is processed and confirmed. */
+      function updateOrderSummary() {
+        const subEl = document.getElementById('mrpSubtotal');
+        const totalEl = document.getElementById('mrpTotal');
+        if (!subEl || !totalEl) return;
+        let subtotal = 0;
+        try {
+          const cart = JSON.parse(localStorage.getItem('al.memberCart') || '[]');
+          cart.forEach(it => { subtotal += (Number(it.price) || 0) * (Number(it.qty) || 1); });
+        } catch (e) {}
+        const text = 'NGN ' + subtotal.toLocaleString('en-NG');
+        subEl.textContent = text;
+        totalEl.textContent = text;
+      }
+
       /* ---------- Init ---------- */
       function init() {
         // Returning from the member cart ("Continue shopping") restores the
@@ -311,6 +346,9 @@
         }
 
         renderProducts();
+        updateOrderSummary();
+        window.addEventListener('al:cartchange', updateOrderSummary);
+        window.addEventListener('storage', updateOrderSummary);
         bindMemberSearch();
 
         if (state.member) {
