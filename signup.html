@@ -692,7 +692,7 @@
         }
         referrerMember = m;
         referrerInput.removeAttribute('aria-invalid');
-        setReferrerHint(tr('signup.referrer_valid', { name: m.name || m.id }), 'ok');
+        setReferrerHint(tr('signup.referrer_valid', { name: m.name || ('Member ' + m.id.slice(-6)) }), 'ok');
         applyCountry(m.country, m.name);
         applyReferrerGate();
         return true;

@@ -504,7 +504,7 @@
           ? window.ProductCatalog.lookupMember(raw) : null;
         referrerMember = m || { id: raw, name: 'Member ' + raw.slice(-6), country: 'Nigeria', source: 'unknown' };
         referrerInput.removeAttribute('aria-invalid');
-        setReferrerHint(tr('signup.referrer_valid', { name: referrerMember.name || referrerMember.id }), 'ok');
+        setReferrerHint(tr('signup.referrer_valid', { name: referrerMember.name || ('Member ' + referrerMember.id.slice(-6)) }), 'ok');
         applyReferrerGate();
         return true;
       }

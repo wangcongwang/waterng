@@ -973,21 +973,26 @@
   }
   // Look up a member by ID → { id, name, country, source } | null.
   // This is the referrer-validity check used by the registration page.
+  function fallbackMemberName(id) {
+    const known = HOUSE_ACCOUNTS[id] || DEMO_MEMBERS[id];
+    if (known && saneMemberName(known.name)) return saneMemberName(known.name);
+    return 'Member ' + String(id || '').slice(-6);
+  }
   function lookupMember(raw) {
     const id = String(raw || '').trim().toUpperCase();
     if (!MEMBER_ID_RE.test(id)) return null;
     const reg = getMemberRegistry().find(m => m && m.id === id);
     if (reg) {
       const c = normalizeCountryName(reg.country) || countryFromMemberId(id);
-      if (c) return { id, name: saneMemberName(reg.name), country: c, source: 'registry' };
+      if (c) return { id, name: saneMemberName(reg.name) || fallbackMemberName(id), country: c, source: 'registry' };
     }
     const known = HOUSE_ACCOUNTS[id] || DEMO_MEMBERS[id];
-    if (known) return { id, name: saneMemberName(known.name), country: normalizeCountryName(known.country), source: 'directory' };
+    if (known) return { id, name: saneMemberName(known.name) || fallbackMemberName(id), country: normalizeCountryName(known.country), source: 'directory' };
     try {
       const md = JSON.parse(localStorage.getItem('al.memberData') || '{}');
       if (md && md.memberId === id) {
         const c = normalizeCountryName(md.country) || countryFromMemberId(id);
-        if (c) return { id, name: saneMemberName(md.memberName || md.name), country: c, source: 'self' };
+        if (c) return { id, name: saneMemberName(md.memberName || md.name) || fallbackMemberName(id), country: c, source: 'self' };
       }
     } catch (e) {}
     try {
@@ -995,14 +1000,14 @@
       const o = orders.find(o => o && o.memberId === id);
       if (o) {
         const c = normalizeCountryName(o.country) || (o.customer && normalizeCountryName(o.customer.country)) || countryFromMemberId(id);
-        if (c) return { id, name: saneMemberName(o.customer && o.customer.name), country: c, source: 'order' };
+        if (c) return { id, name: saneMemberName(o.customer && o.customer.name) || fallbackMemberName(id), country: c, source: 'order' };
       }
     } catch (e) {}
     // Fallback (demo): a well-formed ID always resolves to its market — the
     // NG/AE prefix implies the country — so any syntactically valid referrer
     // can enter the registration flow, even if it is not in a directory yet.
     const implied = countryFromMemberId(id);
-    if (implied) return { id, name: '', country: implied, source: 'inferred' };
+    if (implied) return { id, name: fallbackMemberName(id), country: implied, source: 'inferred' };
     return null;
   }
 
